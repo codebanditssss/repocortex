@@ -129,7 +129,7 @@ class _FileParser(ast.NodeVisitor):
     def _visit_func(self, node: ast.AST) -> None:
         assert isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
         qual = self._qual(node.name)
-        calls, self_calls, raises, messages = _collect_body(node)
+        calls, self_calls, raises, messages, attr_calls = _collect_body(node)
         # Walk nested defs ourselves so their calls stay on the nested function.
         self.functions.append(
             {
@@ -141,6 +141,7 @@ class _FileParser(ast.NodeVisitor):
                 "signature": _signature(node),
                 "calls": calls,
                 "self_calls": self_calls,
+                "attr_calls": attr_calls,
                 "raises": raises,
                 "messages": messages,
                 "class": next((name for kind, name in reversed(self.scope) if kind == "class"), ""),
@@ -167,12 +168,13 @@ class _FileParser(ast.NodeVisitor):
         self._visit_func(node)
 
 
-def _collect_body(node: ast.AST) -> tuple[list[str], list[str], list[str], list[str]]:
+def _collect_body(node: ast.AST) -> tuple[list[str], list[str], list[str], list[str], list[tuple[str, str]]]:
     """Calls and raises directly in this function, not in a nested function."""
     calls: list[str] = []
     self_calls: list[str] = []
     raises: list[str] = []
     messages: list[str] = []
+    attr_calls: list[tuple[str, str]] = []
 
     def walk(tree: ast.AST) -> None:
         for child in ast.iter_child_nodes(tree):
@@ -187,6 +189,12 @@ def _collect_body(node: ast.AST) -> tuple[list[str], list[str], list[str], list[
                 ):
                     self_calls.append(func.attr)
                 else:
+                    if (
+                        isinstance(func, ast.Attribute)
+                        and isinstance(func.value, ast.Name)
+                        and func.value.id not in {"self", "cls"}
+                    ):
+                        attr_calls.append((func.value.id, func.attr))
                     name = _call_name(func)
                     if name:
                         calls.append(name)
@@ -207,7 +215,7 @@ def _collect_body(node: ast.AST) -> tuple[list[str], list[str], list[str], list[
             walk(child)
 
     walk(node)
-    return calls, self_calls, raises, messages
+    return calls, self_calls, raises, messages, attr_calls
 
 
 def _is_test(relpath: str, name: str, class_name: str) -> bool:
@@ -366,43 +374,55 @@ def build_graph(files: list[tuple[str, str]]) -> Graph:
     fn_tokens: dict[str, list[str]] = {}
     for item in parsed:
         for fn in item["functions"]:
+            if fn["is_test"]:
+                fn_tokens[fn["uid"]] = []
+                continue
             bag = tokens(fn["name"]) + tokens(fn["class"]) + tokens(fn["doc"])
             deduped = list(dict.fromkeys(bag))[:12]
             fn_tokens[fn["uid"]] = deduped
             concept_df.update(set(deduped))
 
-    n_funcs = max(1, sum(1 for item in parsed for fn in item["functions"]))
+    n_funcs = max(1, sum(1 for item in parsed for fn in item["functions"] if not fn["is_test"]))
     keep_floor = 2
     keep_ceil = max(8, int(n_funcs * 0.25))
 
     for item in parsed:
         for fn in item["functions"]:
-            for token in fn_tokens.get(fn["uid"], []):
-                df = concept_df[token]
-                if df < keep_floor or df > keep_ceil:
-                    continue
-                cuid = f"concept:{token}"
-                if cuid not in graph.nodes:
-                    graph.add_node(Node(uid=cuid, label="Concept", name=token, kind="concept"))
-                graph.add_edge(fn["uid"], cuid, "MENTIONS")
-            for name in fn["raises"]:
-                suid = f"symptom:{name}"
-                if suid not in graph.nodes:
-                    graph.add_node(Node(uid=suid, label="Symptom", name=name, kind="exception"))
-                graph.add_edge(fn["uid"], suid, "RAISES")
-            for message in fn["messages"][:2]:
-                slug = re.sub(r"[^a-z0-9]+", "-", message.lower()).strip("-")[:48]
-                if not slug:
-                    continue
-                suid = f"symptom:msg:{slug}"
-                if suid not in graph.nodes:
-                    graph.add_node(Node(uid=suid, label="Symptom", name=message[:80], kind="message"))
-                graph.add_edge(fn["uid"], suid, "RAISES")
+            if not fn["is_test"]:
+                for token in fn_tokens.get(fn["uid"], []):
+                    df = concept_df[token]
+                    if df < keep_floor or df > keep_ceil:
+                        continue
+                    cuid = f"concept:{token}"
+                    if cuid not in graph.nodes:
+                        graph.add_node(Node(uid=cuid, label="Concept", name=token, kind="concept"))
+                    graph.add_edge(fn["uid"], cuid, "MENTIONS")
+                for name in fn["raises"]:
+                    suid = f"symptom:{name}"
+                    if suid not in graph.nodes:
+                        graph.add_node(Node(uid=suid, label="Symptom", name=name, kind="exception"))
+                    graph.add_edge(fn["uid"], suid, "RAISES")
+                for message in fn["messages"][:2]:
+                    slug = re.sub(r"[^a-z0-9]+", "-", message.lower()).strip("-")[:48]
+                    if not slug:
+                        continue
+                    suid = f"symptom:msg:{slug}"
+                    if suid not in graph.nodes:
+                        graph.add_node(Node(uid=suid, label="Symptom", name=message[:80], kind="message"))
+                    graph.add_edge(fn["uid"], suid, "RAISES")
 
             for attr in fn["self_calls"]:
                 class_qual = fn["qualname"].rsplit("." + fn["name"], 1)[0] if fn["class"] else ""
                 target = methods_by_class.get(class_qual, {}).get(attr, "")
                 if target:
+                    graph.add_edge(fn["uid"], target, "CALLS")
+            for owner, attr in fn.get("attr_calls") or []:
+                classes = classes_by_name.get(owner, [])
+                if len(classes) != 1:
+                    continue
+                qual = classes[0][len("class:") :]
+                target = methods_by_class.get(qual, {}).get(attr, "")
+                if target and target != fn["uid"]:
                     graph.add_edge(fn["uid"], target, "CALLS")
             for name in fn["calls"]:
                 choices = functions_by_name.get(name, [])

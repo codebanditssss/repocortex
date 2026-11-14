@@ -22,6 +22,17 @@ class PathCompressor(Operator):
         self.misses: dict[tuple[str, str], int] = defaultdict(int)
         self.tickets: dict[tuple[str, str], list[int]] = defaultdict(list)
 
+    def hydrate(self, table) -> None:
+        """Reload support from SHORTCUT edges so a later fix does not reset them."""
+        for (src, rel, dst), props in table.edges.items():
+            if rel != "SHORTCUT":
+                continue
+            pair = (src, dst)
+            self.hits[pair] = int(props.get("hits") or 0)
+            self.misses[pair] = int(props.get("misses") or 0)
+            raw = str(props.get("tickets") or "")
+            self.tickets[pair] = [int(part) for part in raw.split(",") if part.strip().isdigit()]
+
     def on_outcome(self, table, episode: Episode) -> OperatorResult:
         applied = 0
         gold = [uid for uid in episode.gold if uid]

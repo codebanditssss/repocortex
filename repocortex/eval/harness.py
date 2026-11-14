@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from repocortex.eval.metrics import summarize
+from repocortex.eval.metrics import bootstrap_ci, score_rows, summarize
 from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import DenseIndex, Embedder
 from repocortex.retrieve.textutil import issue_text
@@ -18,9 +18,18 @@ def _rows_from_ranked(issues: list[dict], ranked_for) -> list[dict]:
                 "files": [item[1] for item in ranked],
                 "gold": issue["gold_functions"],
                 "gold_files": issue["gold_files"],
+                "ticket": int(issue.get("ticket") or 0),
             }
         )
     return rows
+
+
+def _with_ci(rows: list[dict]) -> dict:
+    summary = summarize(rows)
+    scored = score_rows(rows)
+    summary["ci"] = bootstrap_ci(scored)
+    summary["per_issue"] = scored
+    return summary
 
 
 def eval_bm25(index: BM25Index, nodes: dict, issues: list[dict], k: int = 10) -> dict:
@@ -28,7 +37,7 @@ def eval_bm25(index: BM25Index, nodes: dict, issues: list[dict], k: int = 10) ->
         top = index.top(issue_text(issue), k)
         return [(uid, (nodes.get(uid) or {}).get("file", "")) for uid, _score in top]
 
-    return summarize(_rows_from_ranked(issues, rank))
+    return _with_ci(_rows_from_ranked(issues, rank))
 
 
 def eval_dense(index: DenseIndex, embedder: Embedder, nodes: dict, issues: list[dict], k: int = 10) -> dict:
@@ -37,7 +46,7 @@ def eval_dense(index: DenseIndex, embedder: Embedder, nodes: dict, issues: list[
         top = index.top(vector, k)
         return [(uid, (nodes.get(uid) or {}).get("file", "")) for uid, _score in top]
 
-    return summarize(_rows_from_ranked(issues, rank))
+    return _with_ci(_rows_from_ranked(issues, rank))
 
 
 def eval_ranker(ranker, issues: list[dict], k: int = 10) -> dict:
@@ -52,6 +61,7 @@ def eval_ranker(ranker, issues: list[dict], k: int = 10) -> dict:
                 "files": [hit.file for hit in pred.hits],
                 "gold": issue["gold_functions"],
                 "gold_files": issue["gold_files"],
+                "ticket": int(issue.get("ticket") or 0),
             }
         )
-    return summarize(rows)
+    return _with_ci(rows)

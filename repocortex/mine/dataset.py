@@ -52,7 +52,9 @@ def build_dataset(
     cache: dict[tuple[str, str], dict | None] = {}
     kept: list[dict] = []
     scanned = 0
-    scan_cap = max(limit * 6, limit)
+    # Newest qualifying fixes are kept. Many commits miss the snapshot or
+    # touch too many functions, so the scan runs well past `limit`.
+    scan_cap = max(limit * 25, limit)
     for commit in commits:
         if len(kept) >= limit or scanned >= scan_cap:
             break

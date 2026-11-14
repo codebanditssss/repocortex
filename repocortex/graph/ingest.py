@@ -35,6 +35,12 @@ def ingest(client, graph: Graph) -> dict:
     return {"nodes": node_counts, "edges": edge_counts}
 
 
+def wipe_graph(client) -> None:
+    """Delete every project node so a rebuilt graph does not keep stale ids."""
+    for label in LABELS:
+        client.query(f"MATCH (n:{label}) DETACH DELETE n")
+
+
 def clear_learned(client) -> None:
     """Drop shortcut, fix, and issue rows so a replay starts from the code graph."""
     for rel in ("SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"):
@@ -65,6 +71,8 @@ def load_graph(client) -> tuple[dict, dict, dict]:
                 "qualname": row.get("qualname") or "",
                 "doc": row.get("doc") or "",
                 "signature": row.get("signature") or "",
+                "start": int(row.get("start") or 0),
+                "end": int(row.get("end") or 0),
             }
     edges: dict[tuple[str, str, str], dict] = {}
     for rel in ("CONTAINS", "DEFINES", "CALLS", "IMPORTS", "INHERITS", "TESTED_BY", "CO_CHANGED", "MENTIONS", "RAISES"):

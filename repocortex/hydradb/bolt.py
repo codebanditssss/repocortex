@@ -255,7 +255,7 @@ class BoltClient:
             page = self.query(
                 f"MATCH (n:{label}) RETURN n.id AS id, n.uid AS uid, n.name AS name, "
                 "n.file AS file, n.qualname AS qualname, n.signature AS signature, "
-                "n.doc AS doc, n.kind AS kind "
+                "n.doc AS doc, n.kind AS kind, n.start AS start, n.end AS end "
                 "ORDER BY n.id SKIP $skip LIMIT $limit",
                 {"skip": skip, "limit": PAGE},
             )

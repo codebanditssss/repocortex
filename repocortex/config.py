@@ -22,7 +22,7 @@ def _load_dotenv(path: Path) -> None:
 
 def _scope(value: str) -> tuple[str, ...]:
     parts = tuple(p.strip().strip("/") for p in value.split(",") if p.strip())
-    return parts or ("django/db", "django/forms")
+    return parts or ("django", "tests")
 
 
 @dataclass
@@ -37,8 +37,8 @@ class Settings:
     hydradb_database: str = "repocortex"
     hydradb_collection: str = "code"
     django_repo: Path = field(default_factory=lambda: Path("data/django"))
-    scope: tuple[str, ...] = ("django/db", "django/forms")
-    limit: int = 400
+    scope: tuple[str, ...] = ("django", "tests")
+    limit: int = 1600
     holdout: float = 0.2
     hops: int = 2
     root: Path = field(default_factory=lambda: Path("."))
@@ -60,8 +60,8 @@ class Settings:
             hydradb_database=os.environ.get("HYDRADB_DATABASE", "repocortex"),
             hydradb_collection=os.environ.get("HYDRADB_COLLECTION", "code"),
             django_repo=Path(os.environ.get("REPOCORTEX_DJANGO", root / "data" / "django")),
-            scope=_scope(os.environ.get("REPOCORTEX_SCOPE", "django/db,django/forms")),
-            limit=int(os.environ.get("REPOCORTEX_LIMIT", "400")),
+            scope=_scope(os.environ.get("REPOCORTEX_SCOPE", "django,tests")),
+            limit=int(os.environ.get("REPOCORTEX_LIMIT", "1600")),
             holdout=float(os.environ.get("REPOCORTEX_HOLDOUT", "0.2")),
             hops=int(os.environ.get("REPOCORTEX_HOPS", "2")),
             root=root,

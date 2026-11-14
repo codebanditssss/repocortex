@@ -3,9 +3,9 @@
 RepoCortex is a code graph for bug localization. It stores files, classes,
 functions, and the edges between them in HydraDB, ranks the functions a bug
 report touches, and updates that graph from the repository's fix history.
-Ranking starts from a dense embedding plus a small BM25 blend. Replaying older
-fixes in time order then adds shortcut and fix edges, and only the edges that
-actually moved a hit get credit or a debit.
+Ranking starts from dense and BM25 seeds, then one hop on the code graph.
+Replaying older fixes in time order stores those fixes and updates the edges
+that actually moved a hit.
 
 ## Layout
 
@@ -49,76 +49,123 @@ The dense baseline downloads `sentence-transformers/all-MiniLM-L6-v2` on first u
 
 ## Data
 
-The miner reads a local Django checkout. A blobless sparse clone of the two packages we index is enough:
+The miner reads a local Django checkout. The indexed tree is the whole `django/` package, including contrib, plus `tests/` so `TESTED_BY` edges exist. Test functions are not gold. A commit that only changes tests is dropped.
 
 ```bash
 git clone --filter=blob:none --sparse https://github.com/django/django.git data/django
-git -C data/django sparse-checkout set django/db django/forms
+git -C data/django sparse-checkout set django tests
 ```
 
-It keeps commits whose subject matches `Fixed #NNNN`, maps diff hunks to the enclosing function, and drops a commit when those functions are gone from the chosen snapshot or when the fix touches more than 8 functions. Ticket text comes from `code.djangoproject.com` and is cached under `data/trac/`. The newest 20% of commits, by commit rather than by ticket, is the held-out split.
+It keeps commits whose subject matches `Fixed #NNNN`, maps diff hunks to the enclosing function, and drops a commit when those functions are gone from the chosen snapshot or when the fix touches more than 8 functions. Ticket text comes from `code.djangoproject.com` and is cached under `data/trac/`. The newest 20% of commits, by commit time rather than by ticket number, is the held-out split. Replay walks the training issues oldest first.
 
 ```bash
-python scripts/mine_django.py --limit 400
+python scripts/mine_django.py --limit 1600
 ```
 
-`--limit` is the number of issues to keep. Scope defaults to `django/db,django/forms` (`REPOCORTEX_SCOPE`).
+`--limit` is the number of issues to keep. Scope defaults to `django,tests` (`REPOCORTEX_SCOPE`). Pass `--force` to rebuild `data/dataset.json`.
 
 ## Graph and eval
 
 ```bash
 python scripts/smoke_hydradb.py
-python scripts/build_graph.py
+python scripts/build_graph.py --reset
 python scripts/run_eval.py --replay
 ```
 
-`scripts/run_phase1.py --limit 400` runs smoke, mine, ingest, baselines, and replay in that order.
+`--reset` deletes the previous graph before ingest, so a wider scope does not keep stale nodes. `build_graph.py` parses the snapshot with the Python `ast` module, adds `CO_CHANGED` edges from the training commits only, and batch-loads nodes and edges. Every structural edge starts at `w=1.0`.
 
-`build_graph.py` parses the snapshot with the Python `ast` module, adds `CO_CHANGED` edges from the training commits only, and batch-loads nodes and edges. Every edge starts at `w=1.0` with zero hits and misses.
+`run_eval.py --replay` writes:
 
-`run_eval.py` writes:
-
-- `results/baselines.json` with function Acc@5, Acc@10, file Acc@1, Acc@5, and MRR
-- `results/curve.json` and `results/curve.png` when `--replay` is set
+- `results/baselines.json` with function Acc@5, Acc@10, file Acc@1, Acc@5, and MRR, each with a 95% bootstrap interval
+- `results/curve.json` and `results/curve.png` for the holdout ablations and the prequential series
 - `results/provenance.json` with the path behind each top hit on the holdout
+- `results/graph.json` with nodes and edges, including learned edges and weights
+- `results/snapshots.json` at each checkpoint, with metrics and the edges added since the previous step
 
-Function accuracy is strict: every gold function has to sit inside the top k. Replay prints a held-out checkpoint every 40 training issues. Four operators run on each training issue, after the prediction and before the fix is stored:
+Function accuracy is strict: every gold function has to sit inside the top k. MRR is the reciprocal rank of the first gold function, and it is 0 when that function is outside the top 10. Intervals are a percentile bootstrap of the mean, 1000 resamples, seed 7. The learned-minus-dense gap resamples the same holdout issues for both systems.
 
-- edge reweight credits a path that reached gold and debits a path that promoted a wrong top-k hit. Nearby edges that did not change the ranking are left alone. Weights decay back toward 1.
-- path compression writes a `SHORTCUT` once a concept or symptom has landed on the same function at least three times with precision at least 0.4.
-- gap ingestion, when gold is outside the frontier, links a same-file neighbor and a matching test, and counts two specific report tokens toward a later shortcut.
-- entity merge writes `SAME_AS` for concepts that fix the same functions, and `REFINES` when one concept is too broad.
+The score at step 0 is the frozen graph. Seeds are the top dense hits and the top BM25 hits. One hop over `CALLS`, `CO_CHANGED`, `TESTED_BY`, and `DEFINES` is mixed in at `graph_mix` 0.05, and each seed is divided by the square root of its degree. A BM25 blend of 0.10 is added to the dense score. That blend was chosen on the last 40 training issues of the smaller phase 2 split. `graph_mix` was not fit on the holdout. This is not the older PageRank walk.
 
-The learned ranker does not walk the whole neighborhood on every query. Its score is the dense score, plus a BM25 blend of 0.10, plus a bonus from similar past fixes (`FIXED_IN`) and from shortcuts. The blend was chosen on the last 40 training issues, which are still before the holdout. At step 0 there is no fix history and no shortcut, so that checkpoint is the unlearned hybrid.
+Replay then stores each training fix and runs the operators, oldest first. Checkpoints are about 15, evenly spaced, including step 0 and the last issue. The same holdout is scored at every checkpoint. Five lines are drawn:
 
-Frozen retrieval is still scored on its own. It restarts PageRank with probability 0.5 and mixes in the BM25 score of the same candidates (weight 0.35). Without that, hub functions such as `Collector.add` outrank the seeds. The walk is not bit-stable across runs.
+- learning off: the frozen score, with no fix stored
+- reweight: store the fix (`FIXED_IN`) and reweight edges that reached gold or promoted a wrong top-k hit
+- +shortcuts: also write a `SHORTCUT` after support of 3 and precision of at least 0.4
+- +gap: also link a same-file neighbor and a matching test when gold is outside the frontier
+- full: also `SAME_AS` and `REFINES`
+
+Every learning line stores the fix. Reweighting has nothing to update until that memory exists. Weights decay back toward 1.
+
+Prequential accuracy scores each training issue before the operators see it. `results/curve.json` stores the raw hit and a rolling window of 100. The plot starts once that window is full, so the first points are not a ramp from zero.
 
 ## Results from this run
 
-Snapshot `f24f38c6b282`, scope `django/db` and `django/forms`, 400 issues (320 train, 80 held out). The graph loaded into local HydraDB 0.4.0 with no truncated pages: 4989 nodes and 21532 edges (3105 functions).
+Snapshot `f24f38c6b282`, scope `django` and `tests`, 1600 issues (1281 train, 319 held out). The graph loaded into local HydraDB 0.4.0 with no truncated pages: 46443 nodes and 138150 edges (8834 functions, 21603 tests, 13686 `TESTED_BY`). `GMI_API_KEY` was unset, so no LLM call was made.
 
-Held-out baselines, before the replay:
+Held-out scores. Brackets are 95% bootstrap intervals.
 
 | ranker | fn Acc@5 | fn Acc@10 | file Acc@1 | file Acc@5 | MRR |
 |---|---:|---:|---:|---:|---:|
-| BM25 | 0.225 | 0.3125 | 0.3375 | 0.675 | 0.258 |
-| dense (MiniLM) | 0.3125 | 0.3875 | 0.400 | 0.7625 | 0.307 |
-| frozen graph | 0.2125 | 0.3125 | 0.300 | 0.600 | 0.220 |
+| BM25 | 0.273 [0.223, 0.323] | 0.329 [0.276, 0.382] | 0.345 [0.298, 0.398] | 0.618 [0.561, 0.671] | 0.324 [0.282, 0.366] |
+| dense (MiniLM) | 0.292 [0.238, 0.342] | 0.373 [0.317, 0.426] | 0.357 [0.307, 0.411] | 0.696 [0.640, 0.746] | 0.320 [0.279, 0.360] |
+| frozen graph (step 0) | 0.354 [0.298, 0.404] | 0.451 [0.395, 0.505] | 0.411 [0.360, 0.461] | 0.734 [0.683, 0.781] | 0.402 [0.358, 0.443] |
+| full replay | 0.370 [0.314, 0.423] | 0.483 [0.423, 0.533] | 0.445 [0.392, 0.502] | 0.762 [0.712, 0.809] | 0.430 [0.385, 0.475] |
 
-The frozen graph does not beat dense. On this run it also does not beat BM25 at function Acc@10 (both 0.3125). An earlier frozen run landed a little higher (function Acc@10 0.325) because the bounded path sampler is not bit-stable. Either way the unlearned walk stays under the dense line.
+Learned minus dense, paired over the same 319 issues:
 
-The learning curve on the same 80 issues:
+| metric | gap |
+|---|---:|
+| fn Acc@5 | +0.078 [0.047, 0.113] |
+| fn Acc@10 | +0.110 [0.075, 0.144] |
+| file Acc@1 | +0.088 [0.053, 0.125] |
+| file Acc@5 | +0.066 [0.034, 0.097] |
+| MRR | +0.106 [0.074, 0.137] |
 
-| step | fn Acc@5 | fn Acc@10 | file Acc@1 | MRR |
-|---:|---:|---:|---:|---:|
-| 0 | 0.375 | 0.400 | 0.450 | 0.371 |
-| 120 | 0.3625 | 0.400 | 0.450 | 0.365 |
-| 200 | 0.375 | 0.425 | 0.4875 | 0.383 |
-| 320 | 0.3875 | 0.4375 | 0.500 | 0.395 |
+Every one of those intervals is above 0. Most of that gap is already present at step 0. The paired difference between the full replay and the frozen graph is smaller, and it is the part that training moved:
 
-Step 0 is already above dense because of the BM25 blend (function Acc@10 0.400 vs 0.3875, MRR 0.371 vs 0.307). Learning then lifts function Acc@10 to 0.4375 and MRR to 0.395. MRR dips at step 120 (0.365) and recovers. File Acc@1 moves from 0.450 to 0.500. The full series is in `results/curve.json` and `results/curve.png`.
+| metric | full minus frozen |
+|---|---:|
+| fn Acc@5 | +0.016 [-0.009, 0.041] |
+| fn Acc@10 | +0.031 [0.009, 0.056] |
+| file Acc@1 | +0.034 [0.013, 0.060] |
+| file Acc@5 | +0.028 [0.013, 0.047] |
+| MRR | +0.026 [0.005, 0.048] |
 
-The replay wrote 597 `FIXED_IN` edges and 60 `SHORTCUT` edges into local HydraDB. Credit or debit touched 232 edges. Path compression fired 107 times, gap ingestion 474 times, and merge/split 3 times. A holdout path looks like `issue #35575 sim 0.75 -FIXED_IN-> UniqueConstraint.validate`. `GMI_API_KEY` was unset, so no LLM call was made.
+Function Acc@10, file Acc@1, file Acc@5, and MRR stay above 0. Function Acc@5 includes 0.
+
+The full holdout curve, 15 steps:
+
+| step | fn Acc@10 | MRR |
+|---:|---:|---:|
+| 0 | 0.451 | 0.402 |
+| 92 | 0.448 | 0.405 |
+| 183 | 0.445 | 0.410 |
+| 274 | 0.448 | 0.409 |
+| 366 | 0.448 | 0.406 |
+| 458 | 0.451 | 0.403 |
+| 549 | 0.458 | 0.410 |
+| 640 | 0.461 | 0.408 |
+| 732 | 0.461 | 0.408 |
+| 824 | 0.461 | 0.412 |
+| 915 | 0.464 | 0.414 |
+| 1006 | 0.464 | 0.415 |
+| 1098 | 0.467 | 0.412 |
+| 1190 | 0.483 | 0.424 |
+| 1281 | 0.483 | 0.430 |
+
+The line sits on the frozen score until about step 500, then climbs. Final ablation scores on the same holdout:
+
+| line | fn Acc@10 | MRR |
+|---|---:|---:|
+| learning off | 0.451 | 0.402 |
+| reweight | 0.480 | 0.422 |
+| +shortcuts | 0.483 | 0.430 |
+| +gap | 0.483 | 0.430 |
+| full | 0.483 | 0.430 |
+
+Storing fixes and reweighting edges does almost all of the lift past step 0. Shortcuts add a little MRR. Gap ingestion fired 1667 times and merge/split 33 times, and neither moved the final holdout number past the shortcut line (gap MRR is 0.4300 versus 0.4296 for shortcuts). The full replay wrote 2414 `FIXED_IN` edges and 275 `SHORTCUT` edges. Credit or debit touched 3407 edges. A holdout path looks like `issue #35690 sim 0.74 -FIXED_IN-> QuerySet.in_bulk`.
+
+Prequential Acc@10 does not trend up. The first 100 training issues score 0.460 and the last 100 score 0.460. Prequential MRR does move, from 0.383 on the first 100 to 0.426 on the last 100. The rolling window of 100 is noisy around that mean, which is why the holdout curve is the cleaner picture on this split. Both series are in `results/curve.png`.
 
 ## Locate
 

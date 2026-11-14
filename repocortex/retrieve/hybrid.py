@@ -1,13 +1,20 @@
 """Rank functions from dense retrieval, then add what the graph has learned.
 
-Step 0 has no shortcuts and no fix history, so the only extra term is a small
-fixed BM25 blend. That blend was chosen on the last 40 training issues, which
-sit before the holdout. Later steps add two learned terms:
+Step 0 is the frozen graph. Seeds are the top dense hits and the top BM25 hits.
+One hop over CALLS, CO_CHANGED, TESTED_BY, and DEFINES is mixed in at
+`graph_mix`, with each seed divided by the square root of its degree so a hub
+does not take the whole hop. The BM25 blend was chosen on the last 40 training
+issues of the smaller phase 2 set, which sat before that holdout. `graph_mix`
+is a small fixed prior and was not fit on the held-out issues.
+
+Later steps add two learned terms on top of that frozen score:
 
 - FIXED_IN from past issues whose text is close to this report
 - SHORTCUT from a concept or symptom that has repeatedly landed on a function
 
-Structural edges contribute only after learning moves their weight above 1.
+Reweighting changes the hop because the neighbor mass is multiplied by the edge
+weight. The hop is then divided by its peak, so only the relative weights move
+the ranking.
 """
 
 from __future__ import annotations
@@ -21,6 +28,13 @@ import numpy as np
 from repocortex.learn.gap import gap_tokens, module_of
 from repocortex.retrieve.frozen import EdgeTable, Hit, Prediction
 from repocortex.retrieve.textutil import issue_text, tokenize
+
+
+class QueryCache:
+    """BM25 vectors reused across ablation rankers. Ticket 0 is never stored."""
+
+    def __init__(self) -> None:
+        self.bm25: dict[int, np.ndarray] = {}
 
 
 def _unit(vector: np.ndarray) -> np.ndarray:
@@ -47,6 +61,7 @@ class HybridRanker:
         shortcut_lam: float = 0.04,
         shortcut_min_support: int = 3,
         shortcut_min_precision: float = 0.4,
+        graph_mix: float = 0.05,
     ):
         self.nodes = nodes
         self.edges = edges
@@ -60,6 +75,7 @@ class HybridRanker:
         self.shortcut_lam = shortcut_lam
         self.shortcut_min_support = shortcut_min_support
         self.shortcut_min_precision = shortcut_min_precision
+        self.graph_mix = graph_mix
         self.func_uids = list(dense.uids)
         self.uid_index = {uid: index for index, uid in enumerate(self.func_uids)}
         self.matrix = np.asarray(dense.matrix, dtype=np.float32)
@@ -77,6 +93,8 @@ class HybridRanker:
         ]
         self.symptoms.sort(key=lambda item: -len(item[1]))
         self._vec: dict[int, np.ndarray] = {}
+        self.score_cache = None
+        self._local_bm25: dict[int, np.ndarray] = {}
         self.memory: list[dict] = []
         self._mem_mat: np.ndarray | None = None
         self._mem_dirty = True
@@ -104,6 +122,8 @@ class HybridRanker:
             "qualname": row["qualname"],
             "doc": row["doc"],
             "signature": row["signature"],
+            "start": row["start"],
+            "end": row["end"],
         }
         self.pending_nodes[uid] = row
         if label == "Concept" and name:
@@ -194,7 +214,8 @@ class HybridRanker:
             if ticket:
                 self._vec[ticket] = vector
         dense_scores = self.matrix @ vector
-        base = dense_scores + np.float32(self.bm25_mix) * self._bm25_norm(text)
+        bm25_norm = self._bm25_norm(text, ticket)
+        base = dense_scores + np.float32(self.bm25_mix) * bm25_norm
         notes: dict[int, list[str]] = defaultdict(list)
         used: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
         learned = np.zeros(self.n, dtype=np.float32)
@@ -202,7 +223,7 @@ class HybridRanker:
         concepts = self._concept_seeds(text)
         modules = self._modules(base)
         learned += self._shortcut_bonus(concepts, modules, notes, used)
-        learned += self._structural_bonus(base, notes, used)
+        learned += self._structural_bonus(dense_scores, bm25_norm, notes, used)
         scores = base + learned
         order = np.lexsort((self.uid_array, -scores))
         base_order = np.lexsort((self.uid_array, -base))
@@ -234,7 +255,10 @@ class HybridRanker:
             gap_concepts=gap_tokens(text, self.concepts),
         )
 
-    def _bm25_norm(self, text: str) -> np.ndarray:
+    def _bm25_norm(self, text: str, ticket: int = 0) -> np.ndarray:
+        cache = self.score_cache.bm25 if self.score_cache is not None else self._local_bm25
+        if ticket and ticket in cache:
+            return cache[ticket]
         scores = np.zeros(self.n, dtype=np.float32)
         for uid, score in self.bm25.score_query(text).items():
             index = self.uid_index.get(uid)
@@ -243,6 +267,8 @@ class HybridRanker:
         peak = float(scores.max())
         if peak > 0:
             scores /= peak
+        if ticket:
+            cache[ticket] = scores
         return scores
 
     def _concept_seeds(self, text: str) -> list[str]:
@@ -405,40 +431,69 @@ class HybridRanker:
         found.sort(key=lambda item: (-item[1], self.func_uids[item[0]]))
         return found
 
-    def _structural_bonus(self, base, notes, used) -> np.ndarray:
+    def _structural_bonus(self, dense_scores, bm25_norm, notes, used) -> np.ndarray:
+        """One hop from the hybrid seeds. Weights of 1 still count, so step 0 uses the graph."""
         bonus = np.zeros(self.n, dtype=np.float32)
-        if self.n == 0:
+        if self.graph_mix <= 0 or self.n == 0:
             return bonus
-        take = min(8, self.n)
-        order = np.argpartition(-base, take - 1)[:take] if self.n > take else np.argsort(-base)
-        for index in order:
-            seed = self.func_uids[int(index)]
+        seeds: list[int] = []
+        for scores in (dense_scores, bm25_norm):
+            take = min(8, self.n)
+            order = np.argpartition(-scores, take - 1)[:take] if self.n > take else np.argsort(-scores)
+            for index in order:
+                index = int(index)
+                if float(scores[index]) <= 0 or index in seeds:
+                    continue
+                seeds.append(index)
+        if not seeds:
+            return bonus
+        raw = np.zeros(self.n, dtype=np.float32)
+        best: dict[int, tuple] = {}
+        rels = {"CALLS", "CO_CHANGED", "TESTED_BY", "DEFINES"}
+        for index in seeds:
+            seed = self.func_uids[index]
+            seed_mass = max(float(dense_scores[index]), float(bm25_norm[index]))
+            neighbors = []
             for key in self.edges.incident(seed):
-                rel = key[1]
-                if rel not in {"CALLS", "CO_CHANGED", "TESTED_BY"}:
-                    continue
-                props = self.edges.edges[key]
-                weight = float(props.get("w") or 1.0)
-                learned = bool(props.get("learned"))
-                if not learned and weight <= 1.05:
-                    continue
-                excess = max(0.0, weight - 1.0)
-                if excess <= 0:
+                if key[1] not in rels:
                     continue
                 other = key[2] if key[0] == seed else key[0]
                 column = self.uid_index.get(other)
                 if column is None:
                     continue
-                gain = 0.02 * excess
-                if gain < 0.005:
+                weight = float(self.edges.edges[key].get("w") or 1.0)
+                neighbors.append((column, weight, key, other))
+            if not neighbors:
+                continue
+            scale = seed_mass / (len(neighbors) ** 0.5)
+            for column, weight, key, other in neighbors:
+                gain = scale * max(weight, 0.0)
+                if gain <= 0:
                     continue
-                bonus[column] += gain
-                used[column].append(key)
-                notes[column].append(f"{self._label(seed)} -{rel}-> {self._label(other)} (w {weight:.2f})")
-        peak = float(bonus.max())
-        if peak > 0.03:
-            bonus *= np.float32(0.03 / peak)
-        return bonus
+                raw[column] += gain
+                prev = best.get(column)
+                if prev is None or gain > prev[0]:
+                    best[column] = (
+                        gain,
+                        key,
+                        f"{self._label(seed)} -{key[1]}-> {self._label(other)} (w {weight:.2f})",
+                    )
+        peak = float(raw.max())
+        if peak <= 0:
+            return bonus
+        scaled = np.float32(self.graph_mix) * (raw / np.float32(peak))
+        columns = list(best)
+        if len(columns) > 40:
+            vals = np.array([raw[column] for column in columns])
+            keep = np.argpartition(-vals, 39)[:40]
+            columns = [columns[int(i)] for i in keep]
+        for column in columns:
+            if raw[column] <= 0:
+                continue
+            _gain, key, note = best[column]
+            used[column].append(key)
+            notes[column].append(note)
+        return scaled
 
     def _seeds(self, base_order, concepts: list[str]) -> list[str]:
         lexical = [self.func_uids[int(i)] for i in base_order[:8]]

@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from repocortex.config import Settings
 from repocortex.graph.builder import add_cochange, build_graph, iter_sources
-from repocortex.graph.ingest import SMOKE_IDS, ingest, load_graph
+from repocortex.graph.ingest import SMOKE_IDS, ingest, load_graph, wipe_graph
 from repocortex.hydradb import connect
 from repocortex.mine.dataset import load_dataset
 
@@ -21,6 +21,7 @@ def main() -> None:
     settings = Settings.load(root)
     parser = argparse.ArgumentParser(description="build the code graph and ingest it")
     parser.add_argument("--dataset", type=Path, default=settings.data_dir / "dataset.json")
+    parser.add_argument("--reset", action="store_true", help="delete the existing graph before ingest")
     args = parser.parse_args()
     dataset = load_dataset(args.dataset)
     print(f"building graph from {settings.django_repo} @ {dataset['snapshot'][:12]}")
@@ -36,7 +37,12 @@ def main() -> None:
     )
     client = connect(settings)
     try:
-        if hasattr(client, "delete_ids"):
+        if args.reset:
+            print("wiping the existing graph")
+            wipe_graph(client)
+            client.close()
+            client = connect(settings)
+        elif hasattr(client, "delete_ids"):
             client.delete_ids(SMOKE_IDS)
         written = ingest(client, graph)
         print("wrote", json.dumps(written))
@@ -61,7 +67,11 @@ def main() -> None:
         # Keep the text the rankers need. The database stores the same fields,
         # and the eval reloads them; this file is the offline corpus backup.
         corpus = {
-            "nodes": {uid: node.as_row() | {"label": node.label} for uid, node in graph.nodes.items()}
+            "nodes": {uid: node.as_row() | {"label": node.label} for uid, node in graph.nodes.items()},
+            "edges": [
+                {"src": src, "rel": rel, "dst": dst, "w": edge.w}
+                for (src, rel, dst), edge in graph.edges.items()
+            ],
         }
         (settings.data_dir / "corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
         print(f"stats -> {settings.results_dir / 'graph_stats.json'}")
