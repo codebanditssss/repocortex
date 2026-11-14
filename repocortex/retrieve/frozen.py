@@ -1,0 +1,205 @@
+"""Frozen-graph retrieval: lexical seeds, bounded traversal, client-side PPR."""
+
+from __future__ import annotations
+
+from collections import defaultdict, deque
+from dataclasses import dataclass, field
+
+from repocortex.retrieve.bm25 import BM25Index
+from repocortex.retrieve.ppr import personalized_pagerank
+from repocortex.retrieve.textutil import issue_text, tokenize
+
+
+@dataclass
+class Hit:
+    uid: str
+    file: str
+    score: float
+    path: str = ""
+
+
+@dataclass
+class Prediction:
+    hits: list[Hit]
+    seeds: list[str]
+    traversed: list[tuple[str, str, str]] = field(default_factory=list)
+
+
+class EdgeTable:
+    """Edge weights mirrored from HydraDB. Learning updates this, then flushes."""
+
+    def __init__(self, edges: dict[tuple[str, str, str], dict]):
+        self.edges = {key: dict(value) for key, value in edges.items()}
+        self.dirty: set[tuple[str, str, str]] = set()
+        self.by_node: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
+        for key in self.edges:
+            self.by_node[key[0]].append(key)
+            self.by_node[key[2]].append(key)
+
+    def undirected(self, nodes: set[str]) -> dict[str, list[tuple[str, float]]]:
+        adj: dict[str, list[tuple[str, float]]] = defaultdict(list)
+        for (src, _rel, dst), props in self.edges.items():
+            if src in nodes and dst in nodes:
+                weight = float(props.get("w") or 1.0)
+                adj[src].append((dst, weight))
+                adj[dst].append((src, weight))
+        return adj
+
+    def near_seeds(self, seeds: list[str], hops: int, cap: int = 800) -> list[tuple[str, str, str]]:
+        """Directed edges within `hops` of a seed, used as the debit/credit set."""
+        allowed = set(seeds)
+        frontier = list(seeds)
+        found: list[tuple[str, str, str]] = []
+        seen: set[tuple[str, str, str]] = set()
+        for _ in range(max(1, hops)):
+            nxt: list[str] = []
+            for uid in frontier:
+                for key in self._touching(uid):
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    found.append(key)
+                    src, _rel, dst = key
+                    other = dst if src == uid else src
+                    if other not in allowed:
+                        allowed.add(other)
+                        nxt.append(other)
+                    if len(found) >= cap:
+                        return found
+            frontier = nxt
+            if not frontier:
+                break
+        return found
+
+    def _touching(self, uid: str):
+        return self.by_node.get(uid, ())
+
+    def apply_rewards(self, keys: list[tuple[str, str, str]], good: set[tuple[str, str, str]], lr: float) -> int:
+        changed = 0
+        for key in keys:
+            props = self.edges.get(key)
+            if props is None:
+                continue
+            reward = 1.0 if key in good else 0.0
+            if reward >= 0.5:
+                props["hits"] = int(props.get("hits") or 0) + 1
+            else:
+                props["misses"] = int(props.get("misses") or 0) + 1
+            weight = float(props.get("w") or 1.0)
+            weight = weight + lr * (reward - weight)
+            props["w"] = min(3.0, max(0.05, weight))
+            self.dirty.add(key)
+            changed += 1
+        return changed
+
+    def flush(self, client) -> int:
+        grouped: dict[str, list[dict]] = defaultdict(list)
+        for key in self.dirty:
+            props = self.edges[key]
+            src, rel, dst = key
+            grouped[rel].append(
+                {
+                    "src": src,
+                    "dst": dst,
+                    "w": props["w"],
+                    "hits": props["hits"],
+                    "misses": props["misses"],
+                }
+            )
+        written = 0
+        for rel, rows in grouped.items():
+            written += client.update_edge_weights(rel, rows)
+        self.dirty.clear()
+        return written
+
+
+def gold_paths(traversed: list[tuple[str, str, str]], seeds: list[str], gold: list[str]) -> set[tuple[str, str, str]]:
+    """Edges that sit on a shortest path from any seed to a gold function."""
+    adj: dict[str, list[tuple[str, tuple[str, str, str]]]] = defaultdict(list)
+    for key in traversed:
+        src, _rel, dst = key
+        adj[src].append((dst, key))
+        adj[dst].append((src, key))
+    good: set[tuple[str, str, str]] = set()
+    for target in gold:
+        parent: dict[str, tuple[str, tuple[str, str, str]] | None] = {seed: None for seed in seeds}
+        queue: deque[str] = deque(seeds)
+        hit = False
+        while queue:
+            cur = queue.popleft()
+            if cur == target:
+                hit = True
+                break
+            for nxt, key in adj.get(cur, []):
+                if nxt not in parent:
+                    parent[nxt] = (cur, key)
+                    queue.append(nxt)
+        if not hit or target not in parent:
+            continue
+        cur = target
+        while parent.get(cur):
+            prev, key = parent[cur]
+            good.add(key)
+            cur = prev
+    return good
+
+
+class FrozenRanker:
+    def __init__(self, nodes: dict[str, dict], edges: EdgeTable, bm25: BM25Index, client, hops: int = 2):
+        self.nodes = nodes
+        self.edges = edges
+        self.bm25 = bm25
+        self.client = client
+        self.hops = hops
+        self.concepts = {
+            node["name"]: uid
+            for uid, node in nodes.items()
+            if node.get("label") == "Concept" and node.get("name")
+        }
+        self.symptoms = [
+            (uid, (node.get("name") or "").lower())
+            for uid, node in nodes.items()
+            if node.get("label") == "Symptom" and node.get("name")
+        ]
+
+    def predict(self, issue: dict, k: int = 10) -> Prediction:
+        text = issue_text(issue)
+        lexical = self.bm25.score_query(text)
+        top = sorted(lexical, key=lambda uid: (-lexical[uid], uid))[:15]
+        query_tokens = set(tokenize(text))
+        concept_seeds = [self.concepts[token] for token in query_tokens if token in self.concepts][:10]
+        lowered = text.lower()
+        symptom_seeds = [uid for uid, name in self.symptoms if name and name in lowered][:8]
+        seeds = list(dict.fromkeys([*top, *concept_seeds, *symptom_seeds]))
+        expanded = self.client.expand(seeds, hops=self.hops, limit=250)
+        paths = {}
+        candidates = set(top)
+        for hit in expanded.hits:
+            node = self.nodes.get(hit.uid)
+            if node and node.get("label") == "Function":
+                candidates.add(hit.uid)
+                paths.setdefault(hit.uid, hit.path)
+        personal = {}
+        peak = max((lexical[uid] for uid in top), default=1.0) or 1.0
+        for uid in top:
+            personal[uid] = lexical[uid] / peak
+        for uid in concept_seeds + symptom_seeds:
+            personal[uid] = max(personal.get(uid, 0.0), 1.0)
+        sub = set(candidates) | set(concept_seeds) | set(symptom_seeds)
+        rank = personalized_pagerank(sorted(sub), self.edges.undirected(sub), personal)
+        hits = []
+        for uid in candidates:
+            node = self.nodes.get(uid) or {}
+            if node.get("label") != "Function":
+                continue
+            hits.append(
+                Hit(
+                    uid=uid,
+                    file=node.get("file") or "",
+                    score=rank.get(uid, 0.0),
+                    path=paths.get(uid, ""),
+                )
+            )
+        hits.sort(key=lambda hit: (-hit.score, -lexical.get(hit.uid, 0.0), hit.uid))
+        traversed = self.edges.near_seeds(seeds, self.hops, cap=250)
+        return Prediction(hits=hits[:k], seeds=seeds, traversed=traversed)
