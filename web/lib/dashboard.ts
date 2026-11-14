@@ -40,3 +40,10 @@ export function searchProvenance(data: Pick<ProvenanceData, "issues">, query: st
     return terms.every((term) => text.includes(term));
   });
 }
+
+/** Evenly spaced labels for the learning-pass step ruler. */
+export function rulerMarks(total: number, count = 5) {
+  const end = Math.max(0, total);
+  if (count <= 1) return [end];
+  return Array.from({ length: count }, (_, i) => Math.round((end * i) / (count - 1)));
+}

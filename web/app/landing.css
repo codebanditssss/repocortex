@@ -2,7 +2,7 @@
   max-width: 1800px;
   margin-inline: auto;
   padding-inline: var(--page-inset);
-  overflow: clip;
+  overflow-x: clip;
 }
 .landing p, .landing figure { margin: 0; }
 .landing button { cursor: pointer; }
@@ -11,7 +11,7 @@
 .landing-head .mark { flex-basis: auto; font-size: 29px; }
 .running-note { font: italic 15px var(--font-newsreader), serif; color: var(--ink2); }
 .landing-head nav { margin-left: auto; display: flex; align-items: center; gap: 36px; font-size: 13px; }
-.landing-head nav a { padding-block: 15px; text-decoration: none; }
+.landing-head nav a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; padding-block: 15px; text-decoration: none; }
 .landing-head nav a span { margin-left: 12px; }
 .landing-head nav a:hover, .text-link:hover { text-decoration: underline; }
 .hero { position: relative; min-height: 810px; padding-top: 22px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 24px; align-content: end; }
@@ -63,8 +63,10 @@
 .hero-ticket { grid-column: 9 / -1; position: relative; margin-bottom: 56px; align-self: end; border-top: 1px solid var(--rule-strong); padding-top: 12px; z-index: 1; background: var(--paper); }
 .ticket-heading { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; color: var(--ink2); }
 .fixture-label { color: var(--ink2); border: 1px solid var(--rule-mid); padding: 4px 6px; font-size: 8px; white-space: nowrap; line-height: 1.2; }
-.ticket-title { font: 400 23px/1.2 var(--font-instrument), serif; min-height: 112px; padding-block: 17px 10px; }
-.ticket-file { font-size: 9px; color: var(--ink2); overflow-wrap: anywhere; padding-bottom: 14px; }
+.ticket-title { position: relative; font: 400 23px/1.2 var(--font-instrument), serif; padding-block: 17px 10px; overflow-wrap: anywhere; }
+.ticket-title-sizer { visibility: hidden; display: block; }
+.ticket-title-typed { position: absolute; inset: 17px 0 10px; overflow-wrap: anywhere; }
+.ticket-file { font-size: 11px; color: var(--ink2); overflow-wrap: anywhere; padding-bottom: 14px; }
 .ticket-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
 .ticket-controls .news { font-size: 14px; font-style: italic; color: var(--ink2); }
 .ticket-controls button { min-width: 70px; min-height: 44px; border: 0; background: transparent; font-size: 12px; }
@@ -73,7 +75,7 @@
 .typing-caret { display: inline-block; width: 1px; height: 16px; background: var(--ink); margin-left: 3px; }
 .hero-bottom { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 20px; padding: 14px 0 18px; border-top: 1px solid var(--rule); color: var(--ink2); }
 .hero-bottom .news { font-size: 13px; font-style: italic; }
-.hero-bottom > a { text-decoration: none; flex: none; }
+.hero-bottom > a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; flex: none; }
 .hero-bottom > a span { margin-left: 15px; }
 .landing-section { position: relative; padding-block: 72px; border-top: 1px solid var(--rule-strong); scroll-margin-top: 24px; }
 .section-ornament { position: absolute; top: 52px; right: 12px; }
@@ -127,10 +129,10 @@
 .chart-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
 .measured-label::before { content: ""; display: inline-block; width: 4px; height: 4px; background: var(--ink); margin: 0 6px 2px 0; }
 .metric-switch { display: flex; align-items: center; gap: 24px; padding: 16px 0 10px; }
-.metric-switch button { padding: 7px 0; background: transparent; border: 0; border-bottom: 1px solid transparent; font-size: 12px; color: var(--ink2); }
+.metric-switch button { padding: 10px 4px; min-height: 44px; background: transparent; border: 0; border-bottom: 1px solid transparent; font-size: 12px; color: var(--ink2); }
 .metric-switch button[aria-pressed="true"] { border-bottom-color: var(--ink); color: var(--ink); }
 .chart-scroll { overflow-x: auto; }
-.metric-chart { display: block; width: 100%; min-width: 520px; height: auto; overflow: visible; }
+.metric-chart { display: block; width: 100%; min-width: 0; height: auto; overflow: visible; }
 .chart-rule { stroke: var(--rule); stroke-width: .7; }
 .chart-tick { font: 11px var(--font-departure); fill: var(--ink2); }
 .chart-axis-title { font: italic 14px var(--font-newsreader), serif; fill: var(--ink2); }
@@ -146,7 +148,7 @@
 .replay-range { flex: 1; }
 .replay-range label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 4px; }
 .replay-range output { font-size: 12px; }
-.replay-range input { width: 100%; accent-color: var(--ink); height: 28px; cursor: ew-resize; }
+.replay-range input { width: 100%; accent-color: var(--ink); height: 44px; cursor: ew-resize; }
 .range-ends { display: flex; justify-content: space-between; color: var(--ink2); font-size: 10px; }
 .show-numbers { background: transparent; border: 0; border-bottom: 1px solid var(--rule-mid); min-height: 44px; font-size: 12px; white-space: nowrap; }
 .show-numbers span { margin-left: 18px; }
@@ -232,7 +234,7 @@
 .landing-colophon { border-top: 1px solid var(--rule-mid); display: flex; align-items: baseline; gap: 30px; padding-block: 22px; }
 .landing-colophon .mark { flex-basis: auto; }
 .landing-colophon p { font-size: 14px; color: var(--ink2); font-style: italic; }
-.landing-colophon > a:last-child { margin-left: auto; font-size: 11px; text-decoration: none; }
+.landing-colophon > a:last-child { margin-left: auto; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 
 @media (min-width: 1500px) {
   .hero { min-height: 860px; }
@@ -241,16 +243,18 @@
 @media (max-width: 1100px) {
   .running-note { display: none; }
   .hero { min-height: 830px; gap: 0 20px; }
-  .hero-plate { height: 310px; gap: 28px; }
-  .hero-mycelium { max-width: 280px; }
+  .hero-plate { height: auto; margin: 52px 0 20px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+  .hero-mycelium { width: min(100%, 280px); }
+  .hero-live-graph { width: 100%; height: 280px; }
   .hero-route { height: 250px; top: 12px; }
-  .route-prediction, .route-seed { font-size: 10px; }
-  .route-prediction-one { left: 22%; }
-  .fix-annotation { left: 17%; }
+  .route-inset-label { top: -16px; max-width: 48%; text-align: right; }
+  .route-prediction, .route-seed { font-size: 11px; }
+  .route-prediction-one { left: 2%; top: 8px; max-width: 40%; }
+  .fix-annotation { left: 28%; top: 78px; }
   .hero-copy { grid-column: 1 / 9; }
   .hero h1 { font-size: 56px; }
   .hero-ticket { grid-column: 9 / -1; margin-bottom: 55px; }
-  .ticket-title { font-size: 21px; min-height: 160px; }
+  .ticket-title { font-size: 21px; }
   .ticket-controls { flex-direction: column; align-items: flex-start; gap: 0; }
   .ticket-space { display: none; }
   .hero-actions { gap: 14px; }
@@ -311,12 +315,12 @@
   .hero-actions .text-link { min-height: 44px; }
   .landing-primary { font-size: 12px; }
   .hero-ticket { margin-bottom: 26px; width: 100%; }
-  .ticket-title { min-height: 90px; font-size: 24px; max-width: 480px; }
+  .ticket-title { font-size: 24px; max-width: 480px; }
   .ticket-controls { flex-direction: row; align-items: center; }
   .ticket-controls button { min-width: 80px; text-align: right; }
   .hero-bottom { padding-bottom: 23px; }
   .hero-bottom .news { max-width: 390px; font-size: 12px; line-height: 1.4; }
-  .hero-bottom > a { padding-top: 8px; font-size: 9px; }
+  .hero-bottom > a { padding-top: 8px; font-size: 11px; min-height: 44px; }
   .landing-section { padding-block: 44px; }
   .section-ornament { top: 24px; right: -34px; transform: scale(.7); transform-origin: right top; }
   .similarity .section-heading { padding-right: 34px; }
@@ -345,7 +349,7 @@
   .replay-graph > .figure-caption { max-width: 100%; margin-top: 16px; }
   .replay-chart-figure { border-top: 1px solid var(--rule); padding-top: 20px; }
   .chart-heading > .sc { font-size: 9px; }
-  .metric-chart { min-width: 520px; }
+  .metric-chart { min-width: 0; }
   .chart-scroll { margin-right: calc(-1 * var(--page-inset)); padding-right: 12px; }
   .metric-switch { padding-top: 12px; }
   .replay-controls { flex-wrap: wrap; gap: 20px 16px; padding-block: 24px; }

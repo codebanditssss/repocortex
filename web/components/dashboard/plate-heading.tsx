@@ -12,7 +12,7 @@ const descriptions: Record<ChapterSlug, string> = {
 };
 
 export function SpotArt({ chapter }: { chapter: ChapterSlug }) {
-  return <PlateImage className="dashboard-spot" src={`/art/spot-${chapter}.png`} alt={descriptions[chapter]} caption={`Fig. 0 / ${chapter} study`} hairline />;
+  return <PlateImage className="dashboard-spot" src={`/art/spot-${chapter}.webp`} alt={descriptions[chapter]} caption={`Fig. 0 / ${chapter} study`} hairline />;
 }
 
 export function PlateHeading({ chapter, title, children, art = true, placeholder }: {

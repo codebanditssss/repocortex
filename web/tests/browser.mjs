@@ -259,7 +259,7 @@ try {
   for (const metric of ["file_acc@1", "function_acc@10"]) {
     run("click", `.manual-metric-switch button:nth-child(${metric === "file_acc@1" ? 1 : 2})`);
     for (const point of curve.curve) {
-      run("click", `.checkpoint-buttons button[aria-label="Seek to step ${point.step}"]`);
+      run("click", `.checkpoint-buttons button[data-step="${point.step}"]`);
       assert.equal(evaluate('document.querySelector(".chart-label-repo .chart-series-value").textContent'), `${Number((point[metric] * 100).toFixed(2))}%`);
       const overlaps = evaluate(`(() => {
         const text = [...document.querySelectorAll(".chart-series-label, .chart-series-value, .chart-tick, .chart-axis-title")].map(el => {
@@ -278,7 +278,7 @@ try {
   run("press", "Space");
   assert.equal(evaluate('document.querySelector(".replay-toggle").textContent.includes("Play")'), true);
   run("click", '.replay-speeds button:last-child');
-  run("click", '.checkpoint-buttons button[aria-label="Seek to step 280"]');
+  run("click", '.checkpoint-buttons button[data-step="274"]');
   run("click", ".replay-toggle");
   run("wait", "--fn", 'document.querySelector("#dashboard-replay-step").value === "1281" && document.querySelector(".replay-toggle").textContent.includes("Play")');
   console.log("PASS dashboard checkpoints, label geometry, prev/next, keyboard playback, speed and stop at end");

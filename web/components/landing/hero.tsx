@@ -1,14 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type { CurveData, ProvenanceIssue } from "@/lib/data";
 import { fixedInRoutes, hitSymbol } from "@/lib/landing";
-import { PlateImage } from "@/components/plate-image";
 import { GraphPlate } from "./graph-plate";
 import { useInView, usePageVisible, useReducedMotion } from "./use-field-state";
 
-export function Hero({ ticket, evaluation }: {
-  ticket: ProvenanceIssue; evaluation: CurveData;
+function typedLine(text: string, progress: number) {
+  if (progress >= 1) return text;
+  const count = Math.min(text.length, Math.ceil(Math.max(0, progress) * text.length));
+  return text.slice(0, count);
+}
+
+export function Hero({ ticket, evaluation, plate }: {
+  ticket: ProvenanceIssue;
+  evaluation: CurveData;
+  plate: ReactNode;
 }) {
   const ref = useRef<HTMLElement>(null);
   const visible = useInView(ref);
@@ -71,6 +78,7 @@ export function Hero({ ticket, evaluation }: {
   }, [visible, play]);
 
   const shown = reduced && !optedIn ? 1 : started ? progress : 0;
+  const typing = Math.min(1, shown / .32);
   const routeReady = shown > .32;
   const found = shown > .62;
   const last = evaluation.curve[evaluation.curve.length - 1];
@@ -78,6 +86,7 @@ export function Hero({ ticket, evaluation }: {
   const route = fixedInRoutes(hit.path)[0];
   const symbol = hitSymbol(hit).replace("django.db.models.query.", "");
   const ticketText = `Issue #${ticket.ticket}: ${symbol}`;
+  const typedTicket = typedLine(ticketText, typing);
 
   return (
     <section className="hero" ref={ref} aria-labelledby="page-title">
@@ -86,7 +95,7 @@ export function Hero({ ticket, evaluation }: {
         <p className="hero-counter"><span className="sc">PRs learned</span><span className="num">{String(last.step).padStart(4, "0")}</span><span className="news">django/django</span></p>
       </div>
       <div className="hero-plate">
-        <PlateImage className="hero-mycelium" src="/art/hero-mycelium.png" alt="Branching ink mycelium connects clusters of dark nodes, with vermilion threads tracing a few routes." caption="Fig. 0 / A graph with roots" hairline priority />
+        {plate}
         <div className="hero-live-graph">
           <GraphPlate />
           <div className={`hero-route ${routeReady ? "is-seeded" : ""} ${found ? "is-found" : ""}`} aria-label={`Measured route for held-out issue #${ticket.ticket}`}>
@@ -113,9 +122,13 @@ export function Hero({ ticket, evaluation }: {
       </div>
       <aside className="hero-ticket" aria-label="Measured held-out ticket">
         <div className="ticket-heading"><span className="sc">Held-out ticket / #{ticket.ticket}</span><span className="sc measured-label">Measured</span></div>
-        <p className="ticket-title"><span className="sr-only">{ticketText}</span><span aria-hidden="true">{ticketText.slice(0, Math.floor(Math.min(1, shown / .32) * ticketText.length))}<span className={playing && shown < .32 ? "typing-caret" : ""} /></span></p>
+        <p className="ticket-title">
+          <span className="sr-only">{ticketText}</span>
+          <span className="ticket-title-sizer" aria-hidden="true">{ticketText}</span>
+          <span className="ticket-title-typed" aria-hidden="true">{typedTicket}{playing && typing < 1 ? <span className="typing-caret" /> : null}</span>
+        </p>
         <p className="ticket-file num">{hit.file}</p>
-        <div className="ticket-controls"><span className="news">{found ? `Rank ${hit.rank}. Gold hit. Score ${hit.score}.` : routeReady ? "Following a past fix…" : "Reading the record…"}</span><button type="button" onClick={() => { autoStarted.current = true; play(); }} aria-label="Play ticket demonstration">{playing ? "Restart" : "Play"} <span aria-hidden="true">↻</span></button></div>
+        <div className="ticket-controls"><span className="news">{found ? `Rank ${hit.rank}. Gold hit. Score ${hit.score}.` : routeReady ? "Following a past fix…" : "Reading the record…"}</span><button type="button" onClick={() => { autoStarted.current = true; play(); }}>{playing ? "Restart" : "Play"} <span aria-hidden="true">↻</span></button></div>
         <p className="sc ticket-space">Space replays this plate</p>
       </aside>
       <div className="hero-bottom"><p className="news">Held-out routes &amp; evaluation are measured. The graph layout is a placeholder; the mycelium is an illustration.</p><a className="sc" href="#replay">Replay {last.step} merged fixes <span aria-hidden="true">↓</span></a></div>

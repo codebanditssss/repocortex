@@ -37,7 +37,7 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
         <p className="section-dek">Predict. See the real fix. Learn.<br />Then ask the same questions again.</p>
         <p className="news source-note">{data.train} fixes learned in time order. The same {data.holdout} held-out fixes scored at every checkpoint. None of those were learned from.</p>
       </div>
-      <PlateImage className="section-ornament" src="/art/doodle-shortcut.png" alt="A wandering ink path takes a short vermilion connection between two points." marginalia />
+      <PlateImage className="section-ornament" src="/art/doodle-shortcut.webp" alt="A wandering ink path takes a short vermilion connection between two points." marginalia />
       <div className="replay-instrument">
         <figure className="replay-graph">
           <figcaption><span className="sc">The graph, reweighted</span><span className="fixture-label sc">Placeholder layout &amp; deltas</span></figcaption>
@@ -57,7 +57,7 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
         <button className="replay-play" type="button" onClick={() => {
           if (playing) setPlaying(false);
           else { if (index === data.curve.length - 1) setIndex(0); setPlaying(true); }
-        }} aria-label={playing ? "Pause learning replay" : "Play learning replay"}>{playing ? "Pause" : "Play"} <span aria-hidden="true">{playing ? "Ⅱ" : "▷"}</span></button>
+        }} >{playing ? "Pause" : "Play"} <span aria-hidden="true">{playing ? "Ⅱ" : "▷"}</span></button>
         <div className="replay-range"><label htmlFor="replay-step"><span className="sc">Scrub the learning pass</span><output htmlFor="replay-step" className="num">{point.step} / {data.train}</output></label><input id="replay-step" type="range" min="0" max={data.curve.length - 1} step="1" value={index} aria-valuetext={`${point.step} merged fixes learned. ${metricLabels[metric]}: ${formatPercent(point[metric])}`} onChange={(event) => { setPlaying(false); setIndex(Number(event.target.value)); }} /><div className="range-ends num"><span>{first.step}</span><span>{last.step} fixes</span></div></div>
         <button className="show-numbers" type="button" aria-expanded={numbers} aria-controls="curve-data" onClick={() => setNumbers(!numbers)}>{numbers ? "Hide" : "Show"} the numbers <span aria-hidden="true">{numbers ? "−" : "+"}</span></button>
       </div>

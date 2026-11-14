@@ -54,11 +54,11 @@
 .overview-copy .manual-dek { max-width: 520px; }
 .overview-figures { border-left: 1px solid var(--rule-mid); padding: 22px 0 22px 28px; min-width: 0; }
 .figure-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.figure-top .btn { flex: none; min-height: 36px; padding: 8px 12px; gap: 10px; font-size: 12px; }
+.figure-top .btn { flex: none; min-height: 44px; padding: 8px 12px; gap: 10px; font-size: 12px; }
 .manual-page kbd { font: 10px var(--font-inter), sans-serif; border: 1px solid currentColor; padding: 1px 4px; opacity: .8; }
 .overview-graph .graph-stage { height: 280px; margin-block: 8px 12px; }
 .overview-curve { margin-top: 20px !important; }
-.manual-page .overview-curve .metric-chart { min-width: 390px; }
+.manual-page .overview-curve .metric-chart { min-width: 0; }
 .operator-ledger { margin-top: 32px; }
 .operator-table th { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; width: 136px; }
 .operator-table td:nth-child(2) { font: 15px/1.3 var(--font-newsreader), serif; }
@@ -70,7 +70,7 @@
 .baseline-summary .manual-table td { font-size: 10px; }
 
 /* Shared chart and stippled graph. Selectors are scoped away from marketing. */
-.manual-page .metric-chart { display: block; width: 100%; min-width: 520px; height: auto; overflow: visible; }
+.manual-page .metric-chart { display: block; width: 100%; min-width: 0; height: auto; overflow: visible; }
 .manual-page .chart-rule { stroke: var(--rule); stroke-width: .7; }
 .manual-page .chart-tick { font: 11px var(--font-departure); fill: var(--ink2); }
 .manual-page .chart-axis-title { font: italic 14px var(--font-newsreader), serif; fill: var(--ink2); }
@@ -87,8 +87,8 @@
 .manual-page .graph-error { position: absolute; inset: 0; display: grid; align-content: center; justify-items: start; padding: 16px; background: var(--paper); font-size: 12px; }
 .manual-page button { cursor: pointer; }
 .manual-page button:disabled { cursor: default; opacity: .45; }
-.text-control { border: 0; background: none; padding: 5px 0; font-size: 12px; color: var(--ink2); }
-.underlined-control { display: inline-block; border: 0; border-bottom: 1px solid var(--ink); background: none; padding: 0 0 3px; font-size: 13px; color: var(--ink); cursor: pointer; }
+.text-control { border: 0; background: none; padding: 10px 4px; min-width: 44px; min-height: 44px; font-size: 12px; color: var(--ink2); }
+.underlined-control { display: inline-flex; align-items: center; border: 0; border-bottom: 1px solid var(--ink); background: none; min-height: 44px; padding: 0 0 3px; font-size: 13px; color: var(--ink); cursor: pointer; }
 .replay-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); }
 .replay-sidebar { border-right: 1px solid var(--rule-mid); padding: 28px 28px 24px 0; }
 .replay-sidebar .manual-kicker { justify-content: space-between; gap: 8px; }
@@ -98,10 +98,10 @@
 .replay-sidebar > .manual-prose { max-width: 245px; margin: 16px 0 0; }
 .replay-beat { margin: 22px 0 0; font: 400 23px/1.12 var(--font-instrument), serif; }
 .playback-controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 23px; }
-.playback-controls .btn { padding: 8px 10px; min-height: 36px; gap: 8px; }
+.playback-controls .btn { padding: 8px 10px; min-height: 44px; gap: 8px; }
 .playback-controls .btn kbd { font-size: 9px; }
 .replay-speeds { display: flex; align-items: center; gap: 14px; margin: 12px 0 17px; }
-.replay-speeds button, .manual-metric-switch button { border: 0; border-bottom: 1px solid transparent; background: none; padding: 4px 0; font-size: 12px; color: var(--ink2); }
+.replay-speeds button, .manual-metric-switch button { border: 0; border-bottom: 1px solid transparent; background: none; padding: 10px 4px; min-width: 44px; min-height: 44px; font-size: 12px; color: var(--ink2); }
 .replay-speeds button[aria-pressed="true"], .manual-metric-switch button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .replay-neighborhood { margin-top: 30px !important; }
 .replay-neighborhood .graph-stage { height: 160px; margin-top: 10px; }
@@ -112,7 +112,7 @@
 .replay-chart-meta { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin: 10px 0 6px; }
 .replay-chart-meta p { margin-bottom: 0; }
 .manual-metric-switch { display: flex; gap: 20px; }
-.replay-chart .metric-chart { min-width: 900px; cursor: crosshair; }
+.replay-chart .metric-chart { width: 100%; min-width: 0; cursor: crosshair; }
 .replay-chart-note { margin-left: 8%; max-width: 740px; }
 .checkpoint-sheet { margin: 16px 0 0 8%; }
 .checkpoint-buttons { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; margin-top: 12px; }
@@ -123,7 +123,7 @@
 .step-ruler { margin: 16px 0 0 8%; }
 .step-ruler label { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .step-ruler output { font-size: 11px; }
-.step-ruler input { display: block; width: 100%; margin: 14px 0 10px; accent-color: var(--red); cursor: pointer; }
+.step-ruler input { display: block; width: 100%; height: 44px; margin: 8px 0 6px; accent-color: var(--red); cursor: pointer; }
 .ruler-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--ink2); }
 .replay-main > .manual-data, .replay-main > .figure-note:last-child { margin-left: 8%; }
 
@@ -137,10 +137,10 @@
 .ticket-sheet textarea::placeholder { color: var(--ink2); }
 .locate-options { display: flex; gap: 20px; align-items: center; margin-top: 18px; font-size: 12px; color: var(--ink2); }
 .locate-options u { color: var(--ink); text-underline-offset: 4px; }
-.locate-options .btn { margin-left: auto; min-height: 36px; padding: 8px 12px; gap: 10px; }
+.locate-options .btn { margin-left: auto; min-height: 44px; padding: 8px 12px; gap: 10px; }
 .sample-tickets { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--rule-mid); }
 .sample-tickets h2 { margin: 0 0 8px; color: var(--ink2); }
-.sample-tickets button { display: flex; gap: 16px; width: 100%; padding: 8px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; font: 15px/1.3 var(--font-newsreader), serif; overflow-wrap: anywhere; }
+.sample-tickets button { display: flex; gap: 16px; width: 100%; min-height: 44px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; font: 15px/1.3 var(--font-newsreader), serif; overflow-wrap: anywhere; }
 .sample-tickets button .num { flex: none; width: 55px; font-size: 11px; padding-top: 3px; color: var(--ink2); }
 .evidence-index { margin: 18px 0; }
 .evidence-index > div { display: flex; align-items: baseline; gap: 12px; margin-block: 7px; font-size: 12px; }
@@ -236,7 +236,7 @@
 .connect-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; margin-top: 28px; }
 .config-sheet { margin-top: 20px; border: 1px solid var(--rule-mid); padding: 14px 18px; background: var(--paper2); }
 .config-sheet-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
-.config-sheet-head button { background: none; border: 0; border-bottom: 1px solid var(--ink); padding: 2px 0; font-size: 12px; }
+.config-sheet-head button { background: none; border: 0; border-bottom: 1px solid var(--ink); min-height: 44px; padding: 8px 0; font-size: 12px; }
 .config-sheet-head .sc { font-size: 9px; }
 .config-sheet pre { margin: 16px 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 11px/1.65 var(--font-departure); }
 .config-sheet .copy-config-status { margin-bottom: 0; min-height: 31px; }
@@ -249,7 +249,7 @@
 .mcp-contract { margin-top: 28px; }
 .mcp-contract h3 { font-size: 24px; margin: 0 0 14px; }
 .mcp-contract p { font: 15px/1.6 var(--font-newsreader), serif; }
-.shortcuts-trigger { display: inline-grid; place-items: center; vertical-align: middle; width: 20px; height: 20px; padding: 0; border: 1px solid var(--rule-mid); background: none; color: var(--ink2); margin-left: 15px; cursor: pointer; font-size: 12px; }
+.shortcuts-trigger { display: inline-grid; place-items: center; vertical-align: middle; width: 44px; height: 44px; padding: 0; border: 1px solid var(--rule-mid); background: none; color: var(--ink2); margin-left: 8px; cursor: pointer; font-size: 12px; }
 .shortcuts-dialog { width: min(520px, calc(100% - 32px)); max-height: calc(100svh - 48px); overflow-y: auto; padding: 26px; border: 1px solid var(--rule-strong); background: var(--paper); color: var(--ink); margin: auto; text-align: left; font-size: 13px; }
 .shortcuts-dialog::backdrop { background: rgba(28, 25, 20, .4); }
 .shortcuts-dialog h2 i { color: inherit; font: inherit; font-style: italic; }
@@ -307,7 +307,7 @@
   .journal-metrics dt { font-size: 11px; }
   .overview-figures { border: 0; border-top: 1px solid var(--rule-mid); padding: 24px 0 32px; }
   .overview-graph .graph-stage { height: 280px; }
-  .manual-page .overview-curve .metric-chart { min-width: 420px; }
+  .manual-page .overview-curve .metric-chart { min-width: 0; }
   .figure-top { align-items: center; flex-wrap: wrap; }
   .figure-top p { margin-bottom: 0; }
   .operator-table th { width: 95px; }
@@ -317,12 +317,13 @@
   .replay-sidebar .manual-kicker { justify-content: flex-start; gap: 24px; }
   .replay-sidebar > .manual-prose { max-width: 100%; }
   .replay-beat br { display: none; }
+  .replay-beat { display: flex; flex-direction: column; gap: 0; }
   .playback-controls { justify-content: flex-start; gap: 24px; }
   .replay-neighborhood .graph-stage { height: 220px; }
   .replay-sidebar > .dashboard-spot { margin-top: 20px; }
   .replay-main { border-top: 1px solid var(--rule-mid); padding: 24px 0 32px; }
   .replay-chart-meta { flex-wrap: wrap; gap: 12px; }
-  .replay-chart .metric-chart { min-width: 900px; }
+  .replay-chart .metric-chart { min-width: 0; }
   .replay-chart-note, .checkpoint-sheet, .step-ruler, .replay-main > .manual-data, .replay-main > .figure-note:last-child { margin-left: 0; }
   .checkpoint-buttons { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .checkpoint-buttons .serif { font-size: 24px; }
@@ -363,3 +364,5 @@
   .shortcuts-dialog .section-rule h2 { font-size: 26px; }
   .shortcuts-dialog dt { font-size: 12px; }
 }
+
+.connection-record a, .measured-aside a { display: inline-flex; align-items: center; min-height: 44px; }

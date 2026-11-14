@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { checkpointIndex, clampStep, functionName, pathKind, searchProvenance, shortFunctionName } from "../lib/dashboard.ts";
+import { checkpointIndex, clampStep, functionName, pathKind, rulerMarks, searchProvenance, shortFunctionName } from "../lib/dashboard.ts";
 import { provenanceLines, selectHeroIssue } from "../lib/landing.ts";
 
 const readData = async (name) => JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), "utf8"));
@@ -61,4 +61,10 @@ test("a selected non-gold or shortcut hit has its own receipt, not the first gol
       }
     }
   }
+});
+
+test("ruler marks follow the training length instead of a fixed 320-step scale", () => {
+  assert.deepEqual(rulerMarks(1281), [0, 320, 641, 961, 1281]);
+  assert.deepEqual(rulerMarks(320), [0, 80, 160, 240, 320]);
+  assert.deepEqual(rulerMarks(0), [0, 0, 0, 0, 0]);
 });

@@ -48,14 +48,27 @@ export default function Home() {
       </header>
 
       <main id="main-content" tabIndex={-1}>
-        <Hero ticket={ticket} evaluation={evaluation} />
+        <Hero
+          ticket={ticket}
+          evaluation={evaluation}
+          plate={
+            <PlateImage
+              className="hero-mycelium"
+              src="/art/hero-mycelium.webp"
+              alt="Branching ink mycelium connects clusters of dark nodes, with vermilion threads tracing a few routes."
+              caption="Fig. 0 / A graph with roots"
+              hairline
+              priority
+            />
+          }
+        />
 
         <section className="landing-section similarity" aria-labelledby="similar-title">
           <header className="section-heading">
             <p className="sc section-index"><span className="num">01</span> / Retrieval</p>
             <h2 id="similar-title">Similar is not relevant.</h2>
           </header>
-          <PlateImage className="section-ornament" src="/art/doodle-lens.png" alt="An ink magnifying glass isolates a vermilion dot among scattered dark nodes." marginalia />
+          <PlateImage className="section-ornament" src="/art/doodle-lens.webp" alt="An ink magnifying glass isolates a vermilion dot among scattered dark nodes." marginalia />
           <p className="section-dek">Close names are a starting point. For held-out issue #{ticket.ticket}, a learned link from a past fix brings the gold function to rank one.</p>
           <div className="comparison-ticket">
             <span className="sc">Held-out issue #{ticket.ticket}</span><p>{hitSymbol(hit)}</p><span className="sc measured-label">Measured</span>
@@ -162,7 +175,7 @@ export default function Home() {
         <section className="landing-section hydra-section">
           <div>
             <SectionHead number="06" label="Storage" title="Built on HydraDB." />
-            <PlateImage className="storage-ornament" src="/art/doodle-wire.png" alt="A tangled ink wire resolves into a straight strand with a vermilion tip." marginalia />
+            <PlateImage className="storage-ornament" src="/art/doodle-wire.webp" alt="A tangled ink wire resolves into a straight strand with a vermilion tip." marginalia />
             <p className="section-dek">The learning is ours.<br />The graph lives in HydraDB.</p>
             <a className="text-link" href="https://hydradb.com">Meet HydraDB <span aria-hidden="true">→</span></a>
           </div>

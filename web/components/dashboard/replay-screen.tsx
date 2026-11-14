@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { CurveData } from "@/lib/data";
-import { checkpointIndex, clampStep } from "@/lib/dashboard";
+import { checkpointIndex, clampStep, rulerMarks } from "@/lib/dashboard";
 import { formatPercent } from "@/lib/format";
 import type { LandingMetric } from "@/lib/landing";
 import { MetricChart, metricLabels } from "@/components/metric-chart";
@@ -52,11 +52,11 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <h1 id="replay-screen-title" className="sr-only">Replay the learning pass</h1>
         <div className="replay-journal-number">{step}<span>/ {data.train}</span></div>
         <p className="manual-prose">Issues learned in the order Django fixed them. Each one: predict, see the real fix, learn.</p>
-        <p className="replay-beat">The graph changes.<br /><i>The test set does not.</i></p>
+        <p className="replay-beat">The graph changes. <br /><i>The test set does not.</i></p>
         <div className="playback-controls">
-          <button type="button" className="text-control" aria-label="Previous step" disabled={step === 0} onClick={() => seek(step - 1)}>‹ prev</button>
-          <button type="button" className="btn replay-toggle" aria-label={playing ? "Pause replay" : "Play replay"} onClick={toggle}>{playing ? "Pause" : "Play"} <kbd>Space</kbd></button>
-          <button type="button" className="text-control" aria-label="Next step" disabled={step === data.train} onClick={() => seek(step + 1)}>next ›</button>
+          <button type="button" className="text-control" disabled={step === 0} onClick={() => seek(step - 1)}>‹ prev</button>
+          <button type="button" className="btn replay-toggle" onClick={toggle}>{playing ? "Pause" : "Play"} <kbd>Space</kbd></button>
+          <button type="button" className="text-control" disabled={step === data.train} onClick={() => seek(step + 1)}>next ›</button>
         </div>
         <div className="replay-speeds" role="group" aria-label="Playback speed">{[1, 4, 8].map((value) => <button type="button" key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}</div>
         <button type="button" className="underlined-control" onClick={() => seek(data.train)}>Jump to the last step →</button>
@@ -68,8 +68,8 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <div className="replay-chart-meta"><div className="manual-metric-switch" role="group" aria-label="Evaluation metric">{(Object.keys(metricLabels) as LandingMetric[]).map((value) => <button type="button" key={value} aria-pressed={metric === value} onClick={() => setMetric(value)}>{metricLabels[value]}</button>)}</div><p className="cap">Checkpoint {point.step}: <span className="num">{formatPercent(point[metric])}</span></p></div>
         <div className="manual-chart-scroll replay-chart" tabIndex={0} role="region" aria-label="Held-out accuracy chart, use the step slider to seek"><MetricChart data={data} metric={metric} index={index} step={step} onSeek={seek} wide /></div>
         <p className="figure-note replay-chart-note">Lines join measured checkpoints, including the dip. Between checkpoints, the score stays at the last measurement. Function Acc@10 ends at {formatPercent(data.curve.at(-1)!["function_acc@10"])}. Baselines are single-point references.</p>
-        <div className="checkpoint-sheet"><p className="cap"><b>FIG. 3</b> Checkpoint register / {metricLabels[metric]}, not a mutation log.</p><div className="checkpoint-buttons">{data.curve.map((value) => <button type="button" key={value.step} aria-label={`Seek to step ${value.step}`} aria-pressed={point.step === value.step} onClick={() => seek(value.step)}><span className="num">{value.step}</span><span className="serif">{formatPercent(value[metric])}</span></button>)}</div></div>
-        <div className="step-ruler"><label htmlFor="dashboard-replay-step"><span className="sc">Fixes learned, in time order</span><output className="num" htmlFor="dashboard-replay-step">{step} / {data.train}</output></label><input type="range" id="dashboard-replay-step" min={0} max={data.train} value={step} onChange={(event) => seek(Number(event.target.value))} aria-valuetext={`Step ${step} of ${data.train}. Last measured checkpoint ${point.step}, ${metricLabels[metric]} ${formatPercent(point[metric])}.`} /><div className="ruler-labels num"><span>0</span><span>80</span><span>160</span><span>240</span><span>320</span></div></div>
+        <div className="checkpoint-sheet"><p className="cap"><b>FIG. 3</b> Checkpoint register / {metricLabels[metric]}, not a mutation log.</p><div className="checkpoint-buttons">{data.curve.map((value) => <button type="button" key={value.step} data-step={value.step} aria-pressed={point.step === value.step} onClick={() => seek(value.step)}><span className="num">{value.step}</span> <span className="serif">{formatPercent(value[metric])}</span></button>)}</div></div>
+        <div className="step-ruler"><label htmlFor="dashboard-replay-step"><span className="sc">Fixes learned, in time order</span><output className="num" htmlFor="dashboard-replay-step">{step} / {data.train}</output></label><input type="range" id="dashboard-replay-step" min={0} max={data.train} value={step} onChange={(event) => seek(Number(event.target.value))} aria-valuetext={`Step ${step} of ${data.train}. Last measured checkpoint ${point.step}, ${metricLabels[metric]} ${formatPercent(point[metric])}.`} /><div className="ruler-labels num">{rulerMarks(data.train).map((mark) => <span key={mark}>{mark}</span>)}</div></div>
         <EvaluationTable data={data} metric={metric} note="Step 0 is the starting graph for this pass. The frozen reference used an older ranker. Playback starts paused, including with reduced motion." />
       </section>
     </div>

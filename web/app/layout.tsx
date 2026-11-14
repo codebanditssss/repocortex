@@ -5,6 +5,7 @@ import {
   Newsreader,
   Reenie_Beanie,
 } from "next/font/google";
+import localFont from "next/font/local";
 import { PaperGrain } from "@/components/paper-grain";
 import "./globals.css";
 
@@ -29,6 +30,7 @@ const newsreader = Newsreader({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   display: "swap",
+  preload: false,
 });
 
 const reenie = Reenie_Beanie({
@@ -36,6 +38,14 @@ const reenie = Reenie_Beanie({
   subsets: ["latin"],
   weight: "400",
   display: "swap",
+  preload: false,
+});
+
+const departure = localFont({
+  src: "./fonts/DepartureMono-Regular.woff2",
+  variable: "--font-departure",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -52,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${instrument.variable} ${inter.variable} ${newsreader.variable} ${reenie.variable}`}
+      className={`${instrument.variable} ${inter.variable} ${newsreader.variable} ${reenie.variable} ${departure.variable}`}
     >
       <body>
         <a className="skip-link" href="#main-content">

@@ -1,13 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Departure Mono";
-  src: url("/fonts/DepartureMono-Regular.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
 :root {
   color-scheme: light;
   --paper: #F2EEE6;
@@ -20,7 +12,6 @@
   --rule-mid: rgba(28, 25, 20, .32);
   --rule-strong: rgba(28, 25, 20, .62);
   --page-inset: 56px;
-  --font-departure: "Departure Mono", monospace;
 }
 
 @theme inline {
@@ -78,7 +69,7 @@ main:focus { outline: none; }
 
 .serif { font-family: var(--font-instrument), serif; font-weight: 400; letter-spacing: -.01em; }
 .news { font-family: var(--font-newsreader), serif; }
-.num { font-family: var(--font-departure); font-weight: 400; letter-spacing: 0; }
+.num { font-family: var(--font-departure), ui-monospace, monospace; font-weight: 400; letter-spacing: 0; }
 .hand { font-family: var(--font-reenie), cursive; color: var(--red); font-size: 22px; line-height: 1; }
 .sc { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 500; }
 .cap { font-size: 11px; line-height: 1.4; color: var(--ink2); }
@@ -109,6 +100,9 @@ main:focus { outline: none; }
 
 .mark {
   flex: 0 0 196px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--font-instrument), serif;
   font-size: 23px;
   font-weight: 400;
@@ -122,6 +116,7 @@ main:focus { outline: none; }
   position: relative;
   display: flex;
   align-items: center;
+  min-width: 44px;
   min-height: 44px;
   gap: 5px;
   font-size: 13px;
@@ -272,11 +267,11 @@ main:focus { outline: none; }
   .mark { font-size: 25px; }
   .meta { font-size: 10px; }
   .chap { display: grid; grid-template-columns: repeat(4, max-content); justify-content: space-between; gap: 0 16px; margin-top: 0; padding-bottom: 4px; }
-  .chap a { font-size: 12px; min-height: 44px; }
+  .chap a { font-size: 12px; min-width: 44px; min-height: 44px; }
   .chap a[aria-current="page"]::after { bottom: 3px; }
   .head-note { display: none; }
   .home-head { padding-bottom: 14px; }
-  .home-head .meta { flex-basis: 100%; text-align: left; margin-left: 0; }
+  .head .meta { flex-basis: 100%; text-align: left; margin-left: 0; }
   .stage { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; padding-block: 28px 48px; }
   .plate-intro, .landing-intro { grid-column: 1 / -1; padding-top: 0; }
   .plate-intro h1 { font-size: 40px; }
