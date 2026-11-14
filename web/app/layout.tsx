@@ -56,6 +56,26 @@ export const metadata: Metadata = {
   description:
     "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
   icons: { icon: "/icon.svg" },
+  openGraph: {
+    title: "RepoCortex | A repository field manual",
+    description:
+      "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
+    images: [
+      {
+        url: "/art/gh-social-1280x640.webp",
+        width: 1280,
+        height: 640,
+        alt: "RepoCortex: a code graph that learns from every fix. Plus 11.0 points over dense search, function Acc@10, interval 7.5 to 14.4.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RepoCortex | A repository field manual",
+    description:
+      "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
+    images: ["/art/x-card-1200x675.webp"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

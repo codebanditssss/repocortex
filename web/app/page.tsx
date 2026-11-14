@@ -190,7 +190,9 @@ export default function Home() {
       <footer id="install" className="install-section">
         <p className="sc section-index"><span className="num">07</span> / Take it with you</p>
         <div className="install-grid">
-          <div><h2>It remembers<br /><i>every fix.</i></h2><p className="section-dek">One MCP server. Works with Claude Code, Cursor and anything else that speaks MCP.</p></div>
+          <div><h2>It remembers<br /><i>every fix.</i></h2>
+            <PlateImage className="storage-ornament" src="/art/doodle-memory.webp" alt="Two ink graph clusters joined by a short vermilion filament, a remembered path." marginalia />
+            <p className="section-dek">One MCP server. Works with Claude Code, Cursor and anything else that speaks MCP.</p></div>
           <div className="install-command">
             <p className="sc">MCP install / placeholder command</p>
             <CopyCommand />

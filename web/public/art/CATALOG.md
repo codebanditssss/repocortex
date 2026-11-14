@@ -26,3 +26,11 @@ teaser-untangle.webp  Tweet teaser. A knot becomes an orderly graph.
 
 Teasers hint at "a graph that learns" and do not name the product, Django, or
 bug fixing.
+
+Set 2 additions:
+
+doodle-memory.webp    Section divider. Two clusters joined by a vermilion remembered path.
+doodle-receipt.webp   Section divider. Blank ticket with a vermilion thread, beside a few nodes.
+doodle-reweight.webp  Section divider. Two nodes with a vermilion reweighted chord.
+x-card-1200x675.webp  X card, typed. +11.0 pts over dense search.
+gh-social-1280x640.webp  GitHub social / Open Graph card, same type treatment.
