@@ -43,7 +43,8 @@ Bug location depends on relations, not text: past fixes of similar tickets, co-c
 Replay of 1281 real Django fixes in commit order, scored on the 319 newest fixes it never trained on.
 
 - Function Acc@10: BM25 0.329, dense 0.373, RepoCortex step 0 0.451, RepoCortex after learning **0.483**.
-- Learning lift on the same held-out set: +3.1 points of function Acc@10 [0.9, 5.6], MRR 0.402 to 0.430. The curve is flat for about 500 fixes, then climbs. Storing fixes and reweighting edges do most of it. The ablation is in the README.
+- Learning lift on the same held-out set: +3.1 points of function Acc@10 [0.9, 5.6], MRR 0.402 to 0.430. The held-out curve is flat for about 500 fixes, then climbs: early on, similar past tickets usually name a different function (at step 100 the nearest past fix shares a gold function 3.5% of the time), so memory only pays off once it has enough history. Storing fixes and reweighting edges do most of the lift. The ablation is in the README.
+- Two curves that rise earlier, both outside the holdout: on a validation slice of the newest 256 training issues, fn Acc@10 goes 0.414 to 0.449 (peak 0.453) and MRR 0.380 to 0.414. Scoring each training issue before learning from it, the learning graph ends +3.4 points of Acc@10 and +3.3 points of MRR above a frozen replay (0.472 vs 0.439). Over the last 100 issues learning holds 0.460 while frozen falls to 0.410.
 - Claude Sonnet 5.5 agent on 30 held-out bugs: 16% fewer input tokens with the tool, 27% fewer and 22% lower cost when told to call it first. Accuracy about the same.
 - `locate_bug` alone gets the top-1 function 0.47 of the time, the agent alone 0.40. Under a second, no model call.
 - Load test: 1,251 requests, 0 failures, p95 44 ms, 63 requests per second.

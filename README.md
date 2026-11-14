@@ -32,7 +32,16 @@ The same held-out set, scored at every learning checkpoint of the replay:
 | fn Acc@10 | 0.451 | 0.448 | 0.445 | 0.448 | 0.448 | 0.451 | 0.458 | 0.461 | 0.461 | 0.461 | 0.464 | 0.464 | 0.467 | 0.483 | 0.483 |
 | MRR | 0.402 | 0.405 | 0.410 | 0.409 | 0.406 | 0.403 | 0.410 | 0.408 | 0.408 | 0.412 | 0.414 | 0.415 | 0.412 | 0.424 | 0.430 |
 
-These held-out numbers match the previous replay. A search for a stronger memory signal was run first, on the last 256 training issues only, and every change lost, so the holdout was scored once with the same settings.
+These held-out numbers did not move in the latest pass. A search for a stronger memory signal ran first on the training side only, every change lost, and the holdout was scored once with the same settings.
+
+Two curves that rise earlier. **Neither is the holdout**, and they are labeled that way everywhere:
+
+| curve (not the holdout) | start | end | change |
+|---|---:|---:|---:|
+| Validation slice, newest 256 training issues, fn Acc@10 | 0.414 | 0.449 (peak 0.453 at step 879) | +0.035 |
+| Validation slice, MRR | 0.380 | 0.414 | +0.034 |
+| Expanding window, 1281 training issues, fn Acc@10: learning vs frozen | frozen 0.439 | learning 0.472 | +3.4 points |
+| Expanding window, MRR: learning vs frozen | frozen 0.391 | learning 0.424 | +3.3 points |
 
 Coding agent (30 held-out bugs, Claude Sonnet 5.5): **16% fewer input tokens** with the RepoCortex MCP tool available, **27% fewer** when told to call it first, same accuracy.
 
@@ -42,8 +51,8 @@ Coding agent (30 held-out bugs, Claude Sonnet 5.5): **16% fewer input tokens** w
 |---|---|---|
 | Beats a plain vector store | fn Acc@10 **0.483** vs dense **0.373** vs BM25 **0.329**. Paired gap over dense: **+11.0 points** [7.5, 14.4] | [`results/baselines.json`](results/baselines.json) |
 | Learning moves the held-out score | fn Acc@10 0.451 at step 0 to 0.483 after 1281 fixes. Paired lift **+3.1 points** [0.9, 5.6], MRR 0.402 to 0.430 | [`results/curve.json`](results/curve.json), [`results/curve.png`](results/curve.png) |
-| The nearer future rises earlier | Validation Acc@10 0.414 to 0.453 by fit step 879, MRR 0.380 to 0.414. Not the holdout | [`results/curve.png`](results/curve.png), [`results/tuning.json`](results/tuning.json) |
-| Online learning holds up as bugs get harder | Expanding-window gap vs a frozen replay: **+3.4 points** Acc@10 and **+3.3 points** MRR after 1281 training issues | [`results/curve.json`](results/curve.json) |
+| The nearer future rises earlier | Validation fn Acc@10 0.414 to 0.449 (peak 0.453), MRR 0.380 to 0.414. Not the holdout | [`results/curve.json`](results/curve.json), [`results/tuning.json`](results/tuning.json) |
+| Memory holds up as bugs get harder | Expanding window vs a frozen replay: **+3.4 points** fn Acc@10 and **+3.3 points** MRR after 1281 issues. Not the holdout | [`results/curve.json`](results/curve.json) |
 | Agents do less work with it | **16%** fewer input tokens, **27%** when told to call it first, 22% lower cost | [`results/agent_eval/`](results/agent_eval/README.md) |
 | The tool alone is a strong first guess | `locate_bug` top-1 function **0.47** vs the Claude agent's **0.40** (14 vs 12 of 30), under a second, no model call | [`results/agent_eval/tool_only.json`](results/agent_eval/tool_only.json) |
 | It is fast enough to sit in an agent loop | p95 **44 ms**, p50 21 ms, 63 req/s, **0 failures** over 1,251 requests | [`results/loadtest.json`](results/loadtest.json) |
@@ -158,34 +167,32 @@ Storing fixes and reweighting does almost all of the lift. Shortcuts add a littl
 
 ## Where the curve rises
 
-The held-out line above sits on the frozen score until about step 500, then gains about 3 points. That is real, and it is late. Two other curves rise earlier. Neither one is the holdout.
+<img src="results/curve.png" alt="RepoCortex curves: held-out accuracy and MRR by replay step with dense and BM25 baselines, the expanding-window learning and frozen series, and the validation slice" width="900">
 
-**Why a stronger memory weight does not help.** Held-out issues often look like an older ticket and still name a different function. By step 100, 43% of the holdout has a past fix with cosine at least 0.55, and that neighbor shares a gold function 3.5% of the time. At the end of training the nearest fix is right 18.5% of the time, and some neighbor above 0.55 is right 34.5% of the time. Copying the neighbor's functions early mostly copies the wrong function. The full table is [`results/diagnosis.json`](results/diagnosis.json). It was not used to pick settings.
+The held-out line sits on the frozen score until about step 500, then gains about 3 points. That is real, and it is late.
 
-The search scored the newest 256 training issues after replaying only the older 1,025. The rule was fixed first: maximize `0.65 * final validation MRR + 0.35 * midpoint validation MRR`, and keep a change only when that score beats the current one by more than 0.01 without dropping validation Acc@10 by more than 0.02. The grid covered memory weight, similarity threshold, neighbor count, sum versus max, file and module priors, recency, credit decay, earlier shortcuts, and a gate that lets memory rerank only functions the report already ranked highly. The published settings scored 0.407. The nearest challenger scored 0.413. Weight 0.40 dropped validation MRR to about 0.29 to 0.36. Nothing cleared the bar. The log is [`results/tuning.json`](results/tuning.json).
+**Why the curve starts late.** Early on, a held-out bug often looks like an older ticket and still names a different function. By step 100, 42.6% of the holdout already has a past fix with cosine similarity of at least 0.55, but that nearest neighbor shares a gold function only 3.5% of the time. By the end of training the nearest fix is right 18.5% of the time, and some neighbor above 0.55 is right 34.5% of the time. Copying the neighbor's functions early mostly copies the wrong function, so a stronger memory weight hurts before it helps. Source: [`results/diagnosis.json`](results/diagnosis.json). It was not used to pick settings.
 
-**Validation slice, the newest 20% of training.** Not the 319 held-out issues.
+**The settings search.** It replayed the older 1025 training issues and scored the newest 256, never the holdout. The rule was fixed first: maximize `0.65 * final validation MRR + 0.35 * midpoint validation MRR`, and keep a change only if it beats the current score by more than 0.01 without losing more than 0.02 validation Acc@10. The grid covered memory weight, similarity threshold, neighbor count, sum vs max, file and module priors, recency, credit decay, earlier shortcuts, and a rerank-only memory gate. The published settings scored 0.407, the best challenger 0.413. Nothing cleared the bar. Log: [`results/tuning.json`](results/tuning.json).
+
+**Validation slice, the newest 256 training issues. Not the holdout.**
 
 | fit issues | 0 | 146 | 293 | 439 | 586 | 732 | 879 | 1025 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | fn Acc@10 | 0.414 | 0.418 | 0.418 | 0.426 | 0.434 | 0.445 | 0.453 | 0.449 |
 | MRR | 0.380 | 0.380 | 0.389 | 0.389 | 0.394 | 0.399 | 0.407 | 0.414 |
 
-Acc@10 is up about four points by step 879, then dips 0.4 points. MRR moves from 0.380 to 0.414, with one small dip between step 293 and step 439. This is the bottom row of [`results/curve.png`](results/curve.png).
-
-**Expanding window on the training stream.** Each training issue is scored before the operators see it. The same issues are scored with learning off. Both lines climb over the first few hundred issues, so that early climb is not by itself learning. After that, learning stays up and the frozen line falls.
+**Expanding window on the training stream. Not the holdout.** Each training issue is scored before the operators see it, and the same issues are scored with learning off. Both lines climb over the first few hundred issues, so that early climb is not learning by itself. After that, learning stays up and the frozen line falls.
 
 | issues seen | learning Acc@10 | frozen Acc@10 | learning MRR | frozen MRR |
 |---:|---:|---:|---:|---:|
 | 100 | 0.460 | 0.450 | 0.383 | 0.376 |
-| 400 | 0.500 | 0.482 | 0.434 | 0.411 |
+| 400 | 0.500 | 0.482 | 0.434 | 0.412 |
 | 1281 | 0.472 | 0.439 | 0.424 | 0.391 |
 
-The gap at the end is about +3.4 points of Acc@10 and +3.3 points of MRR. The rolling window of 100 says the same thing: learning scores 0.460 on the first 100 and 0.460 on the last 100, while the frozen ranker falls from 0.450 to 0.410. Later training issues are harder. Memory is what holds the rate.
+The rolling window of 100 says the same thing: learning scores 0.460 on the first 100 and 0.460 on the last 100, while the frozen ranker falls from 0.450 to 0.410. Later issues are harder, and memory is what holds the rate.
 
-**Seen module versus unseen module.** A holdout issue is seen when one of its gold functions sits in a module a training fix already touched. Module means the first two path parts. By step 92, 315 of 319 holdout issues are already in a seen module. Three are still unseen at the end, which is too few to read (Acc@10 0.333 against 0.484 on the other 316). The flat holdout curve is not an unseen-module problem.
-
-Seen file is the split that moves. Membership changes as more files are observed, so this is not one fixed cohort. Acc@10 on issues whose file was already fixed goes from 0.359 at step 92 (145 issues) to 0.456 at step 1281 (296 issues). The unseen-file rate stays high while the count shrinks from 174 to 23, which means the files that remain unseen are ones the frozen ranker already hits.
+**Seen file vs unseen file.** On held-out issues whose file a training fix already touched, fn Acc@10 goes from 0.359 at step 92 (145 issues) to 0.456 at step 1281 (296 issues). Membership grows as files are observed, so this is not one fixed cohort. The unseen-file group shrinks from 174 to 23 issues, and the ones left are mostly files the frozen ranker already hits. Module-level splits say little: 315 of 319 held-out issues are in a seen module by step 92, and only 3 are still unseen at the end.
 
 ## Provenance
 
@@ -239,7 +246,7 @@ Accuracy is about the same with and without the tool. The difference is one bug 
 
 ## Dashboard
 
-The web app in [`web/`](web/) reads `web/public/data/curve.json`, a copy of this run's measured curve. `web/public/data/snapshots.json` is still an illustrative layout fixture, not the replay log. Run it with `cd web && npm install && npm run dev`.
+The web app in [`web/`](web/) reads copies of the measured `results/` files from `web/public/data/`. Run it with `cd web && npm install && npm run dev`.
 
 | | |
 |---|---|
@@ -260,7 +267,7 @@ Locust, 8 concurrent users for 20 seconds against `POST /locate`: 1,251 requests
 - **Metrics.** fn Acc@k is strict: every gold function must be in the top k. File Acc@1 is the top file. MRR is the reciprocal rank of the first gold function, 0 outside the top 10.
 - **Most of the gap over dense is there at step 0.** The frozen graph already scores 0.451. Learning adds +3.1 points of fn Acc@10 [0.9, 5.6] and +0.026 MRR. fn Acc@5 lift is not significant (its interval starts at -0.009).
 - **The step 0 ranker blends BM25 into dense.** We report dense and BM25 alone, but not dense + BM25 without the graph hop.
-- **The held-out curve is late.** It sits on the frozen score until about 500 fixes, then climbs about 3 points. Stronger memory settings lost on the validation slice, so that shape was not forced. The validation curve and the expanding-window gap, above, are the rises that show up earlier. See [Where the curve rises](#where-the-curve-rises).
+- **The held-out curve is late.** It sits on the frozen score until about 500 fixes, then climbs about 3 points. Stronger memory settings lost on the validation slice, so the shape was not forced. The validation and expanding-window curves rise earlier, and neither is the holdout. See [Where the curve rises](#where-the-curve-rises).
 - **One repository.** Everything here is Django. A second repo was not replayed.
 - **The agent eval is small.** 30 bugs, one model, one run each.
 - **Hyperparameters** (BM25 blend, graph mix) were picked on the last 40 training issues of a smaller split, never on the holdout.
