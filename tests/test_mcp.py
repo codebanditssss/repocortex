@@ -1,40 +1,18 @@
-import io
-import json
+import asyncio
 import unittest
 
-from scripts.mcp_server import handle, read_message, write_message
+from scripts.mcp_server import server
 
 
 class McpTest(unittest.TestCase):
-    def test_locate_bug_returns_ranked_hits(self):
-        def locate_fn(report, k=10):
-            self.assertIn("filter", report)
-            self.assertEqual(k, 2)
-            return [{"rank": 1, "uid": "func:a", "file": "q.py", "qualname": "QuerySet.filter", "score": 0.5, "path": "dense + bm25"}]
-
-        listed = handle({"jsonrpc": "2.0", "id": 1, "method": "tools/list"}, locate_fn)
-        self.assertEqual(listed["result"]["tools"][0]["name"], "locate_bug")
-        response = handle(
-            {
-                "jsonrpc": "2.0",
-                "id": 2,
-                "method": "tools/call",
-                "params": {"name": "locate_bug", "arguments": {"report": "filter rows", "k": 2}},
-            },
-            locate_fn,
-        )
-        body = json.loads(response["result"]["content"][0]["text"])
-        self.assertEqual(body["hits"][0]["uid"], "func:a")
-        self.assertIsNone(handle({"jsonrpc": "2.0", "method": "notifications/initialized"}, locate_fn))
-
-    def test_framed_roundtrip(self):
-        payload = {"jsonrpc": "2.0", "id": 3, "method": "ping"}
-        buf = io.BytesIO()
-        write_message(buf, payload)
-        buf.seek(0)
-        self.assertEqual(read_message(buf), payload)
-        response = handle(payload, lambda report, k=10: [])
-        self.assertEqual(response["result"], {})
+    def test_tools_are_registered(self):
+        tools = asyncio.run(server.list_tools())
+        names = sorted(tool.name for tool in tools)
+        self.assertEqual(names, ["learn_from_fix", "locate_bug"])
+        locate = next(tool for tool in tools if tool.name == "locate_bug")
+        self.assertIn("report", locate.input_schema["properties"])
+        learn = next(tool for tool in tools if tool.name == "learn_from_fix")
+        self.assertIn("diff", learn.input_schema["properties"])
 
 
 if __name__ == "__main__":

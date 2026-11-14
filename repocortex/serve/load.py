@@ -42,6 +42,13 @@ def load_ranker(root: Path) -> HybridRanker:
     learned_path = root / "data" / "learned_state.json"
     learned = json.loads(learned_path.read_text(encoding="utf-8"))
     edges = {}
+    for row in corpus.get("edges") or []:
+        edges[(row["src"], row["rel"], row["dst"])] = {
+            "w": float(row.get("w") or 1),
+            "hits": 0,
+            "misses": 0,
+            "count": 1,
+        }
     for row in learned:
         _endpoint(nodes, row["src"])
         _endpoint(nodes, row["dst"])
@@ -102,6 +109,7 @@ def locate(ranker, report: str, k: int = 10) -> list[dict]:
                 "uid": hit.uid,
                 "file": hit.file,
                 "qualname": node.get("qualname") or node.get("name") or "",
+                "line": int(node.get("start") or 0),
                 "score": round(float(hit.score), 4),
                 "path": hit.path,
             }

@@ -169,16 +169,60 @@ Prequential Acc@10 does not trend up. The first 100 training issues score 0.460 
 
 ## Locate
 
-`run_eval.py --replay` writes the learned edges and the fix memory to `data/learned_state.npz` (gitignored). Two fronts read that file. Neither calls an LLM. `GMI_API_KEY` was unset.
+`run_eval.py --replay` writes the learned edges and the fix memory to `data/learned_state.npz` (gitignored). The MCP server reads that file plus `data/corpus.json` and `data/embeddings.npz`. It does not call an LLM.
 
 ```bash
 python scripts/mcp_server.py
+python scripts/mcp_server.py --http
 python scripts/serve_locate.py 8765
 ```
 
-The MCP tool is `locate_bug`. It takes `report` and an optional `k`, and returns ranked functions with the path behind each hit. The HTTP server accepts `POST /locate` with the same fields, and `GET /health`.
+`scripts/mcp_server.py` is a Python MCP SDK server (`mcp.server.mcpserver.MCPServer`). With no flags it speaks stdio. `--http` serves streamable HTTP at `http://127.0.0.1:8765/mcp`. Do not run that and `serve_locate.py` on port 8765 at the same time.
 
-A 20 second Locust run with 8 users against that server made 1251 requests, 0 failures, median 21 ms, about 63 requests per second. The summary is `results/loadtest.json`.
+Tools:
+
+- `locate_bug(report, k)` returns ranked functions with file, line, qualname, score, and the provenance path.
+- `learn_from_fix(report, diff)` maps the unified diff onto functions, predicts first, then stores the fix and writes the learned state back. A later `locate_bug` sees that update.
+
+Cursor (`.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "repocortex": {
+      "command": ".venv/bin/python",
+      "args": ["scripts/mcp_server.py"]
+    }
+  }
+}
+```
+
+Claude Code (`~/.claude.json` or the project's `.mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "repocortex": {
+      "command": ".venv/bin/python",
+      "args": ["scripts/mcp_server.py"]
+    }
+  }
+}
+```
+
+For the HTTP transport, point either client at the URL instead of a command:
+
+```json
+{
+  "mcpServers": {
+    "repocortex": {
+      "url": "http://127.0.0.1:8765/mcp"
+    }
+  }
+}
+```
+
+`serve_locate.py` is the older plain HTTP front (`POST /locate`, `GET /health`). A 20 second Locust run against it, from before this wider graph, made 1251 requests, 0 failures, median 21 ms, about 63 requests per second. That summary is `results/loadtest.json`. It was not rerun on the larger graph.
 
 ## Tests
 

@@ -1,127 +1,100 @@
-"""MCP stdio server. Exposes locate_bug(report) -> ranked functions and paths.
+"""RepoCortex MCP server.
 
-Run after scripts/run_eval.py --replay so data/learned_state.npz exists.
-No LLM calls. GMI_API_KEY is unused.
+stdio:
+
+    python scripts/mcp_server.py
+
+streamable HTTP (http://127.0.0.1:8765/mcp):
+
+    python scripts/mcp_server.py --http
 """
 
 from __future__ import annotations
 
-import json
+import argparse
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from repocortex.serve.load import load_ranker, locate
+from mcp.server.mcpserver import MCPServer
+
+server = MCPServer(
+    "repocortex",
+    instructions=(
+        "Locate the functions a bug report touches in the learned Django code graph, "
+        "and fold a unified diff back into that graph."
+    ),
+)
+
+_state = None
 
 
-TOOL = {
-    "name": "locate_bug",
-    "description": "Rank functions a bug report is likely to touch, with the graph path behind each hit.",
-    "inputSchema": {
-        "type": "object",
-        "properties": {
-            "report": {"type": "string", "description": "Bug report text."},
-            "k": {"type": "integer", "description": "How many functions to return.", "default": 10},
-        },
-        "required": ["report"],
-        "additionalProperties": False,
-    },
-}
+def get_state():
+    global _state
+    if _state is not None:
+        return _state
+    from repocortex.config import Settings
+    from repocortex.learn.compress import PathCompressor
+    from repocortex.learn.replay import make_operators
+    from repocortex.serve.load import load_ranker
+
+    root = Path(__file__).resolve().parents[1]
+    ranker = load_ranker(root)
+    operators = make_operators(ranker, "full", lr=0.25, merger_every=40)
+    for op in operators:
+        if isinstance(op, PathCompressor):
+            op.hydrate(ranker.edges)
+    client = None
+    try:
+        from repocortex.hydradb import connect
+
+        client = connect(Settings.load(root))
+        ranker.client = client
+    except Exception:
+        client = None
+    _state = {"ranker": ranker, "operators": operators, "root": root, "client": client}
+    return _state
 
 
-def handle(message: dict, locate_fn) -> dict | None:
-    method = message.get("method")
-    msg_id = message.get("id")
-    if msg_id is None:
-        return None
-    if method == "initialize":
-        return {
-            "jsonrpc": "2.0",
-            "id": msg_id,
-            "result": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {"tools": {"listChanged": False}},
-                "serverInfo": {"name": "repocortex", "version": "0.2"},
-            },
-        }
-    if method == "tools/list":
-        return {"jsonrpc": "2.0", "id": msg_id, "result": {"tools": [TOOL]}}
-    if method == "tools/call":
-        params = message.get("params") or {}
-        name = params.get("name")
-        if name != "locate_bug":
-            return _error(msg_id, f"unknown tool {name}")
-        args = params.get("arguments") or {}
-        report = str(args.get("report") or "")
-        try:
-            k = int(args.get("k") or 10)
-        except (TypeError, ValueError):
-            k = 10
-        hits = locate_fn(report, k)
-        return {
-            "jsonrpc": "2.0",
-            "id": msg_id,
-            "result": {
-                "content": [{"type": "text", "text": json.dumps({"hits": hits})}],
-                "isError": False,
-            },
-        }
-    if method == "ping":
-        return {"jsonrpc": "2.0", "id": msg_id, "result": {}}
-    return _error(msg_id, f"unknown method {method}")
+@server.tool(description="Rank functions for a bug report. Each hit includes file, line, score, and the provenance path.")
+def locate_bug(report: str, k: int = 10) -> dict:
+    from repocortex.serve.load import locate
+
+    k = max(1, min(int(k), 20))
+    return {"hits": locate(get_state()["ranker"], report, k)}
 
 
-def _error(msg_id, message: str) -> dict:
-    return {"jsonrpc": "2.0", "id": msg_id, "error": {"code": -32601, "message": message}}
+@server.tool(description="Predict, then learn from a unified diff of the fix. The prediction is made before the graph changes.")
+def learn_from_fix(report: str, diff: str) -> dict:
+    from repocortex.serve.learn import learn_from_fix as apply_fix
 
-
-def read_message(stream) -> dict | None:
-    headers = {}
-    while True:
-        line = stream.readline()
-        if not line:
-            return None
-        if line in (b"\r\n", b"\n"):
-            break
-        decoded = line.decode("utf-8", errors="replace")
-        if ":" not in decoded:
-            continue
-        key, value = decoded.split(":", 1)
-        headers[key.strip().lower()] = value.strip()
-    length = int(headers.get("content-length") or 0)
-    if length <= 0:
-        return None
-    return json.loads(stream.read(length).decode("utf-8"))
-
-
-def write_message(stream, payload: dict) -> None:
-    body = json.dumps(payload).encode("utf-8")
-    stream.write(f"Content-Length: {len(body)}\r\n\r\n".encode("ascii"))
-    stream.write(body)
-    stream.flush()
-
-
-def serve(locate_fn, stdin=None, stdout=None) -> None:
-    stdin = stdin or sys.stdin.buffer
-    stdout = stdout or sys.stdout.buffer
-    while True:
-        message = read_message(stdin)
-        if message is None:
-            return
-        response = handle(message, locate_fn)
-        if response is not None:
-            write_message(stdout, response)
+    state = get_state()
+    return apply_fix(
+        state["ranker"],
+        report,
+        diff,
+        operators=state["operators"],
+        state_path=state["root"] / "data" / "learned_state.npz",
+    )
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[1]
-    ranker = load_ranker(root)
-
-    def locate_fn(report: str, k: int = 10):
-        return locate(ranker, report, k)
-
-    serve(locate_fn)
+    parser = argparse.ArgumentParser(description="RepoCortex MCP server")
+    parser.add_argument("--http", action="store_true", help="serve streamable HTTP instead of stdio")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8765)
+    args = parser.parse_args()
+    if args.http:
+        server.run(
+            "streamable-http",
+            host=args.host,
+            port=args.port,
+            streamable_http_path="/mcp",
+            stateless_http=True,
+        )
+    else:
+        server.run(transport="stdio")
 
 
 if __name__ == "__main__":
