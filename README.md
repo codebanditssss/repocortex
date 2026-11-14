@@ -224,6 +224,21 @@ For the HTTP transport, point either client at the URL instead of a command:
 
 `serve_locate.py` is the older plain HTTP front (`POST /locate`, `GET /health`). A 20 second Locust run against it, from before this wider graph, made 1251 requests, 0 failures, median 21 ms, about 63 requests per second. That summary is `results/loadtest.json`. It was not rerun on the larger graph.
 
+## Agent eval
+
+`results/agent_eval/PLAN.md` is the plan for comparing an agent that can call `locate_bug` with the same agent that only sees the bug report. The harness is `scripts/agent_eval.py`. This environment has no Claude key, so the model was not called.
+
+```bash
+python scripts/agent_eval.py prepare --n 30
+python scripts/agent_eval.py score --predictions results/agent_eval/predictions-with-mcp.json
+ANTHROPIC_API_KEY=... python scripts/agent_eval.py run --condition without-mcp
+ANTHROPIC_API_KEY=... python scripts/agent_eval.py run --condition with-mcp
+```
+
+`prepare` writes `results/agent_eval/tasks.json` from the oldest held-out issues. The prompt does not include the gold functions. `run` calls the Anthropic Messages API. `with-mcp` executes `locate_bug` locally and sends the hits back. `without-mcp` has no tool. `ANTHROPIC_MODEL` overrides the default `claude-sonnet-4-5`. If the key is missing, `run` prints these commands and exits without calling a model.
+
+`score` maps the returned names onto the corpus and uses the same strict metrics, including a 95% bootstrap interval.
+
 ## Tests
 
 ```bash
@@ -232,4 +247,4 @@ python -m unittest discover -s tests
 
 ## What is left
 
-The Next.js dashboard is still a placeholder. It is meant to read `results/baselines.json`, `results/curve.json`, and `results/curve.png`.
+The Next.js dashboard is still a placeholder. It is meant to read `results/baselines.json`, `results/curve.json`, `results/curve.png`, `results/graph.json`, and `results/snapshots.json`. The agent comparison has not been run here.
