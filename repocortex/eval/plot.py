@@ -12,6 +12,7 @@ def plot_curve(
     prequential: list[dict] | None = None,
     window: int = 100,
     frozen_online: list[dict] | None = None,
+    validation: list[dict] | None = None,
 ) -> None:
     import matplotlib
 
@@ -21,7 +22,8 @@ def plot_curve(
     from repocortex.learn.replay import rolling_mean
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig, axes = plt.subplots(2, 2, figsize=(11.2, 8.0))
+    rows = 3 if validation else 2
+    fig, axes = plt.subplots(rows, 2, figsize=(11.2, 8.0 if rows == 2 else 12.4))
     styles = {
         "learning off": ("#7f8c8d", "--"),
         "reweight": ("#b9770e", "-"),
@@ -91,10 +93,36 @@ def plot_curve(
         axes[1, 1], prequential or [], frozen_online or [], "mrr",
         "expanding-window MRR", window, rolling_mean,
     )
+    if validation:
+        _plot_validation(axes[2, 0], validation, "function_acc@10", "validation Acc@10")
+        _plot_validation(axes[2, 1], validation, "mrr", "validation MRR")
     fig.suptitle("RepoCortex learning curve")
-    fig.tight_layout(rect=(0, 0.02, 1, 0.98), h_pad=2.4)
+    fig.tight_layout(rect=(0, 0.01, 1, 0.98), h_pad=2.6)
     fig.savefig(path, dpi=140)
     plt.close(fig)
+
+
+def _plot_validation(ax, curve, key, ylabel) -> None:
+    """Score on the late training slice. This is not the holdout."""
+    steps = [row["step"] for row in curve]
+    values = [row[key] for row in curve]
+    ax.plot(steps, values, color="#1b4f72", linewidth=2.2, label="validation")
+    lo = [row.get("ci", {}).get(key, {}).get("lo") for row in curve]
+    hi = [row.get("ci", {}).get(key, {}).get("hi") for row in curve]
+    if all(isinstance(item, (int, float)) for item in lo + hi):
+        ax.fill_between(steps, lo, hi, color="#1b4f72", alpha=0.15, linewidth=0)
+    if values:
+        ax.plot(steps, [values[0]] * len(steps), color="#7f8c8d", linestyle="--", linewidth=1.4, label="step 0")
+    ax.set_xlabel("fit issues replayed")
+    ax.set_ylabel(ylabel)
+    finite = [value for value in values + [item for item in lo + hi if isinstance(item, (int, float))]]
+    if finite:
+        low, high = min(finite), max(finite)
+        pad = max(0.02, (high - low) * 0.25)
+        ax.set_ylim(max(0.0, low - pad), min(1.0, high + pad))
+    ax.grid(True, axis="y", alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, loc="upper left")
+    ax.set_title("validation slice, not the holdout", fontsize=9)
 
 
 def _plot_online(ax, rows, frozen_rows, key, ylabel, window, rolling_mean) -> None:

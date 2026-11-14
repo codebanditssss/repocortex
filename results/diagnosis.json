@@ -1,0 +1,71 @@
+{
+  "holdout": 319,
+  "train": 1281,
+  "rows": [
+    {
+      "step": 0,
+      "sim_at_least_0.55": 0.0,
+      "sim_at_least_0.45": 0.0,
+      "median_max_sim": 0.0,
+      "nearest_gold_overlap": 0.0,
+      "any_neighbor_0.55_gold_overlap": 0.0
+    },
+    {
+      "step": 100,
+      "sim_at_least_0.55": 0.4263,
+      "sim_at_least_0.45": 0.8276,
+      "median_max_sim": 0.5333,
+      "nearest_gold_overlap": 0.0345,
+      "any_neighbor_0.55_gold_overlap": 0.0376
+    },
+    {
+      "step": 200,
+      "sim_at_least_0.55": 0.5705,
+      "sim_at_least_0.45": 0.8746,
+      "median_max_sim": 0.5661,
+      "nearest_gold_overlap": 0.0502,
+      "any_neighbor_0.55_gold_overlap": 0.0533
+    },
+    {
+      "step": 400,
+      "sim_at_least_0.55": 0.6928,
+      "sim_at_least_0.45": 0.9404,
+      "median_max_sim": 0.5891,
+      "nearest_gold_overlap": 0.069,
+      "any_neighbor_0.55_gold_overlap": 0.0972
+    },
+    {
+      "step": 600,
+      "sim_at_least_0.55": 0.7524,
+      "sim_at_least_0.45": 0.9498,
+      "median_max_sim": 0.6057,
+      "nearest_gold_overlap": 0.1034,
+      "any_neighbor_0.55_gold_overlap": 0.163
+    },
+    {
+      "step": 800,
+      "sim_at_least_0.55": 0.7962,
+      "sim_at_least_0.45": 0.9687,
+      "median_max_sim": 0.6151,
+      "nearest_gold_overlap": 0.1129,
+      "any_neighbor_0.55_gold_overlap": 0.2038
+    },
+    {
+      "step": 1000,
+      "sim_at_least_0.55": 0.8182,
+      "sim_at_least_0.45": 0.9781,
+      "median_max_sim": 0.6248,
+      "nearest_gold_overlap": 0.1285,
+      "any_neighbor_0.55_gold_overlap": 0.2445
+    },
+    {
+      "step": 1281,
+      "sim_at_least_0.55": 0.8589,
+      "sim_at_least_0.45": 0.9875,
+      "median_max_sim": 0.6405,
+      "nearest_gold_overlap": 0.185,
+      "any_neighbor_0.55_gold_overlap": 0.3448
+    }
+  ],
+  "used_for_selection": false
+}

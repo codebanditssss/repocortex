@@ -255,6 +255,7 @@ def main() -> None:
                 online,
                 window,
                 frozen_online,
+                validation_curve,
             )
             print(f"plot -> {settings.results_dir / 'curve.png'}", flush=True)
             if client is not None:
@@ -355,7 +356,11 @@ def _payload(
             "Memory threshold, k, recency, file and module priors, shortcut support, "
             "and credit decay were chosen on the last 20% of the training issues only. "
             "The holdout was scored once after that choice. "
-            "slices splits the holdout into issues whose gold module or file already appeared in a training fix."
+            "slices splits the holdout into issues whose gold module or file already appeared in a training fix. "
+            "Stronger memory weights, a lower similarity threshold, file and module priors, "
+            "recency, a lower credit decay, earlier shortcuts, and a frontier gate were tried "
+            "on the last 20% of training and did not clear the selection bar, so this holdout "
+            "uses the previous hyperparameters. The validation curve is that slice, not the holdout."
         ),
     }
 

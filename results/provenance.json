@@ -2,7 +2,7 @@
   "holdout": 319,
   "hits_with_fixed_in": 314,
   "hits_with_shortcut": 63,
-  "hits_with_graph": 665,
+  "hits_with_graph": 663,
   "issues": [
     {
       "ticket": 36616,
@@ -1417,9 +1417,9 @@
           "uid": "func:django/core/management/commands/inspectdb.py:django.core.management.commands.inspectdb.Command.handle_inspection",
           "file": "django/core/management/commands/inspectdb.py",
           "line": 56,
-          "score": 0.8305,
+          "score": 0.8292,
           "gold": true,
-          "path": "issue #36052 sim 0.61 -FIXED_IN-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.00) | issue #32234 sim 0.61 -FIXED_IN-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.08) | django.core.management.commands.inspectdb.Command.get_meta -CALLS-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.14)"
+          "path": "issue #36052 sim 0.61 -FIXED_IN-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.00) | issue #32234 sim 0.61 -FIXED_IN-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.08) | django.core.management.commands.inspectdb.Command.handle -CALLS-> django.core.management.commands.inspectdb.Command.handle_inspection (w 1.00)"
         },
         {
           "rank": 2,
@@ -4353,7 +4353,7 @@
           "line": 903,
           "score": 0.7424,
           "gold": false,
-          "path": "django.contrib.admin.options.ModelAdmin.get_changelist_instance -CALLS-> django.contrib.admin.options.ModelAdmin.get_changelist (w 1.00)"
+          "path": "dense + bm25"
         },
         {
           "rank": 5,
@@ -10392,7 +10392,7 @@
           "line": 1793,
           "score": 0.6,
           "gold": false,
-          "path": "dense + bm25"
+          "path": "django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field -CALLS-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._rename_field_sql (w 1.00)"
         }
       ]
     },
@@ -11799,7 +11799,7 @@
           "line": 39,
           "score": 0.6876,
           "gold": false,
-          "path": "django.core.management.commands.runserver.Command.inner_run -CO_CHANGED-> django.core.management.commands.runserver.Command.add_arguments (w 1.00)"
+          "path": "dense + bm25"
         }
       ]
     },
@@ -12210,7 +12210,7 @@
           "line": 465,
           "score": 0.7175,
           "gold": false,
-          "path": "django.contrib.admin.options.BaseModelAdmin.get_field_queryset -CALLS-> django.contrib.admin.options.BaseModelAdmin.get_ordering (w 1.00)"
+          "path": "dense + bm25"
         },
         {
           "rank": 4,
@@ -17083,7 +17083,7 @@
           "uid": "func:django/core/management/commands/createcachetable.py:django.core.management.commands.createcachetable.Command.handle",
           "file": "django/core/management/commands/createcachetable.py",
           "line": 51,
-          "score": 0.872,
+          "score": 0.8723,
           "gold": true,
           "path": "django.core.management.commands.createcachetable.Command.create_table -CALLS-> django.core.management.commands.createcachetable.Command.handle (w 1.00)"
         },
@@ -17092,7 +17092,7 @@
           "uid": "func:django/core/management/commands/createcachetable.py:django.core.management.commands.createcachetable.Command.create_table",
           "file": "django/core/management/commands/createcachetable.py",
           "line": 75,
-          "score": 0.8375,
+          "score": 0.8379,
           "gold": false,
           "path": "django.core.management.commands.createcachetable.Command.handle -CALLS-> django.core.management.commands.createcachetable.Command.create_table (w 1.00)"
         },
