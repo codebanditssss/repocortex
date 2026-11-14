@@ -120,12 +120,25 @@ Step 0 is already above dense because of the BM25 blend (function Acc@10 0.400 v
 
 The replay wrote 597 `FIXED_IN` edges and 60 `SHORTCUT` edges into local HydraDB. Credit or debit touched 232 edges. Path compression fired 107 times, gap ingestion 474 times, and merge/split 3 times. A holdout path looks like `issue #35575 sim 0.75 -FIXED_IN-> UniqueConstraint.validate`. `GMI_API_KEY` was unset, so no LLM call was made.
 
+## Locate
+
+`run_eval.py --replay` writes the learned edges and the fix memory to `data/learned_state.npz` (gitignored). Two fronts read that file. Neither calls an LLM. `GMI_API_KEY` was unset.
+
+```bash
+python scripts/mcp_server.py
+python scripts/serve_locate.py 8765
+```
+
+The MCP tool is `locate_bug`. It takes `report` and an optional `k`, and returns ranked functions with the path behind each hit. The HTTP server accepts `POST /locate` with the same fields, and `GET /health`.
+
+A 20 second Locust run with 8 users against that server made 1251 requests, 0 failures, median 21 ms, about 63 requests per second. The summary is `results/loadtest.json`.
+
 ## Tests
 
 ```bash
 python -m unittest discover -s tests
 ```
 
-## What is not in this phase
+## What is left
 
-An MCP server, a load test, and the dashboard are later phases. `GMI_API_KEY` is reserved and unused.
+The Next.js dashboard is still a placeholder. It is meant to read `results/baselines.json`, `results/curve.json`, and `results/curve.png`.
