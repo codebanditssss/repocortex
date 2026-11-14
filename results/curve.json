@@ -1,0 +1,74 @@
+[
+  {
+    "n": 80,
+    "function_acc@5": 0.25,
+    "function_acc@10": 0.325,
+    "file_acc@1": 0.2375,
+    "file_acc@5": 0.5875,
+    "mrr": 0.2216269841269841,
+    "step": 0
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.275,
+    "function_acc@10": 0.325,
+    "file_acc@1": 0.3,
+    "file_acc@5": 0.6,
+    "mrr": 0.26053571428571426,
+    "step": 50
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.275,
+    "function_acc@10": 0.325,
+    "file_acc@1": 0.325,
+    "file_acc@5": 0.6125,
+    "mrr": 0.2601686507936508,
+    "step": 100
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.2625,
+    "function_acc@10": 0.3125,
+    "file_acc@1": 0.3,
+    "file_acc@5": 0.6,
+    "mrr": 0.2612103174603174,
+    "step": 150
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.2625,
+    "function_acc@10": 0.3125,
+    "file_acc@1": 0.3,
+    "file_acc@5": 0.5875,
+    "mrr": 0.26496031746031745,
+    "step": 200
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.2625,
+    "function_acc@10": 0.3125,
+    "file_acc@1": 0.3125,
+    "file_acc@5": 0.575,
+    "mrr": 0.253139880952381,
+    "step": 250
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.2625,
+    "function_acc@10": 0.3125,
+    "file_acc@1": 0.3125,
+    "file_acc@5": 0.5625,
+    "mrr": 0.25418154761904765,
+    "step": 300
+  },
+  {
+    "n": 80,
+    "function_acc@5": 0.2625,
+    "function_acc@10": 0.3125,
+    "file_acc@1": 0.3125,
+    "file_acc@5": 0.575,
+    "mrr": 0.25284226190476194,
+    "step": 320
+  }
+]

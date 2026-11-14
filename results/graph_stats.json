@@ -1,0 +1,21 @@
+{
+  "snapshot": "f24f38c6b2825f15628c07bf2892f1664eed9361",
+  "backend": "bolt",
+  "local_nodes": 4989,
+  "local_edges": 21532,
+  "db_nodes": 4989,
+  "db_edges": 21532,
+  "truncated": {
+    "nodes": [],
+    "edges": []
+  },
+  "labels": {
+    "Repo": 1,
+    "File": 113,
+    "Function": 3105,
+    "Class": 587,
+    "Test": 5,
+    "Concept": 957,
+    "Symptom": 221
+  }
+}
