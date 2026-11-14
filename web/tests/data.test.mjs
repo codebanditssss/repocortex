@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { selectHeroIssue } from "../lib/landing.ts";
 
+const backend = JSON.parse(await readFile(new URL("../../results/baselines.json", import.meta.url), "utf8"));
 const readData = async (name) =>
   JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), "utf8"));
 const [evaluation, graph, snapshots, provenance, agent, load, loadTest] = await Promise.all(
@@ -25,11 +26,12 @@ test("the full curve matches the current backend results", () => {
   const last = evaluation.curve.at(-1);
   assert.equal(last["function_acc@10"], 0.4827586206896552);
   assert.equal(last["file_acc@1"], 0.445141065830721);
-  assert.deepEqual(evaluation.operators, {
-    edge_reweight: 3407, path_compression: 535, gap_ingestion: 1667, entity_merge_split: 33,
-  });
+  assert.deepEqual(evaluation.operators, backend.operators);
+  assert.ok(Object.values(evaluation.operators).every((count) => Number.isInteger(count) && count > 0));
   assert.equal(evaluation.params.bm25_mix, .1);
   assert.equal(evaluation.params.memory_k, 5);
+  assert.deepEqual(evaluation.prequential, backend.prequential);
+  assert.deepEqual(evaluation.prequential_frozen, backend.prequential_frozen);
 });
 
 test("all baseline metrics retain the exact supplied values", () => {

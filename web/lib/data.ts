@@ -39,7 +39,20 @@ export interface CurveData {
     shortcut_min_support?: number;
     shortcut_min_precision?: number;
   };
+  prequential?: PrequentialSummary;
+  prequential_frozen?: PrequentialSummary;
   note: string;
+}
+
+export interface PrequentialSummary {
+  n: number;
+  window: number;
+  first_window_acc10: number;
+  last_window_acc10: number;
+  first_window_mrr: number;
+  last_window_mrr: number;
+  cumulative_acc10: number;
+  cumulative_mrr: number;
 }
 
 export type EdgeType = "CALLS" | "IMPORTS" | "CO_CHANGED" | "SHORTCUT";
