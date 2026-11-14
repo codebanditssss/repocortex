@@ -1,0 +1,32 @@
+# Open-source HydraDB 0.4.0 (graph-node) on a local directory.
+# The image listens on 0.0.0.0 inside the container, so published ports work.
+# Official env names: https://github.com/hydra-db/hydradb
+services:
+  hydradb:
+    image: ghcr.io/hydra-db/hydradb:0.4.0
+    container_name: hydradb
+    ports:
+      - "7687:7687"
+      - "8443:8443"
+      - "9090:9090"
+    user: "${HYDRADB_UID:-1000}:${HYDRADB_GID:-1000}"
+    volumes:
+      - ./data/hydradb:/data
+    environment:
+      CLOUD_PROVIDER: local
+      LOCAL_PATH: /data/store
+      GRAPH_NAMESPACE: default
+      GRAPH_ID: default
+      GRAPH_CELL_ID: cell-0
+      GRAPH_CELLS: cell-0
+      GRAPH_NODE_ID: node-0
+      GRAPH_BOLT_NODE_ADDRESSES: node-0=127.0.0.1:7687
+      GRAPH_ADVERTISED_BOLT_ADDR: 127.0.0.1:7687
+      GRAPH_DATA_CACHE_DIR: /data/cache
+      GRAPH_DATA_CACHE_PART_BYTES: "4194304"
+      GRAPH_DATA_CACHE_MAX_OPEN_FILES: "512"
+      GRAPH_AUTH_TOKEN_FILE: /data/auth-token
+      GRAPH_ALLOW_PLAINTEXT: "true"
+      RUST_MIN_STACK: "33554432"
+      GRAPH_USAGE_REPORT_ENABLED: "false"
+    restart: unless-stopped
