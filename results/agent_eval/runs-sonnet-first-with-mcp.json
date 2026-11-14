@@ -1,0 +1,963 @@
+{
+  "condition": "with-mcp-first",
+  "model": "claude-sonnet-5-5",
+  "runs": [
+    {
+      "ticket": 36616,
+      "functions": [
+        "django/db/models/fields/__init__.py::DurationField.get_db_prep_value",
+        "django/db/backends/base/operations.py::BaseDatabaseOperations.adapt_durationfield_value",
+        "django/db/backends/postgresql/operations.py::DatabaseOperations.adapt_durationfield_value",
+        "django/db/backends/oracle/operations.py::DatabaseOperations.adapt_durationfield_value"
+      ],
+      "stop": "submit",
+      "turns": 3,
+      "tool_calls": 6,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 1,
+        "read_file": 4,
+        "submit": 1
+      },
+      "files_opened": 4,
+      "files": [
+        "django/db/models/fields/__init__.py",
+        "django/db/backends/base/operations.py",
+        "django/db/backends/oracle/operations.py",
+        "django/db/backends/postgresql/operations.py"
+      ],
+      "usage": {
+        "input": 8,
+        "cache_write": 3419,
+        "cache_read": 4532,
+        "output": 1097
+      },
+      "wall_s": 9.9,
+      "task_index": 0,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01999
+    },
+    {
+      "ticket": 36434,
+      "functions": [
+        "django/utils/autoreload.py::restart_with_reloader",
+        "django/utils/autoreload.py::get_child_arguments"
+      ],
+      "stop": "submit",
+      "turns": 3,
+      "tool_calls": 3,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 1,
+        "read_file": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/utils/autoreload.py"
+      ],
+      "usage": {
+        "input": 8,
+        "cache_write": 2669,
+        "cache_read": 4093,
+        "output": 581
+      },
+      "wall_s": 14.2,
+      "task_index": 1,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01291
+    },
+    {
+      "ticket": 36605,
+      "functions": [
+        "django/db/models/query.py::QuerySet.in_bulk"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 4,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 1,
+        "read_file": 2,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/db/models/query.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 4259,
+        "cache_read": 8253,
+        "output": 729
+      },
+      "wall_s": 13.9,
+      "task_index": 2,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01878
+    },
+    {
+      "ticket": 36142,
+      "functions": [
+        "django/shortcuts.py::get_object_or_404",
+        "django/shortcuts.py::aget_object_or_404",
+        "django/shortcuts.py::get_list_or_404",
+        "django/shortcuts.py::aget_list_or_404"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 4,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/shortcuts.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 3313,
+        "cache_read": 8268,
+        "output": 608
+      },
+      "wall_s": 8.1,
+      "task_index": 3,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01521
+    },
+    {
+      "ticket": 36491,
+      "functions": [
+        "django/test/runner.py::RemoteTestResult.addError",
+        "django/test/runner.py::ParallelTestSuite.handle_event",
+        "django/test/runner.py::ParallelTestSuite.run",
+        "django/test/runner.py::RemoteTestRunner.run",
+        "django/test/runner.py::RemoteTestResult.__getstate__"
+      ],
+      "stop": "submit",
+      "turns": 7,
+      "tool_calls": 7,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 4,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/test/runner.py"
+      ],
+      "usage": {
+        "input": 18,
+        "cache_write": 8822,
+        "cache_read": 37723,
+        "output": 4444
+      },
+      "wall_s": 40.4,
+      "task_index": 4,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.0703
+    },
+    {
+      "ticket": 36277,
+      "functions": [
+        "django/db/backends/postgresql/features.py::DatabaseFeatures"
+      ],
+      "stop": "submit",
+      "turns": 12,
+      "tool_calls": 15,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 7,
+        "read_file": 7,
+        "submit": 1
+      },
+      "files_opened": 4,
+      "files": [
+        "django/db/backends/postgresql/features.py",
+        "django/db/backends/base/schema.py",
+        "django/db/backends/postgresql/schema.py",
+        "django/db/models/fields/generated.py"
+      ],
+      "usage": {
+        "input": 26,
+        "cache_write": 10485,
+        "cache_read": 71319,
+        "output": 4353
+      },
+      "wall_s": 46.1,
+      "task_index": 5,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.07693
+    },
+    {
+      "ticket": 36614,
+      "functions": [
+        "django/db/models/query.py::QuerySet.values_list"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 5,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 2,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/db/models/query.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 3358,
+        "cache_read": 8304,
+        "output": 626
+      },
+      "wall_s": 8.9,
+      "task_index": 6,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01551
+    },
+    {
+      "ticket": 36636,
+      "functions": [
+        "django/views/i18n.py::set_language"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 3,
+      "calls_by_tool": {
+        "search_code": 2,
+        "read_file": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/views/i18n.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 1299,
+        "cache_read": 5500,
+        "output": 360
+      },
+      "wall_s": 6.9,
+      "task_index": 7,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.00742
+    },
+    {
+      "ticket": 36623,
+      "functions": [
+        "django/db/backends/postgresql/features.py::DatabaseFeatures",
+        "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperations.spatial_version"
+      ],
+      "stop": "submit",
+      "turns": 10,
+      "tool_calls": 14,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 10,
+        "read_file": 3,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/backends/postgresql/features.py",
+        "django/contrib/gis/db/backends/postgis/operations.py"
+      ],
+      "usage": {
+        "input": 22,
+        "cache_write": 12778,
+        "cache_read": 71204,
+        "output": 2957
+      },
+      "wall_s": 31.8,
+      "task_index": 8,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.06868
+    },
+    {
+      "ticket": 36646,
+      "functions": [
+        "django/db/backends/oracle/base.py::OracleParam.__init__",
+        "django/db/models/fields/__init__.py::BinaryField.get_db_prep_value"
+      ],
+      "stop": "submit",
+      "turns": 10,
+      "tool_calls": 12,
+      "calls_by_tool": {
+        "search_code": 8,
+        "read_file": 3,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/backends/oracle/base.py",
+        "django/db/models/fields/__init__.py"
+      ],
+      "usage": {
+        "input": 22,
+        "cache_write": 7116,
+        "cache_read": 45942,
+        "output": 2658
+      },
+      "wall_s": 27.4,
+      "task_index": 9,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.04901
+    },
+    {
+      "ticket": 36660,
+      "functions": [
+        "django/db/models/indexes.py::Index.check",
+        "django/db/models/indexes.py::Index.__init__",
+        "django/db/models/base.py::Model._check_local_fields"
+      ],
+      "stop": "submit",
+      "turns": 15,
+      "tool_calls": 18,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 9,
+        "read_file": 8,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/models/base.py",
+        "django/db/models/indexes.py"
+      ],
+      "usage": {
+        "input": 34,
+        "cache_write": 11798,
+        "cache_read": 91537,
+        "output": 5322
+      },
+      "wall_s": 55.3,
+      "task_index": 10,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.09194
+    },
+    {
+      "ticket": 36611,
+      "functions": [
+        "django/db/models/base.py::Model._get_field_expression_map",
+        "django/db/models/constraints.py::CheckConstraint.validate",
+        "django/db/models/query_utils.py::Q.check"
+      ],
+      "stop": "submit",
+      "turns": 10,
+      "tool_calls": 12,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "read_file": 6,
+        "search_code": 5,
+        "submit": 1
+      },
+      "files_opened": 5,
+      "files": [
+        "django/db/models/constraints.py",
+        "django/db/models/base.py",
+        "django/db/models/query_utils.py",
+        "django/db/models/expressions.py",
+        "django/db/models/fields/tuple_lookups.py"
+      ],
+      "usage": {
+        "input": 22,
+        "cache_write": 9746,
+        "cache_read": 56900,
+        "output": 2067
+      },
+      "wall_s": 35.5,
+      "task_index": 11,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.05077
+    },
+    {
+      "ticket": 36654,
+      "functions": [
+        "django/db/models/base.py::Model._do_update"
+      ],
+      "stop": "submit",
+      "turns": 5,
+      "tool_calls": 5,
+      "calls_by_tool": {
+        "search_code": 2,
+        "read_file": 3,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/db/models/base.py"
+      ],
+      "usage": {
+        "input": 12,
+        "cache_write": 3644,
+        "cache_read": 7592,
+        "output": 762
+      },
+      "wall_s": 19.9,
+      "task_index": 12,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01751
+    },
+    {
+      "ticket": 36648,
+      "functions": [
+        "django/db/models/query.py::QuerySet._check_ordering_first_last_queryset_aggregation"
+      ],
+      "stop": "submit",
+      "turns": 10,
+      "tool_calls": 11,
+      "calls_by_tool": {
+        "search_code": 4,
+        "locate_bug": 1,
+        "read_file": 6,
+        "submit": 1
+      },
+      "files_opened": 5,
+      "files": [
+        "django/db/models/query.py",
+        "django/db/models/sql/query.py",
+        "django/db/models/options.py",
+        "tests/composite_pk/models/tenant.py",
+        "django/db/models/fields/composite.py"
+      ],
+      "usage": {
+        "input": 22,
+        "cache_write": 8647,
+        "cache_read": 39928,
+        "output": 4038
+      },
+      "wall_s": 34.7,
+      "task_index": 13,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.06603
+    },
+    {
+      "ticket": 36671,
+      "functions": [
+        "django/db/models/fields/tuple_lookups.py::Tuple.as_sqlite",
+        "django/db/backends/sqlite3/features.py::DatabaseFeatures"
+      ],
+      "stop": "submit",
+      "turns": 12,
+      "tool_calls": 20,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 12,
+        "read_file": 7,
+        "submit": 1
+      },
+      "files_opened": 5,
+      "files": [
+        "django/db/backends/sqlite3/features.py",
+        "django/db/backends/sqlite3/schema.py",
+        "django/db/backends/sqlite3/base.py",
+        "django/db/backends/sqlite3/_functions.py",
+        "django/db/models/fields/tuple_lookups.py"
+      ],
+      "usage": {
+        "input": 26,
+        "cache_write": 16332,
+        "cache_read": 111214,
+        "output": 3948
+      },
+      "wall_s": 32.2,
+      "task_index": 14,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.09148
+    },
+    {
+      "ticket": 36470,
+      "functions": [
+        "django/core/servers/basehttp.py::WSGIRequestHandler.log_message"
+      ],
+      "stop": "submit",
+      "turns": 2,
+      "tool_calls": 2,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 1,
+        "submit": 1
+      },
+      "files_opened": 0,
+      "files": [],
+      "usage": {
+        "input": 6,
+        "cache_write": 1461,
+        "cache_read": 2068,
+        "output": 261
+      },
+      "wall_s": 2.5,
+      "task_index": 15,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.00648
+    },
+    {
+      "ticket": 36656,
+      "functions": [
+        "django/utils/text.py::acompress_sequence",
+        "django/middleware/gzip.py::GZipMiddleware.process_response",
+        "django/utils/text.py::compress_sequence"
+      ],
+      "stop": "submit",
+      "turns": 7,
+      "tool_calls": 7,
+      "calls_by_tool": {
+        "search_code": 3,
+        "read_file": 3,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 3,
+      "files": [
+        "django/utils/text.py",
+        "django/middleware/gzip.py",
+        "django/http/response.py"
+      ],
+      "usage": {
+        "input": 16,
+        "cache_write": 6482,
+        "cache_read": 26504,
+        "output": 2174
+      },
+      "wall_s": 23.3,
+      "task_index": 16,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.04063
+    },
+    {
+      "ticket": 36677,
+      "functions": [
+        "django/test/runner.py::_init_worker"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 3,
+      "calls_by_tool": {
+        "search_code": 1,
+        "read_file": 1,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/test/runner.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 2656,
+        "cache_read": 6724,
+        "output": 412
+      },
+      "wall_s": 7.3,
+      "task_index": 17,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01145
+    },
+    {
+      "ticket": 36674,
+      "functions": [
+        "django/db/models/sql/compiler.py::SQLCompiler.get_related_selections",
+        "django/db/models/sql/compiler.py::SQLCompiler.get_select_from_parent",
+        "django/db/models/sql/compiler.py::SQLCompiler.get_select"
+      ],
+      "stop": "submit",
+      "turns": 6,
+      "tool_calls": 7,
+      "calls_by_tool": {
+        "search_code": 2,
+        "read_file": 4,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/db/models/sql/compiler.py"
+      ],
+      "usage": {
+        "input": 14,
+        "cache_write": 7409,
+        "cache_read": 21675,
+        "output": 1928
+      },
+      "wall_s": 23.4,
+      "task_index": 18,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.04
+    },
+    {
+      "ticket": 36683,
+      "functions": [
+        "django/db/models/query.py::QuerySet.update",
+        "django/db/models/query.py::QuerySet.delete"
+      ],
+      "stop": "submit",
+      "turns": 5,
+      "tool_calls": 5,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 2,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/db/models/query.py"
+      ],
+      "usage": {
+        "input": 12,
+        "cache_write": 2611,
+        "cache_read": 9709,
+        "output": 814
+      },
+      "wall_s": 11.3,
+      "task_index": 19,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.01566
+    },
+    {
+      "ticket": 26434,
+      "functions": [
+        "django/db/models/sql/query.py::Query.get_aggregation",
+        "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+        "django/db/models/sql/query.py::Query.clear_ordering",
+        "django/db/models/sql/query.py::Query.set_group_by",
+        "django/db/models/sql/compiler.py::SQLCompiler.get_group_by"
+      ],
+      "stop": "submit",
+      "turns": 10,
+      "tool_calls": 13,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 4,
+        "read_file": 8,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/models/sql/query.py",
+        "django/db/models/sql/compiler.py"
+      ],
+      "usage": {
+        "input": 24,
+        "cache_write": 12714,
+        "cache_read": 64087,
+        "output": 6004
+      },
+      "wall_s": 53.2,
+      "task_index": 20,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.09828
+    },
+    {
+      "ticket": 36596,
+      "functions": [
+        "django/test/runner.py::_init_worker",
+        "django/db/backends/base/creation.py::BaseDatabaseCreation.mark_expected_failures_and_skips",
+        "django/db/backends/base/creation.py::BaseDatabaseCreation._mark_test",
+        "django/test/runner.py::ParallelTestSuite.__init__",
+        "django/test/runner.py::ParallelTestSuite.initialize_suite"
+      ],
+      "stop": "submit",
+      "turns": 6,
+      "tool_calls": 6,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 3,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/test/runner.py",
+        "django/db/backends/base/creation.py"
+      ],
+      "usage": {
+        "input": 16,
+        "cache_write": 5274,
+        "cache_read": 21323,
+        "output": 2893
+      },
+      "wall_s": 28.7,
+      "task_index": 21,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.04428
+    },
+    {
+      "ticket": 26434,
+      "functions": [
+        "django/db/models/sql/query.py::Query.get_aggregation",
+        "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+        "django/db/models/sql/query.py::Query.clear_ordering"
+      ],
+      "stop": "submit",
+      "turns": 12,
+      "tool_calls": 16,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "read_file": 7,
+        "search_code": 8,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/models/sql/query.py",
+        "django/db/models/sql/compiler.py"
+      ],
+      "usage": {
+        "input": 26,
+        "cache_write": 12684,
+        "cache_read": 88056,
+        "output": 6416
+      },
+      "wall_s": 60.4,
+      "task_index": 22,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.10473
+    },
+    {
+      "ticket": 36678,
+      "functions": [
+        "django/test/runner.py::ParallelTestSuite.run",
+        "django/test/runner.py::_safe_init_worker",
+        "django/test/runner.py::_init_worker",
+        "django/test/runner.py::_claim_database_clone_slot"
+      ],
+      "stop": "submit",
+      "turns": 6,
+      "tool_calls": 5,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "read_file": 3,
+        "search_code": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/test/runner.py"
+      ],
+      "usage": {
+        "input": 14,
+        "cache_write": 5909,
+        "cache_read": 19136,
+        "output": 2057
+      },
+      "wall_s": 22.4,
+      "task_index": 23,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.03728
+    },
+    {
+      "ticket": 35381,
+      "functions": [
+        "django/db/models/fields/json.py::JSONField.get_db_prep_save",
+        "django/db/models/fields/json.py::JSONExact.process_rhs",
+        "django/db/models/expressions.py::JSONNull.as_sql",
+        "django/db/models/fields/json.py::JSONIn.resolve_expression_parameter",
+        "django/db/models/expressions.py::JSONNull.as_mysql",
+        "django/db/models/fields/json.py::JSONIn.as_oracle"
+      ],
+      "stop": "submit",
+      "turns": 8,
+      "tool_calls": 9,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 3,
+        "read_file": 5,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/models/fields/json.py",
+        "django/db/models/expressions.py"
+      ],
+      "usage": {
+        "input": 18,
+        "cache_write": 8692,
+        "cache_read": 42317,
+        "output": 3387
+      },
+      "wall_s": 30.0,
+      "task_index": 24,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.05987
+    },
+    {
+      "ticket": 36696,
+      "functions": [
+        "django/utils/inspect.py::signature",
+        "django/utils/inspect.py::getfullargspec",
+        "django/utils/inspect.py::lazy_annotations",
+        "django/utils/inspect.py::_get_func_parameters",
+        "django/utils/inspect.py::func_accepts_kwargs"
+      ],
+      "stop": "submit",
+      "turns": 11,
+      "tool_calls": 16,
+      "calls_by_tool": {
+        "read_file": 3,
+        "search_code": 12,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/utils/inspect.py",
+        "django/core/management/base.py"
+      ],
+      "usage": {
+        "input": 24,
+        "cache_write": 20173,
+        "cache_read": 57881,
+        "output": 4115
+      },
+      "wall_s": 486.8,
+      "task_index": 25,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.09742
+    },
+    {
+      "ticket": 36661,
+      "functions": [
+        "django/db/backends/sqlite3/introspection.py::DatabaseIntrospection.get_relations",
+        "django/db/backends/postgresql/introspection.py::DatabaseIntrospection.get_relations",
+        "django/db/backends/mysql/introspection.py::DatabaseIntrospection.get_relations",
+        "django/db/backends/oracle/introspection.py::DatabaseIntrospection.get_relations",
+        "django/core/management/commands/inspectdb.py::Command.handle_inspection",
+        "django/db/backends/base/introspection.py::BaseDatabaseIntrospection.get_relations",
+        "django/db/backends/sqlite3/introspection.py::DatabaseIntrospection.get_constraints"
+      ],
+      "stop": "submit",
+      "turns": 12,
+      "tool_calls": 21,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 9,
+        "read_file": 11,
+        "submit": 1
+      },
+      "files_opened": 7,
+      "files": [
+        "django/core/management/commands/inspectdb.py",
+        "django/db/backends/postgresql/introspection.py",
+        "django/db/backends/sqlite3/introspection.py",
+        "django/db/backends/mysql/introspection.py",
+        "django/db/backends/oracle/introspection.py",
+        "django/db/backends/base/introspection.py",
+        "django/db/models/deletion.py"
+      ],
+      "usage": {
+        "input": 26,
+        "cache_write": 14806,
+        "cache_read": 92358,
+        "output": 4477
+      },
+      "wall_s": 40.9,
+      "task_index": 26,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.09107
+    },
+    {
+      "ticket": 36704,
+      "functions": [
+        "django/db/models/base.py::Model._check_composite_pk"
+      ],
+      "stop": "submit",
+      "turns": 7,
+      "tool_calls": 7,
+      "calls_by_tool": {
+        "search_code": 3,
+        "read_file": 3,
+        "locate_bug": 1,
+        "submit": 1
+      },
+      "files_opened": 2,
+      "files": [
+        "django/db/models/base.py",
+        "django/db/models/fields/composite.py"
+      ],
+      "usage": {
+        "input": 16,
+        "cache_write": 6084,
+        "cache_read": 22499,
+        "output": 2176
+      },
+      "wall_s": 23.4,
+      "task_index": 27,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.03925
+    },
+    {
+      "ticket": 36709,
+      "functions": [
+        "django/contrib/auth/checks.py::check_user_model"
+      ],
+      "stop": "submit",
+      "turns": 4,
+      "tool_calls": 4,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "search_code": 2,
+        "read_file": 1,
+        "submit": 1
+      },
+      "files_opened": 1,
+      "files": [
+        "django/contrib/auth/checks.py"
+      ],
+      "usage": {
+        "input": 10,
+        "cache_write": 2871,
+        "cache_read": 9115,
+        "output": 469
+      },
+      "wall_s": 5.0,
+      "task_index": 28,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.0128
+    },
+    {
+      "ticket": 36702,
+      "functions": [
+        "django/db/models/query.py::QuerySet.bulk_create",
+        "django/db/models/query.py::QuerySet._batched_insert",
+        "django/db/models/query.py::QuerySet._prepare_for_bulk_create",
+        "django/db/models/sql/compiler.py::SQLInsertCompiler.as_sql"
+      ],
+      "stop": "submit",
+      "turns": 13,
+      "tool_calls": 13,
+      "calls_by_tool": {
+        "locate_bug": 1,
+        "read_file": 8,
+        "search_code": 4,
+        "submit": 1
+      },
+      "files_opened": 4,
+      "files": [
+        "django/db/models/query.py",
+        "django/db/models/sql/compiler.py",
+        "django/db/models/options.py",
+        "django/db/models/base.py"
+      ],
+      "usage": {
+        "input": 28,
+        "cache_write": 16008,
+        "cache_read": 101038,
+        "output": 5163
+      },
+      "wall_s": 50.0,
+      "task_index": 29,
+      "model": "claude-sonnet-5-5",
+      "cost_usd": 0.10181
+    }
+  ]
+}

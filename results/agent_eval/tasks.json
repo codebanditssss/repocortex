@@ -1,0 +1,403 @@
+{
+  "tasks": [
+    {
+      "ticket": 36616,
+      "time": 1758645409,
+      "summary": "Add DatabaseOperations.adapt_durationfield_value() hook",
+      "description": "The MongoDB backend has to [https://github.com/mongodb/django-mongodb-backend/blob/f8c95289d6555d8e135e7177dc43576c01179360/django_mongodb_backend/fields/duration.py#L7-L14 monkeypatch] DurationField.get_db_prep_value() to adapt the value sent to the database. Following the pattern of other fields, a DatabaseOperations.adapt_durationfield_value() hook could be added to remedy this.",
+      "gold_functions": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.get_db_prep_value"
+      ],
+      "gold_files": [
+        "django/db/backends/base/operations.py",
+        "django/db/backends/oracle/operations.py",
+        "django/db/backends/postgresql/operations.py",
+        "django/db/models/fields/__init__.py"
+      ]
+    },
+    {
+      "ticket": 36434,
+      "time": 1758793108,
+      "summary": "manage.py runserver only respects python -u flag if --noreload is present (-u flag forces streams to be unbuffered)",
+      "description": "From python help: -u : force the stdout and stderr streams to be unbuffered; this option has no effect on stdin; also PYTHONUNBUFFERED=x Running **manage.py runserver** only respects python -u flag if --noreload is present, meanwhile setting the environment variable PYTHONUNBUFFERED=1 works fine. The solution is likely to make sure subprocesses are called with the very same flag.",
+      "gold_functions": [
+        "func:django/utils/autoreload.py:django.utils.autoreload.restart_with_reloader"
+      ],
+      "gold_files": [
+        "django/utils/autoreload.py"
+      ]
+    },
+    {
+      "ticket": 36605,
+      "time": 1758804703,
+      "summary": "Support chaining QuerySet.in_bulk() after .values() or .values_list()",
+      "description": "Per [https://github.com/django/new-features/issues/74 new-features#74 ], supporting values()/values_list() to be chained with in_bulk() would allow fetching limited columns while obeying database parameter limits. The implementation for #28586 would benefit from it, at least. #35690 improved the error message for these currently-unsupported cases, but also had an associated PR trying to add support: https://github.com/django/django/pull/18497 . We can revive this PR and finish it off.",
+      "gold_functions": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk.get_obj"
+      ],
+      "gold_files": [
+        "django/db/models/query.py"
+      ]
+    },
+    {
+      "ticket": 36142,
+      "time": 1758898066,
+      "summary": "django.shortcuts.get_object_or_404 does not support translation for error messages (i18n)",
+      "description": "class WheatProvidingViewSet(viewsets.ModelViewSet): queryset = WheatProviding.objects.all() serializer_class = WheatProvidingSerializer def destroy(self, request, *args, **kwargs): instance = self.get_object() The code above demonstrates a Django REST Framework (DRF) ModelViewSet. When a non-existent ID is provided, the destroy method raises a 404 Not Found error. However, the error message is not translated. The root cause of this issue is that ModelViewSet relies on Django\u2019s get_object_or_404 function, which does not support internationalization (i18n) for its error messages. Could you consider adding support for translations in the get_object_or_404 function? This enhancement would allow DRF to natively support localized error messages, improving its usability in multilingual applications.",
+      "gold_functions": [
+        "func:django/shortcuts.py:django.shortcuts.aget_list_or_404",
+        "func:django/shortcuts.py:django.shortcuts.aget_object_or_404",
+        "func:django/shortcuts.py:django.shortcuts.get_list_or_404",
+        "func:django/shortcuts.py:django.shortcuts.get_object_or_404"
+      ],
+      "gold_files": [
+        "django/shortcuts.py"
+      ]
+    },
+    {
+      "ticket": 36491,
+      "time": 1758898530,
+      "summary": "AttributeError: '_io.TextIOWrapper' object has no attribute 'getvalue' when setUpTestData raises and tests are run with \u2013parallel \u2013buffer",
+      "description": "Similar issue reported here: https://code.djangoproject.com/ticket/35794 If a test class raises an exception in setUpTestData(), the failure is reported correctly when tests are executed \u2022 in sequence, or \u2022 in parallel without buffering (--parallel only). However, running the same suite with both **--parallel and --buffer** causes the test run to abort with an unrelated AttributeError, and the original exception is lost. Minimal reproducer # tests/test_issue.py from django.test import TestCase class AbortingTest(TestCase): @classmethod def setUpTestData(cls): raise RuntimeError(\"Boo!\") def test_pass(self): pass class AnotherAbortingTest(TestCase): @classmethod def setUpTestData(cls): raise RuntimeError(\"Boo Too!\") def test_pass(self): pass the errors are reported clearly when running tests in sequence or --parallel **without --buffer** ====================================================================== ERROR: setUpClass (investment.investment.tests.test_issue.AnotherAbortingTest) ---------------------------------------------------------------------- Traceback (most recent call last): File \"/opt/homebrew/Cellar/python@3.12/3.12.11/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py\", line 166, in _handleClassSetUp setUpClass() File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/test/testcases.py\", line 1426, in setUpClass cls.setUpTestData() ^^^^^^^^^^^^^^^^^ File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/Indiana/investment/investment/tests/test_issue.py\", line 16, in setUpTestData raise RuntimeError(\"Boo Too!\") ^^^^^^^^^^^^^^^^^ RuntimeError: Boo Too! ====================================================================== ERROR: setUpClass (investment.investment.tests.test_issue.AbortingTest) ---------------------------------------------------------------------- Traceback (most recent call last): File \"/opt/homebrew/Cellar/python@3.12/3.12.11/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py\", line 166, in _handleClassSetUp setUpClass() File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/test/testcases.py\", line 1426, in setUpClass cls.setUpTestData() ^^^^^^^^^^^^^^^^^ File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/Indiana/investment/investment/tests/test_issue.py\", line 7, in setUpTestData raise RuntimeError(\"Boo!\") ^^^^^^^^^^^^^^^^^ RuntimeError: Boo! ---------------------------------------------------------------------- Ran 0 tests in 4.715s FAILED (errors=2) \u274c Fails (parallel **with** buffer) python manage.py test tests.test_issue --parallel --buffer Destroying test database for alias 'default'... Traceback (most recent call last): File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/Indiana/manage.py\", line 34, in <module> main() File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/Indiana/manage.py\", line 29, in main execute_from_command_line(sys.argv) File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/core/management/__init__.py\", line 442, in execute_from_command_line utility.execute() File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/core/management/__init__.py\", line 436, in execute self.fetch_command(subcommand).run_from_argv(self.argv) File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/core/management/commands/test.py\", line 24, in run_from_argv super().run_from_argv(argv) File \"/Users/rafaelsm@backbase.com/dell/home/rsoriano/repositorios/docker-indiana/venvs/indiana_3_12/lib/python3.12/site-packages/django/core/managem",
+      "gold_functions": [
+        "func:django/test/runner.py:django.test.runner.ParallelTestSuite.run"
+      ],
+      "gold_files": [
+        "django/test/runner.py"
+      ]
+    },
+    {
+      "ticket": 36277,
+      "time": 1759136067,
+      "summary": "Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
+      "description": "PostgreSQL 18, expected late 2025, [https://www.depesz.com/2025/02/28/waiting-for-postgresql-18-virtual-generated-columns/ includes virtual generated column support]. When PostgreSQL 18 is testable, we can update the associated database feature to a cached property that checks the server version: https://github.com/django/django/blob/d5c19f9b327fccc1f707e10de648fe9d4cdacb9b/django/db/backends/postgresql/features.py#L76",
+      "gold_functions": [
+        "func:django/db/backends/postgresql/features.py:django.db.backends.postgresql.features.DatabaseFeatures.is_postgresql_18"
+      ],
+      "gold_files": [
+        "django/db/backends/postgresql/features.py"
+      ]
+    },
+    {
+      "ticket": 36614,
+      "time": 1759214788,
+      "summary": "Deprecate QuerySet.values_list(flat=True) with no fields",
+      "description": "In #36606, this case was optimized, but it was also agreed we can deprecate it. Using values_list(flat=True) doesn\u2019t clearly declare which fields to fetch, and while it happens to select the PK due to field ordering, that\u2019s unclear. It's also a bit counterintuitive, compared to calls without flat=True, which select *all* fields.",
+      "gold_functions": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values_list"
+      ],
+      "gold_files": [
+        "django/db/models/query.py"
+      ]
+    },
+    {
+      "ticket": 36636,
+      "time": 1759518997,
+      "summary": "Outdated documentation in set_language() references removed session-based language storage",
+      "description": "The documentation and docstring for django.views.i18n.set_language() contain outdated information about session-based language storage, which was deprecated in Django 3.0 and removed in Django 4.0. **Affected locations:** 1. **Docstring in django/views/i18n.py:** Current text says: \"Redirect to a given URL while setting the chosen language **in the session** (if enabled) and in a cookie.\" 2. **Documentation (i18n section):** Current text says: \"The view expects to be called via the POST method, with a language parameter set in request. **If session support is enabled, the view saves the language choice in the user's session.** It also saves the language choice in a cookie that is named django_language by default.\" **The issue:** The actual code in set_language() does NOT save the language to the session. According to the Django 3.0 release notes: > \"To limit creation of sessions and hence favor some caching strategies, django.views.i18n.set_language() will stop setting the user's language in the session in Django 4.0. Since Django 2.1, the language is always stored in the LANGUAGE_COOKIE_NAME cookie.\" **Expected behavior:** Both the docstring and documentation should be updated to remove references to session storage and clarify that the language choice is stored only in the cookie (LANGUAGE_COOKIE_NAME, which defaults to django_language). **Credit:** Issue reported by kid_alan_ on Discord.",
+      "gold_functions": [
+        "func:django/views/i18n.py:django.views.i18n.set_language"
+      ],
+      "gold_files": [
+        "django/views/i18n.py"
+      ]
+    },
+    {
+      "ticket": 36623,
+      "time": 1759525977,
+      "summary": "Drop support for PostgreSQL 14 and PostGIS 3.1.",
+      "description": "The end of support for PostgreSQL 14 is November 2026. Therefore, Django 6.1 (released in August 2026) may set PostgreSQL 15 as the minimum version that it supports (see SupportedDatabaseVersions). Also drop support for PostGIS 3.1.",
+      "gold_functions": [
+        "func:django/contrib/gis/db/backends/postgis/operations.py:django.contrib.gis.db.backends.postgis.operations.PostGISOperations.spatial_version"
+      ],
+      "gold_files": [
+        "django/contrib/gis/db/backends/postgis/operations.py"
+      ]
+    },
+    {
+      "ticket": 36646,
+      "time": 1760195728,
+      "summary": "oracledb 3.4.0 TypeError: isinstance() arg 2 must be a type, a tuple of types, or a union",
+      "description": "When running Django v5.2.7 with oracledb 3.4.0, the following traceback is generated. In the 3.4.0 release they changed the definition of Binary from an alias to bytes to a function (https://github.com/oracle/python-oracledb/blob/a71468238ea98f38a331afe0a0664b2fa707a294/src/oracledb/constructors.py#L37-L41). The issue does not occur with oracledb 3.3.0. Traceback (most recent call last): File \"C:\\Users\\johnwa\\AppData\\Roaming\\uv\\python\\cpython-3.13.7-windows-x86_64-none\\Lib\\threading.py\", line 1043, in _bootstrap_inner self.run() ~~~~~~~~^^ File \"C:\\Users\\johnwa\\AppData\\Roaming\\uv\\python\\cpython-3.13.7-windows-x86_64-none\\Lib\\threading.py\", line 994, in run self._target(*self._args, **self._kwargs) ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\utils\\autoreload.py\", line 64, in wrapper fn(*args, **kwargs) ~~^^^^^^^^^^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\core\\management\\commands\\runserver.py\", line 137, in inner_run self.check_migrations() ~~~~~~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\core\\management\\base.py\", line 587, in check_migrations executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS]) File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\migrations\\executor.py\", line 18, in __init__ self.loader = MigrationLoader(self.connection) ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\migrations\\loader.py\", line 58, in __init__ self.build_graph() ~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\migrations\\loader.py\", line 235, in build_graph self.applied_migrations = recorder.applied_migrations() ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\migrations\\recorder.py\", line 89, in applied_migrations if self.has_table(): ~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\migrations\\recorder.py\", line 63, in has_table with self.connection.cursor() as cursor: ~~~~~~~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\utils\\asyncio.py\", line 26, in inner return func(*args, **kwargs) File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\base\\base.py\", line 320, in cursor return self._cursor() ~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\base\\base.py\", line 296, in _cursor self.ensure_connection() ~~~~~~~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\utils\\asyncio.py\", line 26, in inner return func(*args, **kwargs) File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\base\\base.py\", line 279, in ensure_connection self.connect() ~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\utils\\asyncio.py\", line 26, in inner return func(*args, **kwargs) File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\base\\base.py\", line 258, in connect self.init_connection_state() ~~~~~~~~~~~~~~~~~~~~~~~~~~^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\oracle\\base.py\", line 336, in init_connection_state cursor.execute( ~~~~~~~~~~~~~~^ \"SELECT 1 FROM DUAL WHERE DUMMY %s\" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ % self._standard_operators[\"contains\"], ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ [\"X\"], ^^^^^^ ) ^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\oracle\\base.py\", line 630, in execute query, params = self._fix_for_params(query, params, unify_by_values=True) ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\oracle\\base.py\", line 627, in _fix_for_params return query, self._format_params(params) ~~~~~~~~~~~~~~~~~~~^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\django\\db\\backends\\oracle\\base.py\", line 555, in _format_params return {k: OracleParam(v, self, True) for k, v in params.items()} ~~~~~~~~~~~^^^^^^^^^^^^^^^ File \"C:\\Projects\\rsvp\\.venv\\Lib\\site-packages\\djang",
+      "gold_functions": [
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.OracleParam.__init__",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_datefield_value",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_timefield_value"
+      ],
+      "gold_files": [
+        "django/db/backends/oracle/base.py",
+        "django/db/backends/oracle/operations.py"
+      ]
+    },
+    {
+      "ticket": 36660,
+      "time": 1760362943,
+      "summary": "False-positive E012 check error when index contains descending order field",
+      "description": "When a model has an index defined like this: class Meta: indexes = [models.Index(fields=[\"foo\", \"-bar\"])] The system check framework in 6.0a1 will now report the following error: foo.FooModel: (models.E012) 'indexes' refers to the nonexistent field '-bar'. Tested with Django 6.0a1. This was not happening in 5.2. Might have something to do with these [https://github.com/django/django/commit/8638d8bf74c1a58302c97d4436ad2eb08438145b changes] but I'm not sure.",
+      "gold_functions": [
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.check"
+      ],
+      "gold_files": [
+        "django/db/models/indexes.py"
+      ]
+    },
+    {
+      "ticket": 36611,
+      "time": 1760378019,
+      "summary": "Model validation of constraint involving ForeignObject considers only first column",
+      "description": "Discovered during #36580 in [https://github.com/django/django/pull/19798/files#r2350234373 review]. Similar to #36431, where only the first column of a ForeignObject was considered in values(), only the first column is considered during model validation of constraints. Composite PK's are not affected, because they raise system checks if you try to use them in a constraint. But ForeignObject has been broken since its introduction in this regard. Reproduced on 5.2, but thus, not a release blocker. Rough test (needs adjusting to avoid hijacking this model and unnecessarily skipping tests on backends not supporting constraints): #!diff diff --git a/tests/composite_pk/models/tenant.py b/tests/composite_pk/models/tenant.py index 65eb0feae8..c818ec4de7 100644 --- a/tests/composite_pk/models/tenant.py +++ b/tests/composite_pk/models/tenant.py @@ -48,6 +48,16 @@ class Comment(models.Model): text = models.TextField(default=\"\", blank=True) integer = models.IntegerField(default=0) + class Meta: + # TODO: use new model instead + required_db_features = {\"supports_table_check_constraints\"} + constraints = [ + models.CheckConstraint( + condition=models.Q(user__lt=(1000, 1000)), + name=\"user_limit\", + ), + ] + class Post(models.Model): pk = models.CompositePrimaryKey(\"tenant_id\", \"id\") diff --git a/tests/composite_pk/test_models.py b/tests/composite_pk/test_models.py index 27157a52ad..05aafd5306 100644 --- a/tests/composite_pk/test_models.py +++ b/tests/composite_pk/test_models.py @@ -1,6 +1,8 @@ from django.contrib.contenttypes.models import ContentType from django.core.exceptions import ValidationError +from django.db import connection from django.test import TestCase +from django.test.utils import CaptureQueriesContext from .models import Comment, Tenant, Token, User @@ -119,7 +121,23 @@ class CompositePKModelsTests(TestCase): self.assertSequenceEqual(ctx.exception.messages, messages) def test_full_clean_update(self): - with self.assertNumQueries(1): + with CaptureQueriesContext(connection) as ctx: + self.comment_1.full_clean() + select_queries = [ + query[\"sql\"] + for query in ctx.captured_queries + if \"select\" in query[\"sql\"].lower() + ] + self.assertEqual(len(select_queries), 2, select_queries) # 1 on 5.2.x + + def test_full_clean_update_invalid(self): + self.comment_1.tenant_id = 1001 + with self.assertRaises(ValidationError): + self.comment_1.full_clean() + + self.comment_1.tenant_id = 1 + self.comment_1.user_id = 1001 + with self.assertRaises(ValidationError): self.comment_1.full_clean() def test_field_conflicts(self): diff --git a/tests/composite_pk/tests.py b/tests/composite_pk/tests.py index 2245a472e4..5b7e34a0bc 100644 --- a/tests/composite_pk/tests.py +++ b/tests/composite_pk/tests.py @@ -187,12 +187,17 @@ class CompositePKTests(TestCase): self.assertEqual(user.email, self.user.email) def test_select_related(self): - Comment.objects.create(tenant=self.tenant, id=2) + user2 = User.objects.create( + tenant=self.tenant, + id=2, + email=\"user0002@example.com\", + ) + Comment.objects.create(tenant=self.tenant, id=2, user=user2) with self.assertNumQueries(1): comments = list(Comment.objects.select_related(\"user\").order_by(\"pk\")) self.assertEqual(len(comments), 2) self.assertEqual(comments[0].user, self.user) - self.assertIsNone(comments[1].user) + self.assertEqual(comments[1].user, user2) def test_model_forms(self): fields = [\"tenant\", \"id\", \"user_id\", \"text\", \"integer\"] ---- Notice 1001 only appears in the first query of the test_full_clean_update_invalid. #!py FAIL: test_full_clean_update_invalid (composite_pk.test_models.CompositePKModelsTests.test_full_clean_update_invalid) ---------------------------------------------------------------------- Traceback (most recent call last): File \"/Users/jwalls/django/tests/composite_pk/test_models.py\", line 140, in test_full_clean_update_invalid with self.assertRaises(ValidationError): ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^ AssertionError: ValidationError not raised --------------------------------",
+      "gold_functions": [
+        "func:django/db/models/base.py:django.db.models.base.Model._check_local_fields"
+      ],
+      "gold_files": [
+        "django/db/models/base.py"
+      ]
+    },
+    {
+      "ticket": 36654,
+      "time": 1760445521,
+      "summary": "Incorrect docstring in model _do_update",
+      "description": "In 55a0073b3beb9de8f7c1f7c44a7d0bc10126c841 _do_update was changed not to return bool but a list of updated fileds but the docstring at https://github.com/django/django/blob/main/django/db/models/base.py#L1185 was not updated Try to update the model. Return True if the model was updated (if an update query was done and a matching row was found in the DB).",
+      "gold_functions": [
+        "func:django/db/models/base.py:django.db.models.base.Model._do_update"
+      ],
+      "gold_files": [
+        "django/db/models/base.py"
+      ]
+    },
+    {
+      "ticket": 36648,
+      "time": 1760471309,
+      "summary": "\"pk\" exception when using first() on unordered queryset with aggregation does not consider composite pk fields provided separately",
+      "description": "Discovered while poking into the source for first() that we have a special case for \"pk\" that does not behave equivalently for composite primary key fields specified individually. A test for CompositePKAggregateTests: The commented out assertion shows the point of the guard -- it should raise a TypeError in most cases of using first() on an unordered queryset, see #33772. The second assertion shows the exception for values(\"pk\") -- this does not raise. The third assertion tries to provide the values for a composite pk separately -- this should not raise... #!py def test_group_by_guard(self): # This assertion passes, only included to demonstrate the behavior. # with self.assertRaises(TypeError): # Comment.objects.values(\"text\").annotate(max=Max(\"id\")).first() Comment.objects.values(\"pk\").annotate(max=Max(\"id\")).first() # passes Comment.objects.values(\"tenant\", \"id\").annotate(max=Max(\"id\")).first() # fails ... but does: #!py TypeError: Cannot use QuerySet.first() on an unordered queryset performing aggregation. Add an ordering with order_by().",
+      "gold_functions": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._check_ordering_first_last_queryset_aggregation"
+      ],
+      "gold_files": [
+        "django/db/models/query.py"
+      ]
+    },
+    {
+      "ticket": 36671,
+      "time": 1760814251,
+      "summary": "Drop support for SQLite < 3.37.0.",
+      "description": "SQLite 3.35.5+ supports ALTER TABLE ... DROP COLUMN. SQLite 3.35+ can return columns from INSERT and UPDATE. Ubuntu Noble ships with SQLite 3.45.1 (which will still by supported by Django). Debian Bullseye will EOL in August 2026 and Django 6.1 will be released in August 2026, so we may ignore it. Debian Bookworm ships with SQLite 3.40.1 (which will still by supported by Django). Python 3.12 ships with 3.43.1. \u200bSQLite 3.36.0 was released in June 2021. SQLite version support seems like a similar situation as GEOS libraries which we generally support about 5 years after released.",
+      "gold_functions": [
+        "func:django/db/backends/sqlite3/features.py:django.db.backends.sqlite3.features.DatabaseFeatures.max_query_params",
+        "func:django/db/backends/sqlite3/introspection.py:django.db.backends.sqlite3.introspection.DatabaseIntrospection.get_constraints",
+        "func:django/db/backends/sqlite3/schema.py:django.db.backends.sqlite3.schema.DatabaseSchemaEditor.remove_field"
+      ],
+      "gold_files": [
+        "django/db/backends/sqlite3/features.py",
+        "django/db/backends/sqlite3/introspection.py",
+        "django/db/backends/sqlite3/schema.py"
+      ]
+    },
+    {
+      "ticket": 36470,
+      "time": 1760988092,
+      "summary": "Potential log injection in development server (runserver) logging",
+      "description": "django.core.servers.basehttp.WSGIRequestHandler.log_message() may emit log records that are not properly escaped or sanitized, making it possible for specially crafted requests to inject terminal escape sequences or misleading log content. This only affects the internal development server (runserver command). Per the documentation, this server is not intended for production use and has not been security-audited. Although this is not considered a vulnerability, a fix for defense-in-depth should be applied, also to avoid confusion and future security reports about the same thing. This fix would be in line to what [https://github.com/python/cpython/blob/1c7efaf58a62d848421b2da97360ba3df7d7856b/Lib/http/server.py#L626 Python does for esacaping]. Thanks to \"Kainan Zhang (@4xpl0r3r) from Fortinet\" for the report in the security mailing list.",
+      "gold_functions": [
+        "func:django/core/servers/basehttp.py:django.core.servers.basehttp.WSGIRequestHandler.log_message",
+        "func:django/utils/log.py:django.utils.log.log_message",
+        "func:django/utils/log.py:django.utils.log.log_response"
+      ],
+      "gold_files": [
+        "django/core/servers/basehttp.py",
+        "django/utils/log.py"
+      ]
+    },
+    {
+      "ticket": 36656,
+      "time": 1761057912,
+      "summary": "GZipMiddleware drops content from async streaming responses",
+      "description": "0bd2c0c9015b53c41394a1c0989afbfd94dc2830 (#33735) expanded GZipMiddleware to support async streaming responses. But it does so with a faulty gzip_wrapper() that compresses chunks as individual files, rather than as a continuous stream. As a result, only the first chunk is decompressible, and browsers drop the rest of the response, even as they stay connected and download all the data. The solution is to use a streaming approach with GzipFile, as is already done for sync responses in compress_sequence(). Additionally, the sync approach currently starts by sending an empty chunk to flush the headers. I think that may be necessary for async responses too, since the first content chunk may take an arbitrary amount of time to be generated. To reproduce the issue, use the app below, which can be run with uv run --script. If you comment out GzipMiddleware and load the page in a browser, you will see the numbers incrementing every second. If you include GzipMiddleware, only the header will appear, and the rest of the response will be dropped. #!python #!/usr/bin/env uv run --script # /// script # requires-python = \">=3.14\" # dependencies = [ # \"daphne\", # \"django\", # ] # /// from __future__ import annotations import asyncio import os import sys from django.conf import settings from django.core.asgi import get_asgi_application from django.http import StreamingHttpResponse from django.urls import path settings.configure( # Dangerous: disable host header validation ALLOWED_HOSTS=[\"*\"], # Use DEBUG=1 to enable debug mode DEBUG=(os.environ.get(\"DEBUG\", \"\") == \"1\"), # Make this module the urlconf ROOT_URLCONF=__name__, # Use Daphne for async runserver INSTALLED_APPS=[ \"daphne\", ], ASGI_APPLICATION=f\"{__name__}.app\", # Only gzip middleware MIDDLEWARE=[ \"django.middleware.gzip.GZipMiddleware\", ], ) async def clock(request): async def stream(): yield \"<h1>Clock</h1>\\n\" count = 1 while True: yield f\"<p>{count}</p>\\n\" count += 1 await asyncio.sleep(1) return StreamingHttpResponse(stream()) urlpatterns = [ path(\"\", clock), ] app = get_asgi_application() if __name__ == \"__main__\": from django.core.management import execute_from_command_line execute_from_command_line(sys.argv)",
+      "gold_functions": [
+        "func:django/middleware/gzip.py:django.middleware.gzip.GZipMiddleware.process_response",
+        "func:django/utils/text.py:django.utils.text.acompress_sequence"
+      ],
+      "gold_files": [
+        "django/middleware/gzip.py",
+        "django/utils/text.py"
+      ]
+    },
+    {
+      "ticket": 36677,
+      "time": 1761101660,
+      "summary": "Parallel test runner runs system checks with database aliases before those aliases are set up",
+      "description": "#36083 made the parallel test runner run system checks in workers. Well and good, but the call is done before database aliases are set up. This should explain the recent failures with the geodjango label on Github Actions, also reproducible locally, with errors like: django.db.utils.OperationalError: connection failed: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL: database \"django-postgis-other\" does not exist I'm showing this is fixed with: #!diff diff --git a/django/test/runner.py b/django/test/runner.py index 25089a6db1..73665a63d2 100644 --- a/django/test/runner.py +++ b/django/test/runner.py @@ -463,9 +463,6 @@ def _init_worker( process_setup(*process_setup_args) django.setup() setup_test_environment(debug=debug_mode) - call_command( - \"check\", stdout=io.StringIO(), stderr=io.StringIO(), databases=used_aliases - ) db_aliases = used_aliases if used_aliases is not None else connections for alias in db_aliases: @@ -477,6 +474,10 @@ def _init_worker( connection._test_serialized_contents = value connection.creation.setup_worker_connection(_worker_id) + if is_spawn_or_forkserver: + call_command( + \"check\", stdout=io.StringIO(), stderr=io.StringIO(), databases=used_aliases + ) def _run_subsuite(args): \"\"\" Regression in 606fc352799e372928fa2c978ab99f0fb6d6017c. Interestingly, this specific failure did not manifest until e8190b370e508648b0f0ee9b86876f97d3997e14.",
+      "gold_functions": [
+        "func:django/test/runner.py:django.test.runner._init_worker"
+      ],
+      "gold_files": [
+        "django/test/runner.py"
+      ]
+    },
+    {
+      "ticket": 36674,
+      "time": 1761335499,
+      "summary": "select_related() leaks memory",
+      "description": "Calls to select_related() create nested functions that aren't cleaned up until garbage collection runs: Borrowed testing strategy from #34865: #!diff diff --git a/tests/select_related/tests.py b/tests/select_related/tests.py index 41ed350cf3..252e884d7a 100644 --- a/tests/select_related/tests.py +++ b/tests/select_related/tests.py @@ -242,6 +242,30 @@ class SelectRelatedTests(TestCase): FETCH_PEERS, ) + def test_memory_leak(self): + # todo: factor out a test util + import gc + + # Schedule the restore of the garbage collection settings. + self.addCleanup(gc.set_debug, 0) + self.addCleanup(gc.enable) + + # Disable automatic garbage collection to control when it's triggered, + # then run a full collection cycle to ensure gc.garbage is empty. + gc.disable() + gc.collect() + + # The garbage list isn't automatically populated to avoid CPU overhead, + # so debugging needs to be enabled to track all unreachable items and + # have them stored in gc.garbage. + gc.set_debug(gc.DEBUG_SAVEALL) + + list(Species.objects.select_related(\"genus\")) + + # Enforce garbage collection to populate gc.garbage for inspection. + gc.collect() + self.assertEqual(gc.garbage, []) + class SelectRelatedValidationTests(SimpleTestCase): \"\"\" Gives: #!diff AssertionError: Lists differ: [<cell at 0x10630c940: function object at [148 chars]040>] != [] First list contains 3 additional elements. First extra element 0: <cell at 0x10630c940: function object at 0x1079b8040> + [] - [<cell at 0x10630c940: function object at 0x1079b8040>, - (<cell at 0x10630c940: function object at 0x1079b8040>,), - <function SQLCompiler.get_select.<locals>.get_select_from_parent at 0x1079b8040>] At a glance, it looks like we can lift get_select_from_parent to a class method or all the way to module-level without a loss of functionality to address this.",
+      "gold_functions": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_select_from_parent"
+      ],
+      "gold_files": [
+        "django/db/models/sql/compiler.py"
+      ]
+    },
+    {
+      "ticket": 36683,
+      "time": 1761409287,
+      "summary": "Update with Distinct Produces Unintentional Results",
+      "description": "Similar to #32433. The ORM permits calling update() on a Queryset when a distinct() was applied. This results in unforeseen consequences where a larger data set will be updated than what is expected. Similar to the example provided in #32433: Comment.objects.order_by('post_id', 'created_at').distinct('post_id').update(deleted=True) The developer may assume that this will delete only one comment per post_id, however, the distinct() is ignored (as UPDATE has no distinct) which results in the entire table being updated: UPDATE \"post_comment\" SET \"deleted\" = true' Since delete() already guards against this case, I believe update() should behave consistently to protect the developer from mistakes, even though applying a distinct() before an update() is generally unusual.",
+      "gold_functions": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.update"
+      ],
+      "gold_files": [
+        "django/db/models/query.py"
+      ]
+    },
+    {
+      "ticket": 26434,
+      "time": 1761592279,
+      "summary": "Inconsistent results of QuerySet.count() when ordering is not a subset of explicit grouping.",
+      "description": "Using a PostgreSQL backend database, in some cases with QuerySets involving 'annotations', 'values' or 'values_list' and ordering('order_by') clauses the resulting QuerySet 'count()' method fails to predict the real row result unless that QuerySet is evaluated. For instance: #!python q = BundleVersion.objects.order_by('-id').values_list(\"port__id\", \"asset_bundle__id\").annotate(max=models.Max(\"id\")) This QuerySet using PostgreSQL would, in fact, group the results by 'BundleVersion.id' instead of the tuple (\"port!__id\", \"asset_bundle!__id\") due to the 'order_by' clause using a column not in the 'values_list'. This is a documented behavior. The problem is that if 'q' is not evaluated yet, calling 'q.count()' will return an amount of rows as if the grouping was done on the tuple (\"port!__id\", \"asset_bundle!__id\"). 'After' evaluating 'q', or calling 'len(q)', the result of 'q.count()' will be the expected, as if the grouping was done using BundleVersion.id.",
+      "gold_functions": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering"
+      ],
+      "gold_files": [
+        "django/db/models/sql/query.py"
+      ]
+    },
+    {
+      "ticket": 36596,
+      "time": 1761663349,
+      "summary": "django_test_skips and django_test_expected_failures have no effect on the parallel test runner in \"spawn\" mode",
+      "description": "The [https://docs.djangoproject.com/en/5.2/releases/3.2/#database-backends django_test_expected_failures] attribute has no effect on the parallel test runner in \"spawn\" multiprocessing mode, because it uses setattr to [https://github.com/django/django/blob/4e7a991c12a113229e0927974d3bf94ea04eecf6/django/db/backends/base/creation.py#L365 monkey-patch] a class, and that patching is lost when workers are spawned. To reproduce: - add multiprocessing.set_start_method(\"spawn\") near the top of runtests.py if not running on MacOS or Windows - adjust postgres database settings to include \"OPTIONS\": { \"server_side_binding\": True} (to trigger an expected failure), - ./runtests.py aggregation.tests --settings=test_postgres --parallel=1 : passes - ./runtests.py aggregation.tests --settings=test_postgres: fails Python will be defaulting all systems into \"spawn\" by default in Python 3.14, so we're about to see more traffic into this.",
+      "gold_functions": [
+        "func:django/db/backends/sqlite3/creation.py:django.db.backends.sqlite3.creation.DatabaseCreation.setup_worker_connection",
+        "func:django/test/runner.py:django.test.runner._init_worker"
+      ],
+      "gold_files": [
+        "django/db/backends/sqlite3/creation.py",
+        "django/test/runner.py"
+      ]
+    },
+    {
+      "ticket": 26434,
+      "time": 1761666001,
+      "summary": "Inconsistent results of QuerySet.count() when ordering is not a subset of explicit grouping.",
+      "description": "Using a PostgreSQL backend database, in some cases with QuerySets involving 'annotations', 'values' or 'values_list' and ordering('order_by') clauses the resulting QuerySet 'count()' method fails to predict the real row result unless that QuerySet is evaluated. For instance: #!python q = BundleVersion.objects.order_by('-id').values_list(\"port__id\", \"asset_bundle__id\").annotate(max=models.Max(\"id\")) This QuerySet using PostgreSQL would, in fact, group the results by 'BundleVersion.id' instead of the tuple (\"port!__id\", \"asset_bundle!__id\") due to the 'order_by' clause using a column not in the 'values_list'. This is a documented behavior. The problem is that if 'q' is not evaluated yet, calling 'q.count()' will return an amount of rows as if the grouping was done on the tuple (\"port!__id\", \"asset_bundle!__id\"). 'After' evaluating 'q', or calling 'len(q)', the result of 'q.count()' will be the expected, as if the grouping was done using BundleVersion.id.",
+      "gold_functions": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering"
+      ],
+      "gold_files": [
+        "django/db/models/sql/query.py"
+      ]
+    },
+    {
+      "ticket": 36678,
+      "time": 1761739891,
+      "summary": "Infinite retries in parallel test runner if _init_worker fails",
+      "description": "Recent GitHub actions were timing out after 6 hours because of an infinite retry in the parallel test runner. To reproduce, throw an error at the top of _init_worker. We will fix the specific error source in #36677, but we should also fix the parallel test runner to have a bound on retries.",
+      "gold_functions": [
+        "func:django/test/runner.py:django.test.runner.ParallelTestSuite.run",
+        "func:django/test/runner.py:django.test.runner._safe_init_worker"
+      ],
+      "gold_files": [
+        "django/test/runner.py"
+      ]
+    },
+    {
+      "ticket": 35381,
+      "time": 1761764452,
+      "summary": "Provide JSONNull expression to represent JSON null value",
+      "description": "From Simon Charette in comment:3, in reference to the issues between SQL's NULL and JSON's null: In order to finally solve this null ambiguity problem we should: 1. Introduce a JSONNull expression to disambiguate between the two. It would also allow the creation of model instances with a JSON null which is convoluted today as it requires models.Value(None, models.JSONField()) to be used. 2. Deprecate filter(jsonfield=None) meaning JSON null by requiring JSONNull to be used instead. Should we only do this at the top level to still allow jsonfield__key=None to filter against null keys? An alternative would be to introduce a __jsonnull lookup. The good news is that Django makes it very hard to store JSON null in the first place since #34754 so this kind of constraints should be rarely needed. == Old description == Regression is still present in 5.0 and main branch given a model defined as follow from django.db import models class JSONFieldModel(models.Model): data = models.JSONField(null=True, blank=True, default=None) class Meta: required_db_features = {\"supports_json_field\"} constraints = [ models.CheckConstraint( check=~models.Q(data=models.Value(None, models.JSONField())), name=\"json_data_cant_be_json_null\", ), ] the following test works in django 4.1.13, fails in later version from django.test import TestCase, skipUnlessDBFeature from .models import JSONFieldModel class CheckConstraintTests(TestCase): @skipUnlessDBFeature(\"supports_json_field\") def test_full_clean_on_null_value(self): instance = JSONFieldModel.objects.create(data=None) # data = SQL Null value instance.full_clean() tests/runtests.py json_null_tests ====================================================================== ERROR: test_full_clean_on_null_value (json_null_tests.tests.CheckConstraintTests.test_full_clean_on_null_value) ---------------------------------------------------------------------- Traceback (most recent call last): File \"/Users/olivier/dev/django.dev/olibook/django/django/test/testcases.py\", line 1428, in skip_wrapper return test_func(*args, **kwargs) ^^^^^^^^^^^^^^^^^^^^^^^^^^ File \"/Users/olivier/dev/django.dev/olibook/django/tests/json_null_tests/tests.py\", line 13, in test_full_clean_on_null_value instance.full_clean() File \"/Users/olivier/dev/django.dev/olibook/django/django/db/models/base.py\", line 1504, in full_clean raise ValidationError(errors) django.core.exceptions.ValidationError: {'__all__': ['Constraint \u201cjson_data_cant_be_json_null\u201d is violated.']} ---------------------------------------------------------------------- Attached a patch that will create run json_null_tests folder in django's tests directories. Test can be run with tests/runtests.py json_null_tests NOTE : in django 5.1 the CheckConstraint.check parameter as been renamed to CheckConstraint.condition. I ran a git bisect on this test case: 8fcb9f1f106cf60d953d88aeaa412cc625c60029 is bad e14d08cd894e9d91cb5d9f44ba7532c1a223f458 is good git bisect run tests/runtests.py json_null_tests 5c23d9f0c32f166c81ecb6f3f01d5077a6084318 is identified as first bad commit the issue appears with both sqlite and postgres backends A few words on what we I'm trying to achieve (some context on the regression): The json_data_cant_be_json_null aims to prevent having JsonModel.data = None (SQL Null) and JSONModel.data = Value(None, JSONField()) (JSON null) values in the database. These leads to unwanted behaviors when filtering on the null value, and I settled on representing the absence of value with SQL Null and not JSON null. The app was running in django 4.1 and I'm upgrading it to later django version. That's how the issue appeared.",
+      "gold_functions": [
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONExact.process_rhs"
+      ],
+      "gold_files": [
+        "django/db/models/fields/json.py"
+      ]
+    },
+    {
+      "ticket": 36696,
+      "time": 1761914677,
+      "summary": "Using deferred annotations on signals, tasks, etc. in Python 3.14 raises NameError",
+      "description": "Starting with Python 3.14, deferred evaluation of annotations (PEP-649) is default now. This would suggest that using annotations in templatetags or signals should be as easy as: from typing import TYPE_CHECKING from django.contrib.auth.signals import user_logged_in from django.dispatch import receiver if TYPE_CHECKING: from django.http import HttpRequest @receiver(user_logged_in) def handle_successful_login(request: HttpRequest, *args, **kwargs) -> None: print(\"Someone logged in successful - this would contain useful code\") Weirdly, as long as DEBUG is set to False, this code will run without problems. However, if DEBUG is turned to True, Signal.connect will use func_accepts_kwargs from django.utils.inspect to check if handle_successful_login accepts kwargs. func_accepts_kwargs will ultimatively use inspect.signature on the function, which triggers evaluation of the annotations and leads to NameError, as TYPE_CHECKING is False here. This can be resolved in various ways: 1. One can add from __future__ import annotations to switch back to Stringified annotations. However, this is called to be deprecated in the future 2. One can switch to always import HttpRequest. This would work, but code linters will fight this, argueing that HttpRequest is only used as an type annotation here (which is correct) 3. As django.utils.inspect does not actually care for the annotations, inspect.inspect(..., annotation_format=annotationlib.Format.STRING) can be used (sadly this works only in Python 3.14). My suggestion would be to something around @functools.lru_cache(maxsize=512) def _get_func_parameters(func, remove_first): if sys.version_info[0:2] >= (3, 14): import annotationlib signature = inspect.signature(func, annotation_format=annotationlib.Format.STRING) else: signature = inspect.signature(func) parameters = tuple(signature.parameters.values()) if remove_first: parameters = parameters[1:] return parameters But I agree that it might not be the nicest solution.",
+      "gold_functions": [
+        "func:django/utils/inspect.py:django.utils.inspect._get_func_parameters"
+      ],
+      "gold_files": [
+        "django/utils/inspect.py"
+      ]
+    },
+    {
+      "ticket": 36661,
+      "time": 1761917607,
+      "summary": "Add introspection support for database-level delete options",
+      "description": "After #21961, we could add support for introspecting database-level delete options and producing better output from inspectdb. See [https://github.com/django/django/pull/19925#issuecomment-3395231548 comment].",
+      "gold_functions": [
+        "func:django/core/management/commands/inspectdb.py:django.core.management.commands.inspectdb.Command.handle_inspection",
+        "func:django/db/backends/base/introspection.py:django.db.backends.base.introspection.BaseDatabaseIntrospection.get_relations",
+        "func:django/db/backends/mysql/base.py:django.db.backends.mysql.base.DatabaseWrapper.check_constraints",
+        "func:django/db/backends/mysql/introspection.py:django.db.backends.mysql.introspection.DatabaseIntrospection.get_relations",
+        "func:django/db/backends/oracle/introspection.py:django.db.backends.oracle.introspection.DatabaseIntrospection.get_relations",
+        "func:django/db/backends/postgresql/introspection.py:django.db.backends.postgresql.introspection.DatabaseIntrospection.get_relations",
+        "func:django/db/backends/sqlite3/introspection.py:django.db.backends.sqlite3.introspection.DatabaseIntrospection.get_constraints",
+        "func:django/db/backends/sqlite3/introspection.py:django.db.backends.sqlite3.introspection.DatabaseIntrospection.get_relations"
+      ],
+      "gold_files": [
+        "django/core/management/commands/inspectdb.py",
+        "django/db/backends/base/introspection.py",
+        "django/db/backends/mysql/base.py",
+        "django/db/backends/mysql/introspection.py",
+        "django/db/backends/oracle/introspection.py",
+        "django/db/backends/postgresql/introspection.py",
+        "django/db/backends/sqlite3/introspection.py"
+      ]
+    },
+    {
+      "ticket": 36704,
+      "time": 1762275561,
+      "summary": "Proxy model with a CompositePrimaryKey fails system check with false positive: (models.E042) '<field>' cannot be included in the composite primary key",
+      "description": "A proxy subclass model of a parent model that uses CompositePrimaryKey causes manage.py check to fail: $ python manage.py check SystemCheckError: System check identified some issues: ERRORS: example.ProxyOrderLineItem: (models.E042) 'order_id' cannot be included in the composite primary key. HINT: 'order_id' field is not a local field. example.ProxyOrderLineItem: (models.E042) 'product_id' cannot be included in the composite primary key. HINT: 'product_id' field is not a local field. System check identified 2 issues (0 silenced). This models.py module will reproduce the issue: # Example from https://docs.djangoproject.com/en/5.2/topics/composite-primary-key/ from django.db import models class Product(models.Model): name = models.CharField(max_length=100) class Order(models.Model): reference = models.CharField(max_length=20, primary_key=True) class OrderLineItem(models.Model): pk = models.CompositePrimaryKey(\"product_id\", \"order_id\") product = models.ForeignKey(Product, on_delete=models.CASCADE) order = models.ForeignKey(Order, on_delete=models.CASCADE) quantity = models.IntegerField() # This proxy model triggers the check error class ProxyOrderLineItem(OrderLineItem): class Meta: proxy = True The issue is caused by [https://github.com/django/django/blob/05ba1a9228128614fb3c475f1c4bdf0160f44dba/django/db/models/base.py#L1825-L1826 these two lines of the checks for classes with CompositePrimaryKey]: elif field not in meta.local_fields: hint = f\"{field_name!r} field is not a local field.\" The meta.local_fields is empty for proxy subclasses, but the check passes for the parent class because the meta.local_fields contains the fields in the parent. I believe this is a false-positive, as the proxy model seems to work as expected if the failed checks are suppressed.",
+      "gold_functions": [
+        "func:django/db/models/base.py:django.db.models.base.Model._check_composite_pk"
+      ],
+      "gold_files": [
+        "django/db/models/base.py"
+      ]
+    },
+    {
+      "ticket": 36709,
+      "time": 1762379775,
+      "summary": "System checks for is_authenticated (auth.C010) and 'is_anonymous' (auth.C009) fail to detect @staticmethod overrides",
+      "description": "'Summary:' The Django system check command (manage.py check) fails to identify an issue when a custom user model overrides is_authenticated or is_anonymous with a @staticmethod. The relevant checks, auth.C009 and auth.C010, appear to check only for MethodType, but do not correctly identify staticmethod objects. This is a flaw in the check's tooling, as this override pattern causes bool(User()) to incorrectly evaluate to True, which could lead to issues in custom developer code that manually instantiates the user model. === How to Reproduce 1. 'Define a VulnerableUser model in models.py:' #!python from django.contrib.auth.models import AbstractUser class VulnerableUser(AbstractUser): \"\"\" This model overrides is_authenticated with a staticmethod, which the check command fails to detect. \"\"\" @staticmethod def is_authenticated(): return False @staticmethod def is_anonymous(): return False 2. 'Point to this model in settings.py:' AUTH_USER_MODEL = 'myapp.VulnerableUser' 3. 'Run the system check:' python manage.py check === Expected Behavior The check command should detect the improper override and report errors auth.C009 and auth.C010: System check identified 2 issues: CRITICAL: myapp.VulnerableUser.is_anonymous must be an attribute or property... (auth.C009) CRITICAL: myapp.VulnerableUser.is_authenticated must be an attribute or property... (auth.C010) === Actual Behavior The check command fails to detect the staticmethod and reports no issues: System check identified no issues (0 silenced). === Proposed Patch The vulnerability in the check lies in django/contrib/auth/checks.py. The current check incorrectly uses isinstance(..., MethodType), which fails to detect staticmethod overrides as they are resolved as type function. The check should be modified to use callable() instead. AnonymousUser (the correct implementation) uses @property, which results in a bool value, and callable(False) is False. The vulnerable staticmethod override results in a function object, and callable(<function>) is True. 'File:' django/contrib/auth/checks.py 'Current (flawed) code:' #!python if isinstance(cls().is_anonymous, MethodType): errors.append( checks.Critical( \"%s.is_anonymous must be an attribute or property rather than \" \"a method. Ignoring this is a security issue as anonymous \" \"users will be treated as authenticated!\" % cls, obj=cls, id=\"auth.C009\", ) ) if isinstance(cls().is_authenticated, MethodType): errors.append( checks.Critical( \"%s.is_authenticated must be an attribute or property rather \" \"than a method. Ignoring this is a security issue as anonymous \" \"users will be treated as authenticated!\" % cls, obj=cls, id=\"auth.C010\", ) ) return errors 'Suggested patch:' #!python if callable(cls().is_anonymous): # MODIFIED errors.append( checks.Critical( \"%s.is_anonymous must be an attribute or property rather than \" \"a method. Ignoring this is a security issue as anonymous \" \"users will be treated as authenticated!\" % cls, obj=cls, id=\"auth.C009\", ) ) if callable(cls().is_authenticated): # MODIFIED errors.append( checks.Critical( \"%s.is_authenticated must be an attribute or property rather \" \"than a method. Ignoring this is a security issue as anonymous \" \"users will be treated as authenticated!\" % cls, obj=cls, id=\"auth.C010\", ) ) return errors",
+      "gold_functions": [
+        "func:django/contrib/auth/checks.py:django.contrib.auth.checks.check_user_model"
+      ],
+      "gold_files": [
+        "django/contrib/auth/checks.py"
+      ]
+    },
+    {
+      "ticket": 36702,
+      "time": 1762448281,
+      "summary": "bulk_create not returning pk if it was set as an expression",
+      "description": "Currently, when the pk is set on an object passed to bulk_create the pk is explicitly not updated in the object: https://github.com/django/django/blob/05ba1a9228128614fb3c475f1c4bdf0160f44dba/django/db/models/query.py#L843 This becomes a problem if the pk of the object has been set to an expression, because then we have no access to the actual generated pk even though the db returned it. Would it break any functionality to just remove the line above and also update the pk even if it had been set?",
+      "gold_functions": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create"
+      ],
+      "gold_files": [
+        "django/db/models/query.py"
+      ]
+    }
+  ]
+}

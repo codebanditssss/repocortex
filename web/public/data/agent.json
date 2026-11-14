@@ -1,26 +1,51 @@
 {
-  "placeholder": true,
-  "ticket": "ModelChoiceField rejects a valid selection when to_field_name targets a unique field",
-  "note": "Stand-in traces for one illustrative ticket. No measured token saving is claimed.",
+  "placeholder": false,
+  "ticket": "#36277 Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
+  "note": "Measured on the oldest 30 held-out Django fixes with claude-sonnet-5-5. Token, turn and file numbers are means per issue. Accuracy is about the same with and without the tool (top-1 function 0.43 vs 0.40, one issue). The tool cut input tokens by 16 percent, or 27 percent when the agent is told to call it first.",
+  "model": "claude-sonnet-5-5",
+  "n": 30,
   "without": {
-    "tokens": 18400,
-    "turns": 14,
-    "files_read": 18
+    "tokens": 67500,
+    "turns": 9.6,
+    "files_read": 2.8,
+    "tool_calls_mean": 11.3,
+    "top1_function_hit": 0.4,
+    "top1_file_hit": 0.633,
+    "function_acc@5": 0.367,
+    "cost_usd_mean": 0.0633,
+    "wall_s_mean": 36.5
   },
   "with": {
-    "tokens": 12100,
-    "turns": 9,
-    "files_read": 8,
+    "tokens": 56840,
+    "turns": 8.3,
+    "files_read": 2.4,
+    "tool_calls_mean": 9.8,
+    "top1_function_hit": 0.433,
+    "top1_file_hit": 0.633,
+    "function_acc@5": 0.4,
+    "cost_usd_mean": 0.0539,
+    "wall_s_mean": 29.9,
     "tool_calls": [
       {
-        "name": "repocortex.locate",
+        "name": "locate_bug",
         "args": {
           "repository": "django/django",
-          "ticket": "ModelChoiceField rejects a valid selection when to_field_name targets a unique field",
+          "ticket": "Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
           "top_k": 10
         },
-        "result_summary": "Illustrative result: inspect ModelChoiceField.to_python and QuerySet.get."
+        "result_summary": "Top hits were GeneratedField.__init__ and GeneratedField._check_supported, via a past fix (#36262) and a CALLS edge. The agent then read the PostgreSQL backend and named DatabaseFeatures.is_postgresql_18, the gold function. Without the tool it named a schema editor method and missed."
       }
     ]
+  },
+  "with_locate_first": {
+    "tokens": 48938,
+    "turns": 7.5,
+    "files_read": 2.2,
+    "tool_calls_mean": 9.1,
+    "top1_function_hit": 0.433,
+    "top1_file_hit": 0.633,
+    "function_acc@5": 0.367,
+    "cost_usd_mean": 0.0491,
+    "wall_s_mean": 41.8
   }
 }

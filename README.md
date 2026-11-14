@@ -226,18 +226,27 @@ For the HTTP transport, point either client at the URL instead of a command:
 
 ## Agent eval
 
-`results/agent_eval/PLAN.md` is the plan for comparing an agent that can call `locate_bug` with the same agent that only sees the bug report. The harness is `scripts/agent_eval.py`. This environment has no Claude key, so the model was not called.
+A tool-using Claude agent (`claude-sonnet-5-5`) tried to name the functions each of the oldest 30 held-out Django fixes touched. Every arm had the same Django checkout and the same `search_code`, `read_file`, `list_dir` tools. `with-mcp` also had `locate_bug`, the RepoCortex MCP tool, backed by the replayed graph. The ticket number was never shown.
 
-```bash
-python scripts/agent_eval.py prepare --n 30
-python scripts/agent_eval.py score --predictions results/agent_eval/predictions-with-mcp.json
-ANTHROPIC_API_KEY=... python scripts/agent_eval.py run --condition without-mcp
-ANTHROPIC_API_KEY=... python scripts/agent_eval.py run --condition with-mcp
-```
+| | without-mcp | with-mcp | with-mcp, told to call it first | locate_bug alone, no model |
+|---|---:|---:|---:|---:|
+| top-1 function correct | 0.40 (12/30) | 0.43 (13/30) | 0.43 (13/30) | 0.47 (14/30) |
+| top-1 file correct | 0.63 | 0.63 | 0.63 | 0.67 |
+| strict fn Acc@5 | 0.37 | 0.40 | 0.37 | 0.30 |
+| MRR | 0.45 | 0.47 | 0.47 | 0.49 |
+| input tokens per issue | 63,885 | 53,888 (-16%) | 46,361 (-27%) | 0 |
+| output tokens per issue | 3,615 | 2,952 | 2,577 | 0 |
+| tool calls per issue | 11.3 | 9.8 | 9.1 | 1 |
+| locate_bug calls per issue | 0 | 0.43 | 0.93 | 1 |
+| files opened per issue | 2.8 | 2.4 | 2.2 | 0 |
+| model turns per issue | 9.6 | 8.3 | 7.5 | 0 |
+| wall time per issue | 36.5 s | 29.9 s | 41.8 s | under 1 s |
+| cost per issue | $0.063 | $0.054 | $0.049 | $0 |
+| cost for 30 issues | $1.90 | $1.62 | $1.47 | $0 |
 
-`prepare` writes `results/agent_eval/tasks.json` from the oldest held-out issues. The prompt does not include the gold functions. `run` calls the Anthropic Messages API. `with-mcp` executes `locate_bug` locally and sends the hits back. `without-mcp` has no tool. `ANTHROPIC_MODEL` overrides the default `claude-sonnet-4-5`. If the key is missing, `run` prints these commands and exits without calling a model.
+Accuracy is about the same with and without the tool: the gain is one issue out of 30, which is noise. The agent does less work with it: 16% fewer input tokens and 15% lower cost, or 27% fewer tokens when told to call `locate_bug` first. Left alone it called the tool on only 13 of 30 issues. `locate_bug` alone matches the agent's top-1 accuracy in under a second with no model call.
 
-`score` maps the returned names onto the corpus and uses the same strict metrics, including a 95% bootstrap interval.
+Details, caveats, and the commands to rerun it are in `results/agent_eval/README.md`. The harness is `scripts/agent_bench.py`. The older `scripts/agent_eval.py` is the no-tools prompt-only version and still writes `tasks.json`.
 
 ## Tests
 
@@ -247,4 +256,4 @@ python -m unittest discover -s tests
 
 ## What is left
 
-The Next.js dashboard is still a placeholder. It is meant to read `results/baselines.json`, `results/curve.json`, `results/curve.png`, `results/graph.json`, and `results/snapshots.json`. The agent comparison has not been run here.
+The Next.js dashboard is still a placeholder. It is meant to read `results/baselines.json`, `results/curve.json`, `results/curve.png`, `results/graph.json`, and `results/snapshots.json`.

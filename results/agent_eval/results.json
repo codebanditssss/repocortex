@@ -1,0 +1,2088 @@
+{
+  "conditions": {
+    "sonnet-first-with-mcp": {
+      "condition": "with-mcp-first",
+      "model": "claude-sonnet-5-5",
+      "n": 30,
+      "localization": {
+        "top1_function_hit": 0.43333333333333335,
+        "any_gold_function_top5": 0.5333333333333333,
+        "top1_file_hit": 0.6333333333333333
+      },
+      "strict": {
+        "n": 30,
+        "function_acc@5": 0.36666666666666664,
+        "function_acc@10": 0.36666666666666664,
+        "file_acc@1": 0.5,
+        "file_acc@5": 0.5,
+        "mrr": 0.47222222222222227,
+        "ci": {
+          "function_acc@5": {
+            "mean": 0.366667,
+            "lo": 0.2,
+            "hi": 0.566667
+          },
+          "function_acc@10": {
+            "mean": 0.366667,
+            "lo": 0.2,
+            "hi": 0.566667
+          },
+          "file_acc@1": {
+            "mean": 0.5,
+            "lo": 0.333333,
+            "hi": 0.7
+          },
+          "file_acc@5": {
+            "mean": 0.5,
+            "lo": 0.333333,
+            "hi": 0.7
+          },
+          "mrr": {
+            "mean": 0.472222,
+            "lo": 0.3,
+            "hi": 0.633472
+          }
+        }
+      },
+      "mean": {
+        "input_tokens": 46361.26666666667,
+        "uncached_input_tokens": 7801.3,
+        "output_tokens": 2576.5333333333333,
+        "tool_calls": 9.1,
+        "locate_bug_calls": 0.9333333333333333,
+        "files_opened": 2.2333333333333334,
+        "turns": 7.533333333333333,
+        "wall_s": 41.79333333333333,
+        "cost_usd": 0.04911600000000001
+      },
+      "total_cost_usd": 1.4734800000000001,
+      "per_issue": [
+        {
+          "ticket": 36616,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 6,
+          "files_opened": 4,
+          "turns": 3,
+          "wall_s": 9.9,
+          "cost_usd": 0.01999,
+          "stop": "submit",
+          "tokens_in": 7959,
+          "tokens_out": 1097,
+          "predicted": [
+            "django/db/models/fields/__init__.py::DurationField.get_db_prep_value",
+            "django/db/backends/base/operations.py::BaseDatabaseOperations.adapt_durationfield_value",
+            "django/db/backends/postgresql/operations.py::DatabaseOperations.adapt_durationfield_value",
+            "django/db/backends/oracle/operations.py::DatabaseOperations.adapt_durationfield_value"
+          ]
+        },
+        {
+          "ticket": 36434,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 3,
+          "wall_s": 14.2,
+          "cost_usd": 0.01291,
+          "stop": "submit",
+          "tokens_in": 6770,
+          "tokens_out": 581,
+          "predicted": [
+            "django/utils/autoreload.py::restart_with_reloader",
+            "django/utils/autoreload.py::get_child_arguments"
+          ]
+        },
+        {
+          "ticket": 36605,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 13.9,
+          "cost_usd": 0.01878,
+          "stop": "submit",
+          "tokens_in": 12522,
+          "tokens_out": 729,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.in_bulk"
+          ]
+        },
+        {
+          "ticket": 36142,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 4,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 8.1,
+          "cost_usd": 0.01521,
+          "stop": "submit",
+          "tokens_in": 11591,
+          "tokens_out": 608,
+          "predicted": [
+            "django/shortcuts.py::get_object_or_404",
+            "django/shortcuts.py::aget_object_or_404",
+            "django/shortcuts.py::get_list_or_404",
+            "django/shortcuts.py::aget_list_or_404"
+          ]
+        },
+        {
+          "ticket": 36491,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 5,
+          "tool_calls": 7,
+          "files_opened": 1,
+          "turns": 7,
+          "wall_s": 40.4,
+          "cost_usd": 0.0703,
+          "stop": "submit",
+          "tokens_in": 46563,
+          "tokens_out": 4444,
+          "predicted": [
+            "django/test/runner.py::RemoteTestResult.addError",
+            "django/test/runner.py::ParallelTestSuite.handle_event",
+            "django/test/runner.py::ParallelTestSuite.run",
+            "django/test/runner.py::RemoteTestRunner.run",
+            "django/test/runner.py::RemoteTestResult.__getstate__"
+          ]
+        },
+        {
+          "ticket": 36277,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 15,
+          "files_opened": 4,
+          "turns": 12,
+          "wall_s": 46.1,
+          "cost_usd": 0.07693,
+          "stop": "submit",
+          "tokens_in": 81830,
+          "tokens_out": 4353,
+          "predicted": [
+            "django/db/backends/postgresql/features.py::DatabaseFeatures"
+          ]
+        },
+        {
+          "ticket": 36614,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 8.9,
+          "cost_usd": 0.01551,
+          "stop": "submit",
+          "tokens_in": 11672,
+          "tokens_out": 626,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.values_list"
+          ]
+        },
+        {
+          "ticket": 36636,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 6.9,
+          "cost_usd": 0.00742,
+          "stop": "submit",
+          "tokens_in": 6809,
+          "tokens_out": 360,
+          "predicted": [
+            "django/views/i18n.py::set_language"
+          ]
+        },
+        {
+          "ticket": 36623,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 2,
+          "tool_calls": 14,
+          "files_opened": 2,
+          "turns": 10,
+          "wall_s": 31.8,
+          "cost_usd": 0.06868,
+          "stop": "submit",
+          "tokens_in": 84004,
+          "tokens_out": 2957,
+          "predicted": [
+            "django/db/backends/postgresql/features.py::DatabaseFeatures",
+            "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperations.spatial_version"
+          ]
+        },
+        {
+          "ticket": 36646,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 12,
+          "files_opened": 2,
+          "turns": 10,
+          "wall_s": 27.4,
+          "cost_usd": 0.04901,
+          "stop": "submit",
+          "tokens_in": 53080,
+          "tokens_out": 2658,
+          "predicted": [
+            "django/db/backends/oracle/base.py::OracleParam.__init__",
+            "django/db/models/fields/__init__.py::BinaryField.get_db_prep_value"
+          ]
+        },
+        {
+          "ticket": 36660,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 18,
+          "files_opened": 2,
+          "turns": 15,
+          "wall_s": 55.3,
+          "cost_usd": 0.09194,
+          "stop": "submit",
+          "tokens_in": 103369,
+          "tokens_out": 5322,
+          "predicted": [
+            "django/db/models/indexes.py::Index.check",
+            "django/db/models/indexes.py::Index.__init__",
+            "django/db/models/base.py::Model._check_local_fields"
+          ]
+        },
+        {
+          "ticket": 36611,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 3,
+          "tool_calls": 12,
+          "files_opened": 5,
+          "turns": 10,
+          "wall_s": 35.5,
+          "cost_usd": 0.05077,
+          "stop": "submit",
+          "tokens_in": 66668,
+          "tokens_out": 2067,
+          "predicted": [
+            "django/db/models/base.py::Model._get_field_expression_map",
+            "django/db/models/constraints.py::CheckConstraint.validate",
+            "django/db/models/query_utils.py::Q.check"
+          ]
+        },
+        {
+          "ticket": 36654,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 19.9,
+          "cost_usd": 0.01751,
+          "stop": "submit",
+          "tokens_in": 11248,
+          "tokens_out": 762,
+          "predicted": [
+            "django/db/models/base.py::Model._do_update"
+          ]
+        },
+        {
+          "ticket": 36648,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 11,
+          "files_opened": 5,
+          "turns": 10,
+          "wall_s": 34.7,
+          "cost_usd": 0.06603,
+          "stop": "submit",
+          "tokens_in": 48597,
+          "tokens_out": 4038,
+          "predicted": [
+            "django/db/models/query.py::QuerySet._check_ordering_first_last_queryset_aggregation"
+          ]
+        },
+        {
+          "ticket": 36671,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 1,
+          "named": 2,
+          "tool_calls": 20,
+          "files_opened": 5,
+          "turns": 12,
+          "wall_s": 32.2,
+          "cost_usd": 0.09148,
+          "stop": "submit",
+          "tokens_in": 127572,
+          "tokens_out": 3948,
+          "predicted": [
+            "django/db/models/fields/tuple_lookups.py::Tuple.as_sqlite",
+            "django/db/backends/sqlite3/features.py::DatabaseFeatures"
+          ]
+        },
+        {
+          "ticket": 36470,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 2,
+          "files_opened": 0,
+          "turns": 2,
+          "wall_s": 2.5,
+          "cost_usd": 0.00648,
+          "stop": "submit",
+          "tokens_in": 3535,
+          "tokens_out": 261,
+          "predicted": [
+            "django/core/servers/basehttp.py::WSGIRequestHandler.log_message"
+          ]
+        },
+        {
+          "ticket": 36656,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 3,
+          "tool_calls": 7,
+          "files_opened": 3,
+          "turns": 7,
+          "wall_s": 23.3,
+          "cost_usd": 0.04063,
+          "stop": "submit",
+          "tokens_in": 33002,
+          "tokens_out": 2174,
+          "predicted": [
+            "django/utils/text.py::acompress_sequence",
+            "django/middleware/gzip.py::GZipMiddleware.process_response",
+            "django/utils/text.py::compress_sequence"
+          ]
+        },
+        {
+          "ticket": 36677,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 7.3,
+          "cost_usd": 0.01145,
+          "stop": "submit",
+          "tokens_in": 9390,
+          "tokens_out": 412,
+          "predicted": [
+            "django/test/runner.py::_init_worker"
+          ]
+        },
+        {
+          "ticket": 36674,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 7,
+          "files_opened": 1,
+          "turns": 6,
+          "wall_s": 23.4,
+          "cost_usd": 0.04,
+          "stop": "submit",
+          "tokens_in": 29098,
+          "tokens_out": 1928,
+          "predicted": [
+            "django/db/models/sql/compiler.py::SQLCompiler.get_related_selections",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select_from_parent",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select"
+          ]
+        },
+        {
+          "ticket": 36683,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 2,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 11.3,
+          "cost_usd": 0.01566,
+          "stop": "submit",
+          "tokens_in": 12332,
+          "tokens_out": 814,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.update",
+            "django/db/models/query.py::QuerySet.delete"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 5,
+          "named": 5,
+          "tool_calls": 13,
+          "files_opened": 2,
+          "turns": 10,
+          "wall_s": 53.2,
+          "cost_usd": 0.09828,
+          "stop": "submit",
+          "tokens_in": 76825,
+          "tokens_out": 6004,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/query.py::Query.clear_ordering",
+            "django/db/models/sql/query.py::Query.set_group_by",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_group_by"
+          ]
+        },
+        {
+          "ticket": 36596,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 3,
+          "named": 5,
+          "tool_calls": 6,
+          "files_opened": 2,
+          "turns": 6,
+          "wall_s": 28.7,
+          "cost_usd": 0.04428,
+          "stop": "submit",
+          "tokens_in": 26613,
+          "tokens_out": 2893,
+          "predicted": [
+            "django/test/runner.py::_init_worker",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation.mark_expected_failures_and_skips",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation._mark_test",
+            "django/test/runner.py::ParallelTestSuite.__init__",
+            "django/test/runner.py::ParallelTestSuite.initialize_suite"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 16,
+          "files_opened": 2,
+          "turns": 12,
+          "wall_s": 60.4,
+          "cost_usd": 0.10473,
+          "stop": "submit",
+          "tokens_in": 100766,
+          "tokens_out": 6416,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/query.py::Query.clear_ordering"
+          ]
+        },
+        {
+          "ticket": 36678,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 4,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 6,
+          "wall_s": 22.4,
+          "cost_usd": 0.03728,
+          "stop": "submit",
+          "tokens_in": 25059,
+          "tokens_out": 2057,
+          "predicted": [
+            "django/test/runner.py::ParallelTestSuite.run",
+            "django/test/runner.py::_safe_init_worker",
+            "django/test/runner.py::_init_worker",
+            "django/test/runner.py::_claim_database_clone_slot"
+          ]
+        },
+        {
+          "ticket": 35381,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 6,
+          "tool_calls": 9,
+          "files_opened": 2,
+          "turns": 8,
+          "wall_s": 30.0,
+          "cost_usd": 0.05987,
+          "stop": "submit",
+          "tokens_in": 51027,
+          "tokens_out": 3387,
+          "predicted": [
+            "django/db/models/fields/json.py::JSONField.get_db_prep_save",
+            "django/db/models/fields/json.py::JSONExact.process_rhs",
+            "django/db/models/expressions.py::JSONNull.as_sql",
+            "django/db/models/fields/json.py::JSONIn.resolve_expression_parameter",
+            "django/db/models/expressions.py::JSONNull.as_mysql"
+          ]
+        },
+        {
+          "ticket": 36696,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 5,
+          "tool_calls": 16,
+          "files_opened": 2,
+          "turns": 11,
+          "wall_s": 486.8,
+          "cost_usd": 0.09742,
+          "stop": "submit",
+          "tokens_in": 78078,
+          "tokens_out": 4115,
+          "predicted": [
+            "django/utils/inspect.py::signature",
+            "django/utils/inspect.py::getfullargspec",
+            "django/utils/inspect.py::lazy_annotations",
+            "django/utils/inspect.py::_get_func_parameters",
+            "django/utils/inspect.py::func_accepts_kwargs"
+          ]
+        },
+        {
+          "ticket": 36661,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 7,
+          "named": 7,
+          "tool_calls": 21,
+          "files_opened": 7,
+          "turns": 12,
+          "wall_s": 40.9,
+          "cost_usd": 0.09107,
+          "stop": "submit",
+          "tokens_in": 107190,
+          "tokens_out": 4477,
+          "predicted": [
+            "django/db/backends/sqlite3/introspection.py::DatabaseIntrospection.get_relations",
+            "django/db/backends/postgresql/introspection.py::DatabaseIntrospection.get_relations",
+            "django/db/backends/mysql/introspection.py::DatabaseIntrospection.get_relations",
+            "django/db/backends/oracle/introspection.py::DatabaseIntrospection.get_relations",
+            "django/core/management/commands/inspectdb.py::Command.handle_inspection"
+          ]
+        },
+        {
+          "ticket": 36704,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 7,
+          "files_opened": 2,
+          "turns": 7,
+          "wall_s": 23.4,
+          "cost_usd": 0.03925,
+          "stop": "submit",
+          "tokens_in": 28599,
+          "tokens_out": 2176,
+          "predicted": [
+            "django/db/models/base.py::Model._check_composite_pk"
+          ]
+        },
+        {
+          "ticket": 36709,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 5.0,
+          "cost_usd": 0.0128,
+          "stop": "submit",
+          "tokens_in": 11996,
+          "tokens_out": 469,
+          "predicted": [
+            "django/contrib/auth/checks.py::check_user_model"
+          ]
+        },
+        {
+          "ticket": 36702,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 13,
+          "files_opened": 4,
+          "turns": 13,
+          "wall_s": 50.0,
+          "cost_usd": 0.10181,
+          "stop": "submit",
+          "tokens_in": 117074,
+          "tokens_out": 5163,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.bulk_create",
+            "django/db/models/query.py::QuerySet._batched_insert",
+            "django/db/models/query.py::QuerySet._prepare_for_bulk_create",
+            "django/db/models/sql/compiler.py::SQLInsertCompiler.as_sql"
+          ]
+        }
+      ]
+    },
+    "sonnet-with-mcp": {
+      "condition": "with-mcp",
+      "model": "claude-sonnet-5-5",
+      "n": 30,
+      "localization": {
+        "top1_function_hit": 0.43333333333333335,
+        "any_gold_function_top5": 0.5333333333333333,
+        "top1_file_hit": 0.6333333333333333
+      },
+      "strict": {
+        "n": 30,
+        "function_acc@5": 0.4,
+        "function_acc@10": 0.4,
+        "file_acc@1": 0.5333333333333333,
+        "file_acc@5": 0.5333333333333333,
+        "mrr": 0.4677777777777778,
+        "ci": {
+          "function_acc@5": {
+            "mean": 0.4,
+            "lo": 0.233333,
+            "hi": 0.6
+          },
+          "function_acc@10": {
+            "mean": 0.4,
+            "lo": 0.233333,
+            "hi": 0.6
+          },
+          "file_acc@1": {
+            "mean": 0.533333,
+            "lo": 0.366667,
+            "hi": 0.733333
+          },
+          "file_acc@5": {
+            "mean": 0.533333,
+            "lo": 0.366667,
+            "hi": 0.733333
+          },
+          "mrr": {
+            "mean": 0.467778,
+            "lo": 0.297722,
+            "hi": 0.641194
+          }
+        }
+      },
+      "mean": {
+        "input_tokens": 53888.5,
+        "uncached_input_tokens": 7913.2,
+        "output_tokens": 2951.7,
+        "tool_calls": 9.766666666666667,
+        "locate_bug_calls": 0.43333333333333335,
+        "files_opened": 2.4,
+        "turns": 8.3,
+        "wall_s": 29.936666666666667,
+        "cost_usd": 0.05388766666666667
+      },
+      "total_cost_usd": 1.61663,
+      "per_issue": [
+        {
+          "ticket": 36616,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 7,
+          "files_opened": 4,
+          "turns": 5,
+          "wall_s": 13.1,
+          "cost_usd": 0.02528,
+          "stop": "submit",
+          "tokens_in": 14354,
+          "tokens_out": 1355,
+          "predicted": [
+            "django/db/models/fields/__init__.py::DurationField.get_db_prep_value",
+            "django/db/backends/base/operations.py::BaseDatabaseOperations.adapt_durationfield_value",
+            "django/db/backends/postgresql/operations.py::DatabaseOperations.adapt_durationfield_value",
+            "django/db/backends/oracle/operations.py::DatabaseOperations.adapt_durationfield_value"
+          ]
+        },
+        {
+          "ticket": 36434,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 9.1,
+          "cost_usd": 0.01386,
+          "stop": "submit",
+          "tokens_in": 8087,
+          "tokens_out": 744,
+          "predicted": [
+            "django/utils/autoreload.py::restart_with_reloader",
+            "django/utils/autoreload.py::get_child_arguments"
+          ]
+        },
+        {
+          "ticket": 36605,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 11.3,
+          "cost_usd": 0.01772,
+          "stop": "submit",
+          "tokens_in": 12193,
+          "tokens_out": 873,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.in_bulk"
+          ]
+        },
+        {
+          "ticket": 36142,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 4,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 10.0,
+          "cost_usd": 0.01647,
+          "stop": "submit",
+          "tokens_in": 13480,
+          "tokens_out": 777,
+          "predicted": [
+            "django/shortcuts.py::get_object_or_404",
+            "django/shortcuts.py::aget_object_or_404",
+            "django/shortcuts.py::get_list_or_404",
+            "django/shortcuts.py::aget_list_or_404"
+          ]
+        },
+        {
+          "ticket": 36491,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 5,
+          "tool_calls": 9,
+          "files_opened": 2,
+          "turns": 11,
+          "wall_s": 50.0,
+          "cost_usd": 0.09222,
+          "stop": "submit",
+          "tokens_in": 100531,
+          "tokens_out": 5210,
+          "predicted": [
+            "django/test/runner.py::ParallelTestSuite.handle_event",
+            "django/test/runner.py::RemoteTestResult.addError",
+            "django/test/runner.py::ParallelTestSuite.run",
+            "django/test/runner.py::RemoteTestRunner.run",
+            "django/test/runner.py::RemoteTestResult._exc_info_to_string"
+          ]
+        },
+        {
+          "ticket": 36277,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 21,
+          "files_opened": 5,
+          "turns": 13,
+          "wall_s": 61.5,
+          "cost_usd": 0.12395,
+          "stop": "submit",
+          "tokens_in": 137942,
+          "tokens_out": 6550,
+          "predicted": [
+            "django/db/backends/postgresql/features.py::DatabaseFeatures.supports_virtual_generated_columns",
+            "django/db/backends/postgresql/features.py::DatabaseFeatures.is_postgresql_18",
+            "django/db/backends/postgresql/schema.py::DatabaseSchemaEditor._using_sql",
+            "django/db/backends/base/schema.py::BaseDatabaseSchemaEditor._column_generated_persistency_sql"
+          ]
+        },
+        {
+          "ticket": 36614,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 18,
+          "files_opened": 2,
+          "turns": 14,
+          "wall_s": 33.8,
+          "cost_usd": 0.06415,
+          "stop": "submit",
+          "tokens_in": 86138,
+          "tokens_out": 3097,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.values_list"
+          ]
+        },
+        {
+          "ticket": 36636,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 8.0,
+          "cost_usd": 0.00755,
+          "stop": "submit",
+          "tokens_in": 6701,
+          "tokens_out": 381,
+          "predicted": [
+            "django/views/i18n.py::set_language"
+          ]
+        },
+        {
+          "ticket": 36623,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 2,
+          "tool_calls": 20,
+          "files_opened": 2,
+          "turns": 13,
+          "wall_s": 41.4,
+          "cost_usd": 0.08135,
+          "stop": "submit",
+          "tokens_in": 112024,
+          "tokens_out": 3811,
+          "predicted": [
+            "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperations.spatial_version",
+            "django/db/backends/postgresql/features.py::DatabaseFeatures"
+          ]
+        },
+        {
+          "ticket": 36646,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 16,
+          "files_opened": 3,
+          "turns": 14,
+          "wall_s": 45.1,
+          "cost_usd": 0.0792,
+          "stop": "submit",
+          "tokens_in": 98126,
+          "tokens_out": 4349,
+          "predicted": [
+            "django/db/backends/oracle/base.py::OracleParam.__init__",
+            "django/db/models/fields/__init__.py::BinaryField.get_db_prep_value"
+          ]
+        },
+        {
+          "ticket": 36660,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 19,
+          "files_opened": 2,
+          "turns": 15,
+          "wall_s": 54.6,
+          "cost_usd": 0.09814,
+          "stop": "submit",
+          "tokens_in": 120447,
+          "tokens_out": 5328,
+          "predicted": [
+            "django/db/models/indexes.py::Index.check",
+            "django/db/models/base.py::Model._check_local_fields",
+            "django/db/models/base.py::Model._check_indexes"
+          ]
+        },
+        {
+          "ticket": 36611,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 4,
+          "tool_calls": 18,
+          "files_opened": 6,
+          "turns": 14,
+          "wall_s": 44.7,
+          "cost_usd": 0.0896,
+          "stop": "submit",
+          "tokens_in": 110913,
+          "tokens_out": 4633,
+          "predicted": [
+            "django/db/models/base.py::Model._get_field_expression_map",
+            "django/db/models/fields/related_lookups.py::RelatedLookupMixin.as_sql",
+            "django/db/models/expressions.py::Value.as_sql",
+            "django/db/models/query_utils.py::Q.check"
+          ]
+        },
+        {
+          "ticket": 36654,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 8.9,
+          "cost_usd": 0.01348,
+          "stop": "submit",
+          "tokens_in": 8076,
+          "tokens_out": 555,
+          "predicted": [
+            "django/db/models/base.py::Model._do_update"
+          ]
+        },
+        {
+          "ticket": 36648,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 4,
+          "named": 4,
+          "tool_calls": 6,
+          "files_opened": 2,
+          "turns": 7,
+          "wall_s": 30.8,
+          "cost_usd": 0.03967,
+          "stop": "submit",
+          "tokens_in": 19568,
+          "tokens_out": 2932,
+          "predicted": [
+            "django/db/models/query.py::QuerySet._check_ordering_first_last_queryset_aggregation",
+            "django/db/models/sql/query.py::Query.set_group_by",
+            "django/db/models/query.py::QuerySet.first",
+            "django/db/models/query.py::QuerySet.last"
+          ]
+        },
+        {
+          "ticket": 36671,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 12.5,
+          "cost_usd": 0.01279,
+          "stop": "submit",
+          "tokens_in": 8437,
+          "tokens_out": 678,
+          "predicted": [
+            "django/db/models/fields/tuple_lookups.py::Tuple.as_sqlite"
+          ]
+        },
+        {
+          "ticket": 36470,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 2,
+          "files_opened": 1,
+          "turns": 3,
+          "wall_s": 8.9,
+          "cost_usd": 0.00756,
+          "stop": "submit",
+          "tokens_in": 4946,
+          "tokens_out": 345,
+          "predicted": [
+            "django/core/servers/basehttp.py::WSGIRequestHandler.log_message"
+          ]
+        },
+        {
+          "ticket": 36656,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 3,
+          "tool_calls": 10,
+          "files_opened": 4,
+          "turns": 10,
+          "wall_s": 32.4,
+          "cost_usd": 0.0494,
+          "stop": "submit",
+          "tokens_in": 56777,
+          "tokens_out": 3324,
+          "predicted": [
+            "django/utils/text.py::acompress_sequence",
+            "django/middleware/gzip.py::GZipMiddleware.process_response",
+            "django/utils/text.py::compress_sequence"
+          ]
+        },
+        {
+          "ticket": 36677,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 6,
+          "wall_s": 14.2,
+          "cost_usd": 0.02192,
+          "stop": "submit",
+          "tokens_in": 17372,
+          "tokens_out": 1087,
+          "predicted": [
+            "django/test/runner.py::_init_worker"
+          ]
+        },
+        {
+          "ticket": 36674,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 6,
+          "files_opened": 1,
+          "turns": 6,
+          "wall_s": 19.4,
+          "cost_usd": 0.03797,
+          "stop": "submit",
+          "tokens_in": 25636,
+          "tokens_out": 1777,
+          "predicted": [
+            "django/db/models/sql/compiler.py::SQLCompiler.get_related_selections",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select_from_parent",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select"
+          ]
+        },
+        {
+          "ticket": 36683,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 2,
+          "tool_calls": 2,
+          "files_opened": 1,
+          "turns": 3,
+          "wall_s": 6.1,
+          "cost_usd": 0.00986,
+          "stop": "submit",
+          "tokens_in": 5540,
+          "tokens_out": 422,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.update",
+            "django/db/models/query.py::QuerySet.delete"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 5,
+          "named": 5,
+          "tool_calls": 9,
+          "files_opened": 2,
+          "turns": 9,
+          "wall_s": 41.2,
+          "cost_usd": 0.07328,
+          "stop": "submit",
+          "tokens_in": 53312,
+          "tokens_out": 4405,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/query.py::Query.clear_ordering",
+            "django/db/models/sql/query.py::Query.set_group_by",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_group_by"
+          ]
+        },
+        {
+          "ticket": 36596,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 4,
+          "named": 6,
+          "tool_calls": 19,
+          "files_opened": 5,
+          "turns": 15,
+          "wall_s": 100.7,
+          "cost_usd": 0.16355,
+          "stop": "submit",
+          "tokens_in": 138971,
+          "tokens_out": 11449,
+          "predicted": [
+            "django/test/runner.py::_init_worker",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation.mark_expected_failures_and_skips",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation._mark_test",
+            "django/test/runner.py::ParallelTestSuite.initialize_suite",
+            "django/test/runner.py::ParallelTestSuite.run"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 5,
+          "named": 5,
+          "tool_calls": 12,
+          "files_opened": 2,
+          "turns": 11,
+          "wall_s": 55.9,
+          "cost_usd": 0.09904,
+          "stop": "submit",
+          "tokens_in": 92187,
+          "tokens_out": 6027,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_group_by",
+            "django/db/models/sql/query.py::Query.set_group_by",
+            "django/db/models/sql/query.py::Query.clear_ordering"
+          ]
+        },
+        {
+          "ticket": 36678,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 3,
+          "tool_calls": 6,
+          "files_opened": 1,
+          "turns": 6,
+          "wall_s": 20.8,
+          "cost_usd": 0.03345,
+          "stop": "submit",
+          "tokens_in": 24590,
+          "tokens_out": 1643,
+          "predicted": [
+            "django/test/runner.py::ParallelTestSuite.run",
+            "django/test/runner.py::_safe_init_worker",
+            "django/test/runner.py::_init_worker"
+          ]
+        },
+        {
+          "ticket": 35381,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 6,
+          "tool_calls": 13,
+          "files_opened": 2,
+          "turns": 9,
+          "wall_s": 35.3,
+          "cost_usd": 0.08025,
+          "stop": "submit",
+          "tokens_in": 70895,
+          "tokens_out": 4226,
+          "predicted": [
+            "django/db/models/fields/json.py::JSONField.get_db_prep_save",
+            "django/db/models/fields/json.py::JSONExact.process_rhs",
+            "django/db/models/expressions.py::JSONNull.as_sql",
+            "django/db/models/expressions.py::JSONNull.__init__",
+            "django/db/models/fields/json.py::JSONIn.resolve_expression_parameter"
+          ]
+        },
+        {
+          "ticket": 36696,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 5,
+          "tool_calls": 12,
+          "files_opened": 2,
+          "turns": 10,
+          "wall_s": 32.8,
+          "cost_usd": 0.05982,
+          "stop": "submit",
+          "tokens_in": 66100,
+          "tokens_out": 2980,
+          "predicted": [
+            "django/utils/inspect.py::signature",
+            "django/utils/inspect.py::_get_func_parameters",
+            "django/utils/inspect.py::getfullargspec",
+            "django/utils/inspect.py::lazy_annotations",
+            "django/utils/inspect.py::func_accepts_kwargs"
+          ]
+        },
+        {
+          "ticket": 36661,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 0,
+          "tool_calls": 20,
+          "files_opened": 8,
+          "turns": 10,
+          "wall_s": 42.2,
+          "cost_usd": 0.10069,
+          "stop": "submit",
+          "tokens_in": 109865,
+          "tokens_out": 4651,
+          "predicted": []
+        },
+        {
+          "ticket": 36704,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 6,
+          "files_opened": 3,
+          "turns": 6,
+          "wall_s": 23.0,
+          "cost_usd": 0.03328,
+          "stop": "submit",
+          "tokens_in": 19881,
+          "tokens_out": 2000,
+          "predicted": [
+            "django/db/models/base.py::Model._check_composite_pk"
+          ]
+        },
+        {
+          "ticket": 36709,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 2,
+          "files_opened": 0,
+          "turns": 3,
+          "wall_s": 4.9,
+          "cost_usd": 0.00748,
+          "stop": "submit",
+          "tokens_in": 7095,
+          "tokens_out": 248,
+          "predicted": [
+            "django/contrib/auth/checks.py::check_user_model"
+          ]
+        },
+        {
+          "ticket": 36702,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 12,
+          "files_opened": 5,
+          "turns": 10,
+          "wall_s": 25.5,
+          "cost_usd": 0.06365,
+          "stop": "submit",
+          "tokens_in": 66471,
+          "tokens_out": 2694,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.bulk_create",
+            "django/db/models/query.py::QuerySet._batched_insert",
+            "django/db/models/query.py::QuerySet._prepare_for_bulk_create",
+            "django/db/models/sql/compiler.py::SQLInsertCompiler.execute_sql"
+          ]
+        }
+      ]
+    },
+    "sonnet-without-mcp": {
+      "condition": "without-mcp",
+      "model": "claude-sonnet-5-5",
+      "n": 30,
+      "localization": {
+        "top1_function_hit": 0.4,
+        "any_gold_function_top5": 0.5333333333333333,
+        "top1_file_hit": 0.6333333333333333
+      },
+      "strict": {
+        "n": 30,
+        "function_acc@5": 0.36666666666666664,
+        "function_acc@10": 0.36666666666666664,
+        "file_acc@1": 0.5,
+        "file_acc@5": 0.5333333333333333,
+        "mrr": 0.4527777777777778,
+        "ci": {
+          "function_acc@5": {
+            "mean": 0.366667,
+            "lo": 0.2,
+            "hi": 0.566667
+          },
+          "function_acc@10": {
+            "mean": 0.366667,
+            "lo": 0.2,
+            "hi": 0.566667
+          },
+          "file_acc@1": {
+            "mean": 0.5,
+            "lo": 0.333333,
+            "hi": 0.7
+          },
+          "file_acc@5": {
+            "mean": 0.533333,
+            "lo": 0.366667,
+            "hi": 0.733333
+          },
+          "mrr": {
+            "mean": 0.452778,
+            "lo": 0.286111,
+            "hi": 0.616667
+          }
+        }
+      },
+      "mean": {
+        "input_tokens": 63884.76666666667,
+        "uncached_input_tokens": 8668.866666666667,
+        "output_tokens": 3615.0333333333333,
+        "tool_calls": 11.266666666666667,
+        "locate_bug_calls": 0.0,
+        "files_opened": 2.8,
+        "turns": 9.566666666666666,
+        "wall_s": 36.49333333333333,
+        "cost_usd": 0.06333433333333334
+      },
+      "total_cost_usd": 1.90003,
+      "per_issue": [
+        {
+          "ticket": 36616,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 2,
+          "tool_calls": 10,
+          "files_opened": 5,
+          "turns": 8,
+          "wall_s": 26.2,
+          "cost_usd": 0.05238,
+          "stop": "submit",
+          "tokens_in": 32212,
+          "tokens_out": 3251,
+          "predicted": [
+            "django/db/models/fields/__init__.py::DurationField.get_db_prep_value",
+            "django/db/backends/base/operations.py::BaseDatabaseOperations.adapt_durationfield_value"
+          ]
+        },
+        {
+          "ticket": 36434,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 2,
+          "files_opened": 1,
+          "turns": 3,
+          "wall_s": 7.9,
+          "cost_usd": 0.01177,
+          "stop": "submit",
+          "tokens_in": 4710,
+          "tokens_out": 682,
+          "predicted": [
+            "django/utils/autoreload.py::restart_with_reloader",
+            "django/utils/autoreload.py::get_child_arguments"
+          ]
+        },
+        {
+          "ticket": 36605,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 11,
+          "files_opened": 3,
+          "turns": 12,
+          "wall_s": 53.9,
+          "cost_usd": 0.08726,
+          "stop": "submit",
+          "tokens_in": 71720,
+          "tokens_out": 5593,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.in_bulk"
+          ]
+        },
+        {
+          "ticket": 36142,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 4,
+          "tool_calls": 10,
+          "files_opened": 2,
+          "turns": 10,
+          "wall_s": 28.9,
+          "cost_usd": 0.03784,
+          "stop": "submit",
+          "tokens_in": 38130,
+          "tokens_out": 2101,
+          "predicted": [
+            "django/shortcuts.py::get_object_or_404",
+            "django/shortcuts.py::aget_object_or_404",
+            "django/shortcuts.py::get_list_or_404",
+            "django/shortcuts.py::aget_list_or_404"
+          ]
+        },
+        {
+          "ticket": 36491,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 4,
+          "tool_calls": 6,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 22.8,
+          "cost_usd": 0.04482,
+          "stop": "submit",
+          "tokens_in": 23926,
+          "tokens_out": 2523,
+          "predicted": [
+            "django/test/runner.py::RemoteTestResult.addError",
+            "django/test/runner.py::RemoteTestResult.addFailure",
+            "django/test/runner.py::RemoteTestResult.__getstate__",
+            "django/test/runner.py::RemoteTestResult.startTestRun"
+          ]
+        },
+        {
+          "ticket": 36277,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 0,
+          "resolved": 5,
+          "named": 5,
+          "tool_calls": 23,
+          "files_opened": 5,
+          "turns": 15,
+          "wall_s": 71.2,
+          "cost_usd": 0.14201,
+          "stop": "submit",
+          "tokens_in": 166134,
+          "tokens_out": 8041,
+          "predicted": [
+            "django/db/backends/postgresql/schema.py::DatabaseSchemaEditor._using_sql",
+            "django/db/backends/postgresql/schema.py::DatabaseSchemaEditor._alter_column_type_sql",
+            "django/db/backends/postgresql/features.py::DatabaseFeatures.is_postgresql_18",
+            "django/db/backends/postgresql/schema.py::DatabaseSchemaEditor._alter_field",
+            "django/db/backends/base/schema.py::BaseDatabaseSchemaEditor._alter_many_to_many"
+          ]
+        },
+        {
+          "ticket": 36614,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 2,
+          "tool_calls": 18,
+          "files_opened": 3,
+          "turns": 12,
+          "wall_s": 33.3,
+          "cost_usd": 0.06569,
+          "stop": "submit",
+          "tokens_in": 77109,
+          "tokens_out": 3255,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.values_list",
+            "django/db/models/query.py::QuerySet.in_bulk"
+          ]
+        },
+        {
+          "ticket": 36636,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 1,
+          "files_opened": 0,
+          "turns": 2,
+          "wall_s": 7.1,
+          "cost_usd": 0.00365,
+          "stop": "submit",
+          "tokens_in": 2755,
+          "tokens_out": 143,
+          "predicted": [
+            "django/views/i18n.py::set_language"
+          ]
+        },
+        {
+          "ticket": 36623,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 2,
+          "tool_calls": 21,
+          "files_opened": 2,
+          "turns": 15,
+          "wall_s": 51.5,
+          "cost_usd": 0.09295,
+          "stop": "submit",
+          "tokens_in": 122419,
+          "tokens_out": 4453,
+          "predicted": [
+            "django/db/backends/postgresql/features.py::DatabaseFeatures",
+            "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperations.spatial_version"
+          ]
+        },
+        {
+          "ticket": 36646,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 2,
+          "tool_calls": 16,
+          "files_opened": 3,
+          "turns": 15,
+          "wall_s": 49.6,
+          "cost_usd": 0.08285,
+          "stop": "submit",
+          "tokens_in": 93096,
+          "tokens_out": 4844,
+          "predicted": [
+            "django/db/backends/oracle/base.py::OracleParam.__init__",
+            "django/db/models/fields/__init__.py::BinaryField.get_db_prep_value"
+          ]
+        },
+        {
+          "ticket": 36660,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 19,
+          "files_opened": 2,
+          "turns": 15,
+          "wall_s": 46.3,
+          "cost_usd": 0.08312,
+          "stop": "submit",
+          "tokens_in": 96153,
+          "tokens_out": 4393,
+          "predicted": [
+            "django/db/models/indexes.py::Index.check",
+            "django/db/models/base.py::Model._check_local_fields",
+            "django/db/models/base.py::Model._check_indexes"
+          ]
+        },
+        {
+          "ticket": 36611,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 4,
+          "tool_calls": 12,
+          "files_opened": 5,
+          "turns": 11,
+          "wall_s": 33.2,
+          "cost_usd": 0.068,
+          "stop": "submit",
+          "tokens_in": 70670,
+          "tokens_out": 3480,
+          "predicted": [
+            "django/db/models/fields/related_lookups.py::RelatedLookupMixin.get_prep_lookup",
+            "django/db/models/fields/related_lookups.py::RelatedLookupMixin.as_sql",
+            "django/db/models/base.py::Model._get_field_expression_map",
+            "django/db/models/fields/related_lookups.py::get_normalized_value"
+          ]
+        },
+        {
+          "ticket": 36654,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 10.9,
+          "cost_usd": 0.01654,
+          "stop": "submit",
+          "tokens_in": 10389,
+          "tokens_out": 693,
+          "predicted": [
+            "django/db/models/base.py::Model._do_update"
+          ]
+        },
+        {
+          "ticket": 36648,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 2,
+          "tool_calls": 16,
+          "files_opened": 6,
+          "turns": 15,
+          "wall_s": 73.0,
+          "cost_usd": 0.099,
+          "stop": "submit",
+          "tokens_in": 74940,
+          "tokens_out": 7158,
+          "predicted": [
+            "django/db/models/query.py::QuerySet._check_ordering_first_last_queryset_aggregation",
+            "django/db/models/sql/query.py::Query.set_group_by"
+          ]
+        },
+        {
+          "ticket": 36671,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 9,
+          "files_opened": 2,
+          "turns": 8,
+          "wall_s": 20.7,
+          "cost_usd": 0.03767,
+          "stop": "submit",
+          "tokens_in": 38937,
+          "tokens_out": 1673,
+          "predicted": [
+            "django/db/models/fields/tuple_lookups.py::Tuple.as_sqlite"
+          ]
+        },
+        {
+          "ticket": 36470,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 1,
+          "tool_calls": 2,
+          "files_opened": 1,
+          "turns": 3,
+          "wall_s": 5.2,
+          "cost_usd": 0.00732,
+          "stop": "submit",
+          "tokens_in": 4629,
+          "tokens_out": 301,
+          "predicted": [
+            "django/core/servers/basehttp.py::WSGIRequestHandler.log_message"
+          ]
+        },
+        {
+          "ticket": 36656,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 1,
+          "named": 3,
+          "tool_calls": 14,
+          "files_opened": 5,
+          "turns": 13,
+          "wall_s": 52.1,
+          "cost_usd": 0.08608,
+          "stop": "submit",
+          "tokens_in": 82154,
+          "tokens_out": 5539,
+          "predicted": [
+            "django/utils/text.py::acompress_sequence",
+            "django/middleware/gzip.py::GZipMiddleware.process_response",
+            "django/utils/text.py::compress_sequence"
+          ]
+        },
+        {
+          "ticket": 36677,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 1,
+          "files_opened": 0,
+          "turns": 2,
+          "wall_s": 2.9,
+          "cost_usd": 0.00457,
+          "stop": "submit",
+          "tokens_in": 3150,
+          "tokens_out": 164,
+          "predicted": [
+            "django/test/runner.py::_init_worker"
+          ]
+        },
+        {
+          "ticket": 36674,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 5,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 13.0,
+          "cost_usd": 0.03074,
+          "stop": "submit",
+          "tokens_in": 21146,
+          "tokens_out": 1142,
+          "predicted": [
+            "django/db/models/sql/compiler.py::SQLCompiler.get_related_selections",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select_from_parent",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_select"
+          ]
+        },
+        {
+          "ticket": 36683,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 2,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 12.2,
+          "cost_usd": 0.01239,
+          "stop": "submit",
+          "tokens_in": 8661,
+          "tokens_out": 714,
+          "predicted": [
+            "django/db/models/query.py::QuerySet.update",
+            "django/db/models/query.py::QuerySet.delete"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 4,
+          "named": 4,
+          "tool_calls": 12,
+          "files_opened": 2,
+          "turns": 12,
+          "wall_s": 63.3,
+          "cost_usd": 0.10703,
+          "stop": "submit",
+          "tokens_in": 100701,
+          "tokens_out": 6696,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.as_sql",
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/query.py::Query.clear_ordering"
+          ]
+        },
+        {
+          "ticket": 36596,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 15,
+          "files_opened": 4,
+          "turns": 12,
+          "wall_s": 51.9,
+          "cost_usd": 0.08824,
+          "stop": "submit",
+          "tokens_in": 74240,
+          "tokens_out": 5766,
+          "predicted": [
+            "django/test/runner.py::_init_worker",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation.mark_expected_failures_and_skips",
+            "django/db/backends/base/creation.py::BaseDatabaseCreation._mark_test",
+            "django/test/runner.py::ParallelTestSuite.initialize_suite"
+          ]
+        },
+        {
+          "ticket": 26434,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 17,
+          "files_opened": 2,
+          "turns": 15,
+          "wall_s": 100.1,
+          "cost_usd": 0.14691,
+          "stop": "submit",
+          "tokens_in": 150202,
+          "tokens_out": 9736,
+          "predicted": [
+            "django/db/models/sql/query.py::Query.get_aggregation",
+            "django/db/models/sql/query.py::Query.orderby_issubset_groupby",
+            "django/db/models/sql/compiler.py::SQLCompiler.get_group_by"
+          ]
+        },
+        {
+          "ticket": 36678,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 3,
+          "tool_calls": 3,
+          "files_opened": 1,
+          "turns": 4,
+          "wall_s": 12.6,
+          "cost_usd": 0.01786,
+          "stop": "submit",
+          "tokens_in": 9974,
+          "tokens_out": 713,
+          "predicted": [
+            "django/test/runner.py::ParallelTestSuite.run",
+            "django/test/runner.py::_safe_init_worker",
+            "django/test/runner.py::_init_worker"
+          ]
+        },
+        {
+          "ticket": 35381,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 1,
+          "resolved": 2,
+          "named": 4,
+          "tool_calls": 5,
+          "files_opened": 2,
+          "turns": 4,
+          "wall_s": 11.2,
+          "cost_usd": 0.02536,
+          "stop": "submit",
+          "tokens_in": 13501,
+          "tokens_out": 1305,
+          "predicted": [
+            "django/db/models/fields/json.py::JSONField.get_db_prep_save",
+            "django/db/models/fields/json.py::JSONField.get_db_prep_value",
+            "django/db/models/fields/json.py::JSONExact.process_rhs",
+            "django/db/models/expressions.py::JSONNull.as_sql"
+          ]
+        },
+        {
+          "ticket": 36696,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 4,
+          "tool_calls": 21,
+          "files_opened": 4,
+          "turns": 14,
+          "wall_s": 61.9,
+          "cost_usd": 0.11492,
+          "stop": "submit",
+          "tokens_in": 121593,
+          "tokens_out": 6869,
+          "predicted": [
+            "django/utils/inspect.py::lazy_annotations",
+            "django/utils/inspect.py::getfullargspec",
+            "django/utils/inspect.py::signature",
+            "django/utils/inspect.py::_get_func_parameters"
+          ]
+        },
+        {
+          "ticket": 36661,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 7,
+          "named": 7,
+          "tool_calls": 23,
+          "files_opened": 10,
+          "turns": 14,
+          "wall_s": 55.4,
+          "cost_usd": 0.12519,
+          "stop": "submit",
+          "tokens_in": 169577,
+          "tokens_out": 6002,
+          "predicted": [
+            "django/core/management/commands/inspectdb.py::Command.handle_inspection",
+            "django/db/backends/base/introspection.py::BaseDatabaseIntrospection.get_relations",
+            "django/db/backends/postgresql/introspection.py::DatabaseIntrospection.get_relations",
+            "django/db/backends/mysql/introspection.py::DatabaseIntrospection.get_relations",
+            "django/db/backends/sqlite3/introspection.py::DatabaseIntrospection.get_relations"
+          ]
+        },
+        {
+          "ticket": 36704,
+          "top1_hit": 1,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 3,
+          "tool_calls": 18,
+          "files_opened": 4,
+          "turns": 15,
+          "wall_s": 62.6,
+          "cost_usd": 0.09558,
+          "stop": "submit",
+          "tokens_in": 98098,
+          "tokens_out": 5941,
+          "predicted": [
+            "django/db/models/base.py::Model._check_composite_pk",
+            "django/db/models/options.py::Options.setup_proxy",
+            "django/db/models/fields/composite.py::CompositePrimaryKey.fields"
+          ]
+        },
+        {
+          "ticket": 36709,
+          "top1_hit": 0,
+          "any_gold_top5": 0,
+          "file_top1_hit": 0,
+          "resolved": 0,
+          "named": 1,
+          "tool_calls": 4,
+          "files_opened": 1,
+          "turns": 5,
+          "wall_s": 5.9,
+          "cost_usd": 0.01847,
+          "stop": "submit",
+          "tokens_in": 15915,
+          "tokens_out": 612,
+          "predicted": [
+            "django/contrib/auth/checks.py::check_user_model"
+          ]
+        },
+        {
+          "ticket": 36702,
+          "top1_hit": 0,
+          "any_gold_top5": 1,
+          "file_top1_hit": 1,
+          "resolved": 3,
+          "named": 4,
+          "tool_calls": 15,
+          "files_opened": 5,
+          "turns": 13,
+          "wall_s": 48.0,
+          "cost_usd": 0.09382,
+          "stop": "submit",
+          "tokens_in": 119702,
+          "tokens_out": 4668,
+          "predicted": [
+            "django/db/models/query.py::QuerySet._batched_insert",
+            "django/db/models/query.py::QuerySet.bulk_create",
+            "django/db/models/query.py::QuerySet._prepare_for_bulk_create",
+            "django/db/models/sql/compiler.py::SQLInsertCompiler.as_sql"
+          ]
+        }
+      ]
+    }
+  },
+  "locate_bug_alone": {
+    "n": 30,
+    "localization": {
+      "top1_function_hit": 0.4666666666666667,
+      "any_gold_function_top5": 0.5,
+      "top1_file_hit": 0.6666666666666666
+    },
+    "strict": {
+      "n": 30,
+      "function_acc@5": 0.3,
+      "function_acc@10": 0.4,
+      "file_acc@1": 0.43333333333333335,
+      "file_acc@5": 0.8,
+      "mrr": 0.4917989417989418
+    }
+  },
+  "setup": {
+    "tasks": "oldest 30 held-out Django fixes from results/agent_eval/tasks.json",
+    "snapshot": "f24f38c6b282",
+    "max_turns": 14,
+    "input_budget_tokens": 140000,
+    "max_output_tokens_per_call": 1200,
+    "prices_usd_per_mtok": {
+      "claude-sonnet-5-5": {
+        "in": 2.0,
+        "out": 10.0,
+        "cache_write": 2.5,
+        "cache_read": 0.1
+      },
+      "claude-sonnet-5": {
+        "in": 2.0,
+        "out": 10.0,
+        "cache_write": 2.5,
+        "cache_read": 0.2
+      },
+      "claude-haiku-4-5-20251001": {
+        "in": 1.0,
+        "out": 5.0,
+        "cache_write": 1.25,
+        "cache_read": 0.1
+      }
+    }
+  }
+}

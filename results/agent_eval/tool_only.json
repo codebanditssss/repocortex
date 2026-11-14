@@ -1,0 +1,16 @@
+{
+  "n": 30,
+  "localization": {
+    "top1_function_hit": 0.4666666666666667,
+    "any_gold_function_top5": 0.5,
+    "top1_file_hit": 0.6666666666666666
+  },
+  "strict": {
+    "n": 30,
+    "function_acc@5": 0.3,
+    "function_acc@10": 0.4,
+    "file_acc@1": 0.43333333333333335,
+    "file_acc@5": 0.8,
+    "mrr": 0.4917989417989418
+  }
+}
