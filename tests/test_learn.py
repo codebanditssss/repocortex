@@ -186,6 +186,81 @@ class HybridTest(unittest.TestCase):
         self.assertGreater(reciprocal_rank(["func:b"], ["func:b"]), played["curve"][0]["mrr"])
         self.assertIn(("concept:prefetch", "SHORTCUT", "func:b"), ranker.edges.edges)
         self.assertIn(("issue:1", "FIXED_IN", "func:b"), ranker.edges.edges)
+        slices = played["curve"][-1]["slices"]
+        self.assertEqual(slices["seen_module"]["n"], 1)
+        self.assertEqual(slices["unseen_module"]["n"], 0)
+        self.assertGreater(slices["seen_module"]["mrr"], played["curve"][0]["mrr"])
+
+    def test_max_memory_keeps_the_stronger_neighbor(self):
+        ranker = self._ranker()
+        ranker.memory_agg = "max"
+        ranker.memory_thresh = 0.3
+        ranker.memory_k = 8
+        ranker.graph_mix = 0.0
+        ranker.shortcut_lam = 0.0
+        ranker.matrix = np.zeros_like(ranker.matrix)
+        query = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
+        weak = np.array([0.6, 0.8, 0.0, 0.0], dtype=np.float32)
+        weak = weak / np.linalg.norm(weak)
+        ranker._vec[9] = query
+        ranker.memory.append({"uid": "issue:1", "ticket": 1, "golds": ["func:a"], "vec": query, "index": 1})
+        for index, ticket in enumerate((2, 3, 4), start=2):
+            ranker.memory.append(
+                {"uid": f"issue:{ticket}", "ticket": ticket, "golds": ["func:c"], "vec": weak, "index": index}
+            )
+        ranker._mem_dirty = True
+        ranker._seen = 4
+        pred = ranker.predict({"ticket": 9, "summary": "x", "description": ""}, k=1)
+        self.assertEqual(pred.hits[0].uid, "func:a")
+        ranker.memory_agg = "sum"
+        pred = ranker.predict({"ticket": 9, "summary": "x", "description": ""}, k=1)
+        self.assertEqual(pred.hits[0].uid, "func:c")
+
+    def test_file_prior_promotes_a_past_fix_in_the_same_file(self):
+        ranker = self._ranker()
+        ranker.memory_lam = 0.0
+        ranker.shortcut_lam = 0.0
+        ranker.graph_mix = 0.0
+        ranker.file_prior_lam = 1.2
+        ranker.bm25_mix = 0.0
+        issue = {"ticket": 1, "summary": "prefetch cache", "description": "", "gold_functions": ["func:b"], "gold_files": ["q.py"]}
+        before = [hit.uid for hit in ranker.predict(issue, k=1).hits]
+        ranker.observe(
+            {"ticket": 2, "summary": "other", "description": "", "gold_functions": ["func:b"], "gold_files": ["q.py"]}
+        )
+        # The query's dense vector points at func:a, which shares q.py with the stored fix.
+        ranker._vec[1] = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
+        after = [hit.uid for hit in ranker.predict(issue, k=1).hits]
+        self.assertEqual(before, ["func:a"])
+        self.assertEqual(after, ["func:b"])
+        self.assertEqual(ranker.fix_count["func:b"], 1)
+
+    def test_memory_frontier_does_not_promote_a_distant_function(self):
+        ranker = self._ranker()
+        ranker.memory_lam = 2.0
+        ranker.shortcut_lam = 0.0
+        ranker.graph_mix = 0.0
+        ranker.bm25_mix = 0.0
+        ranker.memory_thresh = 0.3
+        ranker.memory_frontier = 1
+        ranker.matrix = np.array(
+            [
+                [0.1, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0, 0.0],
+            ],
+            dtype=np.float32,
+        )
+        query = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
+        ranker._vec[9] = query
+        ranker.memory.append({"uid": "issue:1", "ticket": 1, "golds": ["func:a"], "vec": query, "index": 1})
+        ranker._mem_dirty = True
+        ranker._seen = 1
+        gated = [hit.uid for hit in ranker.predict({"ticket": 9, "summary": "x", "description": ""}, k=1).hits]
+        ranker.memory_frontier = 0
+        free = [hit.uid for hit in ranker.predict({"ticket": 9, "summary": "x", "description": ""}, k=1).hits]
+        self.assertEqual(gated, ["func:c"])
+        self.assertEqual(free, ["func:a"])
 
 
 if __name__ == "__main__":

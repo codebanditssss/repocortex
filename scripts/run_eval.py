@@ -13,7 +13,7 @@ from repocortex.config import Settings
 from repocortex.eval.harness import eval_bm25, eval_dense
 from repocortex.eval.metrics import bootstrap_gap
 from repocortex.eval.plot import plot_curve
-from repocortex.graph.export import dump_graph
+from repocortex.graph.export import dump_graph, load_corpus
 from repocortex.graph.ingest import clear_learned, load_graph
 from repocortex.hydradb import connect
 from repocortex.learn.replay import replay, rolling_mean
@@ -24,7 +24,7 @@ from repocortex.retrieve.frozen import EdgeTable
 from repocortex.retrieve.hybrid import HybridRanker, QueryCache
 
 ABLATIONS = (
-    ("learning off", "disabled", False),
+    ("learning off", "disabled", True),
     ("reweight", "reweight", False),
     ("+shortcuts", "shortcuts", False),
     ("+gap", "gap", False),
@@ -96,15 +96,26 @@ def main() -> None:
     parser.add_argument("--points", type=int, default=15)
     parser.add_argument("--every", type=int, default=40, help="entity merge cadence, in train issues")
     parser.add_argument("--window", type=int, default=100, help="prequential rolling window")
+    parser.add_argument(
+        "--from-corpus",
+        action="store_true",
+        help="score the exported corpus instead of reloading HydraDB",
+    )
     args = parser.parse_args()
     dataset = load_dataset(args.dataset)
     holdout = [issue for issue in dataset["issues"] if issue["split"] == "test"]
     train = [issue for issue in dataset["issues"] if issue["split"] == "train"]
     print(f"train={len(train)} holdout={len(holdout)}", flush=True)
-    client = connect(settings)
-    try:
+    client = None
+    if args.from_corpus:
+        nodes, edges = load_corpus(settings.data_dir / "corpus.json")
+        truncated = {"nodes": [], "edges": []}
+        print(f"corpus nodes={len(nodes)} edges={len(edges)}", flush=True)
+    else:
+        client = connect(settings)
         nodes, edges, truncated = load_graph(client)
         print(f"graph nodes={len(nodes)} edges={len(edges)} truncated={truncated}", flush=True)
+    try:
         if not any(node.get("label") == "Function" for node in nodes.values()):
             raise SystemExit("no functions in the graph; run scripts/build_graph.py")
         bm25 = BM25Index.from_nodes(nodes)
@@ -120,9 +131,31 @@ def main() -> None:
         ablations = {}
         full = None
         frozen_metrics = {}
+        frozen_online_rows: list[dict] = []
+        frozen_per_issue: list[dict] = []
+        validation_curve = []
         if args.replay:
             print("replaying train issues", flush=True)
-            clear_learned(client)
+            if client is not None:
+                clear_learned(client)
+            cut = len(train) - max(1, int(round(len(train) * 0.2)))
+            print(f"validation curve on the last {len(train) - cut} training issues", flush=True)
+            val_ranker = HybridRanker(
+                _copy_nodes(nodes),
+                EdgeTable(edges),
+                bm25,
+                dense,
+                embedder,
+                client=None,
+            )
+            validation_curve = replay(
+                val_ranker,
+                train[:cut],
+                train[cut:],
+                every=args.every,
+                mode="full",
+                points=8,
+            )["curve"]
             shared_vec: dict = {}
             cache = QueryCache()
             for label, mode, record in ABLATIONS:
@@ -157,6 +190,8 @@ def main() -> None:
                 if mode == "disabled":
                     frozen_metrics = dict(played["curve"][0])
                     frozen_metrics.pop("step", None)
+                    frozen_online_rows = played["prequential"]
+                    frozen_per_issue = played["per_issue"]
                 if mode == "full":
                     full = (ranker, played)
             assert full is not None
@@ -164,7 +199,10 @@ def main() -> None:
             window = args.window
             online = _prequential_points(played["prequential"], window)
             online_summary = _prequential_summary(played["prequential"], window)
+            frozen_online = _prequential_points(frozen_online_rows, window)
+            frozen_summary = _prequential_summary(frozen_online_rows, window)
             gap = bootstrap_gap(played["per_issue"], dense_metrics["per_issue"])
+            gap_frozen = bootstrap_gap(played["per_issue"], frozen_per_issue) if frozen_per_issue else {}
             provenance = {
                 "holdout": len(played["provenance"]),
                 "hits_with_fixed_in": sum(
@@ -198,20 +236,35 @@ def main() -> None:
             ranker.save(settings.data_dir / "learned_state.npz")
             curve_payload = {
                 "series": series,
-                "prequential": {"summary": online_summary, "points": online},
+                "prequential": {
+                    "summary": online_summary,
+                    "frozen_summary": frozen_summary,
+                    "points": online,
+                    "frozen_points": frozen_online,
+                },
+                "slices": (played["curve"][-1].get("slices") if played["curve"] else {}) or {},
+                "validation_curve": validation_curve,
             }
             (settings.results_dir / "curve.json").write_text(
                 json.dumps(curve_payload, indent=2), encoding="utf-8"
             )
-            plot_curve(series, {"bm25": bm25_metrics, "dense": dense_metrics}, settings.results_dir / "curve.png", online, window)
+            plot_curve(
+                series,
+                {"bm25": bm25_metrics, "dense": dense_metrics, "frozen": frozen_metrics},
+                settings.results_dir / "curve.png",
+                online,
+                window,
+                frozen_online,
+            )
             print(f"plot -> {settings.results_dir / 'curve.png'}", flush=True)
-            try:
-                print(
-                    f"shortcuts={client.count_rel('SHORTCUT')} fixed_in={client.count_rel('FIXED_IN')}",
-                    flush=True,
-                )
-            except Exception as exc:
-                print(f"could not count learned edges: {exc}", flush=True)
+            if client is not None:
+                try:
+                    print(
+                        f"shortcuts={client.count_rel('SHORTCUT')} fixed_in={client.count_rel('FIXED_IN')}",
+                        flush=True,
+                    )
+                except Exception as exc:
+                    print(f"could not count learned edges: {exc}", flush=True)
             payload = _payload(
                 dataset,
                 settings,
@@ -226,6 +279,10 @@ def main() -> None:
                 gap,
                 online_summary,
                 graph_counts,
+                gap_frozen,
+                frozen_summary,
+                (played["curve"][-1].get("slices") if played["curve"] else {}) or {},
+                validation_curve,
             )
         else:
             payload = _payload(
@@ -247,10 +304,15 @@ def main() -> None:
         out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         print(f"wrote {out}", flush=True)
     finally:
-        client.close()
+        if client is not None:
+            client.close()
 
 
-def _payload(dataset, settings, truncated, train, holdout, bm25_metrics, dense_metrics, frozen_metrics, played, ablations, gap, online_summary, graph_counts):
+def _payload(
+    dataset, settings, truncated, train, holdout, bm25_metrics, dense_metrics,
+    frozen_metrics, played, ablations, gap, online_summary, graph_counts,
+    gap_frozen=None, frozen_online_summary=None, slices=None, validation_curve=None,
+):
     def clean(metrics):
         if not metrics:
             return {}
@@ -271,6 +333,9 @@ def _payload(dataset, settings, truncated, train, holdout, bm25_metrics, dense_m
             "frozen": clean(frozen_metrics),
         },
         "gap_learned_minus_dense": gap,
+        "gap_learned_minus_frozen": gap_frozen or {},
+        "slices": slices or {},
+        "validation_curve": validation_curve or [],
         "curve": played["curve"] if played else [],
         "ablations": {
             name: {"mode": body["mode"], "operators": body["operators"], "final": body["final"]}
@@ -279,13 +344,18 @@ def _payload(dataset, settings, truncated, train, holdout, bm25_metrics, dense_m
         "operators": played["operators"] if played else {},
         "params": played["params"] if played else {},
         "prequential": online_summary,
+        "prequential_frozen": frozen_online_summary or {},
         "graph": graph_counts,
         "note": (
             "frozen is the unlearned hybrid: dense plus a 0.10 BM25 blend plus one hop "
             "from those seeds over the code graph. It is not the older PageRank walk. "
             "Learning modes store each fix before the next prediction. "
             "reweight is that memory plus edge reweighting. "
-            "+shortcuts, +gap, and full add those operators on top."
+            "+shortcuts, +gap, and full add those operators on top. "
+            "Memory threshold, k, recency, file and module priors, shortcut support, "
+            "and credit decay were chosen on the last 20% of the training issues only. "
+            "The holdout was scored once after that choice. "
+            "slices splits the holdout into issues whose gold module or file already appeared in a training fix."
         ),
     }
 

@@ -76,17 +76,22 @@ def _edge_row(key, props) -> dict:
     }
 
 
-def make_operators(ranker, mode: str, lr: float, merger_every: int) -> list:
+def make_operators(ranker, mode: str, lr: float, merger_every: int, decay: float = 0.08) -> list:
     enabled = set(MODES[mode])
     operators = []
     if "gap" in enabled:
         operators.append(GapIngestor(nodes=getattr(ranker, "nodes", {}), ranker=ranker))
     if "shortcuts" in enabled:
-        operators.append(PathCompressor())
+        operators.append(
+            PathCompressor(
+                min_support=int(getattr(ranker, "shortcut_min_support", 3) or 3),
+                min_precision=float(getattr(ranker, "shortcut_min_precision", 0.4) or 0.4),
+            )
+        )
     if "merge" in enabled:
         operators.append(EntityMerger(ranker=ranker, every=merger_every))
     if "reweight" in enabled:
-        operators.append(EdgeReweighter(lr=lr))
+        operators.append(EdgeReweighter(lr=lr, decay=decay))
     return operators
 
 
@@ -109,6 +114,13 @@ def learn_one(ranker, issue: dict, operators: list):
         frontier=list(pred.frontier),
         gap_concepts=list(getattr(pred, "gap_concepts", []) or []),
     )
+    extra = ranker.gold_concepts(issue["gold_functions"]) if hasattr(ranker, "gold_concepts") else []
+    if extra:
+        concepts = list(episode.concepts)
+        for concept in extra:
+            if concept not in concepts:
+                concepts.append(concept)
+        episode.concepts = concepts
     results = [op.on_outcome(ranker.edges, episode) for op in operators]
     if hasattr(ranker, "observe"):
         ranker.observe(issue)
@@ -125,10 +137,13 @@ def replay(
     points: int | None = None,
     record_prequential: bool = False,
     snapshots: bool = False,
+    decay: float | None = None,
 ) -> dict:
     if mode not in MODES:
         raise ValueError(f"unknown replay mode {mode}")
-    operators = make_operators(ranker, mode, lr, merger_every=every)
+    if decay is None:
+        decay = float(getattr(ranker, "credit_decay", 0.08) or 0.0)
+    operators = make_operators(ranker, mode, lr, merger_every=every, decay=decay)
     operator_totals = {op.name: 0 for op in operators}
     if hasattr(ranker, "prepare"):
         ranker.prepare(list(train) + list(holdout))
@@ -139,6 +154,8 @@ def replay(
     prequential = []
     snapshot_rows = []
     seen_weight: dict[tuple, float] = {}
+    seen_modules: set[str] = set()
+    seen_files: set[str] = set()
 
     def checkpoint(step: int, capture: bool) -> None:
         rows = []
@@ -183,6 +200,8 @@ def replay(
         metrics = summarize(rows)
         metrics["step"] = step
         metrics["ci"] = bootstrap_ci(scored)
+        if operators:
+            metrics["slices"] = _slices(rows, seen_modules, seen_files)
         curve.append(metrics)
         curve[-1]["_per_issue"] = scored
         print(
@@ -196,6 +215,16 @@ def replay(
 
     if not operators:
         checkpoint(0, False)
+        if record_prequential:
+            for index, issue in enumerate(train, start=1):
+                pred = ranker.predict(issue, k=10)
+                ranked = [hit.uid for hit in pred.hits]
+                files = [hit.file for hit in pred.hits]
+                item = score_issue(ranked, files, issue["gold_functions"], issue["gold_files"])
+                item["ticket"] = int(issue["ticket"])
+                item["index"] = index
+                item["time"] = int(issue.get("time") or 0)
+                prequential.append(item)
         for step in steps[1:]:
             row = {key: value for key, value in curve[0].items() if key != "_per_issue"}
             row["step"] = step
@@ -216,6 +245,8 @@ def replay(
                 item["index"] = index
                 item["time"] = int(issue.get("time") or 0)
                 prequential.append(item)
+            seen_modules |= _areas(issue, 2)
+            seen_files |= _areas(issue, 0)
             if index in step_set:
                 if hasattr(ranker, "flush"):
                     ranker.flush()
@@ -238,9 +269,18 @@ def replay(
         "graph_mix",
         "shortcut_min_support",
         "shortcut_min_precision",
+        "memory_agg",
+        "memory_frontier",
+        "recency_half_life",
+        "file_prior_lam",
+        "module_prior_lam",
+        "prior_seeds",
+        "generalize_concepts",
+        "credit_decay",
     ):
         if hasattr(ranker, name):
             params[name] = getattr(ranker, name)
+    params["decay"] = decay
     return {
         "curve": curve,
         "operators": operator_totals,
@@ -288,6 +328,49 @@ def _snapshot(step, metrics, operators, ranker, seen_weight: dict) -> dict:
         "new_edges": new_edges,
         "weight_updates": weight_updates,
     }
+
+
+def _areas(issue: dict, depth: int) -> set[str]:
+    """Gold files when depth is 0, otherwise the first `depth` path parts."""
+    found: set[str] = set()
+    golds = issue.get("gold_functions") or issue.get("gold") or []
+    for uid in golds:
+        parts = str(uid).split(":", 2)
+        if len(parts) < 2 or not parts[1]:
+            continue
+        if depth <= 0:
+            found.add(parts[1])
+            continue
+        segs = [seg for seg in parts[1].split("/") if seg]
+        if segs:
+            found.add("/".join(segs[:depth]))
+    return found
+
+
+def _brief(rows: list[dict]) -> dict:
+    if not rows:
+        return {"n": 0, "function_acc@10": None, "mrr": None}
+    metrics = summarize(rows)
+    return {
+        "n": metrics["n"],
+        "function_acc@10": metrics["function_acc@10"],
+        "mrr": metrics["mrr"],
+    }
+
+
+def _slices(rows: list[dict], seen_modules: set[str], seen_files: set[str]) -> dict:
+    buckets = {
+        "seen_module": [],
+        "unseen_module": [],
+        "seen_file": [],
+        "unseen_file": [],
+    }
+    for row in rows:
+        modules = _areas(row, 2)
+        files = _areas(row, 0)
+        buckets["seen_module" if modules & seen_modules else "unseen_module"].append(row)
+        buckets["seen_file" if files & seen_files else "unseen_file"].append(row)
+    return {name: _brief(group) for name, group in buckets.items()}
 
 
 def rolling_mean(values: list[float], window: int) -> list[float]:

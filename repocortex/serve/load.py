@@ -86,7 +86,7 @@ def load_ranker(root: Path) -> HybridRanker:
                 "vec": np.asarray(vectors[index], dtype=np.float32),
             }
         )
-    ranker._mem_dirty = True
+    ranker.rebuild_history()
     return ranker
 
 

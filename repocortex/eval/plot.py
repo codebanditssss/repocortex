@@ -11,6 +11,7 @@ def plot_curve(
     path: Path,
     prequential: list[dict] | None = None,
     window: int = 100,
+    frozen_online: list[dict] | None = None,
 ) -> None:
     import matplotlib
 
@@ -69,42 +70,63 @@ def plot_curve(
                 steps = [row["step"] for row in curve]
                 break
         if steps:
-            for name, style in (("bm25", ":"), ("dense", ":")):
+            for name, color in (("bm25", "#1a5276"), ("dense", "#922b21"), ("frozen", "#7f8c8d")):
                 value = baselines.get(name, {}).get(key)
                 if value is None:
                     continue
-                ax.plot(steps, [value] * len(steps), linestyle=style, color="#922b21" if name == "dense" else "#1a5276", label=name)
+                # learning off is already the frozen series, so skip a second copy of that line
+                if name == "frozen" and "learning off" in series:
+                    continue
+                ax.plot(steps, [value] * len(steps), linestyle=":", color=color, linewidth=1.5, label=name)
         ax.set_xlabel("train issues replayed")
         ax.set_ylabel(ylabel)
         ax.set_ylim(ymin, ymax)
         ax.grid(True, axis="y", alpha=0.3)
         ax.legend(frameon=False, fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=4)
-    _plot_online(axes[1, 0], prequential or [], "function_acc@10", "prequential Acc@10", window, rolling_mean)
-    _plot_online(axes[1, 1], prequential or [], "mrr", "prequential MRR", window, rolling_mean)
+    _plot_online(
+        axes[1, 0], prequential or [], frozen_online or [], "function_acc@10",
+        "expanding-window Acc@10", window, rolling_mean,
+    )
+    _plot_online(
+        axes[1, 1], prequential or [], frozen_online or [], "mrr",
+        "expanding-window MRR", window, rolling_mean,
+    )
     fig.suptitle("RepoCortex learning curve")
     fig.tight_layout(rect=(0, 0.02, 1, 0.98), h_pad=2.4)
     fig.savefig(path, dpi=140)
     plt.close(fig)
 
 
-def _plot_online(ax, rows, key, ylabel, window, rolling_mean) -> None:
+def _plot_online(ax, rows, frozen_rows, key, ylabel, window, rolling_mean) -> None:
     if not rows:
         ax.set_ylabel(ylabel)
         ax.text(0.5, 0.5, "no prequential scores", ha="center", va="center", transform=ax.transAxes)
         return
-    # The first window is still filling, so those points are not a learning curve.
-    start = min(len(rows), window) - 1
+    # Expanding mean of the first handful of issues is one outcome, not a trend.
+    start = min(len(rows) - 1, 19)
     values = [float(row[key]) for row in rows]
-    rolled = rolling_mean(values, window)[start:]
-    cumulative = rolling_mean(values, len(values))[start:]
-    indexes = [row["index"] for row in rows[start:]]
-    ax.plot(indexes, rolled, color="#1b4f72", linewidth=2, label=f"rolling {window}")
-    ax.plot(indexes, cumulative, color="#b9770e", linewidth=1.5, linestyle="--", label="cumulative")
+    cumulative = rolling_mean(values, len(values))
+    rolled = rolling_mean(values, window)
+    indexes = [row["index"] for row in rows]
+    ax.plot(indexes[start:], cumulative[start:], color="#1b4f72", linewidth=2.2, label="expanding mean")
+    ax.plot(indexes[start:], rolled[start:], color="#1b4f72", linewidth=1, alpha=0.45, label=f"rolling {window}")
+    if frozen_rows:
+        frozen_values = [float(row[key]) for row in frozen_rows]
+        frozen_cum = rolling_mean(frozen_values, len(frozen_values))
+        frozen_x = [row["index"] for row in frozen_rows]
+        offset = min(start, len(frozen_rows) - 1)
+        ax.plot(
+            frozen_x[offset:], frozen_cum[offset:], color="#7f8c8d", linewidth=1.6,
+            linestyle="--", label="frozen expanding mean",
+        )
+        band = cumulative[start:] + frozen_cum[offset:]
+    else:
+        band = cumulative[start:]
     ax.set_xlabel("train issues seen")
     ax.set_ylabel(ylabel)
-    low = min(rolled + cumulative)
-    high = max(rolled + cumulative)
-    pad = max(0.02, (high - low) * 0.25)
+    low = min(band)
+    high = max(band)
+    pad = max(0.015, (high - low) * 0.35)
     ax.set_ylim(max(0.0, low - pad), min(1.0, high + pad))
     ax.grid(True, axis="y", alpha=0.3)
     ax.legend(frameon=False, fontsize=8)

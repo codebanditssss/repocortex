@@ -8,6 +8,32 @@ from pathlib import Path
 LEARNED_RELS = {"SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"}
 
 
+def load_corpus(path: Path) -> tuple[dict, dict]:
+    """Read the offline corpus written by build_graph.py."""
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    nodes = {}
+    for uid, node in (raw.get("nodes") or {}).items():
+        nodes[str(uid)] = {
+            "label": node.get("label") or "",
+            "file": node.get("file") or "",
+            "name": node.get("name") or "",
+            "qualname": node.get("qualname") or "",
+            "doc": node.get("doc") or "",
+            "signature": node.get("signature") or "",
+            "start": int(node.get("start") or 0),
+            "end": int(node.get("end") or 0),
+        }
+    edges = {}
+    for row in raw.get("edges") or []:
+        edges[(row["src"], row["rel"], row["dst"])] = {
+            "w": float(row.get("w") or 1),
+            "hits": int(row.get("hits") or 0),
+            "misses": int(row.get("misses") or 0),
+            "count": int(row.get("count") or 1),
+        }
+    return nodes, edges
+
+
 def dump_graph(nodes: dict, edges, path: Path) -> dict:
     table = edges.edges if hasattr(edges, "edges") else edges
     node_rows = []

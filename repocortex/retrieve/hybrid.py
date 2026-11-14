@@ -7,14 +7,16 @@ does not take the whole hop. The BM25 blend was chosen on the last 40 training
 issues of the smaller phase 2 set, which sat before that holdout. `graph_mix`
 is a small fixed prior and was not fit on the held-out issues.
 
-Later steps add two learned terms on top of that frozen score:
+Later steps add learned terms on top of that frozen score:
 
 - FIXED_IN from past issues whose text is close to this report
+- a file or module prior from how often those functions were fixed before
 - SHORTCUT from a concept or symptom that has repeatedly landed on a function
 
 Reweighting changes the hop because the neighbor mass is multiplied by the edge
 weight. The hop is then divided by its peak, so only the relative weights move
-the ranking.
+the ranking. Memory hyperparameters are fit on a late slice of the training
+period, not on the holdout.
 """
 
 from __future__ import annotations
@@ -62,6 +64,14 @@ class HybridRanker:
         shortcut_min_support: int = 3,
         shortcut_min_precision: float = 0.4,
         graph_mix: float = 0.05,
+        memory_agg: str = "sum",
+        memory_frontier: int = 0,
+        recency_half_life: float = 0.0,
+        file_prior_lam: float = 0.0,
+        module_prior_lam: float = 0.0,
+        prior_seeds: int = 12,
+        generalize_concepts: bool = False,
+        credit_decay: float = 0.08,
     ):
         self.nodes = nodes
         self.edges = edges
@@ -76,6 +86,14 @@ class HybridRanker:
         self.shortcut_min_support = shortcut_min_support
         self.shortcut_min_precision = shortcut_min_precision
         self.graph_mix = graph_mix
+        self.memory_agg = memory_agg if memory_agg in {"sum", "max"} else "sum"
+        self.memory_frontier = max(0, int(memory_frontier or 0))
+        self.recency_half_life = float(recency_half_life or 0.0)
+        self.file_prior_lam = float(file_prior_lam or 0.0)
+        self.module_prior_lam = float(module_prior_lam or 0.0)
+        self.prior_seeds = max(1, int(prior_seeds))
+        self.generalize_concepts = bool(generalize_concepts)
+        self.credit_decay = float(credit_decay)
         self.func_uids = list(dense.uids)
         self.uid_index = {uid: index for index, uid in enumerate(self.func_uids)}
         self.matrix = np.asarray(dense.matrix, dtype=np.float32)
@@ -96,6 +114,8 @@ class HybridRanker:
         self.score_cache = None
         self._local_bm25: dict[int, np.ndarray] = {}
         self.memory: list[dict] = []
+        self.fix_count: dict[str, int] = {}
+        self._seen = 0
         self._mem_mat: np.ndarray | None = None
         self._mem_dirty = True
         self.pending_nodes: dict[str, dict] = {}
@@ -148,11 +168,46 @@ class HybridRanker:
         uid = f"issue:{ticket}"
         self.add_node(uid, "Issue", f"#{ticket}", kind="issue")
         golds = [gold for gold in issue["gold_functions"] if gold in self.uid_index]
-        self.memory.append({"uid": uid, "ticket": ticket, "golds": golds, "vec": vector})
+        self._seen += 1
+        self.memory.append(
+            {"uid": uid, "ticket": ticket, "golds": golds, "vec": vector, "index": self._seen}
+        )
         self._mem_dirty = True
         for gold in golds:
+            self.fix_count[gold] = self.fix_count.get(gold, 0) + 1
             self.edges.ensure(uid, "FIXED_IN", gold, w=1.0, hits=1, misses=0, count=1, learned=1)
         return uid
+
+    def rebuild_history(self) -> None:
+        """Rebuild fix counts from memory order. Used when a saved replay is reloaded."""
+        self.fix_count = {}
+        for index, item in enumerate(self.memory, start=1):
+            item["index"] = index
+            for gold in item.get("golds") or []:
+                if gold not in self.uid_index:
+                    continue
+                self.fix_count[gold] = self.fix_count.get(gold, 0) + 1
+        self._seen = len(self.memory)
+        self._mem_dirty = True
+
+    def gold_concepts(self, golds: list[str]) -> list[str]:
+        """Concept nodes named by a fixed function, so a later similar symptom can reuse them.
+
+        Called only after the prediction, so the current label does not score itself.
+        """
+        if not self.generalize_concepts:
+            return []
+        found: list[str] = []
+        for gold in golds:
+            node = self.nodes.get(gold) or {}
+            text = f"{node.get('name') or ''} {node.get('qualname') or ''}"
+            for token in tokenize(text):
+                uid = self.concepts.get(token)
+                if uid and uid not in found:
+                    found.append(uid)
+                if len(found) >= 6:
+                    return found
+        return found
 
     def flush(self) -> int:
         if self.client is None:
@@ -219,7 +274,9 @@ class HybridRanker:
         notes: dict[int, list[str]] = defaultdict(list)
         used: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
         learned = np.zeros(self.n, dtype=np.float32)
-        learned += self._memory_bonus(vector, notes, used)
+        learned += self._memory_bonus(vector, notes, used, base)
+        learned += self._history_prior(base, notes, "file")
+        learned += self._history_prior(base, notes, "module")
         concepts = self._concept_seeds(text)
         modules = self._modules(base)
         learned += self._shortcut_bonus(concepts, modules, notes, used)
@@ -308,7 +365,7 @@ class HybridRanker:
             self._mem_dirty = False
         return self._mem_mat
 
-    def _memory_bonus(self, vector, notes, used) -> np.ndarray:
+    def _memory_bonus(self, vector, notes, used, base: np.ndarray | None = None) -> np.ndarray:
         bonus = np.zeros(self.n, dtype=np.float32)
         matrix = self._memory_matrix()
         if matrix is None or self.memory_lam <= 0:
@@ -323,12 +380,16 @@ class HybridRanker:
             chosen = part[np.argsort(-sims[part])]
         raw = np.zeros(self.n, dtype=np.float32)
         span = max(1e-6, 1.0 - self.memory_thresh)
+        newest = max((int(item.get("index") or 0) for item in self.memory), default=0)
         for index in chosen:
             sim = float(sims[int(index)])
             if sim < self.memory_thresh:
                 continue
             scale = (sim - self.memory_thresh) / span
             item = self.memory[int(index)]
+            if self.recency_half_life > 0 and newest:
+                age = max(0, newest - int(item.get("index") or newest))
+                scale *= 0.5 ** (age / self.recency_half_life)
             for gold in item["golds"]:
                 column = self.uid_index.get(gold)
                 if column is None:
@@ -338,15 +399,74 @@ class HybridRanker:
                 props = self.edges.edges.get(key)
                 if props is not None:
                     weight = min(1.15, max(0.85, float(props.get("w") or 1.0)))
-                raw[column] += scale * weight
-                used[column].append(key)
-                notes[column].append(
-                    f"issue #{item['ticket']} sim {sim:.2f} -FIXED_IN-> {self._label(gold)} (w {weight:.2f})"
-                )
+                contrib = scale * weight
+                if self.memory_agg == "max":
+                    if contrib <= float(raw[column]):
+                        continue
+                    raw[column] = contrib
+                    used[column] = [key]
+                    notes[column] = [
+                        f"issue #{item['ticket']} sim {sim:.2f} -FIXED_IN-> {self._label(gold)} (w {weight:.2f})"
+                    ]
+                else:
+                    raw[column] += contrib
+                    used[column].append(key)
+                    notes[column].append(
+                        f"issue #{item['ticket']} sim {sim:.2f} -FIXED_IN-> {self._label(gold)} (w {weight:.2f})"
+                    )
+        if self.memory_frontier > 0 and base is not None and self.n > self.memory_frontier:
+            # A past fix may rerank a function the lexical score already surfaced.
+            # It may not pull in a function the report did not otherwise suggest.
+            keep = np.argpartition(-base, self.memory_frontier - 1)[: self.memory_frontier]
+            allowed = np.zeros(self.n, dtype=bool)
+            allowed[keep] = True
+            for column in np.flatnonzero(~allowed & (raw > 0)):
+                notes.pop(int(column), None)
+                used.pop(int(column), None)
+            raw[~allowed] = 0.0
         peak = float(raw.max())
         if peak > 0:
             bonus += np.float32(self.memory_lam) * (raw / peak)
         return bonus
+
+    def _history_prior(self, base: np.ndarray, notes, kind: str) -> np.ndarray:
+        """Boost functions already fixed in the files or modules the lexical ranker is looking at.
+
+        Counts come only from fixes stored before this prediction. Step 0 has none.
+        """
+        bonus = np.zeros(self.n, dtype=np.float32)
+        lam = self.file_prior_lam if kind == "file" else self.module_prior_lam
+        if lam <= 0 or not self.fix_count or self.n == 0:
+            return bonus
+        take = min(self.prior_seeds, self.n)
+        order = np.argpartition(-base, take - 1)[:take] if self.n > take else np.argsort(-base)
+        seeds: set[str] = set()
+        for index in order:
+            path = (self.nodes.get(self.func_uids[int(index)]) or {}).get("file", "") or ""
+            key = path if kind == "file" else module_of(path)
+            if key:
+                seeds.add(key)
+        if not seeds:
+            return bonus
+        raw = np.zeros(self.n, dtype=np.float32)
+        for uid, count in self.fix_count.items():
+            column = self.uid_index.get(uid)
+            if column is None or count <= 0:
+                continue
+            path = (self.nodes.get(uid) or {}).get("file", "") or ""
+            key = path if kind == "file" else module_of(path)
+            if key not in seeds:
+                continue
+            raw[column] = np.log1p(count)
+        peak = float(raw.max())
+        if peak <= 0:
+            return bonus
+        scaled = np.float32(lam) * (raw / np.float32(peak))
+        label = "file prior" if kind == "file" else "module prior"
+        for column in np.flatnonzero(raw >= 0.5 * peak):
+            uid = self.func_uids[int(column)]
+            notes[int(column)].append(f"{label} x{self.fix_count.get(uid, 0)} {self._label(uid)}")
+        return scaled
 
     def _shortcut_bonus(self, concepts, modules, notes, used) -> np.ndarray:
         bonus = np.zeros(self.n, dtype=np.float32)
