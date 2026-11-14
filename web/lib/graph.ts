@@ -186,7 +186,7 @@ export function bigGraph(seed = 99) {
 }
 
 function context2d(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) throw new Error("A 2D canvas context is required for print rendering.");
   return context;
 }

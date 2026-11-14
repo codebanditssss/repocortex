@@ -24,16 +24,16 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   const [query, setQuery] = useState(String(demo.ticket));
   const [submitted, setSubmitted] = useState(String(demo.ticket));
   const [matches, setMatches] = useState<ProvenanceIssue[]>([demo]);
-  const [ticket, setTicket] = useState(demo.ticket);
+  const [matchIndex, setMatchIndex] = useState(0);
   const [rank, setRank] = useState(1);
   const composer = useRef<HTMLTextAreaElement>(null);
-  const issue = matches.find((value) => value.ticket === ticket);
+  const issue = matches[matchIndex];
   const samples = [demo, ...data.issues.filter((value) => value.ticket !== demo.ticket).slice(0, 2)];
 
   const search = (text: string) => {
     const results = searchProvenance(data, text);
     setQuery(text); setSubmitted(text.trim()); setMatches(results);
-    setTicket(results[0]?.ticket ?? 0); setRank(results[0]?.hits[0]?.rank ?? 1);
+    setMatchIndex(0); setRank(results[0]?.hits[0]?.rank ?? 1);
   };
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
       </section>
       <section className="locate-results" aria-labelledby="locate-results-title">
         <div className="section-rule"><h2 id="locate-results-title">{issue ? <>Ranked <i>suspects</i></> : "The evidence index"}</h2><span className="cap" role="status">{issue ? `${issue.hits.length} captured hits · #${issue.ticket}` : submitted ? "No matches" : "No search yet"}</span></div>
-        {matches.length > 1 && <div className="issue-picker"><label htmlFor="matched-ticket">{matches.length} matching tickets</label><select id="matched-ticket" value={ticket} onChange={(event) => { setTicket(Number(event.target.value)); setRank(1); }}>{matches.map((match) => <option key={match.ticket} value={match.ticket}>#{match.ticket} / {shortFunctionName(match.hits[0])}</option>)}</select></div>}
+        {matches.length > 1 && <div className="issue-picker"><label htmlFor="matched-ticket">{matches.length} matching records</label><select id="matched-ticket" value={matchIndex} onChange={(event) => { const index = Number(event.target.value); setMatchIndex(index); setRank(matches[index].hits[0]?.rank ?? 1); }}>{matches.map((match, index) => <option key={index} value={index}>#{match.ticket} / {shortFunctionName(match.hits[0])} / record {index + 1}</option>)}</select></div>}
         {issue ? <>
           <ol className="ranked-hits">{issue.hits.map((hit) => <Fragment key={hit.rank}><li>
             <button className={`ranked-hit${rank === hit.rank ? " is-selected" : ""}`} type="button" aria-expanded={rank === hit.rank} aria-controls={`hit-receipt-${hit.rank}`} onClick={() => setRank(rank === hit.rank ? 0 : hit.rank)}>

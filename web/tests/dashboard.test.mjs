@@ -68,3 +68,16 @@ test("ruler marks follow the training length instead of a fixed 320-step scale",
   assert.deepEqual(rulerMarks(320), [0, 80, 160, 240, 320]);
   assert.deepEqual(rulerMarks(0), [0, 0, 0, 0, 0]);
 });
+
+test("structural path badges name the edge, not the full overflowing receipt", () => {
+  assert.equal(pathKind("source -CALLS-> target (w 1.00)"), "CALLS");
+  assert.equal(pathKind("source -CO_CHANGED-> target (w 0.95)"), "CO_CHANGED");
+  assert.equal(pathKind("source -CALLS-> target | issue #1 -FIXED_IN-> target"), "FIXED_IN");
+  assert.equal(pathKind("dense + bm25"), "dense + bm25");
+  assert.equal(pathKind("unknown evidence"), "unknown evidence");
+  for (const issue of provenance.issues) {
+    for (const hit of issue.hits) {
+      if (/-[A-Z_]+->/.test(hit.path)) assert.match(pathKind(hit.path), /^[A-Z_]+$/);
+    }
+  }
+});

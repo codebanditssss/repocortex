@@ -98,7 +98,7 @@ export function Hero({ ticket, evaluation, plate }: {
         {plate}
         <div className="hero-live-graph">
           <GraphPlate />
-          <div className={`hero-route ${routeReady ? "is-seeded" : ""} ${found ? "is-found" : ""}`} aria-label={`Measured route for held-out issue #${ticket.ticket}`}>
+          <div className={`hero-route ${routeReady ? "is-seeded" : ""} ${found ? "is-found" : ""}`} role="group" aria-label={`Measured route for held-out issue #${ticket.ticket}`}>
           <p className="sc route-inset-label">Held-out issue → past fix → gold function</p>
           <svg viewBox="0 0 600 240" preserveAspectRatio="none" aria-hidden="true">
             <path className="route-ink" d="M40 152 L240 70 L510 130" />

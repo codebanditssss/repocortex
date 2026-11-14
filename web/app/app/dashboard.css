@@ -34,7 +34,7 @@
 .manual-table td:last-child, .manual-table th:last-child { text-align: right; padding-right: 0; }
 .manual-table-scroll, .manual-chart-scroll { max-width: 100%; overflow-x: auto; }
 .manual-data { margin-top: 15px; font-size: 12px; }
-.manual-data > summary, .receipt-source > summary { width: fit-content; cursor: pointer; color: var(--ink2); text-decoration: underline; text-underline-offset: 4px; }
+.manual-data > summary, .receipt-source > summary { width: fit-content; min-height: 44px; padding-block: 12px; cursor: pointer; color: var(--ink2); text-decoration: underline; text-underline-offset: 4px; }
 .manual-data[open] > summary { margin-bottom: 18px; }
 .manual-data .manual-table { min-width: 420px; }
 .manual-endnote { border-top: 1px solid var(--rule-mid); padding-top: 14px; margin: 32px 0 0; font: italic 14px/1.5 var(--font-newsreader), serif; color: var(--ink2); overflow-wrap: anywhere; }
@@ -65,7 +65,7 @@
 .operator-table td:last-child { font-size: 13px; }
 .operator-table td, .operator-table th { padding-block: 13px; }
 .baseline-summary { margin-top: 24px; }
-.baseline-summary > summary { cursor: pointer; font-size: 12px; color: var(--ink2); }
+.baseline-summary > summary { min-height: 44px; padding-block: 12px; cursor: pointer; font-size: 12px; color: var(--ink2); }
 .baseline-summary[open] .manual-table { margin-top: 16px; }
 .baseline-summary .manual-table td { font-size: 10px; }
 
@@ -180,7 +180,7 @@
 .receipt-source { margin-top: 14px; font-size: 11px; }
 .hit-receipt .provenance-tree { margin: 12px 0; padding: 12px; border: 1px solid var(--rule); max-height: 280px; }
 .issue-picker { margin-block: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 12px; }
-.issue-picker select { max-width: 100%; min-width: 0; background: var(--paper); border: 1px solid var(--rule-mid); padding: 8px; font-size: 12px; }
+.issue-picker select { max-width: 100%; min-width: 0; min-height: 44px; background: var(--paper); border: 1px solid var(--rule-mid); padding: 8px; font-size: 12px; }
 .locate-endnote { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px; margin-top: auto; padding-top: 36px; }
 .locate-endnote > .sc { padding-top: 12px; border-top: 1px solid var(--rule); font-size: 9px; color: var(--ink2); }
 .locate-endnote p { padding-top: 12px; border-top: 1px solid var(--rule); margin-bottom: 0; color: var(--ink2); font: 14px/1.5 var(--font-newsreader), serif; }
@@ -207,11 +207,11 @@
 .agent-workflow ol, .setup-steps { padding-left: 18px; font: 16px/1.6 var(--font-newsreader), serif; color: var(--ink2); }
 .agent-workflow li, .setup-steps li { margin-block: 8px; }
 .agent-tool-calls { border-top: 1px solid var(--rule); padding-top: 18px; }
-.agent-tool-calls summary { display: flex; flex-wrap: wrap; gap: 12px; cursor: pointer; font-family: var(--font-departure); font-size: 12px; }
+.agent-tool-calls summary { display: flex; flex-wrap: wrap; align-items: center; min-height: 44px; gap: 12px; cursor: pointer; font-family: var(--font-departure); font-size: 12px; }
 .agent-tool-calls .sc { font-family: var(--font-inter), sans-serif; color: var(--ink2); font-size: 9px; }
 .agent-tool-calls pre { margin-block: 12px; padding: 12px; border: 1px solid var(--rule); white-space: pre-wrap; overflow-wrap: anywhere; font: 10px/1.6 var(--font-departure); background: var(--paper2); }
 .measured-aside { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; align-items: baseline; gap: 24px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--rule-mid); }
-.measured-aside p { margin-bottom: 0; font: 15px/1.5 var(--font-newsreader), serif; color: var(--ink2); }
+.measured-aside p { min-width: 0; overflow-wrap: anywhere; margin-bottom: 0; font: 15px/1.5 var(--font-newsreader), serif; color: var(--ink2); }
 .measured-aside p .num { font-size: 11px; }
 .measured-aside a { font-size: 12px; }
 .load-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 28px; }
@@ -307,7 +307,7 @@
   .journal-metrics dt { font-size: 11px; }
   .overview-figures { border: 0; border-top: 1px solid var(--rule-mid); padding: 24px 0 32px; }
   .overview-graph .graph-stage { height: 280px; }
-  .manual-page .overview-curve .metric-chart { min-width: 0; }
+  .manual-page .overview-curve .metric-chart { min-width: 720px; }
   .figure-top { align-items: center; flex-wrap: wrap; }
   .figure-top p { margin-bottom: 0; }
   .operator-table th { width: 95px; }
@@ -323,7 +323,7 @@
   .replay-sidebar > .dashboard-spot { margin-top: 20px; }
   .replay-main { border-top: 1px solid var(--rule-mid); padding: 24px 0 32px; }
   .replay-chart-meta { flex-wrap: wrap; gap: 12px; }
-  .replay-chart .metric-chart { min-width: 0; }
+  .replay-chart .metric-chart { min-width: 1004px; }
   .replay-chart-note, .checkpoint-sheet, .step-ruler, .replay-main > .manual-data, .replay-main > .figure-note:last-child { margin-left: 0; }
   .checkpoint-buttons { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .checkpoint-buttons .serif { font-size: 24px; }

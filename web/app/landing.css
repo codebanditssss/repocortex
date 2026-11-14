@@ -169,7 +169,7 @@
 .curve-tables th, .curve-tables td { padding: 10px 8px; border-bottom: 1px solid var(--rule); font-weight: 400; white-space: nowrap; }
 .replay-endnote { margin-top: 38px !important; font-size: 18px; line-height: 1.4; font-style: italic; text-align: right; color: var(--ink2); padding-block: 18px 0; }
 .replay-params { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); color: var(--ink2); font-size: 12px; }
-.replay-params summary { cursor: pointer; width: fit-content; min-height: 32px; }
+.replay-params summary { cursor: pointer; width: fit-content; min-height: 44px; padding-block: 12px; }
 .replay-params dl { display: flex; flex-wrap: wrap; gap: 18px 32px; margin: 12px 0; }
 .replay-params dl > div { display: flex; gap: 12px; }
 .replay-params dd { margin: 0; color: var(--ink); }
@@ -296,7 +296,7 @@
   .hero-plate .graph-module { display: none; }
   .hero-route { right: 0; width: 100%; top: 14px; height: 230px; background: transparent; }
   .hero-route > svg { height: 210px; }
-  .route-inset-label { background: var(--paper); font-size: 8px; top: -18px; }
+  .route-inset-label { background: var(--paper); font-size: 8px; top: -26px; }
   .route-prediction-one { top: 1px; left: 16%; }
   .route-prediction-two { top: 153px; }
   .route-seed { top: 143px; left: 1%; font-size: 9px; }
@@ -349,7 +349,7 @@
   .replay-graph > .figure-caption { max-width: 100%; margin-top: 16px; }
   .replay-chart-figure { border-top: 1px solid var(--rule); padding-top: 20px; }
   .chart-heading > .sc { font-size: 9px; }
-  .metric-chart { min-width: 0; }
+  .metric-chart { min-width: 720px; }
   .chart-scroll { margin-right: calc(-1 * var(--page-inset)); padding-right: 12px; }
   .metric-switch { padding-top: 12px; }
   .replay-controls { flex-wrap: wrap; gap: 20px 16px; padding-block: 24px; }

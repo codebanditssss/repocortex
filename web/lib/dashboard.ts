@@ -25,7 +25,7 @@ export function shortFunctionName(hit: Pick<ProvenanceHit, "uid">) {
 export function pathKind(path: string) {
   if (path.includes("SHORTCUT")) return "SHORTCUT";
   if (path.includes("FIXED_IN")) return "FIXED_IN";
-  return path;
+  return path.match(/-([A-Z_]+)->/)?.[1] ?? path;
 }
 
 /**

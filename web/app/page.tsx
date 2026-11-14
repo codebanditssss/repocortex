@@ -76,7 +76,7 @@ export default function Home() {
           <div className="retrieval-split">
             <figure className="vector-example">
               <figcaption><span className="sc">Nearby candidates</span><span className="news">Dense + BM25 paths</span></figcaption>
-              <div className="chunk-stack" aria-label="Measured hybrid-search hits from the same ranked result">
+              <div className="chunk-stack" role="group" aria-label="Measured hybrid-search hits from the same ranked result">
                 {ticket.hits.filter((candidate) => candidate.path === "dense + bm25").map((candidate) => (
                   <div className="search-chunk" key={candidate.uid}>
                     <span className="num">Rank {candidate.rank} / score {candidate.score}</span>

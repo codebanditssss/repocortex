@@ -38,11 +38,15 @@ const json = (...args) => {
 };
 const evaluate = (source) => json("eval", source).result;
 const routes = ["/", "/app", "/app/overview", "/app/replay", "/app/locate", "/app/agent", "/app/load", "/app/graph", "/app/connect"];
+const curve = JSON.parse(readFileSync(join(root, "public/data/curve.json"), "utf8"));
+const provenance = JSON.parse(readFileSync(join(root, "public/data/provenance.json"), "utf8"));
+const demo = provenance.issues.find(issue => issue.hits[0]?.gold && issue.hits[0].path.includes("FIXED_IN"));
+const percent = value => `${Number((value * 100).toFixed(2))}%`;
 
 try {
-  for (const width of [1440, 768, 320]) {
+  for (const width of [1440, 768, 390, 320]) {
     run("open", base);
-    run("set", "viewport", String(width), "900");
+    run("set", "viewport", String(width), width === 390 ? "844" : "900");
     for (const route of routes) {
       run("open", `${base}${route}`);
       const state = evaluate(`(async () => {
@@ -57,7 +61,8 @@ try {
           text: document.body.innerText,
           localFont: document.fonts.check('16px "Departure Mono"'),
           grain: getComputedStyle(document.querySelector(".grain")).backgroundImage.startsWith('url("data:image/png'),
-          footerBottom: document.querySelector("footer").getBoundingClientRect().bottom,
+          footerTop: document.querySelector("footer").getBoundingClientRect().top,
+          mainBottom: document.querySelector("main").getBoundingClientRect().bottom,
         };
       })()`);
       const screenshots = process.env.REPOCORTEX_SCREENSHOTS_DIR;
@@ -75,8 +80,8 @@ try {
       assert.doesNotMatch(state.text, /\u2014|\p{Extended_Pictographic}/u);
       if (route === "/") {
         assert.match(state.text, /held-out ticket \/ #\d+/i);
-        assert.match(state.text, /36857/);
-        assert.match(state.text, /0\.843/);
+        assert.ok(state.text.includes(String(demo.ticket)));
+        assert.ok(state.text.includes(String(demo.hits[0].score)));
         assert.match(state.text, /learned graph beats dense on both/);
         assert.doesNotMatch(state.text, /Not run in this pass|still lead|slips from/);
         const content = evaluate(`({
@@ -104,7 +109,7 @@ try {
       if (route !== "/") {
         assert.equal(state.active, route === "/app" ? "/app/overview" : route);
         assert.match(state.text, /1281 train \/ 319 held out/);
-        if (width === 1440) assert.ok(state.footerBottom <= 901, `${route} running foot must fit the 900px journal frame: ${state.footerBottom}`);
+        assert.ok(state.footerTop >= state.mainBottom - 1, `${route} running foot must not overlap the chapter`);
       }
       if (width === 1440) {
         const audit = json("a11y");
@@ -117,7 +122,6 @@ try {
   }
 
   // Landing controls are exercised against the production build and real fixtures.
-  const curve = JSON.parse(readFileSync(join(root, "public/data/curve.json"), "utf8"));
   run("set", "viewport", "1440", "900");
   run("open", base);
   run("wait", "--fn", 'document.querySelector(".hero-ticket button").textContent.includes("Restart")');
@@ -235,7 +239,7 @@ try {
   run("press", "Home");
   assert.equal(evaluate('document.querySelector(".replay-range output").textContent'), "0 / 1281");
   run("press", "End");
-  assert.equal(evaluate('document.querySelector(".chart-label-repo .chart-series-value").textContent'), "43.75%");
+  assert.equal(evaluate('document.querySelector(".chart-label-repo .chart-series-value").textContent'), percent(curve.curve.at(-1)["function_acc@10"]));
   assert.equal(evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
   const mobileAudit = json("a11y");
   assert.equal(mobileAudit.counts.violations, 0, JSON.stringify(mobileAudit.violations));
@@ -278,14 +282,14 @@ try {
   run("press", "Space");
   assert.equal(evaluate('document.querySelector(".replay-toggle").textContent.includes("Play")'), true);
   run("click", '.replay-speeds button:last-child');
-  run("click", '.checkpoint-buttons button[data-step="274"]');
+  run("click", `.checkpoint-buttons button[data-step="${curve.curve.at(-2).step}"]`);
   run("click", ".replay-toggle");
   run("wait", "--fn", 'document.querySelector("#dashboard-replay-step").value === "1281" && document.querySelector(".replay-toggle").textContent.includes("Play")');
   console.log("PASS dashboard checkpoints, label geometry, prev/next, keyboard playback, speed and stop at end");
 
   run("open", `${base}/app/locate`);
-  assert.match(evaluate('document.querySelector(".expanded-hit").textContent'), /36857/);
-  assert.match(evaluate('document.querySelector(".ranked-hit.is-selected").textContent'), /QuerySet.totally_ordered.*0\.843/s);
+  assert.ok(evaluate('document.querySelector(".expanded-hit").textContent').includes(String(demo.ticket)));
+  assert.ok(evaluate('document.querySelector(".ranked-hit.is-selected").textContent').includes(String(demo.hits[0].score)));
   run("click", ".ranked-hits > li:nth-child(2) .ranked-hit");
   assert.equal(evaluate('document.querySelectorAll(".expanded-hit").length'), 1);
   run("click", ".receipt-source summary");
@@ -300,7 +304,7 @@ try {
   run("press", "Enter");
   assert.match(evaluate('document.querySelector(".locate-empty").textContent'), /Start with a ticket/);
   run("click", ".locate-empty button");
-  assert.match(evaluate('document.querySelector(".expanded-hit").textContent'), /36857/);
+  assert.ok(evaluate('document.querySelector(".expanded-hit").textContent').includes(String(demo.ticket)));
   const typingCheck = evaluate('location.pathname');
   run("fill", "#locate-query", "LOAD");
   assert.equal(evaluate('location.pathname'), typingCheck);

@@ -11,7 +11,7 @@ export function ProvenanceReceipt({ ticket, hit }: { ticket: ProvenanceIssue; hi
   const visible = useInView(ref, "0px", true);
   const reduced = useReducedMotion();
   return (
-    <pre ref={ref} className={`provenance-tree ${visible && !reduced ? "receipt-reveal" : ""}`} tabIndex={0} aria-label={`Measured provenance route for issue #${ticket.ticket}`}>
+    <pre ref={ref} className={`provenance-tree ${visible && !reduced ? "receipt-reveal" : ""}`} tabIndex={0} role="region" aria-label={`Measured provenance route for issue #${ticket.ticket}`}>
       {provenanceLines(ticket, hit).map((line, index) => (
         <span className={line.includes("gold match") ? "actual-line" : ""} key={index} style={{ animationDelay: `${index * 70}ms` }}>{line || " "}</span>
       ))}

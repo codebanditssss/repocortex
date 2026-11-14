@@ -7,11 +7,15 @@ Run `npm install`, then `npm run dev`. Check with `npm run build`, `npm run lint
 `npm run typecheck`, and `npm test`.
 With `npm start` running and Factory's `agent-browser` installed, run
 `npm run test:browser` for desktop/mobile navigation and accessibility checks.
+With an existing Playwright installation, `node tests/polish.browser.mjs` checks
+console warnings, expanded mobile states, images, links, tap targets, and repeated
+ticket records. Set `PLAYWRIGHT_MODULE_PATH` to its module path and
+`REPOCORTEX_BASE_URL` to the running app (defaults to `http://127.0.0.1:3311`).
 
 Numbers come from `public/data`, sourced from backend `results/` when real.
-`curve.json` and `baselines.json` contain the combined measured evaluation from
-backend main at 97f95aa. Provenance, load results, and graph counts are real.
-Graph layout, edge-delta snapshots, and agent traces remain labeled placeholders.
+`curve.json` and `baselines.json` contain the current measured backend evaluation.
+Provenance, agent results, load results, and graph counts are real.
+Graph layout and edge-delta snapshots remain labeled placeholders.
 `lib/data.ts` provides typed browser loaders. Build-time pages import the same JSON.
 
 The visual source is mockups-v3: paper, ink, vermilion, and running heads and feet.
@@ -35,7 +39,7 @@ measured metrics, three single-point baseline references, and accessible tables.
 The landing hero is a measured rank-one gold hit with a FIXED_IN receipt from the held-out provenance file.
 The replay uses every checkpoint in the held-out curve. Frozen is the unlearned hybrid ranker, so step 0 is the starting point for this pass's learning gain.
 The single Locust run is shown as eight users, not a concurrency sweep.
-Graph layouts and weight deltas, agent traces, and the unpublished install
+Graph layouts and weight deltas, and the unpublished install
 command are explicitly labeled as placeholders. Synthetic snapshots use the
 nearest earlier fixture checkpoint; their cadence is independent of the curve.
 
@@ -52,17 +56,21 @@ v3 running head, roman chapter navigation, hairlines, and running foot.
 
 Overview compares both measured metrics with every baseline and records the
 four operator totals. Replay reuses the landing's SVG chart and dithered graph
-renderer. Its playhead moves through fixes 0 to 320; scores come only from the
-the recorded checkpoints. Graph layout and weight deltas remain placeholders.
+renderer. Its playhead moves through fixes 0 to 1281; scores come only from the
+recorded checkpoints. Graph layout and weight deltas remain placeholders.
 Playback starts paused, has 1x/4x/8x speeds, and stops at the last fix.
 
-Locate searches all 80 saved provenance issues locally by ticket number,
+Locate searches all 319 saved provenance records locally by ticket number,
 function UID, or filename substring. Whitespace-separated search terms must
 all match those fields. This is not live semantic search over report bodies.
 It opens on a measured held-out ticket and preserves the selected hit's score, gold annotation,
-FIXED_IN evidence, SHORTCUT evidence, and full provenance receipt.
+FIXED_IN evidence, SHORTCUT evidence, and full provenance receipt. Separate fixes
+for the same ticket remain independently selectable in the record picker.
 
-Agent shows a clearly marked two-pane fixture, not measured token savings.
+Agent shows the measured 30-bug Claude Sonnet 5.5 evaluation: 63,885 mean input
+tokens without the tool, 53,888 with it available (16% fewer), and 46,361 when
+told to call it first (27% fewer). Accuracy is about the same. The example trace
+found the gold function with and without the tool.
 Load shows only the measured eight-user, 20-second Locust run. Graph separates
 real node/edge/label counts from the placeholder printed layout. Connect offers
 a copyable, unverified local MCP configuration example using the backend script
@@ -76,4 +84,4 @@ Text fields retain their normal typing behavior.
 `tests/dashboard.test.mjs` adds checkpoint, local search, and selected-receipt
 regressions. The existing browser suite now also tests dashboard playback,
 every chart checkpoint, Locate states, global shortcuts, and configuration copy.
-It still checks all routes at 1440, 768, and 320 pixels, plus desktop axe audits.
+It checks all routes at 1440, 768, 390, and 320 pixels, plus desktop axe audits.

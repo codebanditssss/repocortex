@@ -49,12 +49,12 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
           <div className="metric-switch" role="group" aria-label="Evaluation metric">
             {(Object.keys(metricLabels) as LandingMetric[]).map((value) => <button key={value} type="button" aria-pressed={metric === value} onClick={() => setMetric(value)}>{metricLabels[value]}</button>)}
           </div>
-          <div className="chart-scroll" tabIndex={0} aria-label="Evaluation chart, scroll horizontally on small screens"><MetricChart data={data} metric={metric} index={index} /></div>
+          <div className="chart-scroll" role="region" tabIndex={0} aria-label="Evaluation chart, scroll horizontally on small screens"><MetricChart data={data} metric={metric} index={index} /></div>
           <p className="figure-caption">File Acc@1 rises from {formatPercent(first["file_acc@1"])} to {formatPercent(last["file_acc@1"])}. Function Acc@10 rises from {formatPercent(first["function_acc@10"])} to {formatPercent(last["function_acc@10"])}. The learned graph beats dense on both. MRR ends at {last.mrr.toFixed(3)}. Lines connect measured checkpoints, including the dips; baselines are horizontal references.</p>
         </figure>
       </div>
       <div className="replay-controls">
-        <button className="replay-play" type="button" onClick={() => {
+        <button className="replay-play" type="button" aria-label={playing ? "Pause learning replay" : "Play learning replay"} aria-pressed={playing} onClick={() => {
           if (playing) setPlaying(false);
           else { if (index === data.curve.length - 1) setIndex(0); setPlaying(true); }
         }} >{playing ? "Pause" : "Play"} <span aria-hidden="true">{playing ? "Ⅱ" : "▷"}</span></button>
@@ -72,7 +72,7 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
           <div className="curve-table-scroll" key={value} tabIndex={numbers ? 0 : undefined} role="region" aria-label={`${metricLabels[value]} data table`}><table><caption>{metricLabels[value]} / same {data.holdout} held-out fixes at every checkpoint</caption><thead><tr><th scope="col">Fixes learned</th><th scope="col">RepoCortex</th><th scope="col">Frozen</th><th scope="col">Dense</th><th scope="col">BM25</th></tr></thead><tbody>{data.curve.map((row) => <tr key={row.step}><th scope="row">{row.step}</th><td>{formatPercent(row[value])}</td><td>{formatPercent(data.baselines.frozen[value])}</td><td>{formatPercent(data.baselines.dense[value])}</td><td>{formatPercent(data.baselines.bm25[value])}</td></tr>)}</tbody></table></div>
         ))}
       </div>
-      <details className="replay-params"><summary className="sc">Ranker parameters / this pass</summary><dl>{Object.entries(data.params).map(([name, value]) => <div key={name}><dt className="num">{name}</dt><dd className="num">{value}</dd></div>)}</dl><p className="news">Step 0 already uses a better ranker than the old frozen run. Compare this pass from its own starting point, not from frozen.</p></details>
+      <details className="replay-params"><summary className="sc">Ranker parameters / this pass</summary><dl>{Object.entries(data.params).map(([name, value]) => <div key={name}><dt className="num">{name}</dt><dd className="num">{value}</dd></div>)}</dl><p className="news">The frozen reference is this pass&apos;s step 0 graph, with learning off. Learning gain is measured from that starting point.</p></details>
       <p className="replay-endnote news">A measured gain on {data.holdout} held-out issues. Not a claim about every codebase.</p>
     </section>
   );

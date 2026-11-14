@@ -50,7 +50,7 @@ export default function Overview() {
         <figure className="overview-graph"><div className="graph-stage"><GraphPlate step={evaluation.train} modules /></div><figcaption className="cap">{stats.local_nodes.toLocaleString("en-US")} nodes, {stats.local_edges.toLocaleString("en-US")} edges in the scoped graph. Counts are real. The layout and vermilion reweights are placeholders.</figcaption></figure>
         <figure className="overview-curve"><figcaption className="cap"><b>FIG. 2</b> File Acc@1 as the graph learns.</figcaption><div className="manual-chart-scroll" tabIndex={0} role="region" aria-label="Overview held-out accuracy chart"><MetricChart data={evaluation} metric="file_acc@1" index={evaluation.curve.length - 1} /></div><p className="figure-note">{`All ${evaluation.curve.length} points are held-out evaluations. Rules show single-point baselines, not additional replay runs.`}</p></figure>
         <EvaluationTable data={evaluation} metric="file_acc@1" />
-        <p className="figure-note">Scope: {evaluation.scope.join(" · ")}. Step 0 uses this pass&apos;s ranker; the frozen reference used an older ranker. Learning gain is measured from step 0.</p>
+        <p className="figure-note">Scope: {evaluation.scope.join(" · ")}. The frozen reference is this pass&apos;s step 0 graph, with learning off. Learning gain is measured from that starting point.</p>
       </aside>
     </div>
   );

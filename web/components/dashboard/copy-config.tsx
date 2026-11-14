@@ -17,5 +17,5 @@ export function CopyConfig({ snippet }: { snippet: string }) {
       }
       setStatus("Select and copy the configuration");
     }
-  }}>Copy JSON</button></div><pre ref={source} tabIndex={0} aria-label="Example MCP client configuration">{snippet}</pre><p className="copy-config-status cap" role="status">{status || "Replace the absolute path before use. This example has not been connection-tested."}</p></div>;
+  }}>Copy JSON</button></div><pre ref={source} tabIndex={0} role="region" aria-label="Example MCP client configuration">{snippet}</pre><p className="copy-config-status cap" role="status">{status || "Replace the absolute path before use. This example has not been connection-tested."}</p></div>;
 }

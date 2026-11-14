@@ -55,7 +55,7 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <p className="replay-beat">The graph changes. <br /><i>The test set does not.</i></p>
         <div className="playback-controls">
           <button type="button" className="text-control" disabled={step === 0} onClick={() => seek(step - 1)}>‹ prev</button>
-          <button type="button" className="btn replay-toggle" onClick={toggle}>{playing ? "Pause" : "Play"} <kbd>Space</kbd></button>
+          <button type="button" className="btn replay-toggle" aria-label={playing ? "Pause learning replay" : "Play learning replay"} aria-pressed={playing} onClick={toggle}>{playing ? "Pause" : "Play"} <kbd>Space</kbd></button>
           <button type="button" className="text-control" disabled={step === data.train} onClick={() => seek(step + 1)}>next ›</button>
         </div>
         <div className="replay-speeds" role="group" aria-label="Playback speed">{[1, 4, 8].map((value) => <button type="button" key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}</div>
@@ -71,7 +71,7 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <div className="checkpoint-sheet"><p className="cap"><b>FIG. 3</b> Checkpoint register / {metricLabels[metric]}, not a mutation log.</p><div className="checkpoint-buttons">{data.curve.map((value) => <button type="button" key={value.step} data-step={value.step} aria-pressed={point.step === value.step} onClick={() => seek(value.step)}><span className="num">{value.step}</span> <span className="serif">{formatPercent(value[metric])}</span></button>)}</div></div>
         {data.prequential && data.prequential_frozen && <div className="expanding-sheet"><p className="cap"><b>FIG. 4</b> Expanding window on the training stream, not the holdout. Each of {data.prequential.n} issues is scored before the graph learns from it.</p><dl><div><dt>Learning, Acc@10</dt><dd className="num">{formatPercent(data.prequential.cumulative_acc10)}</dd></div><div><dt>Frozen, Acc@10</dt><dd className="num">{formatPercent(data.prequential_frozen.cumulative_acc10)}</dd></div><div><dt>Gap</dt><dd className="num">+{((data.prequential.cumulative_acc10 - data.prequential_frozen.cumulative_acc10) * 100).toFixed(1)} pp</dd></div><div><dt>Last {data.prequential.window}, learning / frozen</dt><dd className="num">{formatPercent(data.prequential.last_window_acc10)} / {formatPercent(data.prequential_frozen.last_window_acc10)}</dd></div></dl></div>}
         <div className="step-ruler"><label htmlFor="dashboard-replay-step"><span className="sc">Fixes learned, in time order</span><output className="num" htmlFor="dashboard-replay-step">{step} / {data.train}</output></label><input type="range" id="dashboard-replay-step" min={0} max={data.train} value={step} onChange={(event) => seek(Number(event.target.value))} aria-valuetext={`Step ${step} of ${data.train}. Last measured checkpoint ${point.step}, ${metricLabels[metric]} ${formatPercent(point[metric])}.`} /><div className="ruler-labels num">{rulerMarks(data.train).map((mark) => <span key={mark}>{mark}</span>)}</div></div>
-        <EvaluationTable data={data} metric={metric} note="Step 0 is the starting graph for this pass. The frozen reference used an older ranker. Playback starts paused, including with reduced motion." />
+        <EvaluationTable data={data} metric={metric} note="The frozen reference is this pass's step 0 graph, with learning off. Playback starts paused, including with reduced motion." />
       </section>
     </div>
   );
