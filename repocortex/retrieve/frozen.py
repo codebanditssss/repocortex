@@ -145,12 +145,27 @@ def gold_paths(traversed: list[tuple[str, str, str]], seeds: list[str], gold: li
 
 
 class FrozenRanker:
-    def __init__(self, nodes: dict[str, dict], edges: EdgeTable, bm25: BM25Index, client, hops: int = 2):
+    def __init__(
+        self,
+        nodes: dict[str, dict],
+        edges: EdgeTable,
+        bm25: BM25Index,
+        client,
+        hops: int = 2,
+        # Restart at 0.5 keeps lexical seeds from being buried by hubs.
+        # lexical_mix blends that PPR score with BM25 on the same candidates.
+        teleport: float = 0.5,
+        hub_norm: bool = False,
+        lexical_mix: float = 0.35,
+    ):
         self.nodes = nodes
         self.edges = edges
         self.bm25 = bm25
         self.client = client
         self.hops = hops
+        self.teleport = teleport
+        self.hub_norm = hub_norm
+        self.lexical_mix = lexical_mix
         self.concepts = {
             node["name"]: uid
             for uid, node in nodes.items()
@@ -186,17 +201,28 @@ class FrozenRanker:
         for uid in concept_seeds + symptom_seeds:
             personal[uid] = max(personal.get(uid, 0.0), 1.0)
         sub = set(candidates) | set(concept_seeds) | set(symptom_seeds)
-        rank = personalized_pagerank(sorted(sub), self.edges.undirected(sub), personal)
+        adj = self.edges.undirected(sub)
+        if self.hub_norm:
+            degree = {uid: sum(weight for _, weight in nbrs) or 1.0 for uid, nbrs in adj.items()}
+            adj = {
+                uid: [(nbr, weight / ((degree.get(uid, 1.0) * degree.get(nbr, 1.0)) ** 0.5)) for nbr, weight in nbrs]
+                for uid, nbrs in adj.items()
+            }
+        rank = personalized_pagerank(sorted(sub), adj, personal, teleport=self.teleport)
         hits = []
+        peak_p = max((rank.get(uid, 0.0) for uid in candidates), default=1.0) or 1.0
+        peak_b = max((lexical.get(uid, 0.0) for uid in candidates), default=1.0) or 1.0
+        mix = self.lexical_mix
         for uid in candidates:
             node = self.nodes.get(uid) or {}
             if node.get("label") != "Function":
                 continue
+            blended = (1.0 - mix) * (rank.get(uid, 0.0) / peak_p) + mix * (lexical.get(uid, 0.0) / peak_b)
             hits.append(
                 Hit(
                     uid=uid,
                     file=node.get("file") or "",
-                    score=rank.get(uid, 0.0),
+                    score=blended,
                     path=paths.get(uid, ""),
                 )
             )
