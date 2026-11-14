@@ -22,6 +22,7 @@ from __future__ import annotations
 from neo4j import GraphDatabase
 
 from repocortex.hydradb.base import (
+    LABELS,
     NODE_FIELDS,
     ExpandHit,
     ExpandResult,
@@ -88,6 +89,7 @@ class BoltClient:
         self.uid_to_id: dict[str, int] = {}
         self.id_to_uid: dict[int, str] = {}
         self._next_id = 1
+        self._ids_synced = False
         self._expand_cache: dict[tuple, list[ExpandHit]] = {}
 
     def close(self) -> None:
@@ -115,6 +117,22 @@ class BoltClient:
         existing = self.uid_to_id.get(uid)
         if existing is not None:
             return existing
+        if not self._ids_synced:
+            # Never reuse an id that already belongs to a node we have not fetched.
+            self._ids_synced = True
+            try:
+                peak = None
+                for label in LABELS:
+                    result = self.query(
+                        f"MATCH (n:{label}) RETURN n.id AS id ORDER BY n.id DESC LIMIT 1"
+                    )
+                    if result.rows and result.rows[0].get("id") is not None:
+                        found = int(result.rows[0]["id"])
+                        peak = found if peak is None else max(peak, found)
+                if peak is not None:
+                    self._next_id = max(self._next_id, peak + 1)
+            except Exception:
+                pass
         node_id = self._next_id
         self._next_id += 1
         self.remember(uid, node_id)

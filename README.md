@@ -2,14 +2,10 @@
 
 RepoCortex is a code graph for bug localization. It stores files, classes,
 functions, and the edges between them in HydraDB, ranks the functions a bug
-report touches, and can reweight those edges from a repository's real fix
-history. This repository is phase 1: the skeleton, a working graph load, and
-baseline numbers on a time-ordered Django subset.
-
-The held-out set is the newest slice of that history. BM25, a dense embedding
-model, and a frozen graph are scored on it before any learning. Edge
-reweighting then replays the earlier fixes in time order. Path compression,
-gap-driven ingestion, and entity merge/split are stubbed for the next phase.
+report touches, and updates that graph from the repository's fix history.
+Ranking starts from a dense embedding plus a small BM25 blend. Replaying older
+fixes in time order then adds shortcut and fix edges, and only the edges that
+actually moved a hit get credit or a debit.
 
 ## Layout
 
@@ -84,35 +80,45 @@ python scripts/run_eval.py --replay
 
 - `results/baselines.json` with function Acc@5, Acc@10, file Acc@1, Acc@5, and MRR
 - `results/curve.json` and `results/curve.png` when `--replay` is set
+- `results/provenance.json` with the path behind each top hit on the holdout
 
-Function accuracy is strict: every gold function has to sit inside the top k. Replay prints a held-out checkpoint every 50 training issues. Only edge reweighting updates the graph. The other three operators return a stub result and leave the graph alone.
+Function accuracy is strict: every gold function has to sit inside the top k. Replay prints a held-out checkpoint every 40 training issues. Four operators run on each training issue, after the prediction and before the fix is stored:
 
-Frozen retrieval restarts PageRank with probability 0.5 and mixes in the BM25 score of the same candidates (weight 0.35). Without that, hub functions such as `Collector.add` outrank the seeds.
+- edge reweight credits a path that reached gold and debits a path that promoted a wrong top-k hit. Nearby edges that did not change the ranking are left alone. Weights decay back toward 1.
+- path compression writes a `SHORTCUT` once a concept or symptom has landed on the same function at least three times with precision at least 0.4.
+- gap ingestion, when gold is outside the frontier, links a same-file neighbor and a matching test, and counts two specific report tokens toward a later shortcut.
+- entity merge writes `SAME_AS` for concepts that fix the same functions, and `REFINES` when one concept is too broad.
+
+The learned ranker does not walk the whole neighborhood on every query. Its score is the dense score, plus a BM25 blend of 0.10, plus a bonus from similar past fixes (`FIXED_IN`) and from shortcuts. The blend was chosen on the last 40 training issues, which are still before the holdout. At step 0 there is no fix history and no shortcut, so that checkpoint is the unlearned hybrid.
+
+Frozen retrieval is still scored on its own. It restarts PageRank with probability 0.5 and mixes in the BM25 score of the same candidates (weight 0.35). Without that, hub functions such as `Collector.add` outrank the seeds. The walk is not bit-stable across runs.
 
 ## Results from this run
 
 Snapshot `f24f38c6b282`, scope `django/db` and `django/forms`, 400 issues (320 train, 80 held out). The graph loaded into local HydraDB 0.4.0 with no truncated pages: 4989 nodes and 21532 edges (3105 functions).
 
-Held-out, before learning:
+Held-out baselines, before the replay:
 
 | ranker | fn Acc@5 | fn Acc@10 | file Acc@1 | file Acc@5 | MRR |
 |---|---:|---:|---:|---:|---:|
 | BM25 | 0.225 | 0.3125 | 0.3375 | 0.675 | 0.258 |
 | dense (MiniLM) | 0.3125 | 0.3875 | 0.400 | 0.7625 | 0.307 |
-| frozen graph | 0.250 | 0.325 | 0.2375 | 0.5875 | 0.222 |
+| frozen graph | 0.2125 | 0.3125 | 0.300 | 0.600 | 0.220 |
 
-The frozen graph beats BM25 on function Acc@5 and Acc@10. It does not beat the dense baseline. File accuracy is still higher for BM25 and dense, because the graph walk promotes neighbors that are not in the touched file.
+The frozen graph does not beat dense. On this run it also does not beat BM25 at function Acc@10 (both 0.3125). An earlier frozen run landed a little higher (function Acc@10 0.325) because the bounded path sampler is not bit-stable. Either way the unlearned walk stays under the dense line.
 
-Edge reweighting on the 320 training issues, scored on the same 80:
+The learning curve on the same 80 issues:
 
 | step | fn Acc@5 | fn Acc@10 | file Acc@1 | MRR |
 |---:|---:|---:|---:|---:|
-| 0 | 0.250 | 0.325 | 0.2375 | 0.222 |
-| 50 | 0.275 | 0.325 | 0.300 | 0.261 |
-| 100 | 0.275 | 0.325 | 0.325 | 0.260 |
-| 320 | 0.2625 | 0.3125 | 0.3125 | 0.253 |
+| 0 | 0.375 | 0.400 | 0.450 | 0.371 |
+| 120 | 0.3625 | 0.400 | 0.450 | 0.365 |
+| 200 | 0.375 | 0.425 | 0.4875 | 0.383 |
+| 320 | 0.3875 | 0.4375 | 0.500 | 0.395 |
 
-Function Acc@10 does not climb. Acc@5 and MRR rise over the first 100 issues and then slip back. File Acc@1 moves from 0.2375 to 0.3125. The debit set is the whole 2-hop neighborhood, so edges that were merely nearby get pulled down. The next pass should credit only the path that reached gold.
+Step 0 is already above dense because of the BM25 blend (function Acc@10 0.400 vs 0.3875, MRR 0.371 vs 0.307). Learning then lifts function Acc@10 to 0.4375 and MRR to 0.395. MRR dips at step 120 (0.365) and recovers. File Acc@1 moves from 0.450 to 0.500. The full series is in `results/curve.json` and `results/curve.png`.
+
+The replay wrote 597 `FIXED_IN` edges and 60 `SHORTCUT` edges into local HydraDB. Credit or debit touched 232 edges. Path compression fired 107 times, gap ingestion 474 times, and merge/split 3 times. A holdout path looks like `issue #35575 sim 0.75 -FIXED_IN-> UniqueConstraint.validate`. `GMI_API_KEY` was unset, so no LLM call was made.
 
 ## Tests
 

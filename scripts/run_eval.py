@@ -12,13 +12,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from repocortex.config import Settings
 from repocortex.eval.harness import eval_bm25, eval_dense, eval_ranker
 from repocortex.eval.plot import plot_curve
-from repocortex.graph.ingest import load_graph
+from repocortex.graph.ingest import clear_learned, load_graph
 from repocortex.hydradb import connect
 from repocortex.learn.replay import replay
 from repocortex.mine.dataset import load_dataset
 from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import Embedder, build_dense_index
 from repocortex.retrieve.frozen import EdgeTable, FrozenRanker
+from repocortex.retrieve.hybrid import HybridRanker
 
 
 def main() -> None:
@@ -27,7 +28,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="run baselines and the learning curve")
     parser.add_argument("--dataset", type=Path, default=settings.data_dir / "dataset.json")
     parser.add_argument("--replay", action="store_true")
-    parser.add_argument("--every", type=int, default=50)
+    parser.add_argument("--every", type=int, default=40)
     args = parser.parse_args()
     dataset = load_dataset(args.dataset)
     holdout = [issue for issue in dataset["issues"] if issue["split"] == "test"]
@@ -47,21 +48,54 @@ def main() -> None:
         dense = build_dense_index(nodes, embedder, settings.data_dir / "embeddings.npz")
         dense_metrics = eval_dense(dense, embedder, nodes, holdout)
         print("dense", json.dumps(dense_metrics))
-        table = EdgeTable(edges)
-        ranker = FrozenRanker(nodes, table, bm25, client, hops=settings.hops)
-        frozen_metrics = eval_ranker(ranker, holdout)
+        frozen_metrics = eval_ranker(
+            FrozenRanker(nodes, EdgeTable(edges), bm25, client, hops=settings.hops),
+            holdout,
+        )
         print("frozen", json.dumps(frozen_metrics))
         curve = []
         operators = {}
+        params = {}
+        settings.results_dir.mkdir(parents=True, exist_ok=True)
         if args.replay:
             print("replaying train issues")
-            # The frozen number above already walked the graph. Replay starts
-            # from those same weights (all still 1.0 on a fresh ingest).
+            clear_learned(client)
+            ranker = HybridRanker(
+                nodes,
+                EdgeTable(edges),
+                bm25,
+                dense,
+                embedder,
+                client,
+            )
             played = replay(ranker, train, holdout, every=args.every)
             curve = played["curve"]
             operators = played["operators"]
+            params = played["params"]
             print("curve", json.dumps(curve))
-        settings.results_dir.mkdir(parents=True, exist_ok=True)
+            provenance = {
+                "holdout": len(played["provenance"]),
+                "hits_with_fixed_in": sum(
+                    1
+                    for issue in played["provenance"]
+                    for hit in issue["hits"]
+                    if "FIXED_IN" in hit["path"]
+                ),
+                "hits_with_shortcut": sum(
+                    1
+                    for issue in played["provenance"]
+                    for hit in issue["hits"]
+                    if "SHORTCUT" in hit["path"]
+                ),
+                "issues": played["provenance"],
+            }
+            (settings.results_dir / "provenance.json").write_text(
+                json.dumps(provenance, indent=2), encoding="utf-8"
+            )
+            ranker.save(settings.data_dir / "learned_state.npz")
+            print(
+                f"shortcuts={client.count_rel('SHORTCUT')} fixed_in={client.count_rel('FIXED_IN')}"
+            )
         payload = {
             "snapshot": dataset["snapshot"],
             "scope": dataset["scope"],
@@ -77,6 +111,7 @@ def main() -> None:
             },
             "curve": curve,
             "operators": operators,
+            "params": params,
         }
         out = settings.results_dir / "baselines.json"
         out.write_text(json.dumps(payload, indent=2), encoding="utf-8")

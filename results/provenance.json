@@ -1,0 +1,3900 @@
+{
+  "holdout": 80,
+  "hits_with_fixed_in": 81,
+  "hits_with_shortcut": 17,
+  "issues": [
+    {
+      "ticket": 37028,
+      "gold": [
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_bit_aggregations",
+        "func:django/db/backends/sqlite3/_functions.py:django.db.backends.sqlite3._functions.BitAggregate.finalize",
+        "func:django/db/backends/sqlite3/_functions.py:django.db.backends.sqlite3._functions.register",
+        "func:django/db/models/aggregates.py:django.db.models.aggregates.BitAggregate.__init__",
+        "func:django/db/models/aggregates.py:django.db.models.aggregates.BitAggregate.as_oracle",
+        "func:django/db/models/aggregates.py:django.db.models.aggregates.BitAggregate.as_sql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_bit_aggregations",
+          "file": "django/db/backends/oracle/features.py",
+          "score": 0.696,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/aggregates.py:django.db.models.aggregates.BitAggregate.as_oracle",
+          "file": "django/db/models/aggregates.py",
+          "score": 0.631,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/expressions.py:django.db.models.expressions.Combinable.bitxor",
+          "file": "django/db/models/expressions.py",
+          "score": 0.6067,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/expressions.py:django.db.models.expressions.Combinable.bitor",
+          "file": "django/db/models/expressions.py",
+          "score": 0.5999,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/aggregates.py:django.db.models.aggregates.BitAggregate.as_sql",
+          "file": "django/db/models/aggregates.py",
+          "score": 0.5558,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37036,
+      "gold": [
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute.fetch_many"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.fetch_many",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.5953,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fetch_modes.py:django.db.models.fetch_modes.FetchPeers.fetch",
+          "file": "django/db/models/fetch_modes.py",
+          "score": 0.5905,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ReverseOneToOneDescriptor.field",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.5888,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ReverseOneToOneDescriptor.fetch_many",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.5835,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.fetch_one",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.5819,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37047,
+      "gold": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.orderby_issubset_groupby"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.orderby_issubset_groupby",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6578,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+          "file": "django/db/models/query.py",
+          "score": 0.5994,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/expressions.py:django.db.models.expressions.OrderBy.__init__",
+          "file": "django/db/models/expressions.py",
+          "score": 0.5958,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.5746,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5685,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 35870,
+      "gold": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.get_choices",
+        "func:django/db/models/fields/reverse_related.py:django.db.models.fields.reverse_related.ForeignObjectRel.get_choices",
+        "func:django/db/models/utils.py:django.db.models.utils.get_blank_choice_label",
+        "func:django/forms/fields.py:django.forms.fields.FilePathField.__init__",
+        "func:django/forms/models.py:django.forms.models.ModelChoiceField.__init__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.get_choices",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6915,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/fields.py:django.forms.fields.ChoiceField.__init__",
+          "file": "django/forms/fields.py",
+          "score": 0.6786,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/fields.py:django.forms.fields.ChoiceField.choices",
+          "file": "django/forms/fields.py",
+          "score": 0.6769,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Select._choice_has_empty_value",
+          "file": "django/forms/widgets.py",
+          "score": 0.6767,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_choices",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6752,
+          "gold": false,
+          "path": "issue #24561 sim 0.59 -FIXED_IN-> django.db.models.fields.Field._check_choices (w 0.90)"
+        }
+      ]
+    },
+    {
+      "ticket": 37057,
+      "gold": [
+        "func:django/db/models/constraints.py:django.db.models.constraints.CheckConstraint.validate",
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.Q.check"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.validate",
+          "file": "django/db/models/constraints.py",
+          "score": 0.8139,
+          "gold": false,
+          "path": "issue #35275 sim 0.75 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 0.92) | issue #35575 sim 0.71 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 0.85) | issue #35594 sim 0.70 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 1.14)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.check",
+          "file": "django/db/models/constraints.py",
+          "score": 0.6988,
+          "gold": false,
+          "path": "issue #36594 sim 0.68 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.check (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+          "file": "django/db/models/base.py",
+          "score": 0.6984,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.688,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.__init__",
+          "file": "django/db/models/constraints.py",
+          "score": 0.6872,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36912,
+      "gold": [
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.Q.__init__",
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.Q._check_connector",
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.Q.create"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.validators",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.4874,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.4114,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.get_or_create",
+          "file": "django/db/models/query.py",
+          "score": 0.3942,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/mysql/base.py:django.db.backends.mysql.base.DatabaseWrapper.check_constraints",
+          "file": "django/db/backends/mysql/base.py",
+          "score": 0.3848,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.clean",
+          "file": "django/db/models/base.py",
+          "score": 0.3831,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 16429,
+      "gold": [
+        "func:django/forms/fields.py:django.forms.fields.FilePathField.__init__",
+        "func:django/forms/fields.py:django.forms.fields.FilePathField.set_choices"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/fields.py:django.forms.fields.FilePathField.set_choices",
+          "file": "django/forms/fields.py",
+          "score": 0.7549,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/fields.py:django.forms.fields.FilePathField.__init__",
+          "file": "django/forms/fields.py",
+          "score": 0.6607,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/files.py:django.db.models.fields.files.FileField.generate_filename",
+          "file": "django/db/models/fields/files.py",
+          "score": 0.6481,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.FilePathField._check_allowing_files_or_folders",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6172,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.FilePathField.__init__",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.612,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37075,
+      "gold": [
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pool"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_connection",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7798,
+          "gold": false,
+          "path": "issue #35688 sim 0.62 -FIXED_IN-> django.db.backends.postgresql.base.DatabaseWrapper._configure_connection (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pool",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7621,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_if_health_check_failed",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7418,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_role",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.733,
+          "gold": false,
+          "path": "issue #35688 sim 0.62 -FIXED_IN-> django.db.backends.postgresql.base.DatabaseWrapper._configure_role (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_pool",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7063,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37053,
+      "gold": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.BinaryField.to_python"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.BinaryField.value_to_string",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5908,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.validate_no_broken_transaction",
+          "file": "django/db/backends/base/base.py",
+          "score": 0.4387,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.clean",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.4375,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/validation.py:django.db.backends.base.validation.BaseDatabaseValidation.check",
+          "file": "django/db/backends/base/validation.py",
+          "score": 0.4291,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.validate_autopk_value",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.4176,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36784,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render",
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render_css",
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render_js",
+        "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__repr__",
+        "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+        "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.render"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/formsets.py:django.forms.formsets.BaseFormSet.media",
+          "file": "django/forms/formsets.py",
+          "score": 0.6481,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.path",
+          "file": "django/forms/widgets.py",
+          "score": 0.6288,
+          "gold": false,
+          "path": "issue #35886 sim 0.64 -FIXED_IN-> django.forms.widgets.MediaAsset.path (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6251,
+          "gold": true,
+          "path": "issue #35886 sim 0.64 -FIXED_IN-> django.forms.widgets.MediaAsset.__str__ (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__eq__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6217,
+          "gold": false,
+          "path": "issue #35886 sim 0.64 -FIXED_IN-> django.forms.widgets.MediaAsset.__eq__ (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media.__getitem__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6135,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37060,
+      "gold": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema._is_relevant_relation",
+        "func:django/db/backends/sqlite3/schema.py:django.db.backends.sqlite3.schema.DatabaseSchemaEditor._alter_field"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema._is_relevant_relation",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7101,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.OneToOneField.__init__",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6431,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_field",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6425,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6381,
+          "gold": false,
+          "path": "concept:field -SAME_AS-> concept:when -SHORTCUT-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field | concept:when -SHORTCUT-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field (hits 3, misses 0)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.OneToOneField.deconstruct",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.623,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37085,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render_css",
+        "func:django/forms/widgets.py:django.forms.widgets.Stylesheet.__init__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media._css",
+          "file": "django/forms/widgets.py",
+          "score": 0.6569,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__init__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6481,
+          "gold": false,
+          "path": "issue #35886 sim 0.82 -FIXED_IN-> django.forms.widgets.MediaAsset.__init__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__eq__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6428,
+          "gold": false,
+          "path": "issue #35886 sim 0.82 -FIXED_IN-> django.forms.widgets.MediaAsset.__eq__ (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media._normalize_css",
+          "file": "django/forms/widgets.py",
+          "score": 0.6425,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6403,
+          "gold": false,
+          "path": "issue #35886 sim 0.82 -FIXED_IN-> django.forms.widgets.MediaAsset.__str__ (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 36593,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+          "file": "django/db/models/query.py",
+          "score": 0.8249,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_select_related",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.7265,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.select_related_descend",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6844,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_related_selections",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6604,
+          "gold": false,
+          "path": "issue #35356 sim 0.58 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler.get_related_selections (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6377,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36938,
+      "gold": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._get_combinator_part_sql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._order_by_pairs",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5842,
+          "gold": false,
+          "path": "issue #35643 sim 0.66 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler._order_by_pairs (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5799,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+          "file": "django/db/models/query.py",
+          "score": 0.5681,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._clear_ordering_in_combined_queries",
+          "file": "django/db/models/query.py",
+          "score": 0.5666,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.5646,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37097,
+      "gold": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.7178,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+          "file": "django/db/models/query.py",
+          "score": 0.697,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.split_exclude",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6245,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._clear_ordering_in_combined_queries",
+          "file": "django/db/models/query.py",
+          "score": 0.6234,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.6212,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37045,
+      "gold": [
+        "func:django/db/transaction.py:django.db.transaction.savepoint",
+        "func:django/db/transaction.py:django.db.transaction.savepoint_create"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/transaction.py:django.db.transaction.savepoint_create",
+          "file": "django/db/transaction.py",
+          "score": 0.8507,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/transaction.py:django.db.transaction.savepoint",
+          "file": "django/db/transaction.py",
+          "score": 0.8382,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.savepoint",
+          "file": "django/db/backends/base/base.py",
+          "score": 0.811,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/transaction.py:django.db.transaction.savepoint_commit",
+          "file": "django/db/transaction.py",
+          "score": 0.7979,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/transaction.py:django.db.transaction.Atomic.__init__",
+          "file": "django/db/transaction.py",
+          "score": 0.7796,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37088,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Media.__init__",
+        "func:django/forms/widgets.py:django.forms.widgets.Media._normalize_css",
+        "func:django/forms/widgets.py:django.forms.widgets.Media._normalize_js",
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render_css",
+        "func:django/forms/widgets.py:django.forms.widgets.Media.render_js",
+        "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__eq__",
+        "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__hash__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.path",
+          "file": "django/forms/widgets.py",
+          "score": 0.7337,
+          "gold": false,
+          "path": "issue #35886 sim 0.59 -FIXED_IN-> django.forms.widgets.MediaAsset.path (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__init__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7336,
+          "gold": false,
+          "path": "issue #35886 sim 0.59 -FIXED_IN-> django.forms.widgets.MediaAsset.__init__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__eq__",
+          "file": "django/forms/widgets.py",
+          "score": 0.723,
+          "gold": true,
+          "path": "issue #35886 sim 0.59 -FIXED_IN-> django.forms.widgets.MediaAsset.__eq__ (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__hash__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6724,
+          "gold": true,
+          "path": "issue #35886 sim 0.59 -FIXED_IN-> django.forms.widgets.MediaAsset.__hash__ (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6649,
+          "gold": false,
+          "path": "issue #35886 sim 0.59 -FIXED_IN-> django.forms.widgets.MediaAsset.__str__ (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 36492,
+      "gold": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.conditional_expression_supported_in_where_clause",
+        "func:django/db/models/lookups.py:django.db.models.lookups.Lookup.as_oracle"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.convert_booleanfield_value",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.6406,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.build_filter",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6231,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.check_filterable",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.62,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._quote_params_for_last_executed_query",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.6197,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_boolean_expr_in_select_clause",
+          "file": "django/db/backends/oracle/features.py",
+          "score": 0.6127,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37139,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model._is_pk_set"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.UUIDField.to_python",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7913,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.__init__",
+          "file": "django/db/models/functions/uuid.py",
+          "score": 0.7773,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.UUIDField.deconstruct",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7701,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sql",
+          "file": "django/db/models/functions/uuid.py",
+          "score": 0.7623,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_sql",
+          "file": "django/db/models/functions/uuid.py",
+          "score": 0.7602,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37147,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Widget.format_value"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.save",
+          "file": "django/db/models/base.py",
+          "score": 0.6662,
+          "gold": false,
+          "path": "issue #35019 sim 0.65 -FIXED_IN-> django.db.models.base.Model.save (w 1.01)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/models.py:django.forms.models.InlineForeignKeyField.clean",
+          "file": "django/forms/models.py",
+          "score": 0.6644,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.UUIDField.formfield",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6524,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/models.py:django.forms.models.InlineForeignKeyField.__init__",
+          "file": "django/forms/models.py",
+          "score": 0.6503,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/fields.py:django.forms.fields.UUIDField.to_python",
+          "file": "django/forms/fields.py",
+          "score": 0.634,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36104,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Media.__add__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/formsets.py:django.forms.formsets.BaseFormSet.media",
+          "file": "django/forms/formsets.py",
+          "score": 0.7657,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__eq__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7645,
+          "gold": false,
+          "path": "issue #35886 sim 0.68 -FIXED_IN-> django.forms.widgets.MediaAsset.__eq__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7517,
+          "gold": false,
+          "path": "issue #35886 sim 0.68 -FIXED_IN-> django.forms.widgets.MediaAsset.__str__ (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media.__getitem__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7515,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media.__add__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7433,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 33185,
+      "gold": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.__init__",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._constraint_names",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_db_table"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/ddl_references.py:django.db.backends.ddl_references.ForeignKeyName.rename_table_references",
+          "file": "django/db/backends/ddl_references.py",
+          "score": 0.6465,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/ddl_references.py:django.db.backends.ddl_references.ForeignKeyName.rename_column_references",
+          "file": "django/db/backends/ddl_references.py",
+          "score": 0.6384,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._rename_field_sql",
+          "file": "django/db/backends/mysql/schema.py",
+          "score": 0.619,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._rename_index_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6111,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._rename_field_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.5999,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 31317,
+      "gold": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._delete_composed_index"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_unique_together",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7478,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.unique",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6351,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.6215,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._check_unique_together",
+          "file": "django/db/models/base.py",
+          "score": 0.618,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._unique_should_be_added",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6152,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37143,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.aiterator"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.iterator",
+          "file": "django/db/models/query.py",
+          "score": 0.8706,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.prefetch_one_level",
+          "file": "django/db/models/query.py",
+          "score": 0.7522,
+          "gold": false,
+          "path": "issue #34889 sim 0.65 -FIXED_IN-> django.db.models.query.prefetch_one_level (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.prefetch_related_objects",
+          "file": "django/db/models/query.py",
+          "score": 0.7507,
+          "gold": false,
+          "path": "issue #36426 sim 0.66 -FIXED_IN-> django.db.models.query.prefetch_related_objects (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._iterator",
+          "file": "django/db/models/query.py",
+          "score": 0.7479,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.aiterator",
+          "file": "django/db/models/query.py",
+          "score": 0.7444,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37122,
+      "gold": [
+        "func:django/forms/fields.py:django.forms.fields.JSONField.has_changed"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/fields.py:django.forms.fields.JSONField.has_changed",
+          "file": "django/forms/fields.py",
+          "score": 0.7913,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/fields.py:django.forms.fields.BooleanField.has_changed",
+          "file": "django/forms/fields.py",
+          "score": 0.7054,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/fields.py:django.forms.fields.Field.has_changed",
+          "file": "django/forms/fields.py",
+          "score": 0.6988,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/fields.py:django.forms.fields.MultiValueField.has_changed",
+          "file": "django/forms/fields.py",
+          "score": 0.6543,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/fields.py:django.forms.fields.FileField.has_changed",
+          "file": "django/forms/fields.py",
+          "score": 0.6417,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36864,
+      "gold": [
+        "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation._mark_test"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/mysql/features.py:django.db.backends.mysql.features.DatabaseFeatures._mysql_storage_engine",
+          "file": "django/db/backends/mysql/features.py",
+          "score": 0.5871,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_field_name",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.531,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/utils.py:django.db.utils.DatabaseErrorWrapper.__init__",
+          "file": "django/db/utils.py",
+          "score": 0.5309,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.__repr__",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5242,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation._mark_test",
+          "file": "django/db/backends/base/creation.py",
+          "score": 0.5192,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 29303,
+      "gold": [
+        "func:django/db/transaction.py:django.db.transaction._non_atomic_requests"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/transaction.py:django.db.transaction._non_atomic_requests",
+          "file": "django/db/transaction.py",
+          "score": 0.7513,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/transaction.py:django.db.transaction.non_atomic_requests",
+          "file": "django/db/transaction.py",
+          "score": 0.7187,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/transaction.py:django.db.transaction.atomic",
+          "file": "django/db/transaction.py",
+          "score": 0.5399,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/transaction.py:django.db.transaction.set_rollback",
+          "file": "django/db/transaction.py",
+          "score": 0.5199,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/transaction.py:django.db.transaction.Atomic.__enter__",
+          "file": "django/db/transaction.py",
+          "score": 0.518,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37234,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._prepare_for_bulk_create"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create",
+          "file": "django/db/models/query.py",
+          "score": 0.706,
+          "gold": false,
+          "path": "issue #36260 sim 0.65 -FIXED_IN-> django.db.models.query.QuerySet.bulk_create (w 1.08) | issue #36060 sim 0.63 -FIXED_IN-> django.db.models.query.QuerySet.bulk_create (w 1.00) | concept:bulk_create -SHORTCUT-> django.db.models.query.QuerySet.bulk_create (hits 4, misses 0)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._check_bulk_create_options",
+          "file": "django/db/models/query.py",
+          "score": 0.6297,
+          "gold": false,
+          "path": "issue #36068 sim 0.67 -FIXED_IN-> django.db.models.query.QuerySet._check_bulk_create_options (w 0.85)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._prepare_for_bulk_create",
+          "file": "django/db/models/query.py",
+          "score": 0.5904,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+          "file": "django/db/backends/base/creation.py",
+          "score": 0.5717,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey._check_unique",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.5661,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37235,
+      "gold": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/utils.py:django.db.backends.utils.CursorDebugWrapper.debug_sql",
+          "file": "django/db/backends/utils.py",
+          "score": 0.5921,
+          "gold": false,
+          "path": "issue #35448 sim 0.70 -FIXED_IN-> django.db.backends.utils.CursorDebugWrapper.debug_sql (w 0.95) | issue #36380 sim 0.63 -FIXED_IN-> django.db.backends.utils.CursorDebugWrapper.debug_sql (w 0.90)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.5819,
+          "gold": true,
+          "path": "issue #35448 sim 0.70 -FIXED_IN-> django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql (w 0.90)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+          "file": "django/db/backends/base/creation.py",
+          "score": 0.5319,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.execute_sql",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5088,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.prepare_sql_script",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.5033,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37238,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model._save_table"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.save",
+          "file": "django/db/models/base.py",
+          "score": 0.7557,
+          "gold": false,
+          "path": "concept:save -SHORTCUT-> django.db.models.base.Model.save (hits 3, misses 0)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.save_base",
+          "file": "django/db/models/base.py",
+          "score": 0.7235,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.pk_default_value",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.707,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.get_pk_value_on_save",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7056,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.pre_save",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.672,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37239,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model._prepare_related_fields_for_save"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.save",
+          "file": "django/db/models/base.py",
+          "score": 0.6798,
+          "gold": false,
+          "path": "issue #35019 sim 0.72 -FIXED_IN-> django.db.models.base.Model.save (w 1.01)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create",
+          "file": "django/db/models/query.py",
+          "score": 0.6718,
+          "gold": false,
+          "path": "issue #36260 sim 0.70 -FIXED_IN-> django.db.models.query.QuerySet.bulk_create (w 1.08)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.save_base",
+          "file": "django/db/models/base.py",
+          "score": 0.6703,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._save_table",
+          "file": "django/db/models/base.py",
+          "score": 0.6454,
+          "gold": false,
+          "path": "issue #35425 sim 0.74 -FIXED_IN-> django.db.models.base.Model._save_table (w 1.14) | concept:primary -SHORTCUT-> django.db.models.base.Model._save_table (hits 3, misses 0)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForeignKeyDeferredAttribute.__set__",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.6394,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37254,
+      "gold": [
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ManyToManyField._check_on_delete",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ManyToManyField.check"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ManyToManyField._check_on_delete",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6975,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ManyToManyField._check_relationship_model",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6964,
+          "gold": false,
+          "path": "issue #36239 sim 0.65 -FIXED_IN-> django.db.models.fields.related.ManyToManyField._check_relationship_model (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey._check_on_delete_db_support",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6885,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey._check_on_delete",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6861,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.6744,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37262,
+      "gold": [
+        "func:django/forms/widgets.py:django.forms.widgets.Media._normalize_css",
+        "func:django/forms/widgets.py:django.forms.widgets.Media._normalize_js"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.path",
+          "file": "django/forms/widgets.py",
+          "score": 0.777,
+          "gold": false,
+          "path": "issue #35886 sim 0.65 -FIXED_IN-> django.forms.widgets.MediaAsset.path (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__init__",
+          "file": "django/forms/widgets.py",
+          "score": 0.736,
+          "gold": false,
+          "path": "issue #35886 sim 0.65 -FIXED_IN-> django.forms.widgets.MediaAsset.__init__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Script.__init__",
+          "file": "django/forms/widgets.py",
+          "score": 0.7048,
+          "gold": false,
+          "path": "issue #35886 sim 0.65 -FIXED_IN-> django.forms.widgets.Script.__init__ (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__hash__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6928,
+          "gold": false,
+          "path": "issue #35886 sim 0.65 -FIXED_IN-> django.forms.widgets.MediaAsset.__hash__ (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.MediaAsset.__str__",
+          "file": "django/forms/widgets.py",
+          "score": 0.6921,
+          "gold": false,
+          "path": "issue #35886 sim 0.65 -FIXED_IN-> django.forms.widgets.MediaAsset.__str__ (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 37273,
+      "gold": [
+        "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleLookupMixin.check_rhs_is_supported_expression"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/composite.py:django.db.models.fields.composite.CompositePrimaryKey.cached_col",
+          "file": "django/db/models/fields/composite.py",
+          "score": 0.6385,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/composite.py:django.db.models.fields.composite.CompositePrimaryKey.value_to_string",
+          "file": "django/db/models/fields/composite.py",
+          "score": 0.6324,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleIn.check_rhs_is_query",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.6271,
+          "gold": false,
+          "path": "issue #36181 sim 0.76 -FIXED_IN-> django.db.models.fields.tuple_lookups.TupleIn.check_rhs_is_query (w 0.85)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleLookupMixin.check_rhs_is_supported_expression",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.6255,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/composite.py:django.db.models.fields.composite.CompositePrimaryKey.to_python",
+          "file": "django/db/models/fields/composite.py",
+          "score": 0.6244,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37248,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model._perform_unique_checks",
+        "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.validate"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.7661,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+          "file": "django/db/models/base.py",
+          "score": 0.7634,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.validate",
+          "file": "django/db/models/constraints.py",
+          "score": 0.7414,
+          "gold": true,
+          "path": "issue #35594 sim 0.68 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 1.14) | issue #35575 sim 0.67 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 0.85) | issue #35275 sim 0.64 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 0.92)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.validate_unique",
+          "file": "django/db/models/base.py",
+          "score": 0.6853,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._perform_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.6189,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37260,
+      "gold": [
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.non_db_attrs"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/sqlite3/schema.py:django.db.backends.sqlite3.schema.DatabaseSchemaEditor._remake_table",
+          "file": "django/db/backends/sqlite3/schema.py",
+          "score": 0.7496,
+          "gold": false,
+          "path": "issue #35373 sim 0.62 -FIXED_IN-> django.db.backends.sqlite3.schema.DatabaseSchemaEditor._remake_table (w 0.90) | concept:field -SHORTCUT-> django.db.backends.sqlite3.schema.DatabaseSchemaEditor._remake_table (hits 3, misses 1)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._field_should_be_altered",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.736,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6894,
+          "gold": false,
+          "path": "issue #28646 sim 0.58 -FIXED_IN-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field (w 1.08) | issue #28646 sim 0.58 -FIXED_IN-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field (w 1.08) | concept:field -SAME_AS-> concept:when -SHORTCUT-> django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_field",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.6787,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/postgresql/schema.py:django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_field",
+          "file": "django/db/backends/postgresql/schema.py",
+          "score": 0.661,
+          "gold": false,
+          "path": "issue #28646 sim 0.58 -FIXED_IN-> django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_field (w 1.14) | issue #28646 sim 0.58 -FIXED_IN-> django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_field (w 1.14) | concept:field -SHORTCUT-> django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_field (hits 3, misses 1)"
+        }
+      ]
+    },
+    {
+      "ticket": 37278,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.843,
+          "gold": true,
+          "path": "issue #36857 sim 0.65 -FIXED_IN-> django.db.models.query.QuerySet.totally_ordered (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.7325,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+          "file": "django/db/models/query.py",
+          "score": 0.7289,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._order_by_pairs",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6492,
+          "gold": false,
+          "path": "issue #34013 sim 0.66 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler._order_by_pairs (w 0.90)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._handle_order_with_respect_to",
+          "file": "django/db/models/query.py",
+          "score": 0.6377,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37275,
+      "gold": [
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.8866,
+          "gold": false,
+          "path": "issue #36233 sim 0.80 -FIXED_IN-> django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.8774,
+          "gold": true,
+          "path": "issue #36233 sim 0.80 -FIXED_IN-> django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.8415,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.839,
+          "gold": false,
+          "path": "issue #24920 sim 0.71 -FIXED_IN-> django.db.models.fields.DecimalField._check_decimal_places_and_max_digits (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_max_digits",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.8164,
+          "gold": false,
+          "path": "issue #24920 sim 0.71 -FIXED_IN-> django.db.models.fields.DecimalField._check_max_digits (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 37274,
+      "gold": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_distinct",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.names_to_path"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.bump_prefix",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6235,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.check_alias",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6155,
+          "gold": false,
+          "path": "issue #36152 sim 0.67 -FIXED_IN-> django.db.models.sql.query.Query.check_alias (w 0.90)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5889,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.find_ordering_name",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5818,
+          "gold": false,
+          "path": "issue #36065 sim 0.63 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler.find_ordering_name (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.get_initial_alias",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5801,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37259,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.ModelIterable.__iter__",
+        "func:django/db/models/query.py:django.db.models.query.RawModelIterable.__iter__",
+        "func:django/db/models/query.py:django.db.models.query.RelatedPopulator.__init__",
+        "func:django/db/models/query.py:django.db.models.query.RelatedPopulator.populate",
+        "func:django/db/models/query.py:django.db.models.query._get_from_db"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query._get_from_db",
+          "file": "django/db/models/query.py",
+          "score": 0.9016,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.fetch_mode",
+          "file": "django/db/models/query.py",
+          "score": 0.7789,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fetch_modes.py:django.db.models.fetch_modes.FetchMode.fetch",
+          "file": "django/db/models/fetch_modes.py",
+          "score": 0.7528,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fetch_modes.py:django.db.models.fetch_modes.FetchOne.fetch",
+          "file": "django/db/models/fetch_modes.py",
+          "score": 0.7375,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fetch_modes.py:django.db.models.fetch_modes.FetchRaise.fetch",
+          "file": "django/db/models/fetch_modes.py",
+          "score": 0.7361,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36945,
+      "gold": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.find_ordering_name",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_fields",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.get_names_to_join"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.get_names_to_join",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6344,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6287,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_filtered_relation",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6077,
+          "gold": false,
+          "path": "concept:filtered -SHORTCUT-> django.db.models.sql.query.Query.add_filtered_relation (hits 3, misses 0)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6012,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.unref_alias",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5978,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37300,
+      "gold": [
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.get_prefetch_querysets",
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ReverseOneToOneDescriptor.get_prefetch_querysets"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.get_prefetch_querysets",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.8682,
+          "gold": true,
+          "path": "issue #36116 sim 0.64 -FIXED_IN-> django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.get_prefetch_querysets (w 1.01) | concept:prefetch -SHORTCUT-> django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.get_prefetch_querysets (hits 4, misses 1)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ReverseOneToOneDescriptor.get_prefetch_querysets",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.7734,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.RawQuerySet.prefetch_related",
+          "file": "django/db/models/query.py",
+          "score": 0.7725,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.prefetch_one_level",
+          "file": "django/db/models/query.py",
+          "score": 0.7693,
+          "gold": false,
+          "path": "issue #34889 sim 0.79 -FIXED_IN-> django.db.models.query.prefetch_one_level (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.get_prefetcher",
+          "file": "django/db/models/query.py",
+          "score": 0.7336,
+          "gold": false,
+          "path": "issue #34791 sim 0.66 -FIXED_IN-> django.db.models.query.get_prefetcher (w 0.85)"
+        }
+      ]
+    },
+    {
+      "ticket": 37237,
+      "gold": [
+        "func:django/db/models/fields/related_lookups.py:django.db.models.fields.related_lookups.RelatedIn.get_prep_lookup"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+          "file": "django/db/models/query.py",
+          "score": 0.6939,
+          "gold": false,
+          "path": "issue #36416 sim 0.63 -FIXED_IN-> django.db.models.query.QuerySet.in_bulk (w 1.00) | concept:list -SHORTCUT-> django.db.models.query.QuerySet.in_bulk (hits 3, misses 1)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.__iter__",
+          "file": "django/db/models/query.py",
+          "score": 0.6851,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.prefetch_related",
+          "file": "django/db/models/query.py",
+          "score": 0.5895,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.iterator",
+          "file": "django/db/models/query.py",
+          "score": 0.5855,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+          "file": "django/db/models/query.py",
+          "score": 0.5613,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37309,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model.__eq__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field.get_pk_value_on_save",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5226,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._is_pk_set._is_unset",
+          "file": "django/db/models/base.py",
+          "score": 0.5118,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/composite.py:django.db.models.fields.composite.CompositePrimaryKey.get_pk_value_on_save",
+          "file": "django/db/models/fields/composite.py",
+          "score": 0.4745,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.4493,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/composite.py:django.db.models.fields.composite.CompositePrimaryKey.deconstruct",
+          "file": "django/db/models/fields/composite.py",
+          "score": 0.4422,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37311,
+      "gold": [
+        "func:django/db/models/lookups.py:django.db.models.lookups.FieldGetDbPrepValueIterableMixin.get_prep_lookup"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.FieldGetDbPrepValueIterableMixin.get_prep_lookup",
+          "file": "django/db/models/lookups.py",
+          "score": 0.7574,
+          "gold": true,
+          "path": "issue #36787 sim 0.58 -FIXED_IN-> django.db.models.lookups.FieldGetDbPrepValueIterableMixin.get_prep_lookup (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.refs_expression",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6444,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.IntegerFieldFloatRounding.get_prep_lookup",
+          "file": "django/db/models/lookups.py",
+          "score": 0.6303,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.In.get_prep_lookup",
+          "file": "django/db/models/lookups.py",
+          "score": 0.6182,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.FieldGetDbPrepValueIterableMixin.resolve_expression_parameter",
+          "file": "django/db/models/lookups.py",
+          "score": 0.616,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37312,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+          "file": "django/db/models/query.py",
+          "score": 0.7831,
+          "gold": true,
+          "path": "issue #35690 sim 0.69 -FIXED_IN-> django.db.models.query.QuerySet.in_bulk (w 0.90) | concept:bulk -SHORTCUT-> django.db.models.query.QuerySet.in_bulk (hits 3, misses 0) | concept:list -SHORTCUT-> django.db.models.query.QuerySet.in_bulk (hits 3, misses 1)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.7055,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.values_list",
+          "file": "django/db/models/query.py",
+          "score": 0.6969,
+          "gold": false,
+          "path": "issue #36606 sim 0.65 -FIXED_IN-> django.db.models.query.QuerySet.values_list (w 1.08) | concept:values_list -SHORTCUT-> django.db.models.query.QuerySet.values_list (hits 3, misses 0) | concept:list -SHORTCUT-> django.db.models.query.QuerySet.values_list (hits 3, misses 0)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._annotate",
+          "file": "django/db/models/query.py",
+          "score": 0.6382,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.ain_bulk",
+          "file": "django/db/models/query.py",
+          "score": 0.6065,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37222,
+      "gold": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._order_by_pairs"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6955,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_distinct",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6267,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_distinct_fields",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5823,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.distinct",
+          "file": "django/db/models/query.py",
+          "score": 0.5641,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+          "file": "django/db/models/query.py",
+          "score": 0.5563,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37293,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.aiterator"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.check_database_version_supported",
+          "file": "django/db/backends/base/base.py",
+          "score": 0.5526,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_deprecation_details",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5391,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/postgresql/psycopg_any.py:django.db.backends.postgresql.psycopg_any.DjangoRangeDumper.upgrade",
+          "file": "django/db/backends/postgresql/psycopg_any.py",
+          "score": 0.5373,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/mysql/features.py:django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version",
+          "file": "django/db/backends/mysql/features.py",
+          "score": 0.5359,
+          "gold": false,
+          "path": "issue #34850 sim 0.56 -FIXED_IN-> django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version (w 1.14) | concept:django -SHORTCUT-> django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version (hits 3, misses 0)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLUpdateCompiler.pre_sql_setup",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5322,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37013,
+      "gold": [
+        "func:django/db/models/functions/datetime.py:django.db.models.functions.datetime.TimezoneMixin.deconstruct"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.timezone",
+          "file": "django/db/backends/base/base.py",
+          "score": 0.819,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.adapt_datetimefield_value",
+          "file": "django/db/backends/oracle/operations.py",
+          "score": 0.7372,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.ensure_timezone",
+          "file": "django/db/backends/base/base.py",
+          "score": 0.7068,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/functions/datetime.py:django.db.models.functions.datetime.TimezoneMixin.deconstruct",
+          "file": "django/db/models/functions/datetime.py",
+          "score": 0.6985,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/functions/datetime.py:django.db.models.functions.datetime.TimezoneMixin.get_tzname",
+          "file": "django/db/models/functions/datetime.py",
+          "score": 0.6872,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37145,
+      "gold": [
+        "func:django/forms/models.py:django.forms.models.BaseModelFormSet._construct_form"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/forms.py:django.forms.forms.BaseForm.add_prefix",
+          "file": "django/forms/forms.py",
+          "score": 0.6916,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/formsets.py:django.forms.formsets.BaseFormSet.add_prefix",
+          "file": "django/forms/formsets.py",
+          "score": 0.6559,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/models.py:django.forms.models.BaseInlineFormSet.get_default_prefix",
+          "file": "django/forms/models.py",
+          "score": 0.6186,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/models.py:django.forms.models.BaseModelFormSet._construct_form",
+          "file": "django/forms/models.py",
+          "score": 0.6089,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/models.py:django.forms.models.BaseInlineFormSet._construct_form",
+          "file": "django/forms/models.py",
+          "score": 0.6072,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36947,
+      "gold": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_comment_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7878,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._alter_column_comment_sql",
+          "file": "django/db/backends/mysql/schema.py",
+          "score": 0.7696,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_db_table_comment",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7418,
+          "gold": false,
+          "path": "issue #35006 sim 0.68 -FIXED_IN-> django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_db_table_comment (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_type_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7286,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/postgresql/schema.py:django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_column_type_sql",
+          "file": "django/db/backends/postgresql/schema.py",
+          "score": 0.7023,
+          "gold": false,
+          "path": "concept:field -SHORTCUT-> django.db.backends.postgresql.schema.DatabaseSchemaEditor._alter_column_type_sql (hits 3, misses 2)"
+        }
+      ]
+    },
+    {
+      "ticket": 37286,
+      "gold": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_field"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._create_missing_fk_index",
+          "file": "django/db/backends/mysql/schema.py",
+          "score": 0.8162,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.deconstruct",
+          "file": "django/db/models/constraints.py",
+          "score": 0.7502,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.remove_sql",
+          "file": "django/db/models/constraints.py",
+          "score": 0.7457,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint._get_index_expressions",
+          "file": "django/db/models/constraints.py",
+          "score": 0.7367,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.7316,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36806,
+      "gold": [
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check",
+          "file": "django/db/models/fields/generated.py",
+          "score": 0.7623,
+          "gold": true,
+          "path": "issue #36806 sim 1.00 -FIXED_IN-> django.db.models.fields.generated.GeneratedField.check (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__",
+          "file": "django/db/models/fields/generated.py",
+          "score": 0.7254,
+          "gold": true,
+          "path": "issue #36806 sim 1.00 -FIXED_IN-> django.db.models.fields.generated.GeneratedField.__init__ (w 1.00) | issue #36262 sim 0.74 -FIXED_IN-> django.db.models.fields.generated.GeneratedField.__init__ (w 1.08) | concept:generated -SHORTCUT-> django.db.models.fields.generated.GeneratedField.__init__ (hits 3, misses 0)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.7172,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_null_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.7024,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField._check_blank_and_null_values",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.6962,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37348,
+      "gold": [
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__",
+          "file": "django/db/models/fields/generated.py",
+          "score": 0.7466,
+          "gold": true,
+          "path": "issue #36806 sim 0.73 -FIXED_IN-> django.db.models.fields.generated.GeneratedField.__init__ (w 1.00) | issue #36262 sim 0.70 -FIXED_IN-> django.db.models.fields.generated.GeneratedField.__init__ (w 1.08) | concept:generated -SHORTCUT-> django.db.models.fields.generated.GeneratedField.__init__ (hits 3, misses 0)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_null_sql",
+          "file": "django/db/backends/base/schema.py",
+          "score": 0.696,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/oracle/schema.py:django.db.backends.oracle.schema.DatabaseSchemaEditor._alter_field_type_workaround",
+          "file": "django/db/backends/oracle/schema.py",
+          "score": 0.6576,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.field_as_sql",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6489,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6433,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37344,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.RelatedPopulator.__init__",
+        "func:django/db/models/query.py:django.db.models.query.RelatedPopulator.populate"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.5406,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.split_exclude",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5395,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.demote_joins",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5263,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.RelatedField.get_forward_related_filter",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.5249,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+          "file": "django/db/models/query.py",
+          "score": 0.523,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37339,
+      "gold": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField.get_prep_value"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField.__init__",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7908,
+          "gold": false,
+          "path": "issue #34818 sim 0.72 -FIXED_IN-> django.db.models.fields.GenericIPAddressField.__init__ (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/fields.py:django.forms.fields.GenericIPAddressField.__init__",
+          "file": "django/forms/fields.py",
+          "score": 0.7753,
+          "gold": false,
+          "path": "issue #34818 sim 0.72 -FIXED_IN-> django.forms.fields.GenericIPAddressField.__init__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField.deconstruct",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7206,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField.check",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.717,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField.to_python",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.7167,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37114,
+      "gold": [
+        "func:django/db/models/functions/json.py:django.db.models.functions.json.JSONArray.as_postgresql",
+        "func:django/db/models/functions/json.py:django.db.models.functions.json.JSONObject.as_postgresql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/mysql/features.py:django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version",
+          "file": "django/db/backends/mysql/features.py",
+          "score": 0.8095,
+          "gold": false,
+          "path": "issue #36105 sim 0.74 -FIXED_IN-> django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version (w 1.08) | issue #36812 sim 0.74 -FIXED_IN-> django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version (w 1.00) | issue #34850 sim 0.72 -FIXED_IN-> django.db.backends.mysql.features.DatabaseFeatures.minimum_database_version (w 1.14)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pg_version",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.756,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.psycopg_version",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7536,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.get_database_version",
+          "file": "django/db/backends/postgresql/base.py",
+          "score": 0.7345,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/postgresql/features.py:django.db.backends.postgresql.features.DatabaseFeatures.is_postgresql_18",
+          "file": "django/db/backends/postgresql/features.py",
+          "score": 0.7161,
+          "gold": false,
+          "path": "issue #36277 sim 0.61 -FIXED_IN-> django.db.backends.postgresql.features.DatabaseFeatures.is_postgresql_18 (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 37066,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.aiterator"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.BaseIterable._async_generator",
+          "file": "django/db/models/query.py",
+          "score": 0.5686,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.only",
+          "file": "django/db/models/query.py",
+          "score": 0.5402,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._avoid_cloning",
+          "file": "django/db/models/query.py",
+          "score": 0.5377,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.__iter__",
+          "file": "django/db/models/query.py",
+          "score": 0.5278,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.BaseIterable._async_generator.next_slice",
+          "file": "django/db/models/query.py",
+          "score": 0.5151,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37350,
+      "gold": [
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_distinct",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.get_names_to_join"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_distinct",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6989,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.refs_expression",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6921,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6783,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_distinct_fields",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6782,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.get_names_to_join",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6667,
+          "gold": true,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 36496,
+      "gold": [
+        "func:django/db/backends/sqlite3/base.py:django.db.backends.sqlite3.base.DatabaseWrapper.get_new_connection"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+          "file": "django/db/backends/base/creation.py",
+          "score": 0.7588,
+          "gold": false,
+          "path": "issue #35402 sim 0.68 -FIXED_IN-> django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/sqlite3/features.py:django.db.backends.sqlite3.features.DatabaseFeatures.django_test_skips",
+          "file": "django/db/backends/sqlite3/features.py",
+          "score": 0.757,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/sqlite3/creation.py:django.db.backends.sqlite3.creation.DatabaseCreation._create_test_db",
+          "file": "django/db/backends/sqlite3/creation.py",
+          "score": 0.7558,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/sqlite3/creation.py:django.db.backends.sqlite3.creation.DatabaseCreation._clone_test_db",
+          "file": "django/db/backends/sqlite3/creation.py",
+          "score": 0.7344,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/sqlite3/creation.py:django.db.backends.sqlite3.creation.DatabaseCreation._get_test_db_name",
+          "file": "django/db/backends/sqlite3/creation.py",
+          "score": 0.7323,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37291,
+      "gold": [
+        "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleLookupMixin.get_lhs_str"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleIn.check_rhs_is_query",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.6301,
+          "gold": false,
+          "path": "issue #36181 sim 0.65 -FIXED_IN-> django.db.models.fields.tuple_lookups.TupleIn.check_rhs_is_query (w 0.85)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleLookupMixin.check_rhs_is_tuple_or_list",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.6068,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleIn.check_rhs_is_collection_of_tuples_or_lists",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.5885,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleLookupMixin.process_rhs",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.5828,
+          "gold": false,
+          "path": "issue #36522 sim 0.66 -FIXED_IN-> django.db.models.fields.tuple_lookups.TupleLookupMixin.process_rhs (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/tuple_lookups.py:django.db.models.fields.tuple_lookups.TupleIn.process_rhs",
+          "file": "django/db/models/fields/tuple_lookups.py",
+          "score": 0.5682,
+          "gold": false,
+          "path": "issue #36522 sim 0.66 -FIXED_IN-> django.db.models.fields.tuple_lookups.TupleIn.process_rhs (w 1.00)"
+        }
+      ]
+    },
+    {
+      "ticket": 37376,
+      "gold": [
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_oracle"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_oracle",
+          "file": "django/db/models/functions/uuid.py",
+          "score": 0.7404,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function_in_default",
+          "file": "django/db/backends/oracle/features.py",
+          "score": 0.7149,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_sql",
+          "file": "django/db/models/functions/uuid.py",
+          "score": 0.6799,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function",
+          "file": "django/db/backends/oracle/features.py",
+          "score": 0.6783,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_uuidfield_value",
+          "file": "django/db/backends/oracle/operations.py",
+          "score": 0.6771,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37377,
+      "gold": [
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONIn.process_lhs",
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONIn.resolve_expression_parameter"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_descriptor_filter",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.6648,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.check_query_object_type",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.662,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONField.check",
+          "file": "django/db/models/fields/json.py",
+          "score": 0.6502,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_primitives_in_json_field",
+          "file": "django/db/backends/oracle/features.py",
+          "score": 0.6486,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONField.from_db_value",
+          "file": "django/db/models/fields/json.py",
+          "score": 0.6432,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37297,
+      "gold": [
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.KeyTransform.as_oracle",
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.KeyTransform.as_postgresql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_json_path_numeric_index",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.6141,
+          "gold": false,
+          "path": "issue #36085 sim 0.63 -FIXED_IN-> django.db.backends.base.operations.BaseDatabaseOperations.format_json_path_numeric_index (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.format_json_path_numeric_index",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.5512,
+          "gold": false,
+          "path": "issue #36085 sim 0.63 -FIXED_IN-> django.db.backends.sqlite3.operations.DatabaseOperations.format_json_path_numeric_index (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5496,
+          "gold": false,
+          "path": "issue #24920 sim 0.61 -FIXED_IN-> django.db.models.fields.DecimalField._check_decimal_places_and_max_digits (w 1.00)"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.adapt_integerfield_value",
+          "file": "django/db/backends/postgresql/operations.py",
+          "score": 0.5458,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.5372,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37403,
+      "gold": [
+        "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONIn.resolve_expression_parameter"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/json.py:django.db.models.fields.json.HasKeyLookup.as_sqlite",
+          "file": "django/db/models/fields/json.py",
+          "score": 0.6347,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.format_json_path_numeric_index",
+          "file": "django/db/backends/sqlite3/operations.py",
+          "score": 0.6288,
+          "gold": false,
+          "path": "issue #36085 sim 0.65 -FIXED_IN-> django.db.backends.sqlite3.operations.DatabaseOperations.format_json_path_numeric_index (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONIn.resolve_expression_parameter",
+          "file": "django/db/models/fields/json.py",
+          "score": 0.6261,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.field_as_sql",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6138,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.FieldGetDbPrepValueIterableMixin.resolve_expression_parameter",
+          "file": "django/db/models/lookups.py",
+          "score": 0.6132,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37382,
+      "gold": [
+        "func:django/db/transaction.py:django.db.transaction._non_atomic_requests"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/transaction.py:django.db.transaction._non_atomic_requests",
+          "file": "django/db/transaction.py",
+          "score": 0.7026,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/transaction.py:django.db.transaction.non_atomic_requests",
+          "file": "django/db/transaction.py",
+          "score": 0.6556,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/transaction.py:django.db.transaction.atomic",
+          "file": "django/db/transaction.py",
+          "score": 0.5216,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/transaction.py:django.db.transaction.Atomic.__init__",
+          "file": "django/db/transaction.py",
+          "score": 0.5063,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/transaction.py:django.db.transaction.set_rollback",
+          "file": "django/db/transaction.py",
+          "score": 0.5013,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37411,
+      "gold": [
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.OracleParam.__init__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.OracleParam.__init__",
+          "file": "django/db/backends/oracle/base.py",
+          "score": 0.7014,
+          "gold": true,
+          "path": "issue #36646 sim 0.61 -FIXED_IN-> django.db.backends.oracle.base.OracleParam.__init__ (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/oracle/utils.py:django.db.backends.oracle.utils.BoundVar.bind_parameter",
+          "file": "django/db/backends/oracle/utils.py",
+          "score": 0.6947,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.VariableWrapper.bind_parameter",
+          "file": "django/db/backends/oracle/base.py",
+          "score": 0.6642,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/backends/oracle/utils.py:django.db.backends.oracle.utils.BoundVar.__init__",
+          "file": "django/db/backends/oracle/utils.py",
+          "score": 0.6615,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/oracle/creation.py:django.db.backends.oracle.creation.DatabaseCreation._test_database_tblspace_tmp_maxsize",
+          "file": "django/db/backends/oracle/creation.py",
+          "score": 0.6497,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37418,
+      "gold": [
+        "func:django/forms/fields.py:django.forms.fields.JSONField.bound_data",
+        "func:django/forms/fields.py:django.forms.fields.JSONField.to_python"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/fields.py:django.forms.fields.JSONField.bound_data",
+          "file": "django/forms/fields.py",
+          "score": 0.6935,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/fields.py:django.forms.fields.JSONField.to_python",
+          "file": "django/forms/fields.py",
+          "score": 0.6462,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/json.py:django.db.models.fields.json.JSONField.formfield",
+          "file": "django/db/models/fields/json.py",
+          "score": 0.6257,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/fields.py:django.forms.fields.JSONField.__init__",
+          "file": "django/forms/fields.py",
+          "score": 0.6198,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/fields.py:django.forms.fields.JSONField.prepare_value",
+          "file": "django/forms/fields.py",
+          "score": 0.6111,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 32980,
+      "gold": [
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.create_forward_many_to_many_manager"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.prefetch_one_level",
+          "file": "django/db/models/query.py",
+          "score": 0.5937,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.prefetch_related_objects",
+          "file": "django/db/models/query.py",
+          "score": 0.5826,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.prefetch_related",
+          "file": "django/db/models/query.py",
+          "score": 0.5385,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_descriptor_filter",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.5304,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForwardManyToOneDescriptor.get_prefetch_querysets",
+          "file": "django/db/models/fields/related_descriptors.py",
+          "score": 0.53,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37407,
+      "gold": [
+        "func:django/db/models/lookups.py:django.db.models.lookups.UUIDTextMixin.as_sql"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.UUIDTextMixin.as_sql",
+          "file": "django/db/models/lookups.py",
+          "score": 0.7883,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._chain",
+          "file": "django/db/models/query.py",
+          "score": 0.7189,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.FieldGetDbPrepValueIterableMixin.process_rhs",
+          "file": "django/db/models/lookups.py",
+          "score": 0.6807,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/lookups.py:django.db.models.lookups.In.process_rhs",
+          "file": "django/db/models/lookups.py",
+          "score": 0.649,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._avoid_cloning",
+          "file": "django/db/models/query.py",
+          "score": 0.6446,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37433,
+      "gold": [
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.Q.check"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.UniqueConstraint.validate",
+          "file": "django/db/models/constraints.py",
+          "score": 0.7755,
+          "gold": false,
+          "path": "issue #35103 sim 0.69 -FIXED_IN-> django.db.models.constraints.UniqueConstraint.validate (w 1.00) | concept:constraint -SHORTCUT-> django.db.models.constraints.UniqueConstraint.validate (hits 4, misses 2)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+          "file": "django/db/models/base.py",
+          "score": 0.7066,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model._get_unique_checks",
+          "file": "django/db/models/base.py",
+          "score": 0.7026,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/constraints.py:django.db.models.constraints.BaseConstraint.get_violation_error_message",
+          "file": "django/db/models/constraints.py",
+          "score": 0.6998,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.unique_error_message",
+          "file": "django/db/models/base.py",
+          "score": 0.6953,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 30949,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.get_prefetcher",
+        "func:django/db/models/query.py:django.db.models.query.get_prefetcher.is_to_attr_fetched"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/fields/mixins.py:django.db.models.fields.mixins.FieldCacheMixin.set_cached_value",
+          "file": "django/db/models/fields/mixins.py",
+          "score": 0.6639,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/fields/mixins.py:django.db.models.fields.mixins.FieldCacheMixin.get_cached_value",
+          "file": "django/db/models/fields/mixins.py",
+          "score": 0.6446,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute.__get__",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6404,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/fields/mixins.py:django.db.models.fields.mixins.FieldCacheMixin.delete_cached_value",
+          "file": "django/db/models/fields/mixins.py",
+          "score": 0.6361,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/fields/mixins.py:django.db.models.fields.mixins.FieldCacheMixin.is_cached",
+          "file": "django/db/models/fields/mixins.py",
+          "score": 0.6358,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37438,
+      "gold": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.JoinPromoter.__init__",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.JoinPromoter.update_join_types"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.5714,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5517,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.5477,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.545,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+          "file": "django/db/models/query.py",
+          "score": 0.5439,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37432,
+      "gold": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_for_update"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.select_for_update",
+          "file": "django/db/models/query.py",
+          "score": 0.6988,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.for_update_sql",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.6542,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLUpdateCompiler.execute_sql",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6313,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/transaction.py:django.db.transaction.non_atomic_requests",
+          "file": "django/db/transaction.py",
+          "score": 0.6235,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+          "file": "django/db/models/query.py",
+          "score": 0.5939,
+          "gold": false,
+          "path": "issue #36388 sim 0.56 -FIXED_IN-> django.db.models.query.QuerySet.union (w 0.90)"
+        }
+      ]
+    },
+    {
+      "ticket": 35225,
+      "gold": [
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.django_test_skips"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.6422,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._order_by_pairs",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6286,
+          "gold": false,
+          "path": "issue #34013 sim 0.71 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler._order_by_pairs (w 0.90) | issue #35643 sim 0.64 -FIXED_IN-> django.db.models.sql.compiler.SQLCompiler._order_by_pairs (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+          "file": "django/db/models/sql/compiler.py",
+          "score": 0.6183,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+          "file": "django/db/models/query.py",
+          "score": 0.6009,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.force_no_ordering",
+          "file": "django/db/backends/base/operations.py",
+          "score": 0.6005,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37463,
+      "gold": [
+        "func:django/forms/boundfield.py:django.forms.boundfield.BoundField.label_tag"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/boundfield.py:django.forms.boundfield.BoundField.legend_tag",
+          "file": "django/forms/boundfield.py",
+          "score": 0.6388,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Select.use_required_attribute",
+          "file": "django/forms/widgets.py",
+          "score": 0.6256,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/forms/boundfield.py:django.forms.boundfield.BoundField.as_widget",
+          "file": "django/forms/boundfield.py",
+          "score": 0.6101,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/forms.py:django.forms.forms.BaseForm.__init__",
+          "file": "django/forms/forms.py",
+          "score": 0.5654,
+          "gold": false,
+          "path": "issue #35521 sim 0.62 -FIXED_IN-> django.forms.forms.BaseForm.__init__ (w 1.00)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/widgets.py:django.forms.widgets.Media.render_css",
+          "file": "django/forms/widgets.py",
+          "score": 0.5635,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37436,
+      "gold": [
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute.__get__",
+        "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute.fetch_many"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.only",
+          "file": "django/db/models/query.py",
+          "score": 0.6525,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute._check_parent_chain",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6319,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.DeferredAttribute.__get__",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.6175,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/base.py:django.db.models.base.Model.refresh_from_db",
+          "file": "django/db/models/base.py",
+          "score": 0.614,
+          "gold": false,
+          "path": "issue #35044 sim 0.66 -FIXED_IN-> django.db.models.base.Model.refresh_from_db (w 1.08) | issue #35950 sim 0.62 -FIXED_IN-> django.db.models.base.Model.refresh_from_db (w 1.00) | issue #34925 sim 0.57 -FIXED_IN-> django.db.models.base.Model.refresh_from_db (w 1.15)"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet.defer",
+          "file": "django/db/models/query.py",
+          "score": 0.6081,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37330,
+      "gold": [
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_values"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/query.py:django.db.models.query.QuerySet._annotate",
+          "file": "django/db/models/query.py",
+          "score": 0.5922,
+          "gold": false,
+          "path": "issue #36155 sim 0.71 -FIXED_IN-> django.db.models.query.QuerySet._annotate (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_annotation",
+          "file": "django/db/models/sql/query.py",
+          "score": 0.5849,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/expressions.py:django.db.models.expressions.BaseExpression._resolve_output_field",
+          "file": "django/db/models/expressions.py",
+          "score": 0.5804,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/query_utils.py:django.db.models.query_utils.refs_expression",
+          "file": "django/db/models/query_utils.py",
+          "score": 0.5699,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/expressions.py:django.db.models.expressions.BaseExpression._output_field_or_none",
+          "file": "django/db/models/expressions.py",
+          "score": 0.5693,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37489,
+      "gold": [
+        "func:django/forms/fields.py:django.forms.fields.Field.__init__"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/forms/fields.py:django.forms.fields.Field.__init__",
+          "file": "django/forms/fields.py",
+          "score": 0.6403,
+          "gold": true,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/forms/utils.py:django.forms.utils.RenderableFieldMixin.as_field_group",
+          "file": "django/forms/utils.py",
+          "score": 0.6343,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_db_comment",
+          "file": "django/db/models/fields/__init__.py",
+          "score": 0.5978,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/forms/models.py:django.forms.models.InlineForeignKeyField.__init__",
+          "file": "django/forms/models.py",
+          "score": 0.5896,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/forms/forms.py:django.forms.forms.BaseForm.__init__",
+          "file": "django/forms/forms.py",
+          "score": 0.5799,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    },
+    {
+      "ticket": 37471,
+      "gold": [
+        "func:django/db/models/base.py:django.db.models.base.Model._check_related_fields"
+      ],
+      "hits": [
+        {
+          "rank": 1,
+          "uid": "func:django/db/models/deletion.py:django.db.models.deletion.Collector.collect",
+          "file": "django/db/models/deletion.py",
+          "score": 0.8283,
+          "gold": false,
+          "path": "issue #36264 sim 0.66 -FIXED_IN-> django.db.models.deletion.Collector.collect (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/db/models/deletion.py:django.db.models.deletion.Collector.add",
+          "file": "django/db/models/deletion.py",
+          "score": 0.7939,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey._check_on_delete",
+          "file": "django/db/models/fields/related.py",
+          "score": 0.7245,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/db/models/deletion.py:django.db.models.deletion.CASCADE",
+          "file": "django/db/models/deletion.py",
+          "score": 0.6984,
+          "gold": false,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/db/models/deletion.py:django.db.models.deletion.Collector.can_fast_delete",
+          "file": "django/db/models/deletion.py",
+          "score": 0.6968,
+          "gold": false,
+          "path": "dense + bm25"
+        }
+      ]
+    }
+  ]
+}

@@ -23,6 +23,12 @@ class Prediction:
     hits: list[Hit]
     seeds: list[str]
     traversed: list[tuple[str, str, str]] = field(default_factory=list)
+    # uid -> edges that added learned boost for that function
+    support_edges: dict[str, list[tuple[str, str, str]]] = field(default_factory=dict)
+    base_topk: list[str] = field(default_factory=list)
+    frontier: list[str] = field(default_factory=list)
+    concepts: list[str] = field(default_factory=list)
+    gap_concepts: list[str] = field(default_factory=list)
 
 
 class EdgeTable:
@@ -31,10 +37,59 @@ class EdgeTable:
     def __init__(self, edges: dict[tuple[str, str, str], dict]):
         self.edges = {key: dict(value) for key, value in edges.items()}
         self.dirty: set[tuple[str, str, str]] = set()
+        # Edges created in this process. Flush inserts them; later edits only SET.
+        self.fresh: set[tuple[str, str, str]] = set()
         self.by_node: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
         for key in self.edges:
             self.by_node[key[0]].append(key)
             self.by_node[key[2]].append(key)
+
+    def incident(self, uid: str, rel: str | None = None):
+        for key in self.by_node.get(uid, ()):
+            if rel is None or key[1] == rel:
+                yield key
+
+    def ensure(self, src: str, rel: str, dst: str, replace: bool = False, **props) -> bool:
+        """Create an edge, or update one that already exists when replace is set."""
+        if not src or not dst or src == dst:
+            return False
+        key = (src, rel, dst)
+        created = key not in self.edges
+        if created:
+            self.edges[key] = {
+                "w": 1.0,
+                "hits": 0,
+                "misses": 0,
+                "count": 1,
+                "learned": 1,
+                "tickets": "",
+            }
+            self.by_node[src].append(key)
+            self.by_node[dst].append(key)
+            self.fresh.add(key)
+        if created or replace:
+            self.edges[key].update(props)
+        else:
+            for name, value in props.items():
+                self.edges[key].setdefault(name, value)
+        self.dirty.add(key)
+        return created
+
+    def nudge(self, key: tuple[str, str, str], reward: float, lr: float = 0.25, decay: float = 0.08) -> None:
+        """Move one edge toward a high or low target, then shrink the gap to 1."""
+        props = self.edges.get(key)
+        if props is None:
+            return
+        if reward >= 0.5:
+            props["hits"] = int(props.get("hits") or 0) + 1
+        else:
+            props["misses"] = int(props.get("misses") or 0) + 1
+        target = 0.55 + 0.8 * float(reward)
+        weight = float(props.get("w") or 1.0)
+        weight = weight + lr * (target - weight)
+        weight = 1.0 + (weight - 1.0) * (1.0 - decay)
+        props["w"] = min(2.2, max(0.35, weight))
+        self.dirty.add(key)
 
     def undirected(self, nodes: set[str]) -> dict[str, list[tuple[str, float]]]:
         adj: dict[str, list[tuple[str, float]]] = defaultdict(list)
@@ -93,22 +148,34 @@ class EdgeTable:
         return changed
 
     def flush(self, client) -> int:
-        grouped: dict[str, list[dict]] = defaultdict(list)
-        for key in self.dirty:
+        if client is None or not self.dirty:
+            return 0
+        fresh_rows: dict[str, list[dict]] = defaultdict(list)
+        old_rows: dict[str, list[dict]] = defaultdict(list)
+        done_fresh: list[tuple[str, str, str]] = []
+        for key in list(self.dirty):
             props = self.edges[key]
             src, rel, dst = key
-            grouped[rel].append(
-                {
-                    "src": src,
-                    "dst": dst,
-                    "w": props["w"],
-                    "hits": props["hits"],
-                    "misses": props["misses"],
-                }
-            )
+            row = {
+                "src": src,
+                "dst": dst,
+                "w": float(props.get("w") or 1.0),
+                "hits": int(props.get("hits") or 0),
+                "misses": int(props.get("misses") or 0),
+                "count": int(props.get("count") or 1),
+            }
+            if key in self.fresh:
+                fresh_rows[rel].append(row)
+                done_fresh.append(key)
+            else:
+                old_rows[rel].append(row)
         written = 0
-        for rel, rows in grouped.items():
+        for rel, rows in fresh_rows.items():
+            written += client.upsert_edges(rel, rows)
+        for rel, rows in old_rows.items():
             written += client.update_edge_weights(rel, rows)
+        for key in done_fresh:
+            self.fresh.discard(key)
         self.dirty.clear()
         return written
 

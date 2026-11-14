@@ -1,0 +1,449 @@
+"""Rank functions from dense retrieval, then add what the graph has learned.
+
+Step 0 has no shortcuts and no fix history, so the only extra term is a small
+fixed BM25 blend. That blend was chosen on the last 40 training issues, which
+sit before the holdout. Later steps add two learned terms:
+
+- FIXED_IN from past issues whose text is close to this report
+- SHORTCUT from a concept or symptom that has repeatedly landed on a function
+
+Structural edges contribute only after learning moves their weight above 1.
+"""
+
+from __future__ import annotations
+
+import json
+from collections import defaultdict
+from pathlib import Path
+
+import numpy as np
+
+from repocortex.learn.gap import gap_tokens, module_of
+from repocortex.retrieve.frozen import EdgeTable, Hit, Prediction
+from repocortex.retrieve.textutil import issue_text, tokenize
+
+
+def _unit(vector: np.ndarray) -> np.ndarray:
+    vector = np.asarray(vector, dtype=np.float32)
+    norm = float(np.linalg.norm(vector))
+    if norm > 0:
+        vector = vector / norm
+    return vector
+
+
+class HybridRanker:
+    def __init__(
+        self,
+        nodes: dict,
+        edges: EdgeTable,
+        bm25,
+        dense,
+        embedder,
+        client=None,
+        bm25_mix: float = 0.10,
+        memory_lam: float = 0.08,
+        memory_thresh: float = 0.55,
+        memory_k: int = 5,
+        shortcut_lam: float = 0.04,
+        shortcut_min_support: int = 3,
+        shortcut_min_precision: float = 0.4,
+    ):
+        self.nodes = nodes
+        self.edges = edges
+        self.bm25 = bm25
+        self.embedder = embedder
+        self.client = client
+        self.bm25_mix = bm25_mix
+        self.memory_lam = memory_lam
+        self.memory_thresh = memory_thresh
+        self.memory_k = memory_k
+        self.shortcut_lam = shortcut_lam
+        self.shortcut_min_support = shortcut_min_support
+        self.shortcut_min_precision = shortcut_min_precision
+        self.func_uids = list(dense.uids)
+        self.uid_index = {uid: index for index, uid in enumerate(self.func_uids)}
+        self.matrix = np.asarray(dense.matrix, dtype=np.float32)
+        self.n = len(self.func_uids)
+        self.uid_array = np.array(self.func_uids)
+        self.concepts = {
+            node["name"]: uid
+            for uid, node in nodes.items()
+            if node.get("label") == "Concept" and node.get("name")
+        }
+        self.symptoms = [
+            (uid, (node.get("name") or "").lower())
+            for uid, node in nodes.items()
+            if node.get("label") == "Symptom" and node.get("name")
+        ]
+        self.symptoms.sort(key=lambda item: -len(item[1]))
+        self._vec: dict[int, np.ndarray] = {}
+        self.memory: list[dict] = []
+        self._mem_mat: np.ndarray | None = None
+        self._mem_dirty = True
+        self.pending_nodes: dict[str, dict] = {}
+
+    def add_node(self, uid: str, label: str, name: str, **extra) -> None:
+        if uid in self.nodes and uid not in self.pending_nodes:
+            return
+        row = {
+            "uid": uid,
+            "label": label,
+            "name": name,
+            "file": extra.get("file", "") or "",
+            "qualname": extra.get("qualname", "") or "",
+            "signature": extra.get("signature", "") or "",
+            "doc": extra.get("doc", "") or "",
+            "start": int(extra.get("start") or 0),
+            "end": int(extra.get("end") or 0),
+            "kind": extra.get("kind") or label.lower(),
+        }
+        self.nodes[uid] = {
+            "label": label,
+            "name": name,
+            "file": row["file"],
+            "qualname": row["qualname"],
+            "doc": row["doc"],
+            "signature": row["signature"],
+        }
+        self.pending_nodes[uid] = row
+        if label == "Concept" and name:
+            self.concepts.setdefault(name, uid)
+
+    def prepare(self, issues: list[dict]) -> None:
+        missing = [issue for issue in issues if int(issue["ticket"]) not in self._vec]
+        if not missing:
+            return
+        vectors = self.embedder.encode([issue_text(issue) for issue in missing])
+        for issue, vector in zip(missing, vectors):
+            self._vec[int(issue["ticket"])] = _unit(vector)
+
+    def observe(self, issue: dict) -> str:
+        """Remember this fix after the prediction, so the label cannot leak in."""
+        ticket = int(issue["ticket"])
+        text = issue_text(issue)
+        vector = self._vec.get(ticket)
+        if vector is None:
+            vector = _unit(self.embedder.encode_one(text))
+            self._vec[ticket] = vector
+        uid = f"issue:{ticket}"
+        self.add_node(uid, "Issue", f"#{ticket}", kind="issue")
+        golds = [gold for gold in issue["gold_functions"] if gold in self.uid_index]
+        self.memory.append({"uid": uid, "ticket": ticket, "golds": golds, "vec": vector})
+        self._mem_dirty = True
+        for gold in golds:
+            self.edges.ensure(uid, "FIXED_IN", gold, w=1.0, hits=1, misses=0, count=1, learned=1)
+        return uid
+
+    def flush(self) -> int:
+        if self.client is None:
+            return 0
+        written = 0
+        by_label: dict[str, list[dict]] = defaultdict(list)
+        for row in self.pending_nodes.values():
+            by_label[row["label"]].append(row)
+        for label, rows in by_label.items():
+            written += self.client.upsert_nodes(label, rows)
+        self.pending_nodes.clear()
+        written += self.edges.flush(self.client)
+        return written
+
+    def save(self, path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        vectors = (
+            np.vstack([item["vec"] for item in self.memory])
+            if self.memory
+            else np.zeros((0, self.matrix.shape[1]), dtype=np.float32)
+        )
+        learned = []
+        for key, props in self.edges.edges.items():
+            touched = (
+                props.get("learned")
+                or key[1] in {"SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"}
+                or int(props.get("hits") or 0)
+                or int(props.get("misses") or 0)
+                or abs(float(props.get("w") or 1.0) - 1.0) > 1e-6
+            )
+            if not touched:
+                continue
+            learned.append(
+                {
+                    "src": key[0],
+                    "rel": key[1],
+                    "dst": key[2],
+                    "w": float(props.get("w") or 1),
+                    "hits": int(props.get("hits") or 0),
+                    "misses": int(props.get("misses") or 0),
+                    "tickets": props.get("tickets") or "",
+                    "split": int(props.get("split") or 0),
+                }
+            )
+        np.savez(
+            path,
+            vectors=vectors,
+            tickets=np.array([item["ticket"] for item in self.memory]),
+            golds=np.array([json.dumps(item["golds"]) for item in self.memory]),
+        )
+        path.with_suffix(".json").write_text(json.dumps(learned), encoding="utf-8")
+
+    def predict(self, issue: dict, k: int = 10) -> Prediction:
+        text = issue_text(issue)
+        ticket = int(issue.get("ticket") or 0)
+        vector = self._vec.get(ticket) if ticket else None
+        if vector is None:
+            vector = _unit(self.embedder.encode_one(text))
+            if ticket:
+                self._vec[ticket] = vector
+        dense_scores = self.matrix @ vector
+        base = dense_scores + np.float32(self.bm25_mix) * self._bm25_norm(text)
+        notes: dict[int, list[str]] = defaultdict(list)
+        used: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
+        learned = np.zeros(self.n, dtype=np.float32)
+        learned += self._memory_bonus(vector, notes, used)
+        concepts = self._concept_seeds(text)
+        modules = self._modules(base)
+        learned += self._shortcut_bonus(concepts, modules, notes, used)
+        learned += self._structural_bonus(base, notes, used)
+        scores = base + learned
+        order = np.lexsort((self.uid_array, -scores))
+        base_order = np.lexsort((self.uid_array, -base))
+        hits = []
+        support: dict[str, list[tuple[str, str, str]]] = {}
+        for index in order[:k]:
+            uid = self.func_uids[int(index)]
+            path = " | ".join(notes.get(int(index), [])[:3]) or "dense + bm25"
+            hits.append(
+                Hit(
+                    uid=uid,
+                    file=(self.nodes.get(uid) or {}).get("file", ""),
+                    score=float(scores[index]),
+                    path=path,
+                )
+            )
+        for index, keys in used.items():
+            if keys:
+                support[self.func_uids[index]] = list(keys)
+        traversed = list(dict.fromkeys(key for keys in support.values() for key in keys))
+        return Prediction(
+            hits=hits,
+            seeds=self._seeds(base_order, concepts),
+            traversed=traversed,
+            support_edges=support,
+            base_topk=[self.func_uids[int(i)] for i in base_order[:k]],
+            frontier=[self.func_uids[int(i)] for i in order[:30]],
+            concepts=concepts,
+            gap_concepts=gap_tokens(text, self.concepts),
+        )
+
+    def _bm25_norm(self, text: str) -> np.ndarray:
+        scores = np.zeros(self.n, dtype=np.float32)
+        for uid, score in self.bm25.score_query(text).items():
+            index = self.uid_index.get(uid)
+            if index is not None:
+                scores[index] = score
+        peak = float(scores.max())
+        if peak > 0:
+            scores /= peak
+        return scores
+
+    def _concept_seeds(self, text: str) -> list[str]:
+        concepts = []
+        for token in tokenize(text):
+            uid = self.concepts.get(token)
+            if uid and uid not in concepts:
+                concepts.append(uid)
+            if len(concepts) >= 8:
+                break
+        lowered = text.lower()
+        symptoms = []
+        for uid, name in self.symptoms:
+            if len(name) < 5 or " " in name or len(name) > 80:
+                continue
+            if name in lowered:
+                symptoms.append(uid)
+                if len(symptoms) >= 4:
+                    break
+        return concepts + symptoms
+
+    def _modules(self, base: np.ndarray) -> set[str]:
+        order = np.argpartition(-base, min(4, self.n - 1))[:5] if self.n > 5 else np.argsort(-base)
+        modules = set()
+        for index in order:
+            path = (self.nodes.get(self.func_uids[int(index)]) or {}).get("file", "")
+            module = module_of(path)
+            if module:
+                modules.add(module)
+        return modules
+
+    def _memory_matrix(self) -> np.ndarray | None:
+        if not self.memory:
+            return None
+        if self._mem_dirty or self._mem_mat is None:
+            self._mem_mat = np.vstack([item["vec"] for item in self.memory])
+            self._mem_dirty = False
+        return self._mem_mat
+
+    def _memory_bonus(self, vector, notes, used) -> np.ndarray:
+        bonus = np.zeros(self.n, dtype=np.float32)
+        matrix = self._memory_matrix()
+        if matrix is None or self.memory_lam <= 0:
+            return bonus
+        sims = matrix @ vector
+        count = sims.shape[0]
+        take = min(self.memory_k, count)
+        if take == count:
+            chosen = np.argsort(-sims)[:take]
+        else:
+            part = np.argpartition(-sims, take - 1)[:take]
+            chosen = part[np.argsort(-sims[part])]
+        raw = np.zeros(self.n, dtype=np.float32)
+        span = max(1e-6, 1.0 - self.memory_thresh)
+        for index in chosen:
+            sim = float(sims[int(index)])
+            if sim < self.memory_thresh:
+                continue
+            scale = (sim - self.memory_thresh) / span
+            item = self.memory[int(index)]
+            for gold in item["golds"]:
+                column = self.uid_index.get(gold)
+                if column is None:
+                    continue
+                key = (item["uid"], "FIXED_IN", gold)
+                weight = 1.0
+                props = self.edges.edges.get(key)
+                if props is not None:
+                    weight = min(1.15, max(0.85, float(props.get("w") or 1.0)))
+                raw[column] += scale * weight
+                used[column].append(key)
+                notes[column].append(
+                    f"issue #{item['ticket']} sim {sim:.2f} -FIXED_IN-> {self._label(gold)} (w {weight:.2f})"
+                )
+        peak = float(raw.max())
+        if peak > 0:
+            bonus += np.float32(self.memory_lam) * (raw / peak)
+        return bonus
+
+    def _shortcut_bonus(self, concepts, modules, notes, used) -> np.ndarray:
+        bonus = np.zeros(self.n, dtype=np.float32)
+        if self.shortcut_lam <= 0 or not concepts:
+            return bonus
+        raw = np.zeros(self.n, dtype=np.float32)
+        for concept in concepts:
+            for column, precision, key, note in self._shortcut_targets(concept, modules)[:8]:
+                raw[column] += precision
+                used[column].append(key)
+                notes[column].append(note)
+        peak = float(raw.max())
+        if peak > 0:
+            bonus += np.float32(self.shortcut_lam) * (raw / peak)
+        return bonus
+
+    def _shortcut_targets(self, concept: str, modules: set[str]):
+        refined = []
+        if modules:
+            for key in self.edges.incident(concept, "REFINES"):
+                if key[0] != concept:
+                    continue
+                child = key[2]
+                module = child.split("@")[-1] if "@" in child else ""
+                if module in modules:
+                    refined.append(child)
+        sources = refined or [concept]
+        found = []
+        seen = set()
+        for source in sources:
+            for key in self.edges.incident(source, "SHORTCUT"):
+                if key[0] != source:
+                    continue
+                props = self.edges.edges[key]
+                if source == concept and props.get("split") and refined:
+                    continue
+                column = self.uid_index.get(key[2])
+                if column is None or column in seen:
+                    continue
+                hits = int(props.get("hits") or 0)
+                misses = int(props.get("misses") or 0)
+                if hits < self.shortcut_min_support:
+                    continue
+                precision = hits / (hits + misses) if hits + misses else 0.0
+                if precision < self.shortcut_min_precision:
+                    continue
+                seen.add(column)
+                found.append(
+                    (
+                        column,
+                        precision,
+                        key,
+                        f"{source} -SHORTCUT-> {self._label(key[2])} (hits {hits}, misses {misses})",
+                    )
+                )
+        if not refined:
+            for key in self.edges.incident(concept, "SAME_AS"):
+                other = key[2] if key[0] == concept else key[0]
+                for child in self.edges.incident(other, "SHORTCUT"):
+                    if child[0] != other:
+                        continue
+                    props = self.edges.edges[child]
+                    column = self.uid_index.get(child[2])
+                    if column is None or column in seen:
+                        continue
+                    hits = int(props.get("hits") or 0)
+                    misses = int(props.get("misses") or 0)
+                    if hits < self.shortcut_min_support:
+                        continue
+                    precision = hits / (hits + misses) if hits + misses else 0.0
+                    if precision < self.shortcut_min_precision:
+                        continue
+                    seen.add(column)
+                    found.append(
+                        (
+                            column,
+                            0.5 * precision,
+                            child,
+                            f"{concept} -SAME_AS-> {other} -SHORTCUT-> {self._label(child[2])}",
+                        )
+                    )
+        found.sort(key=lambda item: (-item[1], self.func_uids[item[0]]))
+        return found
+
+    def _structural_bonus(self, base, notes, used) -> np.ndarray:
+        bonus = np.zeros(self.n, dtype=np.float32)
+        if self.n == 0:
+            return bonus
+        take = min(8, self.n)
+        order = np.argpartition(-base, take - 1)[:take] if self.n > take else np.argsort(-base)
+        for index in order:
+            seed = self.func_uids[int(index)]
+            for key in self.edges.incident(seed):
+                rel = key[1]
+                if rel not in {"CALLS", "CO_CHANGED", "TESTED_BY"}:
+                    continue
+                props = self.edges.edges[key]
+                weight = float(props.get("w") or 1.0)
+                learned = bool(props.get("learned"))
+                if not learned and weight <= 1.05:
+                    continue
+                excess = max(0.0, weight - 1.0)
+                if excess <= 0:
+                    continue
+                other = key[2] if key[0] == seed else key[0]
+                column = self.uid_index.get(other)
+                if column is None:
+                    continue
+                gain = 0.02 * excess
+                if gain < 0.005:
+                    continue
+                bonus[column] += gain
+                used[column].append(key)
+                notes[column].append(f"{self._label(seed)} -{rel}-> {self._label(other)} (w {weight:.2f})")
+        peak = float(bonus.max())
+        if peak > 0.03:
+            bonus *= np.float32(0.03 / peak)
+        return bonus
+
+    def _seeds(self, base_order, concepts: list[str]) -> list[str]:
+        lexical = [self.func_uids[int(i)] for i in base_order[:8]]
+        return list(dict.fromkeys([*lexical, *concepts]))
+
+    def _label(self, uid: str) -> str:
+        node = self.nodes.get(uid) or {}
+        return node.get("qualname") or node.get("name") or uid

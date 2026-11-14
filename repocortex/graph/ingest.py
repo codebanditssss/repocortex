@@ -35,6 +35,13 @@ def ingest(client, graph: Graph) -> dict:
     return {"nodes": node_counts, "edges": edge_counts}
 
 
+def clear_learned(client) -> None:
+    """Drop shortcut, fix, and issue rows so a replay starts from the code graph."""
+    for rel in ("SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"):
+        client.query(f"MATCH (a)-[r:{rel}]->(b) DELETE r")
+    client.query("MATCH (n:Issue) DETACH DELETE n")
+
+
 def load_graph(client) -> tuple[dict, dict, dict]:
     """Return (nodes, edges, truncation flags) read back from HydraDB.
 
