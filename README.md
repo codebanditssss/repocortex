@@ -87,6 +87,33 @@ python scripts/run_eval.py --replay
 
 Function accuracy is strict: every gold function has to sit inside the top k. Replay prints a held-out checkpoint every 50 training issues. Only edge reweighting updates the graph. The other three operators return a stub result and leave the graph alone.
 
+Frozen retrieval restarts PageRank with probability 0.5 and mixes in the BM25 score of the same candidates (weight 0.35). Without that, hub functions such as `Collector.add` outrank the seeds.
+
+## Results from this run
+
+Snapshot `f24f38c6b282`, scope `django/db` and `django/forms`, 400 issues (320 train, 80 held out). The graph loaded into local HydraDB 0.4.0 with no truncated pages: 4989 nodes and 21532 edges (3105 functions).
+
+Held-out, before learning:
+
+| ranker | fn Acc@5 | fn Acc@10 | file Acc@1 | file Acc@5 | MRR |
+|---|---:|---:|---:|---:|---:|
+| BM25 | 0.225 | 0.3125 | 0.3375 | 0.675 | 0.258 |
+| dense (MiniLM) | 0.3125 | 0.3875 | 0.400 | 0.7625 | 0.307 |
+| frozen graph | 0.250 | 0.325 | 0.2375 | 0.5875 | 0.222 |
+
+The frozen graph beats BM25 on function Acc@5 and Acc@10. It does not beat the dense baseline. File accuracy is still higher for BM25 and dense, because the graph walk promotes neighbors that are not in the touched file.
+
+Edge reweighting on the 320 training issues, scored on the same 80:
+
+| step | fn Acc@5 | fn Acc@10 | file Acc@1 | MRR |
+|---:|---:|---:|---:|---:|
+| 0 | 0.250 | 0.325 | 0.2375 | 0.222 |
+| 50 | 0.275 | 0.325 | 0.300 | 0.261 |
+| 100 | 0.275 | 0.325 | 0.325 | 0.260 |
+| 320 | 0.2625 | 0.3125 | 0.3125 | 0.253 |
+
+Function Acc@10 does not climb. Acc@5 and MRR rise over the first 100 issues and then slip back. File Acc@1 moves from 0.2375 to 0.3125. The debit set is the whole 2-hop neighborhood, so edges that were merely nearby get pulled down. The next pass should credit only the path that reached gold.
+
 ## Tests
 
 ```bash
