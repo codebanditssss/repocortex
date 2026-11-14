@@ -1,0 +1,19 @@
+{
+  "source": "results/loadtest.json",
+  "placeholder": false,
+  "tool": "locust 2.47.0",
+  "users": 8,
+  "spawn_rate": 4,
+  "duration_s": 20,
+  "host": "http://127.0.0.1:8765",
+  "endpoint": "POST /locate",
+  "requests": 1251,
+  "failures": 0,
+  "avg_ms": 23,
+  "min_ms": 8,
+  "max_ms": 69,
+  "median_ms": 21,
+  "p95_ms": 44,
+  "p99_ms": 56,
+  "rps": 62.94
+}

@@ -1,0 +1,66 @@
+import type { Metadata } from "next";
+import {
+  Instrument_Serif,
+  Inter_Tight,
+  Newsreader,
+  Reenie_Beanie,
+} from "next/font/google";
+import { PaperGrain } from "@/components/paper-grain";
+import "./globals.css";
+
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const inter = Inter_Tight({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const reenie = Reenie_Beanie({
+  variable: "--font-reenie",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: {
+    default: "RepoCortex | A repository field manual",
+    template: "%s | RepoCortex",
+  },
+  description:
+    "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
+  icons: { icon: "/icon.svg" },
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="en"
+      className={`${instrument.variable} ${inter.variable} ${newsreader.variable} ${reenie.variable}`}
+    >
+      <body>
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        {children}
+        <PaperGrain />
+      </body>
+    </html>
+  );
+}

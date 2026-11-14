@@ -1,0 +1,26 @@
+{
+  "placeholder": true,
+  "ticket": "ModelChoiceField rejects a valid selection when to_field_name targets a unique field",
+  "note": "Stand-in traces for one illustrative ticket. No measured token saving is claimed.",
+  "without": {
+    "tokens": 18400,
+    "turns": 14,
+    "files_read": 18
+  },
+  "with": {
+    "tokens": 12100,
+    "turns": 9,
+    "files_read": 8,
+    "tool_calls": [
+      {
+        "name": "repocortex.locate",
+        "args": {
+          "repository": "django/django",
+          "ticket": "ModelChoiceField rejects a valid selection when to_field_name targets a unique field",
+          "top_k": 10
+        },
+        "result_summary": "Illustrative result: inspect ModelChoiceField.to_python and QuerySet.get."
+      }
+    ]
+  }
+}

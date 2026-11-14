@@ -1,0 +1,23 @@
+{
+  "source": "results/graph_stats.json",
+  "placeholder": false,
+  "snapshot": "f24f38c6b2825f15628c07bf2892f1664eed9361",
+  "backend": "bolt",
+  "local_nodes": 46443,
+  "local_edges": 138150,
+  "db_nodes": 46443,
+  "db_edges": 138150,
+  "truncated": {
+    "nodes": [],
+    "edges": []
+  },
+  "labels": {
+    "Repo": 1,
+    "File": 2605,
+    "Function": 8834,
+    "Class": 10510,
+    "Test": 21603,
+    "Concept": 2268,
+    "Symptom": 622
+  }
+}

@@ -1,0 +1,9 @@
+.paper-plate { margin: 0; background: var(--paper); min-width: 0; }
+.paper-plate-framed { border: 1px solid var(--rule); padding: 8px; }
+.plate-image-media { position: relative; }
+.plate-image-media img { display: block; width: 100%; height: auto; object-fit: contain; mix-blend-mode: multiply; }
+.paper-plate figcaption { padding: 10px 4px 4px; color: var(--ink2); font-size: 8px; line-height: 1.5; }
+/* Crop only the blank paper around these tiny, centrally drawn ornaments. */
+.plate-marginalia { width: 150px; }
+.plate-marginalia .plate-image-media { height: 90px; overflow: hidden; }
+.plate-marginalia img { position: absolute; width: 300px; max-width: none; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
