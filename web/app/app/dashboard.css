@@ -366,3 +366,14 @@
 }
 
 .connection-record a, .measured-aside a { display: inline-flex; align-items: center; min-height: 44px; }
+.agent-comparison-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.agent-comparison-three > section { padding-inline: 24px; border-left: 1px solid var(--rule-mid); }
+.agent-comparison-three > section:first-child { padding-left: 0; border-left: 0; }
+.agent-comparison-three > section:last-child { padding-right: 0; }
+.agent-table, .agent-example { margin-top: 36px; }
+.agent-table .manual-table td { text-align: right; }
+.agent-table .manual-table thead th:not(:first-child) { text-align: right; }
+@media (max-width: 860px) {
+  .agent-comparison-three { grid-template-columns: 1fr; }
+  .agent-comparison-three > section, .agent-comparison-three > section:first-child, .agent-comparison-three > section:last-child { padding-inline: 0; border-left: 0; border-top: 1px solid var(--rule-mid); }
+}

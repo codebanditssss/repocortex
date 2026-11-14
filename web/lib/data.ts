@@ -127,12 +127,35 @@ export interface ProvenanceData {
 
 interface AgentTrace {
   tokens: number;
+  output_tokens: number;
   turns: number;
   files_read: number;
+  tool_calls_mean: number;
+  locate_bug_calls_mean: number;
+  top1_function_hit: number;
+  top1_file_hit: number;
+  "function_acc@5": number;
+  cost_usd_mean: number;
+  wall_s_mean: number;
 }
 
-export interface AgentData extends PlaceholderData {
+interface AgentRun {
+  tool_calls: number;
+  turns: number;
+  tokens_in: number;
+  files_opened: number;
+  calls_by_tool: Record<string, number>;
+}
+
+export interface AgentData {
+  placeholder: false;
+  source: string;
+  model: string;
+  n: number;
+  note: string;
+  savings: { with_input_tokens_pct: number; first_input_tokens_pct: number; with_cost_pct: number; first_cost_pct: number };
   ticket: string;
+  example: { ticket: number; without: AgentRun; with: AgentRun };
   without: AgentTrace;
   with: AgentTrace & {
     tool_calls: {
@@ -141,6 +164,8 @@ export interface AgentData extends PlaceholderData {
       result_summary: string;
     }[];
   };
+  with_locate_first: AgentTrace;
+  tool_only: { top1_function_hit: number; top1_file_hit: number; "function_acc@5": number; mrr: number; source: string };
 }
 
 export interface LoadTest {

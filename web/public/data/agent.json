@@ -1,14 +1,49 @@
 {
   "placeholder": false,
-  "ticket": "#36277 Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
-  "note": "Measured on the oldest 30 held-out Django fixes with claude-sonnet-5-5. Token, turn and file numbers are means per issue. Accuracy is about the same with and without the tool (top-1 function 0.43 vs 0.40, one issue). The tool cut input tokens by 16 percent, or 27 percent when the agent is told to call it first.",
+  "source": "results/agent_eval/results.json",
   "model": "claude-sonnet-5-5",
   "n": 30,
+  "note": "Measured on the oldest 30 held-out Django fixes with claude-sonnet-5-5. Numbers are means per issue. Accuracy is about the same with and without the tool (top-1 function 0.43 vs 0.40, one issue). The tool cut input tokens by 16 percent, or 27 percent when the agent is told to call it first.",
+  "savings": {
+    "with_input_tokens_pct": 16,
+    "first_input_tokens_pct": 27,
+    "with_cost_pct": 15,
+    "first_cost_pct": 22
+  },
+  "ticket": "#36277 Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
+  "example": {
+    "ticket": 36277,
+    "without": {
+      "tool_calls": 23,
+      "turns": 15,
+      "tokens_in": 166134,
+      "files_opened": 5,
+      "calls_by_tool": {
+        "search_code": 13,
+        "read_file": 10,
+        "submit": 1
+      }
+    },
+    "with": {
+      "tool_calls": 21,
+      "turns": 13,
+      "tokens_in": 137942,
+      "files_opened": 5,
+      "calls_by_tool": {
+        "search_code": 10,
+        "read_file": 10,
+        "locate_bug": 1,
+        "submit": 1
+      }
+    }
+  },
   "without": {
-    "tokens": 67500,
+    "tokens": 63885,
+    "output_tokens": 3615,
     "turns": 9.6,
     "files_read": 2.8,
     "tool_calls_mean": 11.3,
+    "locate_bug_calls_mean": 0.0,
     "top1_function_hit": 0.4,
     "top1_file_hit": 0.633,
     "function_acc@5": 0.367,
@@ -16,10 +51,12 @@
     "wall_s_mean": 36.5
   },
   "with": {
-    "tokens": 56840,
+    "tokens": 53888,
+    "output_tokens": 2952,
     "turns": 8.3,
     "files_read": 2.4,
     "tool_calls_mean": 9.8,
+    "locate_bug_calls_mean": 0.43,
     "top1_function_hit": 0.433,
     "top1_file_hit": 0.633,
     "function_acc@5": 0.4,
@@ -29,23 +66,31 @@
       {
         "name": "locate_bug",
         "args": {
-          "repository": "django/django",
-          "ticket": "Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
-          "top_k": 10
+          "report": "Add GeneratedField(db_persist=False) support on PostgreSQL 18+",
+          "k": 10
         },
-        "result_summary": "Top hits were GeneratedField.__init__ and GeneratedField._check_supported, via a past fix (#36262) and a CALLS edge. The agent then read the PostgreSQL backend and named DatabaseFeatures.is_postgresql_18, the gold function. Without the tool it named a schema editor method and missed."
+        "result_summary": "Measured run on this ticket. With locate_bug the agent made 21 tool calls over 13 turns, used 137,942 input tokens, and named the gold function DatabaseFeatures.is_postgresql_18 second. Without it: 23 tool calls, 15 turns, 166,134 input tokens, gold named third."
       }
     ]
   },
   "with_locate_first": {
-    "tokens": 48938,
+    "tokens": 46361,
+    "output_tokens": 2577,
     "turns": 7.5,
     "files_read": 2.2,
     "tool_calls_mean": 9.1,
+    "locate_bug_calls_mean": 0.93,
     "top1_function_hit": 0.433,
     "top1_file_hit": 0.633,
     "function_acc@5": 0.367,
     "cost_usd_mean": 0.0491,
     "wall_s_mean": 41.8
+  },
+  "tool_only": {
+    "top1_function_hit": 0.467,
+    "top1_file_hit": 0.667,
+    "function_acc@5": 0.3,
+    "mrr": 0.492,
+    "source": "results/agent_eval/tool_only.json"
   }
 }

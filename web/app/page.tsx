@@ -119,38 +119,38 @@ export default function Home() {
             <SectionHead number="04" label="Context" title="Your agent reads less." />
             <FixtureLabel show={agent.placeholder} />
           </div>
-          <p className="section-dek">Same agent, same ticket. One of them read half the repo first.</p>
+          <p className="section-dek">Same agent, same {agent.n} tickets. One of them asked the graph first.</p>
           <p className="news source-note">{agent.note}</p>
           <p className="terminal-ticket"><span className="sc">Ticket</span> {agent.ticket}</p>
           <div className="terminal-pair">
             {(["without", "with"] as const).map((mode) => (
               <figure className={`terminal terminal-${mode}`} key={mode}>
-                <figcaption><span className="sc">{mode === "with" ? "With RepoCortex" : "Without RepoCortex"}</span><span className="num">trace / illustrative</span></figcaption>
+                <figcaption><span className="sc">{mode === "with" ? "With RepoCortex" : "Without RepoCortex"}</span><span className="num">measured run</span></figcaption>
                 <div className="terminal-body num">
                   {mode === "without" ? (
                     <>
                       <p><span className="terminal-prompt">$</span> investigate ticket</p>
-                      <p className="terminal-muted">› search &quot;ModelChoiceField&quot;<br />› read django/forms/fields.py<br />› read django/forms/forms.py<br />› search &quot;to_field_name&quot;<br />› read django/forms/models.py<br />› read django/db/models/query.py<br />… follow references, read, repeat</p>
+                      <p className="terminal-muted">› search_code x {agent.example.without.calls_by_tool.search_code}<br />› read_file x {agent.example.without.calls_by_tool.read_file}<br />› {agent.example.without.files_opened} files opened<br />› {agent.example.without.turns} turns, {number(agent.example.without.tokens_in)} input tokens</p>
                     </>
                   ) : (
                     <>
                       <p><span className="terminal-prompt">$</span> {agent.with.tool_calls[0].name}(&#123;</p>
-                      <p className="terminal-muted indent">repository: &quot;{agent.with.tool_calls[0].args.repository}&quot;,<br />ticket: &quot;{agent.ticket}&quot;,<br />top_k: {agent.with.tool_calls[0].args.top_k}</p>
+                      <p className="terminal-muted indent">report: &quot;{agent.with.tool_calls[0].args.report}&quot;,<br />k: {agent.with.tool_calls[0].args.k}</p>
                       <p>&#125;)</p>
                       <p className="terminal-result">{agent.with.tool_calls[0].result_summary}</p>
-                      <p className="terminal-muted">› inspect the returned functions<br />› prepare a targeted edit</p>
+                      <p className="terminal-muted">› {agent.example.with.turns} turns, {number(agent.example.with.tokens_in)} input tokens</p>
                     </>
                   )}
                 </div>
                 <dl className="terminal-stats">
-                  <div><dt>Context tokens</dt><dd className="num">{number(agent[mode].tokens)}</dd></div>
+                  <div><dt>Input tokens, mean</dt><dd className="num">{number(agent[mode].tokens)}</dd></div>
                   <div><dt>Turns</dt><dd className="num">{agent[mode].turns}</dd></div>
                   <div><dt>Files read</dt><dd className="num">{agent[mode].files_read}</dd></div>
                 </dl>
               </figure>
             ))}
           </div>
-          <p className="figure-caption"><b>FIG. 4</b> A preview of the comparison, not a measured token-saving claim.</p>
+          <p className="figure-caption"><b>FIG. 4</b> Traces are one measured run on {agent.ticket}. Totals are means over {agent.n} held-out issues with {agent.model}: {agent.savings.with_input_tokens_pct}% fewer input tokens with the tool, {agent.savings.first_input_tokens_pct}% when told to call it first.</p>
         </section>
 
         <section className="landing-section load-section">

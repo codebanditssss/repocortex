@@ -120,13 +120,15 @@ test("measured provenance retains held-out issues and captured hit paths", () =>
   assert.ok(hero.hits[0].path.includes("FIXED_IN"));
 });
 
-test("agent traces remain explicitly illustrative and independent of real issues", () => {
-  assert.equal(agent.placeholder, true);
-  assert.ok(agent.note.length > 20);
-  assert.equal(typeof agent.ticket, "string");
-  for (const trace of [agent.with, agent.without]) {
-    assert.ok(trace.tokens > 0 && trace.turns > 0 && trace.files_read > 0);
-  }
+test("agent data is the measured eval from results/agent_eval", () => {
+  assert.equal(agent.placeholder, false);
+  assert.equal(agent.source, "results/agent_eval/results.json");
+  assert.equal(agent.n, 30);
+  assert.deepEqual([agent.without.tokens, agent.with.tokens, agent.with_locate_first.tokens], [63885, 53888, 46361]);
+  assert.equal(agent.savings.with_input_tokens_pct, 16);
+  assert.equal(agent.savings.first_input_tokens_pct, 27);
+  assert.equal(agent.tool_only.top1_function_hit, 0.467);
+  assert.equal(agent.without.top1_function_hit, 0.4);
   assert.ok(agent.with.tool_calls.every((call) => call.name && call.args && call.result_summary));
 });
 

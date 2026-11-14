@@ -82,7 +82,7 @@ try {
         const content = evaluate(`({
           plates: [...document.querySelectorAll(".paper-plate img")].map(img => ({ alt: img.alt, source: img.getAttribute("src"), fit: getComputedStyle(img).objectFit })),
           loadRows: [...document.querySelectorAll(".load-table tbody tr")].map(row => [...row.children].map(cell => cell.textContent)),
-          agentFixture: document.querySelector(".agent-section .fixture-label").textContent,
+          agentFixture: document.querySelector(".agent-section .fixture-label"),
           plateBottom: document.querySelector(".hero-mycelium").getBoundingClientRect().bottom,
           copyTop: document.querySelector(".hero-copy").getBoundingClientRect().top
         })`);
@@ -91,7 +91,7 @@ try {
         assert.equal(content.plates[0].fit, "contain");
         assert.ok(content.plates.every(plate => plate.alt.length > 20 && !plate.source.includes("teaser-")));
         assert.deepEqual(content.loadRows, [["8", "21", "44", "0", "62.94"]]);
-        assert.equal(content.agentFixture, "Placeholder fixture");
+        assert.equal(content.agentFixture, null);
         assert.ok(content.plateBottom <= content.copyTop, "the whole hero plate and caption must remain above the typography");
       }
       if (route === "/" && width === 320) {
@@ -365,7 +365,7 @@ try {
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type"), /json/);
     const data = await response.json();
-    assert.equal(data.placeholder, ["graph", "snapshots", "agent"].includes(name));
+    assert.equal(data.placeholder, ["graph", "snapshots"].includes(name));
   }
   const font = await fetch(`${base}/fonts/DepartureMono-Regular.woff2`);
   assert.equal(font.status, 200);
