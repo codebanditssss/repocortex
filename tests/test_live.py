@@ -5,7 +5,7 @@ from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import DenseIndex
 from repocortex.retrieve.frozen import EdgeTable
 from repocortex.retrieve.hybrid import HybridRanker
-from repocortex.serve.load import locate_report
+from repocortex.serve.load import RankingBusyError, locate_report
 
 class Embedder:
     def encode_one(self, text):
@@ -68,6 +68,44 @@ class LiveTest(unittest.TestCase):
         self.assertEqual(result["backend"]["mode"], "replay")
         self.assertEqual(len(result["hits"]), 3)
 
+    def test_busy_ranker_expires_without_starting_work(self):
+        import threading
+        r = self.ranker()
+        acquired, release = threading.Event(), threading.Event()
+        def hold_ranker():
+            with r.request_lock:
+                acquired.set()
+                release.wait(2)
+        worker = threading.Thread(target=hold_ranker)
+        worker.start()
+        self.assertTrue(acquired.wait(1))
+        try:
+            with patch("repocortex.serve.load.REQUEST_LOCK_TIMEOUT_SECONDS", 0.01), patch.object(r, "predict") as predict:
+                with self.assertRaises(RankingBusyError):
+                    locate_report(r, "bug", 3)
+                predict.assert_not_called()
+        finally:
+            release.set()
+            worker.join()
+        # Timed-out callers must neither release another request's lock nor poison it.
+        self.assertEqual(len(locate_report(r, "bug", 3)["hits"]), 3)
+
+    def test_health_error_releases_lock_for_other_threads(self):
+        import threading
+        r = self.ranker()
+        with patch.object(r.client, "ping", side_effect=RuntimeError("offline")):
+            with self.assertRaises(RuntimeError):
+                locate_report(r, "bug", 3)
+        acquired = []
+        def check():
+            locked = r.request_lock.acquire(timeout=0.1)
+            acquired.append(locked)
+            if locked:
+                r.request_lock.release()
+        worker = threading.Thread(target=check)
+        worker.start(); worker.join()
+        self.assertEqual(acquired, [True])
+
 class HttpTest(unittest.TestCase):
     def test_invalid_reports_and_backend_failure_return_json(self):
         import threading, json, urllib.request, urllib.error
@@ -91,6 +129,11 @@ class HttpTest(unittest.TestCase):
             self.assertEqual(post({"report": "x" * 74000})[0], 413)
             with patch.object(ranker.client, "ping", side_effect=RuntimeError("offline")):
                 self.assertEqual(post({"report": "bug"})[0], 503)
+            with patch("scripts.serve_locate.locate_report", side_effect=RankingBusyError("busy")):
+                status, payload = post({"report": "bug"})
+                self.assertEqual(status, 503)
+                self.assertIn("busy", payload["error"])
+                self.assertEqual(payload["hits"], [])
             ranker.client.fail=True
             status,payload=post({"report":"bug"})
             self.assertEqual(status,503)

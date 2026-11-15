@@ -9,6 +9,14 @@ const source = (await readFile(new URL("../app/api/locate/route.ts", import.meta
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ESNext } }).outputText;
 const { POST } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`);
 
+test("locate proxy preserves retryable service failures without exposing backend details", async (t) => {
+  t.mock.method(globalThis, "fetch", async () => Response.json({ error: "private backend detail" }, { status: 503 }));
+  const result = await POST(new Request("http://localhost/api/locate", { method: "POST", body: JSON.stringify({ report: "QuerySet ordering fails" }) }));
+  assert.equal(result.status, 503);
+  assert.equal(result.headers.get("Retry-After"), "5");
+  assert.doesNotMatch(JSON.stringify(await result.json()), /private backend detail/);
+});
+
 test("locate proxy forwards Unicode reports and preserves upstream size errors", async (t) => {
   let forwarded;
   t.mock.method(globalThis, "fetch", async (_url, options) => {

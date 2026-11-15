@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report: body.report.trim(), k: body.k ?? 10 }), cache: "no-store", signal: AbortSignal.timeout(60000),
     });
     if (upstream.status === 413) return Response.json({ error: "The report is too large. Shorten it and try again." }, { status: 413 });
+    if (upstream.status === 503) return Response.json({ error: "Search is temporarily unavailable. Please try again shortly." }, { status: 503, headers: { "Retry-After": "5" } });
     if (!upstream.ok) return Response.json({ error: "The locate service could not complete this search. Try again." }, { status: 502 });
     const result: unknown = await upstream.json();
     if (!isLocateResult(result)) return Response.json({ error: "The locate service returned an incomplete result." }, { status: 502 });

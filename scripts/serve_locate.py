@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from repocortex.serve.load import backend_status, load_ranker, locate_report
+from repocortex.serve.load import RankingBusyError, backend_status, load_ranker, locate_report
 
 
 MAX_REPORT_CHARACTERS = 12000
@@ -74,6 +74,10 @@ def make_handler(ranker):
                 k = 10
             try:
                 payload = locate_report(ranker, report, k)
+            except RankingBusyError:
+                self._send(503, {"error": "ranking is busy; try again shortly", "source": "error",
+                                 "hits": [], "queries": []})
+                return
             except Exception:
                 self._send(503, {"error": "ranking unavailable", "source": "error",
                                  "hits": [], "queries": [],

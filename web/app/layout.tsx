@@ -57,7 +57,10 @@ export const metadata: Metadata = {
   },
   description:
     "Find candidate functions for a bug report with a learning code graph. Inspect evidence from code relationships and past fixes in RepoCortex.",
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: "/icon.svg",
+    apple: { url: "/apple-icon", sizes: "180x180", type: "image/png" },
+  },
   openGraph: {
     type: "website",
     siteName: "RepoCortex",

@@ -13,6 +13,13 @@ from repocortex.retrieve.frozen import EdgeTable
 from repocortex.retrieve.hybrid import HybridRanker
 
 
+REQUEST_LOCK_TIMEOUT_SECONDS = 5.0
+
+
+class RankingBusyError(TimeoutError):
+    """The shared ranker did not become available within the queue budget."""
+
+
 def _endpoint(nodes: dict, uid: str) -> None:
     if not uid or uid in nodes:
         return
@@ -118,7 +125,9 @@ def backend_status(ranker) -> dict:
 
 def locate_report(ranker, report: str, k: int = 10) -> dict:
     """Use live structural edges when connected; label cached learning separately."""
-    with ranker.request_lock:
+    if not ranker.request_lock.acquire(timeout=REQUEST_LOCK_TIMEOUT_SECONDS):
+        raise RankingBusyError("ranking is busy; try again shortly")
+    try:
         status = backend_status(ranker)
         if status.get("mode") == "error":
             raise RuntimeError("live graph health check failed; refusing cached fallback")
@@ -142,6 +151,8 @@ def locate_report(ranker, report: str, k: int = 10) -> dict:
             "source": "live" if live else "replay",
             "scoring": "live structural graph + cached learned memory" if live else "cached graph and learned memory",
         }
+    finally:
+        ranker.request_lock.release()
 
 
 def locate(ranker, report: str, k: int = 10) -> list[dict]:
