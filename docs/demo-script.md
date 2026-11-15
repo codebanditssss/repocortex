@@ -21,7 +21,7 @@ suggestion.”
 
 ## 0:10–0:30 · Run a fresh search
 
-Screen: click **Try a query compilation report**, then **Find functions**. Expand
+Screen: click **Query compilation**, then **Find functions**. Expand
 one returned function. Show the actual file, line, and supporting paths.
 
 Caption: Fresh ranking · live structural graph + cached learned memory
@@ -32,7 +32,7 @@ Here is a candidate function, and the paths that supported it.”
 
 ## 0:30–0:43 · Show what the database did
 
-Screen: expand **Database query receipts**, then a query. Show the Cypher,
+Screen: expand **Database query receipts**, a relationship group, then a query. Show the Cypher,
 returned-row count, and any row-limit notice. Do not present the illustrative
 graph animation as a captured query or mutation log.
 
@@ -74,6 +74,18 @@ back the confirmed fix. RepoCortex gives the next investigation a better
 starting point.”
 
 ## Sources
+
+### Optional persistence demonstration
+
+Run `.venv/bin/python -m scripts.demo_feedback` to inspect prediction → confirmed
+diff → saved memory → reload → prediction. It uses two synthetic functions and
+fixed vectors in a temporary directory; it does not connect to HydraDB, alter the
+recovered runtime, or measure accuracy. The JSON checks that feedback promotes
+the confirmed function, reloading preserves the result, and duplicate feedback
+is skipped. Use this only to explain persistence, separately from the real Django
+evaluation and live database receipts.
+
+### Evidence files
 
 - Accuracy and paired intervals: `results/lexical_gap.json`, `results/curve.json`
 - Split, repeated tickets, and sensitivity: `docs/evaluation-audit.md`
