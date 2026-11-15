@@ -275,6 +275,8 @@ main:focus { outline: none; }
 }
 .foot i { font-family: var(--font-newsreader), serif; font-size: 12px; }
 .foot span { flex: none; }
+.foot .footer-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+.footer-actions > a { display: inline-flex; align-items: center; min-height: 44px; }
 
 @media (max-width: 1279px) {
   .head { flex-wrap: wrap; gap: 0 24px; padding-top: 12px; }

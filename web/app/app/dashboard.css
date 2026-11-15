@@ -481,7 +481,7 @@
 .locate-modes { display: flex; flex-wrap: wrap; gap: 12px 32px; padding: 16px 0; border-bottom: 1px solid var(--rule-mid); }
 .locate-modes a { display: grid; gap: 5px; font-size: 13px; }
 .locate-modes a span { color: var(--ink2); font-size: 11px; }
-#fresh-search, #saved-evidence { scroll-margin-top: 100px; }
+#fresh-search, #saved-evidence, #confirmed-fix { scroll-margin-top: 100px; }
 .live-availability { padding: 14px 16px; margin: 0 0 24px; border: 1px solid var(--rule-mid); font-size: 13px; line-height: 1.6; }
 .live-availability p { margin: 0 0 10px; }
 .live-availability > div { display: flex; flex-wrap: wrap; gap: 12px 24px; }

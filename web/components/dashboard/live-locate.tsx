@@ -120,5 +120,6 @@ export function LiveLocate() {
         </details>
       </>}
     </div></div>
+    <p className="figure-note">Have a confirmed fix? <a href="/app/connect#confirmed-fix">Teach your local agent from the diff →</a> Public search is read-only.</p>
   </section>;
 }

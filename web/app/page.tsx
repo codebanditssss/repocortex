@@ -43,6 +43,7 @@ export default function Home() {
         <nav aria-label="Main navigation">
           <Link href="/app">Results <span aria-hidden="true">→</span></Link>
           <a href="#install">Setup <span aria-hidden="true">↓</span></a>
+          <a href="https://github.com/codebanditssss/hydradb-hack" target="_blank" rel="noreferrer" aria-label="RepoCortex on GitHub (opens in a new tab)">GitHub <span aria-hidden="true">↗</span></a>
         </nav>
       </header>
 
