@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   let body;
   try {
     const text = await request.text();
-    if (text.length > 16000) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
+    if (text.length > 12000 * 6 + 1024) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
     body = JSON.parse(text);
   } catch {
     return Response.json({ error: "Send a valid bug report." }, { status: 400 });
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
     const upstream = await fetch(`${process.env.REPOCORTEX_API_URL || "http://127.0.0.1:8765"}/locate`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report: body.report.trim(), k: body.k ?? 10 }), cache: "no-store", signal: AbortSignal.timeout(60000),
     });
+    if (upstream.status === 413) return Response.json({ error: "The report is too large. Shorten it and try again." }, { status: 413 });
     if (!upstream.ok) return Response.json({ error: "The locate service could not complete this search. Try again." }, { status: 502 });
     const result: unknown = await upstream.json();
     if (!isLocateResult(result)) return Response.json({ error: "The locate service returned an incomplete result." }, { status: 502 });

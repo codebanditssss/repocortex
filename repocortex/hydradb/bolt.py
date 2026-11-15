@@ -19,7 +19,7 @@ than hosted BYOG:
 
 from __future__ import annotations
 
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, Query
 
 from repocortex.hydradb.base import (
     LABELS,
@@ -104,7 +104,7 @@ class BoltClient:
         if self.trace and record:
             self.last_queries.append({"cypher": cypher, "params": params or {}})
         with self.driver.session(database=self.database) as session:
-            cursor = session.run(cypher, params or {}, timeout=timeout)
+            cursor = session.run(Query(cypher, timeout=timeout), params or {})
             rows = [_plain(record.data()) for record in cursor]
         return QueryResult.from_rows(rows)
 

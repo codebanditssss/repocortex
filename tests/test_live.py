@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 import numpy as np
 from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import DenseIndex
@@ -50,6 +51,23 @@ class LiveTest(unittest.TestCase):
         self.assertFalse(r.live_graph)
         self.assertFalse(r.client.trace)
 
+    def test_health_failure_refuses_cached_fallback(self):
+        for ping in (RuntimeError("offline"), {"repo": "test", "functions": 2}):
+            r = self.ranker()
+            kwargs = {"side_effect": ping} if isinstance(ping, Exception) else {"return_value": ping}
+            with patch.object(r.client, "ping", **kwargs), patch.object(r, "predict") as predict:
+                with self.assertRaisesRegex(RuntimeError, "health check failed"):
+                    locate_report(r, "bug", 3)
+                predict.assert_not_called()
+
+    def test_intentional_replay_remains_available(self):
+        r = self.ranker()
+        r.client = None
+        result = locate_report(r, "bug", 3)
+        self.assertEqual(result["source"], "replay")
+        self.assertEqual(result["backend"]["mode"], "replay")
+        self.assertEqual(len(result["hits"]), 3)
+
 class HttpTest(unittest.TestCase):
     def test_invalid_reports_and_backend_failure_return_json(self):
         import threading, json, urllib.request, urllib.error
@@ -58,8 +76,8 @@ class HttpTest(unittest.TestCase):
         ranker=LiveTest().ranker()
         server=ThreadingHTTPServer(("127.0.0.1",0),make_handler(ranker))
         worker=threading.Thread(target=server.serve_forever,daemon=True);worker.start()
-        def post(body):
-            request=urllib.request.Request(f"http://127.0.0.1:{server.server_port}/locate",data=json.dumps(body).encode(),headers={"Content-Type":"application/json"})
+        def post(body, ensure_ascii=True):
+            request=urllib.request.Request(f"http://127.0.0.1:{server.server_port}/locate",data=json.dumps(body, ensure_ascii=ensure_ascii).encode(),headers={"Content-Type":"application/json"})
             try:
                 with urllib.request.urlopen(request) as response:return response.status,json.load(response)
             except urllib.error.HTTPError as response:
@@ -67,6 +85,12 @@ class HttpTest(unittest.TestCase):
         try:
             for body in ([],{}, {"report":42},{"report":""}):
                 self.assertEqual(post(body)[0],400)
+            for report, ascii_encoding in (("错" * 12000, False), ("错" * 12000, True), ("😀" * 12000, False)):
+                self.assertEqual(post({"report": report}, ensure_ascii=ascii_encoding)[0], 200)
+            self.assertEqual(post({"report": "x" * 12001})[0], 400)
+            self.assertEqual(post({"report": "x" * 74000})[0], 413)
+            with patch.object(ranker.client, "ping", side_effect=RuntimeError("offline")):
+                self.assertEqual(post({"report": "bug"})[0], 503)
             ranker.client.fail=True
             status,payload=post({"report":"bug"})
             self.assertEqual(status,503)

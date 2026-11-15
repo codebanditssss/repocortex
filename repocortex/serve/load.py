@@ -120,6 +120,8 @@ def locate_report(ranker, report: str, k: int = 10) -> dict:
     """Use live structural edges when connected; label cached learning separately."""
     with ranker.request_lock:
         status = backend_status(ranker)
+        if status.get("mode") == "error":
+            raise RuntimeError("live graph health check failed; refusing cached fallback")
         client = ranker.client
         live = bool(status.get("connected") and hasattr(client, "structural_edges"))
         ranker.live_graph = live

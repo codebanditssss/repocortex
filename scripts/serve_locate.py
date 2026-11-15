@@ -12,6 +12,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from repocortex.serve.load import backend_status, load_ranker, locate_report
 
 
+MAX_REPORT_CHARACTERS = 12000
+# JSON can escape each character as six ASCII bytes, plus envelope overhead.
+MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 6 + 1024
+
+
 def make_handler(ranker):
     class Handler(BaseHTTPRequestHandler):
         protocol_version = "HTTP/1.1"
@@ -46,7 +51,7 @@ def make_handler(ranker):
             except ValueError:
                 self._send(400, {"error": "invalid content length"})
                 return
-            if length < 0 or length > 32768:
+            if length < 0 or length > MAX_REQUEST_BYTES:
                 self._send(413, {"error": "report too large"})
                 self.close_connection = True
                 return
@@ -60,8 +65,8 @@ def make_handler(ranker):
                 self._send(400, {"error": "report must be text"})
                 return
             report = body["report"].strip()
-            if not report or len(report) > 16000:
-                self._send(400, {"error": "report must contain 1 to 16000 characters"})
+            if not report or len(report) > MAX_REPORT_CHARACTERS:
+                self._send(400, {"error": "report must contain 1 to 12000 characters"})
                 return
             try:
                 k = int(body.get("k") or 10)
