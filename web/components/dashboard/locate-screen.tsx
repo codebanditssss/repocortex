@@ -41,7 +41,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
 
 
   return (
-    <div className="manual-page"><nav className="locate-modes" aria-label="Choose search mode"><a href="#fresh-search"><strong>Fresh report</strong><span>Rank functions for a new Django bug</span></a><a href="#saved-evidence"><strong>Saved evidence</strong><span>Inspect recorded held-out predictions · no live backend needed</span></a></nav><LiveLocate /><div id="saved-evidence" className="locate-layout" tabIndex={-1}>
+    <div className="manual-page"><nav className="locate-modes" aria-label="Choose search mode"><a href="#fresh-search"><strong>Fresh report</strong><span>Rank functions for a new Django bug</span></a><a href="#saved-evidence"><strong>Saved evidence</strong><span>Browse 319 recorded predictions</span></a></nav><LiveLocate /><div id="saved-evidence" className="locate-layout" tabIndex={-1}>
       <section className="locate-composer" aria-label="Search held-out evidence">
         <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
@@ -57,7 +57,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
             : matches.length ? `${matches.length} saved ${matches.length === 1 ? "record" : "records"} found for “${submitted}”. Results are shown in Ranked suspects.`
             : `No saved records match “${submitted}”. For a new bug report, use the live search above.`}</p>
         </div>
-        <p id="locate-search-help" className="figure-note">Search this local evidence index by ticket number, function, or filename. Short phrases match those fields, not bug-report bodies. These saved results are separate from the fresh report search above.</p>
+        <p id="locate-search-help" className="figure-note">Matches ticket numbers, functions and filenames—not bug-report text.</p>
         <div className="sample-tickets"><h2 className="sc">Or try a held-out ticket</h2>{samples.map((sample) => <button type="button" key={sample.ticket} onClick={() => search(String(sample.ticket))}><span className="num">#{sample.ticket}</span><span>{shortFunctionName(sample.hits[0])}</span></button>)}</div>
         <dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl>
       </section>
@@ -71,8 +71,8 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
             </button>
             {rank === hit.rank && <div id={`hit-receipt-${hit.rank}`} className="expanded-hit"><HitReceipt issue={issue} hit={hit} /></div>}
           </li></Fragment>)}</ol>
-          <aside className="locate-endnote"><span className="sc">What this proves</span><p>These are saved predictions for real held-out issues, not fresh search results. A gold mark means the hit matches a function in the recorded fix. FIXED_IN and SHORTCUT expose the evidence behind a result; <b>dense + bm25</b> is a hybrid-search path, not a learned edge.</p></aside>
-        </> : <div className="locate-empty"><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Search saved."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
+          <aside className="locate-endnote"><span className="sc">What this proves</span><p>Recorded held-out predictions. Gold marks match the actual fix. FIXED_IN and SHORTCUT show learned evidence; <b>dense + bm25</b> shows text retrieval.</p></aside>
+        </> : <div className="locate-empty"><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Search saved."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load example #{demo.ticket} →</button></div>}
       </section>
     </div></div>
   );
