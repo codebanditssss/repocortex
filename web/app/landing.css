@@ -76,6 +76,23 @@
 .hero-bottom > a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; flex: none; }
 .hero-bottom > a span { margin-left: 15px; }
 .landing-section { position: relative; padding-block: 72px; border-top: 1px solid var(--rule-strong); scroll-margin-top: 24px; }
+/* Keep distant figures out of initial layout; retain their measured size once seen. */
+@supports (content-visibility: auto) {
+  .landing-section { content-visibility: auto; contain-intrinsic-block-size: auto 650px; }
+  .landing-section.replay-section { contain-intrinsic-block-size: auto 1100px; }
+  .landing-section.provenance-section { contain-intrinsic-block-size: auto 500px; }
+  .landing-section.agent-section { contain-intrinsic-block-size: auto 800px; }
+  .landing-section.load-section, .landing-section.hydra-section { contain-intrinsic-block-size: auto 500px; }
+  @media (max-width: 767px) {
+    .landing-section { contain-intrinsic-block-size: auto 1000px; }
+    .landing-section.replay-section { contain-intrinsic-block-size: auto 1900px; }
+    .landing-section.provenance-section { contain-intrinsic-block-size: auto 850px; }
+    .landing-section.agent-section { contain-intrinsic-block-size: auto 1300px; }
+    .landing-section.load-section { contain-intrinsic-block-size: auto 700px; }
+    .landing-section.hydra-section { contain-intrinsic-block-size: auto 900px; }
+  }
+  @media print { .landing-section { content-visibility: visible; } }
+}
 .section-index { color: var(--ink2); margin-bottom: 18px !important; }
 .section-index > .num { margin-right: 10px; }
 .section-heading h2 { max-width: 660px; }
@@ -391,3 +408,15 @@
 @media (prefers-reduced-motion: reduce) {
   .route-pulse { animation: none; stroke-dasharray: none; }
 }
+
+.hero-benchmark { max-width: 500px; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); }
+.hero-benchmark > .sc { color: var(--ink2); }
+.hero-benchmark dl { display: flex; gap: 32px; margin: 14px 0 12px; }
+.hero-benchmark dt { font-size: 11px; color: var(--ink2); }
+.hero-benchmark dd { margin: 6px 0 0; font-size: 23px; }
+.hero-benchmark dl > div:last-child dd { color: #b9311c; }
+.hero-benchmark-scope, .hero-benchmark details { font-size: 11px; line-height: 1.6; color: var(--ink2); }
+.hero-benchmark details { margin-top: 8px; }
+.hero-benchmark summary { cursor: pointer; }
+.hero-benchmark details p { margin-top: 8px; }
+@media (max-width: 480px) { .hero-benchmark dl { gap: 24px; } .hero-benchmark dd { font-size: 20px; } }

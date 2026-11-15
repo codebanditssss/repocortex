@@ -32,7 +32,23 @@
   --font-hand: var(--font-reenie), cursive;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
+
+/* Native scrolling stays intact; motion follows the reader's scroll position. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-section .section-heading {
+      animation: section-arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+    @keyframes section-arrive {
+      from { transform: translateY(16px); opacity: .85; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  }
+}
 
 html {
   min-height: 100%;

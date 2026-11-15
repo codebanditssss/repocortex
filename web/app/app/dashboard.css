@@ -440,3 +440,8 @@
 @media (max-width: 480px) { .live-result-heading { flex-wrap: wrap; } .live-ranked-hits > li > details > summary { gap: 8px; } .live-method { margin-top: 24px; } }
 .live-ranked-hits .hit-function small { font-size: 12px; line-height: 1.5; margin-top: 5px; }
 .live-keyboard-hint { margin: 8px 0; text-align: right; font-size: 10px; color: var(--ink2); }
+.live-query-group-entries { padding-left: 14px; border-left: 2px solid var(--rule); }
+.live-query-group-entries > .live-query-card:last-child { border-bottom: 0; }
+.live-examples { margin-top: 20px; }
+.live-examples > div { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; }
+.live-examples .underlined-control { font-size: 12px; }

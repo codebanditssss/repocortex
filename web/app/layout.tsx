@@ -49,6 +49,7 @@ const departure = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://repocortex.vercel.app"),
   title: {
     default: "RepoCortex | A repository field manual",
     template: "%s | RepoCortex",

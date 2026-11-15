@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CurveData, ProvenanceIssue } from "@/lib/data";
+import lexical from "@/public/data/lexical_gap.json";
 import { fixedInRoutes, hitSymbol } from "@/lib/landing";
 import { useInView, usePageVisible, useReducedMotion } from "./use-field-state";
+
+const HERO_PLAYBACK_MS = 3000;
 
 function typedLine(text: string, progress: number) {
   if (progress >= 1) return text;
@@ -24,7 +27,7 @@ export function Hero({ ticket, evaluation }: {
   const [optedIn, setOptedIn] = useState(false);
   const [started, setStarted] = useState(false);
   const [run, setRun] = useState(0);
-  const elapsed = useRef(10000);
+  const elapsed = useRef(HERO_PLAYBACK_MS);
   const autoStarted = useRef(false);
 
   const play = useCallback((manual = true) => {
@@ -50,13 +53,13 @@ export function Hero({ ticket, evaluation }: {
     let previous = 0;
     let lastPaint = 0;
     const tick = (now: number) => {
-      if (previous) elapsed.current = Math.min(10000, elapsed.current + now - previous);
+      if (previous) elapsed.current = Math.min(HERO_PLAYBACK_MS, elapsed.current + now - previous);
       previous = now;
-      if (now - lastPaint > 75 || elapsed.current >= 10000) {
-        setProgress(elapsed.current / 10000);
+      if (now - lastPaint > 75 || elapsed.current >= HERO_PLAYBACK_MS) {
+        setProgress(elapsed.current / HERO_PLAYBACK_MS);
         lastPaint = now;
       }
-      if (elapsed.current < 10000) frame = requestAnimationFrame(tick);
+      if (elapsed.current < HERO_PLAYBACK_MS) frame = requestAnimationFrame(tick);
       else setPlaying(false);
     };
     frame = requestAnimationFrame(tick);
@@ -115,6 +118,12 @@ export function Hero({ ticket, evaluation }: {
         <h1 id="page-title">Find the functions.<br />Learn from <i>the fix.</i></h1>
         <p className="hero-dek">Describe a bug. RepoCortex ranks candidate functions using your code graph and past fixes. Inspect the evidence, then feed back the confirmed fix so the next investigation can use it.</p>
         <div className="hero-actions"><a className="landing-primary" href="/app/locate">Try a live search <span aria-hidden="true">→</span></a><a className="text-link" href="#replay">See the learning curve <span aria-hidden="true">↓</span></a></div>
+        <div className="hero-benchmark" aria-label="Strict function accuracy comparison">
+          <p className="sc">Strict Function Acc@10</p>
+          <dl>{([['No graph', lexical.dense_bm25], ['Frozen', lexical.frozen], ['Learned', lexical.learned]] as const).map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="num">{(value['function_acc@10'] * 100).toFixed(1)}%</dd></div>)}</dl>
+          <p className="hero-benchmark-scope">{lexical.n} retrospective Django fix rows · <a href="#replay">See the measured curve</a></p>
+          <details><summary>Scope and limitations</summary><p>All gold functions must appear in the top ten. This is one recorded Django snapshot, which includes later fixes. Three test rows share tickets with training; excluding them preserves the gain. <a href="https://github.com/codebanditssss/hydradb-hack/blob/main/docs/evaluation-audit.md">Read the evaluation audit</a>.</p></details>
+        </div>
       </div>
       <aside className="hero-ticket" aria-label="Measured held-out ticket">
         <div className="ticket-heading"><span className="sc">Held-out ticket / #{ticket.ticket}</span><span className="sc measured-label">Measured</span></div>

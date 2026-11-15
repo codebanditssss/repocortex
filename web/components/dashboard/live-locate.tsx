@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { isBackendStatus, isLocateResult, receiptRelation, shortLiveName, type BackendStatus, type LocateResult } from "@/lib/live";
+import { isBackendStatus, isLocateResult, receiptRelation, shortLiveName, type BackendStatus, type LocateResult, type QueryReceipt } from "@/lib/live";
 
-const example = "QuerySet union loses ordering when combined with values_list. The SQL compiler raises an error when ordering by a column missing from the selected fields.";
+const examples = [
+  { label: "Query compilation", report: "QuerySet union loses ordering when combined with values_list. The SQL compiler raises an error when ordering by a column missing from the selected fields." },
+  { label: "Timezones", report: "With USE_TZ enabled, filtering a DateTimeField by a date near midnight returns the wrong records. The active timezone differs from UTC. Where does Django convert the datetime before extracting its date?" },
+  { label: "Migrations", report: "Renaming a model field in a migration unexpectedly removes and recreates the column instead of preserving its values. Where does Django detect renamed fields and generate the schema operation?" },
+];
 
 export function LiveLocate() {
   const [report, setReport] = useState("");
@@ -56,6 +60,13 @@ export function LiveLocate() {
   }
 
   const bounded = result?.queries.filter((query) => query.limit_reached).length ?? 0;
+  const receiptGroups = new Map<string, { query: QueryReceipt; index: number }[]>();
+  result?.queries.forEach((query, index) => {
+    const relation = receiptRelation(query);
+    const entries = receiptGroups.get(relation) ?? [];
+    entries.push({ query, index });
+    receiptGroups.set(relation, entries);
+  });
   return <section className="live-locate" aria-labelledby="live-locate-title">
     <div className="section-rule"><h2 id="live-locate-title">Follow a fresh <i>bug report.</i></h2><span className={`cap live-status${status?.connected ? " is-connected" : ""}`} role="status">{status === null ? "Checking service…" : status.connected ? "HydraDB connected" : status.mode === "replay" ? "Cached graph mode" : "Service offline"}</span></div>
     <div className="live-locate-grid"><form onSubmit={locate}>
@@ -65,7 +76,7 @@ export function LiveLocate() {
       <div className="locate-options"><span>repo <u>django</u></span><button className="btn" type="submit" disabled={pending || !report.trim()}>{pending ? "Tracing the graph…" : "Find functions →"}</button></div>
       <p className="live-keyboard-hint">Ctrl / ⌘ + Enter to search</p>
       <p id="live-search-help" className="figure-note">Search the recovered Django snapshot. Structural paths are queried in HydraDB when connected. Learned memory comes from the saved training run.</p>
-      <button className="underlined-control" type="button" disabled={pending} onClick={() => setReport(example)}>Try a query compilation report →</button>
+      <div className="live-examples"><span className="sc">Try a report</span><div>{examples.map((example) => <button className="underlined-control" type="button" disabled={pending} key={example.label} onClick={() => { setReport(example.report); composer.current?.focus(); }}>{example.label} →</button>)}</div></div>
       <div className="live-method"><span className="sc">How to read a result</span><p>Start with the function, then open its evidence path. A ranking score compares candidates; it is not a probability that a function contains the bug.</p></div>
     </form><div className="live-search-results" aria-busy={pending}>
       {error && <div className="live-error" role="alert"><strong>Search paused</strong><p>{error}</p><span>Saved evidence below remains available.</span></div>}
@@ -75,7 +86,25 @@ export function LiveLocate() {
         <div className="live-provenance"><span>{result.source === "live" ? "Live structural graph" : "Cached structural graph"}</span><span>Cached learned memory</span></div>
         <ol className="ranked-hits live-ranked-hits">{result.hits.map((hit) => <li key={`${hit.rank}-${hit.uid}`}><details><summary><span className="hit-rank">{String(hit.rank).padStart(2, "0")}</span><span className="hit-function"><strong title={hit.qualname || hit.uid}>{shortLiveName(hit)}</strong><small>{hit.file}:{hit.line}</small></span><span className="live-score"><span className="num">{hit.score.toFixed(3)}</span><small>score</small></span><span className="live-expand" aria-hidden="true">+</span></summary><div className="live-hit-path"><span className="sc">Why this function surfaced</span><ul>{hit.path ? hit.path.split(" | ").map((path, index) => <li key={index}>{path}</li>) : <li>No graph path returned for this candidate.</li>}</ul><p className="figure-note">Learned FIXED_IN and SHORTCUT evidence can come from cached training memory. The database receipts below identify this search&apos;s live queries.</p><details className="live-function-id"><summary>Full function identifier</summary><code>{hit.uid}</code></details></div></details></li>)}</ol>
         {!result.hits.length && <p>No functions matched this report. Add an error message or relevant API name and try again.</p>}
-        <details className="live-query-receipts"><summary><span>Database query receipts</span><span className="num">{result.queries.length} queries</span></summary><p className="figure-note">Each receipt records rows returned by a bounded query. Counts can overlap across queries; they are not unique function counts.</p>{bounded > 0 && <p className="live-bounded">{bounded} {bounded === 1 ? "query reached its row limit" : "queries reached their row limits"}. Additional matching edges may exist beyond this search.</p>}{result.queries.length ? result.queries.map((query, index) => <details className="live-query-card" key={index}><summary><span><b>{receiptRelation(query)}</b><small>Query {index + 1}</small></span><span>{query.rows.toLocaleString()} rows<small>{query.limit_reached ? "Row limit reached" : "Within row limit"}</small></span></summary><pre>{query.cypher}</pre><details className="live-query-params"><summary>Inspect query parameters{Array.isArray(query.params.seeds) ? ` (${query.params.seeds.length} seed functions)` : ""}</summary><pre>{JSON.stringify(query.params, null, 2)}</pre></details></details>) : <p>No live database queries were returned.</p>}</details>
+        <details className="live-query-receipts">
+          <summary><span>Database query receipts</span><span className="num">{result.queries.length} queries</span></summary>
+          <p className="figure-note">Grouped by relationship. Row totals include repeated rows across queries; they are not unique function or edge counts. Open a group to inspect every actual query.</p>
+          {bounded > 0 && <p className="live-bounded">{bounded} {bounded === 1 ? "query reached its row limit" : "queries reached their row limits"}. Additional matching edges may exist beyond this search.</p>}
+          {[...receiptGroups].map(([relation, entries]) => {
+            const rows = entries.reduce((total, { query }) => total + query.rows, 0);
+            const limited = entries.filter(({ query }) => query.limit_reached).length;
+            const label = relation === "Graph query" && entries.every(({ query }) => query.cypher.includes("RETURN n.id AS id, n.uid AS uid")) ? "Function identity lookup" : relation;
+            return <details className="live-query-card live-query-group" key={relation}>
+              <summary><span><b>{label}</b><small>{entries.length} {entries.length === 1 ? "query" : "queries"}</small></span><span>{rows.toLocaleString()} rows returned<small>{limited ? `${limited} at row limit` : "All within row limits"}</small></span></summary>
+              <div className="live-query-group-entries">{entries.map(({ query, index }) => <details className="live-query-card" key={index}>
+                <summary><span>Query {index + 1}</span><span>{query.rows.toLocaleString()} rows<small>{query.limit_reached ? "Row limit reached" : "Within row limit"}</small></span></summary>
+                <pre>{query.cypher}</pre>
+                <details className="live-query-params"><summary>Inspect query parameters{Array.isArray(query.params.seeds) ? ` (${query.params.seeds.length} seed functions)` : ""}</summary><pre>{JSON.stringify(query.params, null, 2)}</pre></details>
+              </details>)}</div>
+            </details>;
+          })}
+          {!result.queries.length && <p>No live database queries were returned.</p>}
+        </details>
       </>}
     </div></div>
   </section>;
