@@ -124,3 +124,12 @@ namespace is configured. Local stdio is the supported write interface.
 | Snapshot fingerprint mismatch | Restore the original base runtime or choose a new namespace; do not reuse a journal with a different snapshot or diff mapper. |
 | No function matches a fix | Check the indexed snapshot and diff line numbers. Deleted functions need an old snapshot; the mapper does not guess them. |
 | Feedback recovery required | Restart with the same runtime and namespace to replay the committed journal before further requests. |
+
+## Database restart verification
+
+Run `.venv/bin/python -m scripts.verify_database_restart` with Docker and the
+locally available HydraDB 0.4.0 image to check recovery in a disposable instance.
+It verifies the same ranking after graceful and forced database restarts and
+removes its container and storage. [Recorded results](../results/database_restart.json)
+cover one synthetic feedback event, not production capacity or immediate
+post-commit power-loss durability. It does not connect to your configured database.
