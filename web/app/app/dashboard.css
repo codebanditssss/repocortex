@@ -1,4 +1,12 @@
 /* Dashboard plates share the v3 running head, paper, rules, and journal scale. */
+.dashboard-shell .head {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--paper);
+  margin-inline: calc(-1 * var(--page-inset));
+  padding-inline: var(--page-inset);
+}
 .dashboard-shell .stage { display: block; padding: 0; }
 .dashboard-shell .chap a[aria-current="page"] .roman { font-size: 14px; }
 .dashboard-shell .foot { min-height: 32px; padding-block: 5px; }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { chapters, chapterForPath } from "@/lib/chapters";
 import evaluation from "@/public/data/curve.json";
@@ -15,6 +16,12 @@ export function FieldShell({
 }) {
   const pathname = usePathname();
   const active = chapterForPath(pathname);
+
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  }, [pathname]);
 
   return (
     <div className={`field-shell${dashboard ? " dashboard-shell" : ""}`}>
