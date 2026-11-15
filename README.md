@@ -6,7 +6,7 @@
 
 A self-improving code graph on HydraDB · hackathon track 1
 
-[Results](#measured-results) · [Try the dashboard](#try-the-dashboard) · [How it works](#how-it-works) · [Reproduce](#reproduce-the-replay) · [Limitations](#limitations) · [Submission](SUBMISSION.md)
+[Results](#measured-results) · [Try live search](https://repocortex.vercel.app/app/locate) · [How it works](#how-it-works) · [Reproduce](#reproduce-the-replay) · [Limitations](#limitations) · [Submission](SUBMISSION.md)
 
 <img src="docs/img/hero-replay.webp" alt="Recorded Django replay: held-out function accuracy as the graph learns from fixes" width="900">
 
@@ -29,7 +29,7 @@ Learning currently runs through historical replay or the `learn_from_fix` tool. 
 | Rerun the experiment | [reproduction instructions](#reproduce-the-replay) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |
 
-**Current demo:** paste a bug report into Locate to get fresh ranked functions. The local service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
+**Current demo:** paste a bug report into Locate to get fresh ranked functions. The hosted service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
 
 ## Measured results
 
@@ -76,6 +76,18 @@ A saved experiment compared the same 30 held-out bugs with the same model and co
 | Instructed to call `locate_bug` first | 46,361 | 13/30 |
 
 The tool-available arm used **16% fewer input tokens**; the locate-first arm used **27% fewer**. A one-issue accuracy difference is too small to establish a gain. This is one model, one run per condition, and 30 tasks; input tokens include cached reads. [protocol, raw runs and caveats](results/agent_eval/README.md)
+
+## Serving checks
+
+The public search runs on Vercel with a persistent Railway HydraDB backend. In a small read-only check, **12/12 searches returned live results and query receipts at three concurrent clients**. End-to-end latency was **2.58s p50 / 3.86s p95**, including network and queueing. Four reports were repeated; this is a smoke check, not sustained capacity or cold-start evidence. [Raw responses and method](results/hosted_search_check.json)
+
+On **32 evenly spaced held-out queries**, the exported graph and restored local HydraDB produced identical top-10 rankings. Benchmark-shaped and serving-shaped inputs also matched. Runtime hashes stayed unchanged. This checks a sample of the direct serving functions, not all 319 queries or the production HTTP deployment. [Parity audit](results/serving_parity.json)
+
+In a separate production check, **8/8 preselected HTTP searches** matched offline top-10 rankings and scores, with 928 query receipts preserved. This is a bounded parity sample, not a full deployed accuracy evaluation. [Production evidence](results/production_parity.json)
+
+### Independent repository pilot
+
+The same pipeline was also run on actual linked Flask issue reports, with unchanged ranking parameters: 13 training reports and seven held out. **Frozen and learned both found all changed functions in the top 10 for 4/7 reports.** The no-graph blend had slightly higher MRR. This small retrospective pilot shows the pipeline runs on another repository; it does **not** demonstrate transferable learning gains. [Protocol, exclusions and reproduction](results/transfer_flask.md)
 
 ## One answer you can inspect
 
@@ -183,6 +195,20 @@ Configure an MCP client that supports streamable HTTP to use `http://127.0.0.1:8
 | `learn_from_fix(report, diff)` | Predict before applying a unified fix diff, then update learned state |
 
 Retrieval uses local embeddings and makes no generation-model API calls. Model-backed agent evaluations are separate and require provider credentials.
+
+## Durable local feedback
+
+For a trusted local MCP client, set `REPOCORTEX_FEEDBACK_NAMESPACE` to a unique project-and-snapshot name before starting the stdio server. Configure HydraDB through the existing environment variables. The server must connect successfully before it accepts durable feedback.
+
+```sh
+REPOCORTEX_FEEDBACK_NAMESPACE=myrepo-snapshot-v1 .venv/bin/python scripts/mcp_server.py
+```
+
+Confirmed `learn_from_fix` calls write a namespaced feedback journal to HydraDB before updating scoring. On a fresh process, the server validates the base snapshot fingerprint and replays those records into scoring memory and learned edges. Exact repeats are idempotent. Keep the base runtime files unchanged and use **one writer per namespace**. Back up the database and runtime files together. This is a durable journal with reconstructed scoring state, not a claim that all embeddings or learned edge weights are served directly from HydraDB.
+
+The public website remains read-only. MCP HTTP transport also refuses feedback; use trusted local stdio for writes. Reports are bounded to 12,000 characters and diffs to 256,000 UTF-8 bytes. A failed post-commit application blocks reads and writes until restart/replay.
+
+A two-function synthetic fixture changed its first-ranked function after feedback and retained that ranking in a fresh subprocess reading real HydraDB. Namespace cleanup left the benchmark graph untouched. This is persistence evidence, not an accuracy result. [Verification](results/persistent_feedback.json)
 
 ## Reproduce the replay
 

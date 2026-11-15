@@ -8,25 +8,25 @@ The buyer is the engineering lead or platform team that pays the agent bill. The
 
 ## The wedge
 
-One question every bug ticket starts with: where do I edit? Today an agent answers it by searching from zero. RepoCortex answers it from the repo's own fix history, shows why, and gets better with every merge. It is narrow enough to measure (did the right function show up first, how many tokens did the agent spend) and it sits in front of every bug-fix task.
+One question every bug ticket starts with: where do I edit? Today an agent answers it by searching from zero. RepoCortex answers it from the repo's own fix history, shows why, and can learn from explicitly confirmed fixes. It is narrow enough to measure (did the right function show up first, how many tokens did the agent spend) and it sits in front of every bug-fix task.
 
 What we can already show on Django:
 
 - strict function Acc@10: 41.7% dense + BM25 without graph, 45.1% frozen graph, 48.3% after learning on 319 chronological fix-commit holdout rows; +3.4 percentage points from the structural graph, then +3.1 from learning
 - 16 to 27 percent fewer agent input tokens on 30 bugs
-- p95 44 ms in the saved smaller, cached phase-2 load test; not live HydraDB traversal latency
+- 12/12 valid hosted searches at three concurrent clients; 2.58s p50 and 3.86s p95 including network and queueing. This is a small smoke check, not a capacity guarantee. [Evidence](../results/hosted_search_check.json)
 
 This is a retrospective evaluation on a fixed Django snapshot that includes later fixes. Three test rows share tickets with training; excluding them leaves 316 rows and preserves the learning gain (45.6% to 48.7%). See the [evaluation audit](evaluation-audit.md).
 
 ## Distribution
 
-- **MCP first.** It is an MCP server with two tools. Listing in MCP directories and the Cursor and Claude Code MCP setup docs gets it in front of agent users with no integration work.
+- **MCP first.** It is a local MCP server with three tools: locate_bug, learn_from_fix and graph_status. Listing in MCP directories and the Cursor and Claude Code MCP setup docs gets it in front of agent users with no integration work.
 - **GitHub app next.** Ingest on merge from a webhook, so `learn_from_fix` runs on every merged PR without anyone calling it.
 - **Open-source core.** The graph builder, rankers, and operators stay open so teams can verify the eval on their own repo before paying.
 
 ## Self-hosted by default
 
-Private code is the first objection. RepoCortex runs on self-hosted HydraDB 0.4.0 in Docker, and the ranker makes no LLM calls, so nothing leaves the customer's machines. HydraDB Cloud is a config change for teams that want it managed.
+Private code is the first objection. RepoCortex runs on self-hosted HydraDB 0.4.0 in Docker, and the ranker makes no LLM calls, so ranking does not send code to an LLM provider. Initial setup downloads public embedding weights. Runtime corpus, embeddings and learned-state files must be managed alongside HydraDB. HydraDB Cloud is a config change for teams that want it managed.
 
 ## Pricing idea
 
@@ -34,7 +34,7 @@ Private code is the first objection. RepoCortex runs on self-hosted HydraDB 0.4.
 - Team: per indexed repo per month, includes the GitHub app, ingest on merge, and a dashboard of accuracy and tokens saved.
 - Enterprise: multi-repo graphs, SSO, on-prem support, and an eval on the customer's own history before purchase.
 
-The pitch to the buyer is a number they already track: agent spend per resolved ticket.
+The initial pilot measures input tokens per investigation and whether all changed functions appear in the suggested context. It does not yet establish fewer dollars per resolved ticket, faster completed fixes, or higher agent accuracy. Pricing and demand remain hypotheses, not validated customer traction.
 
 ## Competition
 

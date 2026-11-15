@@ -1,0 +1,1108 @@
+{
+  "status": "completed",
+  "train": 13,
+  "holdout": 7,
+  "functions": 356,
+  "nodes": 824,
+  "edges": 3084,
+  "baselines": {
+    "bm25": {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.8571428571428571,
+      "mrr": 0.3380952380952381,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.285714,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@5": {
+          "mean": 0.857143,
+          "lo": 0.571429,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.338095,
+          "lo": 0.052381,
+          "hi": 0.714286
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.16666666666666666,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "dense": {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.4801587301587302,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.480159,
+          "lo": 0.214187,
+          "hi": 0.75
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.5,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "dense_bm25": {
+      "n": 7,
+      "function_acc@5": 0.5714285714285714,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.5619047619047619,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.561905,
+          "lo": 0.27131,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "frozen": {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    }
+  },
+  "learned": {
+    "n": 7,
+    "function_acc@5": 0.42857142857142855,
+    "function_acc@10": 0.5714285714285714,
+    "file_acc@1": 0.42857142857142855,
+    "file_acc@5": 0.7142857142857143,
+    "mrr": 0.55,
+    "ci": {
+      "function_acc@5": {
+        "mean": 0.428571,
+        "lo": 0.0,
+        "hi": 0.857143
+      },
+      "function_acc@10": {
+        "mean": 0.571429,
+        "lo": 0.142857,
+        "hi": 0.857143
+      },
+      "file_acc@1": {
+        "mean": 0.428571,
+        "lo": 0.142857,
+        "hi": 0.714286
+      },
+      "file_acc@5": {
+        "mean": 0.714286,
+        "lo": 0.428571,
+        "hi": 1.0
+      },
+      "mrr": {
+        "mean": 0.55,
+        "lo": 0.257143,
+        "hi": 0.857143
+      }
+    },
+    "per_issue": [
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 5636
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 5776
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.25,
+        "ticket": 5895
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.1,
+        "ticket": 5816
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.5,
+        "ticket": 5916
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 1.0,
+        "ticket": 6093
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.0,
+        "ticket": 3193
+      }
+    ]
+  },
+  "curve": [
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 0,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "seen_file": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_file": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 3,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 2,
+          "function_acc@10": 1.0,
+          "mrr": 0.625
+        },
+        "unseen_file": {
+          "n": 5,
+          "function_acc@10": 0.4,
+          "mrr": 0.52
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 6,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 10,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 13,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    }
+  ],
+  "operators": {
+    "gap_ingestion": 5,
+    "path_compression": 1,
+    "entity_merge_split": 0,
+    "edge_reweight": 18
+  },
+  "params": {
+    "bm25_mix": 0.1,
+    "memory_lam": 0.08,
+    "memory_thresh": 0.55,
+    "memory_k": 5,
+    "shortcut_lam": 0.04,
+    "graph_mix": 0.05,
+    "shortcut_min_support": 3,
+    "shortcut_min_precision": 0.4,
+    "memory_agg": "sum",
+    "memory_frontier": 0,
+    "recency_half_life": 0.0,
+    "file_prior_lam": 0.0,
+    "module_prior_lam": 0.0,
+    "prior_seeds": 12,
+    "generalize_concepts": false,
+    "credit_decay": 0.08,
+    "decay": 0.08
+  },
+  "gap_learned_minus_frozen": {
+    "n": 7,
+    "function_acc@5": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "function_acc@10": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "file_acc@1": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "file_acc@5": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "mrr": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    }
+  },
+  "gap_learned_minus_dense_bm25": {
+    "n": 7,
+    "function_acc@5": {
+      "mean": -0.142857,
+      "lo": -0.428571,
+      "hi": 0.0
+    },
+    "function_acc@10": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "file_acc@1": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "file_acc@5": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "mrr": {
+      "mean": -0.011905,
+      "lo": -0.035714,
+      "hi": 0.0
+    }
+  },
+  "repository": "pallets/flask",
+  "snapshot": "49943b5a94413a530761350f04e896f76e8d620e",
+  "dataset_sha256": "c2d4df0b1cbcfa5ea6e1b92f8e0be5f0cbd42c98f310e7fe3923da848bde0f2b",
+  "sample": [
+    {
+      "ticket": 5160,
+      "url": "https://github.com/pallets/flask/issues/5160",
+      "pull_request": "https://github.com/pallets/flask/pull/5161",
+      "commit": "4be9f521425b7ad659b182c319dc3afb8fe64f53",
+      "time": 1686328739,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.get_root_path"
+      ]
+    },
+    {
+      "ticket": 5320,
+      "url": "https://github.com/pallets/flask/issues/5320",
+      "pull_request": "https://github.com/pallets/flask/pull/5336",
+      "commit": "b97165db75c6f4e99c3307b4a5a1f3b0d9f4de25",
+      "time": 1700081743,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.send_file"
+      ]
+    },
+    {
+      "ticket": 5342,
+      "url": "https://github.com/pallets/flask/issues/5342",
+      "pull_request": "https://github.com/pallets/flask/pull/5344",
+      "commit": "05eebe36abe923d065133792f14d4ab6c07336a0",
+      "time": 1702508797,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/cli.py:src.flask.cli._validate_key"
+      ]
+    },
+    {
+      "ticket": 5381,
+      "url": "https://github.com/pallets/flask/issues/5381",
+      "pull_request": "https://github.com/pallets/flask/pull/5382",
+      "commit": "5a48a0fe6b02f62f9a0d90257c6a14d280bc9d23",
+      "time": 1705333955,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/json/tag.py:src.flask.json.tag.TaggedJSONSerializer._untag_scan",
+        "func:src/flask/json/tag.py:src.flask.json.tag.TaggedJSONSerializer.loads"
+      ]
+    },
+    {
+      "ticket": 5388,
+      "url": "https://github.com/pallets/flask/issues/5388",
+      "pull_request": "https://github.com/pallets/flask/pull/5389",
+      "commit": "3435d2ff1589eb0c1a85cc294a20985910a1a606",
+      "time": 1706991520,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/sansio/scaffold.py:src.flask.sansio.scaffold.Scaffold.jinja_loader"
+      ]
+    },
+    {
+      "ticket": 5504,
+      "url": "https://github.com/pallets/flask/issues/5504",
+      "pull_request": "https://github.com/pallets/flask/pull/5526",
+      "commit": "a8956feba1e40105e7bc78fa62ce36c58d1c91e1",
+      "time": 1720664206,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.open_instance_resource",
+        "func:src/flask/app.py:src.flask.app.Flask.open_resource",
+        "func:src/flask/blueprints.py:src.flask.blueprints.Blueprint.open_resource"
+      ]
+    },
+    {
+      "ticket": 5625,
+      "url": "https://github.com/pallets/flask/issues/5625",
+      "pull_request": "https://github.com/pallets/flask/pull/5626",
+      "commit": "6f2014d353d514e404c1f40e8f0a24e2bf62b941",
+      "time": 1730492495,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_content_length",
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_form_memory_size",
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_form_parts"
+      ]
+    },
+    {
+      "ticket": 5472,
+      "url": "https://github.com/pallets/flask/issues/5472",
+      "pull_request": "https://github.com/pallets/flask/pull/5499",
+      "commit": "ce08bc704e24c01582052f5c544fae181d08386f",
+      "time": 1730503597,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.save_session",
+        "func:src/flask/sessions.py:src.flask.sessions.SessionInterface.get_cookie_partitioned"
+      ]
+    },
+    {
+      "ticket": 5628,
+      "url": "https://github.com/pallets/flask/issues/5628",
+      "pull_request": "https://github.com/pallets/flask/pull/5630",
+      "commit": "7522c4bcdb10449dc919e0ffbdebb92fe66822b5",
+      "time": 1731009386,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/cli.py:src.flask.cli.FlaskGroup.make_context",
+        "func:src/flask/cli.py:src.flask.cli.ScriptInfo.__init__",
+        "func:src/flask/cli.py:src.flask.cli._env_file_callback",
+        "func:src/flask/cli.py:src.flask.cli.load_dotenv"
+      ]
+    },
+    {
+      "ticket": 1574,
+      "url": "https://github.com/pallets/flask/issues/1574",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ]
+    },
+    {
+      "ticket": 5428,
+      "url": "https://github.com/pallets/flask/issues/5428",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ]
+    },
+    {
+      "ticket": 5621,
+      "url": "https://github.com/pallets/flask/issues/5621",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ]
+    },
+    {
+      "ticket": 5553,
+      "url": "https://github.com/pallets/flask/issues/5553",
+      "pull_request": "https://github.com/pallets/flask/pull/5634",
+      "commit": "10bdf61a0f751f3cb000f8f8ac5ac5b4bb535677",
+      "time": 1731435219,
+      "split": "train",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.create_url_adapter"
+      ]
+    },
+    {
+      "ticket": 5636,
+      "url": "https://github.com/pallets/flask/issues/5636",
+      "pull_request": "https://github.com/pallets/flask/pull/5637",
+      "commit": "7b21d43d4c763b874bc86d4c2d69a48ee492dc22",
+      "time": 1731474203,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.create_url_adapter"
+      ]
+    },
+    {
+      "ticket": 5776,
+      "url": "https://github.com/pallets/flask/issues/5776",
+      "pull_request": "https://github.com/pallets/flask/pull/5777",
+      "commit": "1dfd7cd5555d9e62a2e198a131c366242e724b35",
+      "time": 1755537972,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.send_file"
+      ]
+    },
+    {
+      "ticket": 5895,
+      "url": "https://github.com/pallets/flask/issues/5895",
+      "pull_request": "https://github.com/pallets/flask/pull/5898",
+      "commit": "809d5a8869d4ffe8656680b2438b10f7c8845613",
+      "time": 1769303915,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.redirect",
+        "func:src/flask/sansio/app.py:src.flask.sansio.app.App.redirect"
+      ]
+    },
+    {
+      "ticket": 5816,
+      "url": "https://github.com/pallets/flask/issues/5816",
+      "pull_request": "https://github.com/pallets/flask/pull/5899",
+      "commit": "4b8bde97d4fa3486e18dce21c3c5f75570d50164",
+      "time": 1769313191,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.full_dispatch_request",
+        "func:src/flask/app.py:src.flask.app.Flask.wsgi_app"
+      ]
+    },
+    {
+      "ticket": 5916,
+      "url": "https://github.com/pallets/flask/issues/5916",
+      "pull_request": "https://github.com/pallets/flask/pull/5917",
+      "commit": "12e95c93b488725f80753f34b2e0d24838ca4646",
+      "time": 1770930470,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/sansio/app.py:src.flask.sansio.app.App.add_url_rule"
+      ]
+    },
+    {
+      "ticket": 6093,
+      "url": "https://github.com/pallets/flask/issues/6093",
+      "pull_request": "https://github.com/pallets/flask/pull/6096",
+      "commit": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+      "time": 1786477720,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.run",
+        "func:src/flask/testing.py:src.flask.testing.FlaskClient.session_transaction"
+      ]
+    },
+    {
+      "ticket": 3193,
+      "url": "https://github.com/pallets/flask/issues/3193",
+      "pull_request": "https://github.com/pallets/flask/pull/6133",
+      "commit": "d8eaaba824655046958d1a97f11780de460c3271",
+      "time": 1786479554,
+      "split": "test",
+      "gold_functions": [
+        "func:src/flask/sansio/scaffold.py:src.flask.sansio.scaffold.Scaffold.query"
+      ]
+    }
+  ],
+  "methodology": {
+    "backend": "offline in-memory structural graph; no HydraDB call",
+    "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)",
+    "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker",
+    "graph": "current source snapshot, src/flask only; no co-change or held-out outcome edges",
+    "parameters": "existing Django defaults transferred unchanged, no Flask tuning",
+    "limitations": [
+      "Small exploratory sample, not independent benchmark replication.",
+      "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.",
+      "GitHub closing references may include feature requests, not exclusively bugs.",
+      "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.",
+      "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.",
+      "Does not establish hosted live graph learning or cross-repository generalization."
+    ]
+  },
+  "selection_counts": {
+    "unique_pr_references_scanned": 327,
+    "unmapped_or_more_than_eight_functions": 276,
+    "eligible_prs_without_closing_issue": 33,
+    "linked_issue_references": 20,
+    "eligible_pr_commits": 51,
+    "retained_unique_issues": 20
+  }
+}

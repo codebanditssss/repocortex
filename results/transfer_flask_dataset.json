@@ -1,0 +1,372 @@
+{
+  "selection_counts": {
+    "unique_pr_references_scanned": 327,
+    "unmapped_or_more_than_eight_functions": 276,
+    "eligible_prs_without_closing_issue": 33,
+    "linked_issue_references": 20,
+    "eligible_pr_commits": 51,
+    "retained_unique_issues": 20
+  },
+  "repository": "pallets/flask",
+  "snapshot": "49943b5a94413a530761350f04e896f76e8d620e",
+  "scope": [
+    "src/flask"
+  ],
+  "issues": [
+    {
+      "ticket": 5160,
+      "commit": "4be9f521425b7ad659b182c319dc3afb8fe64f53",
+      "time": 1686328739,
+      "summary": "Switch to importlib breaks scripts with `app.run()`",
+      "description": "With a trivial script [using `app.run()`](https://flask.palletsprojects.com/en/2.3.x/server/#in-code) such as:\r\n\r\n```python3\r\nfrom flask import Flask\r\n\r\napp = Flask(__name__)\r\n\r\nif __name__ == \"__main__\":\r\n    app.run(debug=True)\r\n```\r\n\r\nThe current git `main` breaks with:\r\n\r\n```pytb\r\nTraceback (most recent call last):\r\n  File \"/home/florian/tmp/flask/app.py\", line 3, in <module>\r\n    app = Flask(__name__)\r\n          ^^^^^^^^^^^^^^^\r\n  File \"/home/florian/tmp/flask/src/flask/app.py\", line 376, in __init__\r\n    instance_path = self.auto_find_instance_path()\r\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/florian/tmp/flask/src/flask/app.py\", line 630, in auto_find_instance_path\r\n    prefix, package_path = find_package(self.import_name)\r\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/florian/tmp/flask/src/flask/scaffold.py\", line 898, in find_package\r\n    package_path = _find_package_path(import_name)\r\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/florian/tmp/flask/src/flask/scaffold.py\", line 858, in _find_package_path\r\n    spec = importlib.util.find_spec(root_mod_name)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"<frozen importlib.util>\", line 114, in find_spec\r\nValueError: __main__.__spec__ is None\r\n```\r\n\r\nThis seems to be a regression due to 84e11a1e827c0f55f9b9ee15952eddcf8a6492e0 from #5157.\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.11.4\r\n- Flask version: git main\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5160",
+      "pull_request": "https://github.com/pallets/flask/pull/5161",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.get_root_path"
+      ],
+      "gold_files": [
+        "src/flask/helpers.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5320,
+      "commit": "b97165db75c6f4e99c3307b4a5a1f3b0d9f4de25",
+      "time": 1700081743,
+      "summary": "flask.send_file() with Pylance in strict mode shows reportUnknownMemberType",
+      "description": "I was using this method fine, until I switched on 'strict' mode in the Pylance plugin for vscode. This gave me the error at calling the method:\r\n\r\n```\r\nType of \"send_file\" is partially unknown\r\n  Type of \"send_file\" is \"(path_or_file: PathLike[Unknown] | str | BinaryIO, mimetype: str | None = None, as_attachment: bool = False, download_name: str | None = None, conditional: bool = True, etag: bool | str = True, last_modified: datetime | int | float | None = None, max_age: int | ((str | None) -> (int | None)) | None = None) -> Response\" \r\n```\r\nCode that causes the error:\r\n```\r\n@app.route('/')\r\ndef home():\r\n    return flask.send_file('web/index.html')\r\n```\r\nThe error sits on: \"flask.send_file\"\r\n\r\nI've been trying to infer this type and googled around, but can't seem to resolve this issue. having investigated \"PathLike[Unknown]\" for a while now looking into this, I've come to the conclusion that this issue is likely cause by the fact that PathLike requires a generic type to be declared.  If I manually (and temporary) add this generic type in, the error goes away.\r\n\r\nIn helpers.py (around line 391) I change:\r\n```\r\ndef send_file(\r\n    path_or_file: t.Union[os.PathLike, str, t.BinaryIO],\r\n```\r\ninto:\r\n```\r\ndef send_file(\r\n    path_or_file: t.Union[os.PathLike[str], str, t.BinaryIO],\r\n```\r\nI've added the \"[str]\" generic type to PathLike. Possibly this might need to be \"[AnyStr]\" as that is the type declared in os.\r\n\r\nI hope this is an easy fix, and that this isn't a user error that I have mistaken as an issue.\r\n\r\nEnvironment:\r\nPython 3.11.2\r\nFlask 2.2.2\r\nWerkzeug 2.2.2",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5320",
+      "pull_request": "https://github.com/pallets/flask/pull/5336",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.send_file"
+      ],
+      "gold_files": [
+        "src/flask/helpers.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5342,
+      "commit": "05eebe36abe923d065133792f14d4ab6c07336a0",
+      "time": 1702508797,
+      "summary": "The double quote is missing in the string",
+      "description": "https://github.com/pallets/flask/blob/d61198941adcb191ddb591f08d7d912e40bde8bc/src/flask/cli.py#L798\r\n\r\nThere is no double quote in the first argument of `click.BadParameter` `\"--key is not used`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5342",
+      "pull_request": "https://github.com/pallets/flask/pull/5344",
+      "gold_functions": [
+        "func:src/flask/cli.py:src.flask.cli._validate_key"
+      ],
+      "gold_files": [
+        "src/flask/cli.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5381,
+      "commit": "5a48a0fe6b02f62f9a0d90257c6a14d280bc9d23",
+      "time": 1705333955,
+      "summary": "Session data is not untagged properly when using other JSON providers",
+      "description": "Providers such as `orjson` and `ujson` do not implement `object_hook`. The \"tagged JSON\" scheme used to encode types for session data currently calls `loads(data, object_hook=...)`, so providers that ignore that option return the data still tagged. Untagging needs to be implemented without using `object_hook`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5381",
+      "pull_request": "https://github.com/pallets/flask/pull/5382",
+      "gold_functions": [
+        "func:src/flask/json/tag.py:src.flask.json.tag.TaggedJSONSerializer._untag_scan",
+        "func:src/flask/json/tag.py:src.flask.json.tag.TaggedJSONSerializer.loads"
+      ],
+      "gold_files": [
+        "src/flask/json/tag.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5388,
+      "commit": "3435d2ff1589eb0c1a85cc294a20985910a1a606",
+      "time": 1706991520,
+      "summary": "jinja_loader type bug",
+      "description": "I have\r\n```Python\r\nfrom jinja2 import ChoiceLoader, FileSystemLoader\r\n\r\n\r\napp.jinja_loader = ChoiceLoader([\r\n    FileSystemLoader(project_dir / 'templates/'),\r\n    app.jinja_loader,\r\n])\r\n```\r\n\r\nThere is a mypy error\r\n```\r\nerror: Incompatible types in assignment (expression has type \"ChoiceLoader\", variable has type \"FileSystemLoader | None\")  [assignment]\r\nerror: List item 1 has incompatible type \"FileSystemLoader | None\"; expected \"BaseLoader\"  [list-item]\r\n```\r\n\r\nThere shouldn't be an error.\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.12.1\r\n- Flask version: 3.0.1\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5388",
+      "pull_request": "https://github.com/pallets/flask/pull/5389",
+      "gold_functions": [
+        "func:src/flask/sansio/scaffold.py:src.flask.sansio.scaffold.Scaffold.jinja_loader"
+      ],
+      "gold_files": [
+        "src/flask/sansio/scaffold.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5504,
+      "commit": "a8956feba1e40105e7bc78fa62ce36c58d1c91e1",
+      "time": 1720664206,
+      "summary": "allow setting encoding in open_resource()",
+      "description": "This is a duplicate of #1740 &mdash; that may have been closed for lack of a clear rationale, however, and I'd like to suggest it again with the following reasoning.\r\n\r\nThe documentation currently gives this example for using `open_resource()`:\r\n\r\n```python\r\nwith app.open_resource(\"schema.sql\") as f:\r\n    conn.executescript(f.read())\r\n```\r\n\r\nOn Windows, however, this can fail to open a file encoded in UTF-8, which most are these days, and safer code looks like this:\r\n\r\n```python\r\nwith app.open_resource(\"schema.sql\", mode=\"rb\") as f:\r\n   conn.executescript(f.read().decode(\"utf-8\"))  # type: ignore [attr-defined]\r\n```\r\n\r\n(The type comment is needed to prevent mypy from complaining about `f.read()` possibly being a string with no `.decode()` method, as it can't tell that the file was opened in 'rb' mode.)\r\n\r\nIt would be cleaner and more flexible to be able to write:\r\n\r\n```python\r\nwith app.open_resource(\"schema.sql\", encoding=\"utf-8\") as f:\r\n   conn.executescript(f.read())\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5504",
+      "pull_request": "https://github.com/pallets/flask/pull/5526",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.open_instance_resource",
+        "func:src/flask/app.py:src.flask.app.Flask.open_resource",
+        "func:src/flask/blueprints.py:src.flask.blueprints.Blueprint.open_resource"
+      ],
+      "gold_files": [
+        "src/flask/app.py",
+        "src/flask/blueprints.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5625,
+      "commit": "6f2014d353d514e404c1f40e8f0a24e2bf62b941",
+      "time": 1730492495,
+      "summary": "extend config for Request form memory settings",
+      "description": "Werkzeug provides three settings on `Request` to control form parsing: `max_content_length`, `max_form_memory_size`, and `max_form_parts`. Only `max_content_length` is exposed as a Flask config right now, and the way it's implemented means it can only be set for the whole application, not per-request. Fix all that. Document these in the security page as well as the config page.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5625",
+      "pull_request": "https://github.com/pallets/flask/pull/5626",
+      "gold_functions": [
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_content_length",
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_form_memory_size",
+        "func:src/flask/wrappers.py:src.flask.wrappers.Request.max_form_parts"
+      ],
+      "gold_files": [
+        "src/flask/wrappers.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5472,
+      "commit": "ce08bc704e24c01582052f5c544fae181d08386f",
+      "time": 1730503597,
+      "summary": "Add support for partitioned session cookies",
+      "description": "Related issue with historical context: https://github.com/pallets/werkzeug/issues/2797\r\n\r\nPartitioned cookies are now supported in Werkzeug: https://github.com/pallets/werkzeug/pull/2855\r\n\r\nIt would be nice to have first-class support for the flask session cookie using the `Partitioned` flag to provide support for Chrome's CHIPS and allow sessions to continue to work within iframes.\r\n\r\nExample usage might be:\r\n\r\n```python\r\napp.config['SESSION_COOKIE_SAMESITE'] = \"None\"\r\napp.config['SESSION_COOKIE_SECURE'] = True\r\napp.config['SESSION_COOKIE_PARTITIONED'] = True # add this?\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5472",
+      "pull_request": "https://github.com/pallets/flask/pull/5499",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.save_session",
+        "func:src/flask/sessions.py:src.flask.sessions.SessionInterface.get_cookie_partitioned"
+      ],
+      "gold_files": [
+        "src/flask/sessions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5628,
+      "commit": "7522c4bcdb10449dc919e0ffbdebb92fe66822b5",
+      "time": 1731009386,
+      "summary": "dotenv file arg should take precedence over default dotenv files",
+      "description": "As pointed out in #5532, `-e file` is loaded after the default `.env` and `.flaskenv` files, which means it won't override env vars that are set by the defaults. It will be a little tricky to track during CLI startup, but I think it should be possible to fix this so that precedence is: `os.environ` > `-e path` > `.env` > `.flaskenv`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5628",
+      "pull_request": "https://github.com/pallets/flask/pull/5630",
+      "gold_functions": [
+        "func:src/flask/cli.py:src.flask.cli.FlaskGroup.make_context",
+        "func:src/flask/cli.py:src.flask.cli.ScriptInfo.__init__",
+        "func:src/flask/cli.py:src.flask.cli._env_file_callback",
+        "func:src/flask/cli.py:src.flask.cli.load_dotenv"
+      ],
+      "gold_files": [
+        "src/flask/cli.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1574,
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "summary": "support for rotating secret keys? ",
+      "description": "Is there any support for rotating secret keys in Flask?\n\nI would like to use http://securekey.heroku.com/ as a source.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/1574",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ],
+      "gold_files": [
+        "src/flask/sessions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5428,
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "summary": "Secret Key Rotation",
+      "description": "Hi everyone,\r\n\r\nI have started working with Flask in the last month and I noticed that there could be an improvement on secret key managment for sessions; specifically I am taking as reference OWASP Top 10 [Cryptographic Failures](https://owasp.org/Top10/A02_2021-Cryptographic_Failures/) on the point where it talks about the importance of proper key managment (that isn't flask responsibility) and rotation.\r\n\r\nI saw that there is a closed issue on that topic, however that was from 10 years ago, a lot of time passed so I thought it would be a nice thing pointing that out; I understand that this implies session invalidating when the secret key changes, but I think that this could be a choice left to developers based on security requirements of the specific system, therefore adding more flexibility.\r\n\r\nIf I am wrong in any way or it isn't feasible I hope that someone can provide me a good explanation about why.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5428",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ],
+      "gold_files": [
+        "src/flask/sessions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5621,
+      "commit": "a20bcff8dc4e263312cfd74c11e432bfe8c194c1",
+      "time": 1731082564,
+      "summary": "Rotating secret keys",
+      "description": "I'd like to have a couple of secret keys available, like so\r\n```\r\napp.secret_keys = [\r\n   'key-1',\r\n   'key-2',\r\n]\r\n```\r\nTo allow them to rotate.\r\n\r\nI've seen this issue which seems to have auto-closed\r\nhttps://github.com/pallets/flask/issues/1574\r\n\r\nIt seems like itsdangerous now supports this\r\nhttps://github.com/pallets/itsdangerous/pull/141\r\n\r\nThis would allow secret keys to be rotated regularly without sessions being invalidated.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5621",
+      "pull_request": "https://github.com/pallets/flask/pull/5632",
+      "gold_functions": [
+        "func:src/flask/sessions.py:src.flask.sessions.SecureCookieSessionInterface.get_signing_serializer"
+      ],
+      "gold_files": [
+        "src/flask/sessions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5553,
+      "commit": "10bdf61a0f751f3cb000f8f8ac5ac5b4bb535677",
+      "time": 1731435219,
+      "summary": "Revisit SERVER_NAME's impact on routing and external URL generation",
+      "description": "#998 was a discussion regarding the impact the `SERVER_NAME` setting has on an application.  IMO, there was consensus in that issue, including by @mitsuhiko, that `SERVER_NAME` being used both in routing and in URL generation was problematic.  \r\n\r\nThat issue was closed by https://github.com/pallets/flask/pull/2635, which made a change regarding subdomain matching.  However, IMO, it did not address the fundamental problem of `SERVER_NAME` impacting two disparate mechanisms in Flask.\r\n\r\nI found two additional issues since #998 that have attempted to point out the problem with `SERVER_NAME`: #2813, #3465\r\n\r\nIn #2813, a minimal, complete, and verifiable example was requested and I have therefore prepared an [example gist that demonstrates the problem](https://gist.github.com/rsyring/c50a500a5d35787ef45c1ff1e78d8898).\r\n\r\nThe gist's third \"currently impossible\" test demonstrates that it's currently impossible to:\r\n\r\n* Set `SERVER_NAME` so external URL generation works outside a request context with only an app context; and\r\n* Have the app respond properly to multiple host names. \r\n\r\nMy particular use case currently is that I need `SERVER_NAME` set so external URLs will be created accurately in distributed tasks where no web request is present.  Additionally, I need the app to respond to multiple host names 1) the canonical URL the public uses; and 2) the IP address based URL our load balancer uses for health checks.\r\n\r\nIMO, `SERVER_NAME` should be deprecated and two new settings should be created.  One which affects external URL generation and a second that affects routing resolution.\r\n\r\nThe setting for the URL generation could be `CANONICAL_URL` and, because its a URL, it could eliminate the need for `url_for()`'s `_scheme` arg.\r\n\r\nThanks for your consideration.\r\n\r\n- Python version: 3.12\r\n- Flask version: 3.0.3\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5553",
+      "pull_request": "https://github.com/pallets/flask/pull/5634",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.create_url_adapter"
+      ],
+      "gold_files": [
+        "src/flask/app.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 5636,
+      "commit": "7b21d43d4c763b874bc86d4c2d69a48ee492dc22",
+      "time": 1731474203,
+      "summary": "configure and check `request.trusted_hosts`",
+      "description": "If `request.trusted_hosts` is set, it will be checked when accessing `request.host`/`url`/etc. Add `TRUSTED_HOSTS` config, and check it during routing.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5636",
+      "pull_request": "https://github.com/pallets/flask/pull/5637",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.create_url_adapter"
+      ],
+      "gold_files": [
+        "src/flask/app.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 5776,
+      "commit": "1dfd7cd5555d9e62a2e198a131c366242e724b35",
+      "time": 1755537972,
+      "summary": "Looser type annotations for send_file() path_or_file argument",
+      "description": "`path_or_file` argument of `flask.helpers.send_file` is typed as `os.PathLike[t.AnyStr] | str | t.BinaryIO`. This prevents passing some objects that are `t.IO[bytes]`, but not `t.BinaryIO`. The underlying`werkzeug.utils.send_file` already allows `t.IO[bytes]` due to pallets/werkzeug#2209 since version 2.0.2.\n\n\nReproduction:\n```python\nfrom tempfile import NamedTemporaryFile\nfrom typing import IO\n\nfrom flask.helpers import send_file\n\n\n# The return type cannot be \"BinaryIO\" because \"NamedTemporaryFile\" is incompatible with it according to Mypy.\ndef some_function() -> IO[bytes]:\n    file = NamedTemporaryFile()\n    ...\n    return file\n\n\nfile = some_function()\nsend_file(file)\n```\n\nRaises the following exception with Mypy 1.16.1.\n```\nerror: Argument 1 to \"send_file\" has incompatible type \"IO[bytes]\"; expected \"PathLike[str] | str | BinaryIO\"  [arg-type]\n```\n\nI could simply change the return value of `some_function` to `_TemporaryFileWrapper[bytes]` or cast it to `BinaryIO`.\nHowever, I would like to allow `t.IO[bytes]`.\n\nSide note: `_TemporaryFileWrapper[bytes]` conforms to `PathLike[str]` due to python/typeshed#7840. That is why it is accepted by `flask.helpers.send_file`.\n\nAllowing `t.IO[bytes]` would be backwards compatible change as all `t.BinaryIO` are also `t.IO[bytes]`.\n[Mypy Playground](https://mypy-play.net/?mypy=latest&python=3.10&gist=4d7e2a43a847df9d332f5b7daba7a9fe)\n\nEnvironment:\n\n- Python version: 3.12.11\n- Flask version: 3.1.1\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5776",
+      "pull_request": "https://github.com/pallets/flask/pull/5777",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.send_file"
+      ],
+      "gold_files": [
+        "src/flask/helpers.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 5895,
+      "commit": "809d5a8869d4ffe8656680b2438b10f7c8845613",
+      "time": 1769303915,
+      "summary": "change default redirect code to 303",
+      "description": "Flask and Werkzeug `redirect` currently defaults to a [302](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/302). Routing uses [307](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/307) since that preserves method consistently. We didn't change the `redirect` default to 307, since that would break the common pattern of \"GET form, POST form, redirect to GET result\", ending up doing \"POST result\" instead. [303](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/303) seems designed exactly for this pattern, so that a redirect always results in a GET, instead of preserving the method or only rewriting it sometimes. [HTMX actually calls this out about Flask.](https://hypermedia.systems/htmx-patterns/#:~:text=cleaner%2E-,A,resource)\n\nI don't _think_ there would actually be a problem switching to 303 as the default. It would still do the expected thing for basic page redirects and form submission redirects. I would be really surprised if anyone was relying on the 302 behavior of only converting POST and nothing else. I don't even remember that being the behavior when we were switching to 307, and I would have switched to 303 instead of leaving 302 then if I had known about it.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5895",
+      "pull_request": "https://github.com/pallets/flask/pull/5898",
+      "gold_functions": [
+        "func:src/flask/helpers.py:src.flask.helpers.redirect",
+        "func:src/flask/sansio/app.py:src.flask.sansio.app.App.redirect"
+      ],
+      "gold_files": [
+        "src/flask/helpers.py",
+        "src/flask/sansio/app.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 5816,
+      "commit": "4b8bde97d4fa3486e18dce21c3c5f75570d50164",
+      "time": 1769313191,
+      "summary": "deprecate `should_ignore_error`",
+      "description": "This was added in f1918093ac70d589a4d67af0d77140734c06c13d as part of the original code to keep the context around for use in the debugger, tests, etc. It was not part of a PR, and there's no linked issue or explanation on why it was added.\n\nThe intention seems to be to allow ignoring certain errors during debugging, so that cleanup is still run immediately. That's not how context preservation works anymore.  It also causes the exception to not be passed to teardown handlers, but there doesn't seem to be any reason to hide that, and handlers can already choose what to do if they're passed an error.\n\nThe method is only documented in the API, not in any other pages. There's no test for it. I have a feeling this isn't used. It results in an extra function call every single request, only to always return false. This can be deprecated then removed.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5816",
+      "pull_request": "https://github.com/pallets/flask/pull/5899",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.full_dispatch_request",
+        "func:src/flask/app.py:src.flask.app.Flask.wsgi_app"
+      ],
+      "gold_files": [
+        "src/flask/app.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 5916,
+      "commit": "12e95c93b488725f80753f34b2e0d24838ca4646",
+      "time": 1770930470,
+      "summary": "`provide_automatic_options` is weird",
+      "description": "While dealing with trying to detect duplicate routes in https://github.com/pallets/werkzeug/issues/3105, I ran into an issue with Flask, which adds `OPTIONS` to every single rule by default.\n\nI started looking into Flask's `provide_automatic_options` feature, and it's just weird.\n\n- Why is there a `PROVIDE_AUTOMATIC_OPTIONS` config? What benefit is there to turning `OPTIONS` off at all, let alone configuring it for a given deployment.\n- Flask adds `OPTIONS` to every route, then has a check that runs on dispatching _every_ request to see if the method was `OPTIONS` and `provide_automatic_options` was enabled for the rule. Performing this check for every request seems wasteful, as opposed to adding an actual rule and endpoint so that the routing that's already happening handles it.\n    - But adding a rule is also sort of bad, as it results in a bunch of duplicate rules since Flask has no way to know what other rules have already been added. This can be caught with Werkzeug 3.2, and doesn't cause problems in earlier versions, but it's still annoying.\n- `provide_automatic_options` can be set as an attribute on the view function. There are some other attributes that are barely documented as well, such as `required_methods`. This is presumably mostly for `View` classes, but works on functions too, making type annotations unhelpful.\n- If `PROVIDE_AUTOMATIC_OPTIONS` is disabled (not the default), the logic for the `provide_automatic_options` argument and attribute doesn't work correctly to _enable_ it, it only works for _disabling_.\n- The tests for this were incomplete and had some issues. Some other tests were revealed to be adding duplicate rules as well. \n\nAt a minimum I've fixed the enabling issue. I've also got a change that registers a route and view for options instead of using special dispatch logic. We should also consider deprecating the config.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/5916",
+      "pull_request": "https://github.com/pallets/flask/pull/5917",
+      "gold_functions": [
+        "func:src/flask/sansio/app.py:src.flask.sansio.app.App.add_url_rule"
+      ],
+      "gold_files": [
+        "src/flask/sansio/app.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 6093,
+      "commit": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+      "time": 1786477720,
+      "summary": "IPv6 addresses parsed incorrectly because of `.partition(\":\")`?",
+      "description": "Hi, I checked the code and saw that two places use `.partition(\":\")` on addresses, and IPv6 addresses contain \":\".\n\nThis breaks 1. `session_transaction` value setting, and 2. `Flask.run()` if `SERVER_NAME` is set. I've already prepared two tests that fail, you can use them to reproduce:\n\n1. In `test_testing.py`\n```\ndef test_session_transaction_ipv6(app):\n    base_url = \"http://[::1]:8000/\"\n    client = app.test_client()\n\n    @app.get(\"/\")\n    def index():\n        return str(flask.session.get(\"value\"))\n\n    with client.session_transaction(base_url=base_url) as sess:\n        sess[\"value\"] = 42\n\n    assert client.get(\"/\", base_url=base_url).text == \"42\"\n```\n\n2. Add one case to `test_run_from_config`\n```\n(None, None, \"[::1]:8080\", \"::1\", 8080),\n```\n\nIs this known and intended? I could send the patches for these two places.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/6093",
+      "pull_request": "https://github.com/pallets/flask/pull/6096",
+      "gold_functions": [
+        "func:src/flask/app.py:src.flask.app.Flask.run",
+        "func:src/flask/testing.py:src.flask.testing.FlaskClient.session_transaction"
+      ],
+      "gold_files": [
+        "src/flask/app.py",
+        "src/flask/testing.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3193,
+      "commit": "d8eaaba824655046958d1a97f11780de460c3271",
+      "time": 1786479554,
+      "summary": "Flask Session variable not available in threads",
+      "description": "For example of passing via a Queue that does not work. https://github.com/HourGlss/FlaskSSE/blob/master/sse/sse.py\r\n\r\n### Expected Behavior\r\nSession is a global variable\r\n\r\n### Actual Behavior\r\nWhen passed via a queue the keys and associated values are dropped. When attempting to access globally, no keys are available even if they had been added by endpoints\r\n\r\n### Environment\r\n\r\n* Python version: 3.7\r\n* Flask version: Default install\r\n* Werkzeug version: Default install\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/flask/issues/3193",
+      "pull_request": "https://github.com/pallets/flask/pull/6133",
+      "gold_functions": [
+        "func:src/flask/sansio/scaffold.py:src.flask.sansio.scaffold.Scaffold.query"
+      ],
+      "gold_files": [
+        "src/flask/sansio/scaffold.py"
+      ],
+      "split": "test"
+    }
+  ]
+}

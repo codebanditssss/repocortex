@@ -1,0 +1,120 @@
+{
+  "checked_at": "2026-11-15T23:22:02.933191+00:00",
+  "endpoint": "https://repocortex.vercel.app/api/locate",
+  "requests": 12,
+  "concurrency": 3,
+  "valid_live_responses": 12,
+  "p50_seconds": 2.5766,
+  "p95_seconds": 3.8646,
+  "limitations": "Small read-only smoke check of four repeated reports, not sustained capacity, cold-start, learning-write load or accuracy evidence. Latency includes network and queueing.",
+  "responses": [
+    {
+      "request": 0,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 105,
+      "seconds": 2.153
+    },
+    {
+      "request": 1,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 3.8646
+    },
+    {
+      "request": 2,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 2.9566
+    },
+    {
+      "request": 3,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 89,
+      "seconds": 2.5225
+    },
+    {
+      "request": 4,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 105,
+      "seconds": 2.7253
+    },
+    {
+      "request": 5,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 3.0713
+    },
+    {
+      "request": 6,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 2.5766
+    },
+    {
+      "request": 7,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 89,
+      "seconds": 2.3381
+    },
+    {
+      "request": 8,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 105,
+      "seconds": 2.1231
+    },
+    {
+      "request": 9,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 2.6109
+    },
+    {
+      "request": 10,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 129,
+      "seconds": 2.6138
+    },
+    {
+      "request": 11,
+      "status": 200,
+      "live": true,
+      "valid": true,
+      "hits": 5,
+      "query_receipts": 89,
+      "seconds": 2.291
+    }
+  ]
+}

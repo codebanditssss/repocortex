@@ -1,0 +1,1904 @@
+{
+  "methodology": {
+    "population": 319,
+    "sample": 32,
+    "selection": "evenly spaced chronological holdout row indices, including first and last; no outcome-based selection",
+    "execution": "sequential local restored HydraDB reads, same ranker and learned memory, no training or graph writes",
+    "scope": "direct serving functions, not HTTP transport; this does not certify production database parity",
+    "cache": "benchmark ticket-vector cache cleared for each sampled row; serving uses ticket 0",
+    "timing": "one pass, not a load test; shared process caches can favor later calls",
+    "input": "benchmark uses summary plus description; serving receives their 4000-character text stripped, as the HTTP handler does"
+  },
+  "runtime_sha256": {
+    "corpus.json": "3d5fcf21b9cfdd454d585e6bd6a7ad61f633e9693646e89f90536f48778052c8",
+    "dataset.json": "eee50894a9fad293537fb41df531b106699f90164a0ced28dc996c519d3b3d49",
+    "embeddings.npz": "e956b93c4bee5c5482fd2ba984276e7b838637d8a90cd8f081275b8570ba1d24",
+    "learned_state.json": "8f5e45ebed9e4cc167b7f92e6f9d4856d0e485b59591d3f61e4fcc9c99e90cb1",
+    "learned_state.npz": "0f5bb7d8c79d10c025fa7d4d74e933e97696eff1042ae107108251205c6a4693"
+  },
+  "runtime_files_unchanged": true,
+  "benchmark_to_serving": {
+    "n": 32,
+    "exact_order_count": 32,
+    "top1_match_count": 32,
+    "mean_top10_overlap": 1.0,
+    "max_common_score_delta": 0.0
+  },
+  "offline_to_live": {
+    "n": 32,
+    "exact_order_count": 32,
+    "top1_match_count": 32,
+    "mean_top10_overlap": 1.0,
+    "max_common_score_delta": 0.0
+  },
+  "rows": [
+    {
+      "holdout_index": 0,
+      "ticket": 36616,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.181658478002646,
+        "offline_serving": 0.22381428299559047,
+        "live_serving": 1.712550675001694
+      },
+      "query_count": 97,
+      "benchmark_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_durationfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.value_to_string",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.get_db_prep_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.to_python",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.convert_durationfield_value",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.to_python",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.prepare_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.formfield"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_durationfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.value_to_string",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.get_db_prep_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.to_python",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.convert_durationfield_value",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.to_python",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.prepare_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.formfield"
+      ],
+      "live_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_durationfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.value_to_string",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.get_db_prep_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.to_python",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.adapt_durationfield_value",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.convert_durationfield_value",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.to_python",
+        "func:django/forms/fields.py:django.forms.fields.DurationField.prepare_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DurationField.formfield"
+      ]
+    },
+    {
+      "holdout_index": 10,
+      "ticket": 36660,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.10901057699811645,
+        "offline_serving": 0.20699237100052414,
+        "live_serving": 1.7253106860007392
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.check",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_index_together",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_indexes",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._create_missing_fk_index",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering",
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.deconstruct",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering_item",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_db_index",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_ordering",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_field_name"
+      ],
+      "offline_uids": [
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.check",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_index_together",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_indexes",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._create_missing_fk_index",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering",
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.deconstruct",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering_item",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_db_index",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_ordering",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_field_name"
+      ],
+      "live_uids": [
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.check",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor.alter_index_together",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_indexes",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._create_missing_fk_index",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering",
+        "func:django/db/models/indexes.py:django.db.models.indexes.Index.deconstruct",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering_item",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_db_index",
+        "func:django/db/models/base.py:django.db.models.base.Model._check_ordering",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.Field._check_field_name"
+      ]
+    },
+    {
+      "holdout_index": 20,
+      "ticket": 26434,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12394684299943037,
+        "offline_serving": 0.1912420349981403,
+        "live_serving": 1.781930420002027
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ]
+    },
+    {
+      "holdout_index": 30,
+      "ticket": 36315,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.06637209900509333,
+        "offline_serving": 0.18498131800151896,
+        "live_serving": 1.433008530002553
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/utils/asyncio.py:django.utils.asyncio.maybe_aclosing",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator",
+        "func:django/tasks/backends/immediate.py:django.tasks.backends.immediate.ImmediateBackend._execute_task",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher._run_parallel",
+        "func:django/tasks/backends/base.py:django.tasks.backends.base.BaseTaskBackend.aenqueue",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator.inner",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.asend",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.get_or_set",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set"
+      ],
+      "offline_uids": [
+        "func:django/utils/asyncio.py:django.utils.asyncio.maybe_aclosing",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator",
+        "func:django/tasks/backends/immediate.py:django.tasks.backends.immediate.ImmediateBackend._execute_task",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher._run_parallel",
+        "func:django/tasks/backends/base.py:django.tasks.backends.base.BaseTaskBackend.aenqueue",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator.inner",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.asend",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.get_or_set",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set"
+      ],
+      "live_uids": [
+        "func:django/utils/asyncio.py:django.utils.asyncio.maybe_aclosing",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator",
+        "func:django/tasks/backends/immediate.py:django.tasks.backends.immediate.ImmediateBackend._execute_task",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher._run_parallel",
+        "func:django/tasks/backends/base.py:django.tasks.backends.base.BaseTaskBackend.aenqueue",
+        "func:django/utils/asyncio.py:django.utils.asyncio.async_unsafe.decorator.inner",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.asend",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.get_or_set",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set"
+      ]
+    },
+    {
+      "holdout_index": 41,
+      "ticket": 36748,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12938943799963454,
+        "offline_serving": 0.2284634809984709,
+        "live_serving": 1.4654697309961193
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/db/backends/postgresql/compiler.py:django.db.backends.postgresql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.field_as_sql",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayField.get_placeholder_sql",
+        "func:django/contrib/postgres/fields/ranges.py:django.contrib.postgres.fields.ranges.RangeField.get_placeholder_sql",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin._rhs_not_none_values",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin.__init__"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/postgresql/compiler.py:django.db.backends.postgresql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.field_as_sql",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayField.get_placeholder_sql",
+        "func:django/contrib/postgres/fields/ranges.py:django.contrib.postgres.fields.ranges.RangeField.get_placeholder_sql",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin._rhs_not_none_values",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin.__init__"
+      ],
+      "live_uids": [
+        "func:django/db/backends/postgresql/compiler.py:django.db.backends.postgresql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.assemble_as_sql",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLInsertCompiler.field_as_sql",
+        "func:django/db/backends/postgresql/operations.py:django.db.backends.postgresql.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayField.get_placeholder_sql",
+        "func:django/contrib/postgres/fields/ranges.py:django.contrib.postgres.fields.ranges.RangeField.get_placeholder_sql",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin._rhs_not_none_values",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.bulk_insert_sql",
+        "func:django/contrib/postgres/fields/array.py:django.contrib.postgres.fields.array.ArrayRHSMixin.__init__"
+      ]
+    },
+    {
+      "holdout_index": 51,
+      "ticket": 26434,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.07687707199511351,
+        "offline_serving": 0.21774130099947797,
+        "live_serving": 1.6264979889965616
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_group_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.count",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_order_by"
+      ]
+    },
+    {
+      "holdout_index": 61,
+      "ticket": 36590,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.11458789600146702,
+        "offline_serving": 0.19754619200102752,
+        "live_serving": 1.3851459189972957
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.delete_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.touch",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_backend_timeout",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.touch",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set"
+      ],
+      "offline_uids": [
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.delete_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.touch",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_backend_timeout",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.touch",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set"
+      ],
+      "live_uids": [
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.delete_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.get_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.touch",
+        "func:django/core/cache/backends/base.py:django.core.cache.backends.base.BaseCache.set_many",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.get_backend_timeout",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCacheClient.touch",
+        "func:django/core/cache/backends/redis.py:django.core.cache.backends.redis.RedisCache.set"
+      ]
+    },
+    {
+      "holdout_index": 71,
+      "ticket": 36112,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12934494999353774,
+        "offline_serving": 0.24442753199400613,
+        "live_serving": 1.5471044639998581
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.last_executed_query",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.wrap_database_errors",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql",
+        "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.wrap_oracle_errors",
+        "func:django/db/utils.py:django.db.utils.DatabaseErrorWrapper.__exit__",
+        "func:django/test/runner.py:django.test.runner.DebugSQLTextTestResult.printErrorList",
+        "func:django/db/backends/utils.py:django.db.backends.utils.CursorDebugWrapper.debug_sql",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.oracledb_version"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.last_executed_query",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.wrap_database_errors",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql",
+        "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.wrap_oracle_errors",
+        "func:django/db/utils.py:django.db.utils.DatabaseErrorWrapper.__exit__",
+        "func:django/test/runner.py:django.test.runner.DebugSQLTextTestResult.printErrorList",
+        "func:django/db/backends/utils.py:django.db.backends.utils.CursorDebugWrapper.debug_sql",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.oracledb_version"
+      ],
+      "live_uids": [
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.last_executed_query",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/base/base.py:django.db.backends.base.base.BaseDatabaseWrapper.wrap_database_errors",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.format_debug_sql",
+        "func:django/db/backends/base/creation.py:django.db.backends.base.creation.BaseDatabaseCreation.mark_expected_failures_and_skips",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.wrap_oracle_errors",
+        "func:django/db/utils.py:django.db.utils.DatabaseErrorWrapper.__exit__",
+        "func:django/test/runner.py:django.test.runner.DebugSQLTextTestResult.printErrorList",
+        "func:django/db/backends/utils.py:django.db.backends.utils.CursorDebugWrapper.debug_sql",
+        "func:django/db/backends/oracle/base.py:django.db.backends.oracle.base.DatabaseWrapper.oracledb_version"
+      ]
+    },
+    {
+      "holdout_index": 82,
+      "ticket": 35442,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.17502809199504554,
+        "offline_serving": 0.28226190600253176,
+        "live_serving": 2.0518049179954687
+      },
+      "query_count": 121,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.split_exclude",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_descriptor_filter",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.RelatedField.get_forward_related_filter",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.prefetch_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._chain",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.__iter__"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.split_exclude",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_descriptor_filter",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.RelatedField.get_forward_related_filter",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.prefetch_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._chain",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.__iter__"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_restriction",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.split_exclude",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignObject.get_extra_descriptor_filter",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.RelatedField.get_forward_related_filter",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.prefetch_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._chain",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.__iter__"
+      ]
+    },
+    {
+      "holdout_index": 92,
+      "ticket": 36233,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.13384775900340173,
+        "offline_serving": 0.24611350100167328,
+        "live_serving": 1.64598057600233
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_max_digits",
+        "func:django/core/validators.py:django.core.validators.DecimalValidator.__init__"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_max_digits",
+        "func:django/core/validators.py:django.core.validators.DecimalValidator.__init__"
+      ],
+      "live_uids": [
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_max_digits",
+        "func:django/core/validators.py:django.core.validators.DecimalValidator.__init__"
+      ]
+    },
+    {
+      "holdout_index": 102,
+      "ticket": 36857,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12289181999949506,
+        "offline_serving": 0.27943766200041864,
+        "live_serving": 2.0012074619953637
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering",
+        "func:django/views/generic/dates.py:django.views.generic.dates.BaseDateListView.get_ordering",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_ordering",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering",
+        "func:django/views/generic/dates.py:django.views.generic.dates.BaseDateListView.get_ordering",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_ordering",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.order_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.clear_ordering",
+        "func:django/views/generic/dates.py:django.views.generic.dates.BaseDateListView.get_ordering",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_ordering",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.BaseModelAdminChecks._check_ordering"
+      ]
+    },
+    {
+      "holdout_index": 112,
+      "ticket": 21080,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.1446272789980867,
+        "offline_serving": 0.24182042499887757,
+        "live_serving": 1.5797105849997024
+      },
+      "query_count": 121,
+      "benchmark_uids": [
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.link_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin._post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.delete_file",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.copy_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.ManifestFilesMixin.post_process",
+        "func:django/contrib/staticfiles/finders.py:django.contrib.staticfiles.finders.FileSystemFinder.check",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.get_ignored_blocks",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.clear_dir",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.__init__"
+      ],
+      "offline_uids": [
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.link_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin._post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.delete_file",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.copy_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.ManifestFilesMixin.post_process",
+        "func:django/contrib/staticfiles/finders.py:django.contrib.staticfiles.finders.FileSystemFinder.check",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.get_ignored_blocks",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.clear_dir",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.__init__"
+      ],
+      "live_uids": [
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.link_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin._post_process",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.delete_file",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.copy_file",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.ManifestFilesMixin.post_process",
+        "func:django/contrib/staticfiles/finders.py:django.contrib.staticfiles.finders.FileSystemFinder.check",
+        "func:django/contrib/staticfiles/storage.py:django.contrib.staticfiles.storage.HashedFilesMixin.get_ignored_blocks",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.clear_dir",
+        "func:django/contrib/staticfiles/management/commands/collectstatic.py:django.contrib.staticfiles.management.commands.collectstatic.Command.__init__"
+      ]
+    },
+    {
+      "holdout_index": 123,
+      "ticket": 36939,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.10851421499683056,
+        "offline_serving": 0.22650855199754005,
+        "live_serving": 1.5725089670013404
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/contrib/gis/ptr.py:django.contrib.gis.ptr.CPointerBase.__del__",
+        "func:django/http/multipartparser.py:django.http.multipartparser.LazyStream._update_unget_history",
+        "func:django/core/files/base.py:django.core.files.base.File.multiple_chunks",
+        "func:django/test/utils.py:django.test.utils.garbage_collect",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.disconnect",
+        "func:django/core/files/storage/memory.py:django.core.files.storage.memory.TimingMixin._initialize_times",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_sized_string",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.__deepcopy__",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_string",
+        "func:django/test/signals.py:django.test.signals.clear_cache_handlers"
+      ],
+      "offline_uids": [
+        "func:django/contrib/gis/ptr.py:django.contrib.gis.ptr.CPointerBase.__del__",
+        "func:django/http/multipartparser.py:django.http.multipartparser.LazyStream._update_unget_history",
+        "func:django/core/files/base.py:django.core.files.base.File.multiple_chunks",
+        "func:django/test/utils.py:django.test.utils.garbage_collect",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.disconnect",
+        "func:django/core/files/storage/memory.py:django.core.files.storage.memory.TimingMixin._initialize_times",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_sized_string",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.__deepcopy__",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_string",
+        "func:django/test/signals.py:django.test.signals.clear_cache_handlers"
+      ],
+      "live_uids": [
+        "func:django/contrib/gis/ptr.py:django.contrib.gis.ptr.CPointerBase.__del__",
+        "func:django/http/multipartparser.py:django.http.multipartparser.LazyStream._update_unget_history",
+        "func:django/core/files/base.py:django.core.files.base.File.multiple_chunks",
+        "func:django/test/utils.py:django.test.utils.garbage_collect",
+        "func:django/dispatch/dispatcher.py:django.dispatch.dispatcher.Signal.disconnect",
+        "func:django/core/files/storage/memory.py:django.core.files.storage.memory.TimingMixin._initialize_times",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_sized_string",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.__deepcopy__",
+        "func:django/contrib/gis/geos/prototypes/errcheck.py:django.contrib.gis.geos.prototypes.errcheck.check_string",
+        "func:django/test/signals.py:django.test.signals.clear_cache_handlers"
+      ]
+    },
+    {
+      "holdout_index": 133,
+      "ticket": 20024,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.05725549999624491,
+        "offline_serving": 0.1951229769983911,
+        "live_serving": 1.4509894590009935
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.none",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude_inplace",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.contains",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._has_filters",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.first",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.last",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exists",
+        "func:django/contrib/admin/filters.py:django.contrib.admin.filters.EmptyFieldListFilter.queryset"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.none",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude_inplace",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.contains",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._has_filters",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.first",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.last",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exists",
+        "func:django/contrib/admin/filters.py:django.contrib.admin.filters.EmptyFieldListFilter.queryset"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.none",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._filter_or_exclude_inplace",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.contains",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._has_filters",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.first",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.last",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.exists",
+        "func:django/contrib/admin/filters.py:django.contrib.admin.filters.EmptyFieldListFilter.queryset"
+      ]
+    },
+    {
+      "holdout_index": 143,
+      "ticket": 15759,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.09651875800045673,
+        "offline_serving": 0.2086415349986055,
+        "live_serving": 1.418718644999899
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_formset_with_permissions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_formset",
+        "func:django/contrib/admin/helpers.py:django.contrib.admin.helpers.InlineAdminFormSet.__init__",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin._has_any_perms_for_target_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_change_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changelist_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_view_permission",
+        "func:django/forms/models.py:django.forms.models.BaseModelFormSet.add_fields.pk_is_not_editable",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_list_editable_queryset"
+      ],
+      "offline_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_formset_with_permissions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_formset",
+        "func:django/contrib/admin/helpers.py:django.contrib.admin.helpers.InlineAdminFormSet.__init__",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin._has_any_perms_for_target_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_change_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changelist_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_view_permission",
+        "func:django/forms/models.py:django.forms.models.BaseModelFormSet.add_fields.pk_is_not_editable",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_list_editable_queryset"
+      ],
+      "live_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_formset_with_permissions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_formset",
+        "func:django/contrib/admin/helpers.py:django.contrib.admin.helpers.InlineAdminFormSet.__init__",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin._has_any_perms_for_target_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_change_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.get_changelist_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changelist_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.has_view_permission",
+        "func:django/forms/models.py:django.forms.models.BaseModelFormSet.add_fields.pk_is_not_editable",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_list_editable_queryset"
+      ]
+    },
+    {
+      "holdout_index": 153,
+      "ticket": 37075,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.13458605200139573,
+        "offline_serving": 0.2569792750000488,
+        "live_serving": 1.4706002050006646
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_connection",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pool",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_role",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_timezone",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_pool",
+        "func:django/contrib/postgres/utils.py:django.contrib.postgres.utils.CheckPostgresInstalledMixin.check",
+        "func:django/db/backends/postgresql/psycopg_any.py:django.db.backends.postgresql.psycopg_any._quote",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.init_connection_state",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.ensure_timezone"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_connection",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pool",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_role",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_timezone",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_pool",
+        "func:django/contrib/postgres/utils.py:django.contrib.postgres.utils.CheckPostgresInstalledMixin.check",
+        "func:django/db/backends/postgresql/psycopg_any.py:django.db.backends.postgresql.psycopg_any._quote",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.init_connection_state",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.ensure_timezone"
+      ],
+      "live_uids": [
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_connection",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.pool",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_role",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_if_health_check_failed",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper._configure_timezone",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.close_pool",
+        "func:django/contrib/postgres/utils.py:django.contrib.postgres.utils.CheckPostgresInstalledMixin.check",
+        "func:django/db/backends/postgresql/psycopg_any.py:django.db.backends.postgresql.psycopg_any._quote",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.init_connection_state",
+        "func:django/db/backends/postgresql/base.py:django.db.backends.postgresql.base.DatabaseWrapper.ensure_timezone"
+      ]
+    },
+    {
+      "holdout_index": 164,
+      "ticket": 36938,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12429800599784357,
+        "offline_serving": 0.24892873600038,
+        "live_serving": 2.1099768770000082
+      },
+      "query_count": 121,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+        "func:django/test/runner.py:django.test.runner.reorder_tests",
+        "func:django/test/testcases.py:django.test.testcases.TransactionTestCase.assertQuerySetEqual",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/test/runner.py:django.test.runner.reorder_test_bin",
+        "func:django/test/runner.py:django.test.runner.shuffle_tests",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.as_sql",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._clear_ordering_in_combined_queries",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+        "func:django/test/runner.py:django.test.runner.reorder_tests",
+        "func:django/test/testcases.py:django.test.testcases.TransactionTestCase.assertQuerySetEqual",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/test/runner.py:django.test.runner.reorder_test_bin",
+        "func:django/test/runner.py:django.test.runner.shuffle_tests",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.as_sql",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._clear_ordering_in_combined_queries",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.union",
+        "func:django/test/runner.py:django.test.runner.reorder_tests",
+        "func:django/test/testcases.py:django.test.testcases.TransactionTestCase.assertQuerySetEqual",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler._setup_joins",
+        "func:django/test/runner.py:django.test.runner.reorder_test_bin",
+        "func:django/test/runner.py:django.test.runner.shuffle_tests",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.as_sql",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._clear_ordering_in_combined_queries",
+        "func:django/db/models/sql/compiler.py:django.db.models.sql.compiler.SQLCompiler.get_group_by",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.totally_ordered"
+      ]
+    },
+    {
+      "holdout_index": 174,
+      "ticket": 37117,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.1310126210009912,
+        "offline_serving": 0.227444636002474,
+        "live_serving": 1.554902736999793
+      },
+      "query_count": 121,
+      "benchmark_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._changeform_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.save_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changeform_view",
+        "func:django/contrib/admin/actions.py:django.contrib.admin.actions.delete_selected",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.log_deletions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_queryset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_actions_with_action_location",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._delete_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.response_action",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.delete_view"
+      ],
+      "offline_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._changeform_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.save_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changeform_view",
+        "func:django/contrib/admin/actions.py:django.contrib.admin.actions.delete_selected",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.log_deletions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_queryset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_actions_with_action_location",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._delete_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.response_action",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.delete_view"
+      ],
+      "live_uids": [
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._changeform_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.save_form",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.changeform_view",
+        "func:django/contrib/admin/actions.py:django.contrib.admin.actions.delete_selected",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.log_deletions",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_queryset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._get_actions_with_action_location",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin._delete_view",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.response_action",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.ModelAdmin.delete_view"
+      ]
+    },
+    {
+      "holdout_index": 184,
+      "ticket": 36984,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.1098203170040506,
+        "offline_serving": 0.22153396399517078,
+        "live_serving": 1.5271538699962548
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/core/validators.py:django.core.validators.MaxLengthValidator.clean",
+        "func:django/core/validators.py:django.core.validators.int_list_validator",
+        "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean_fields",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.ModelAdminChecks._check_inlines_item",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_max_num",
+        "func:django/core/validators.py:django.core.validators.MinLengthValidator.clean",
+        "func:django/forms/fields.py:django.forms.fields.Field.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_extra"
+      ],
+      "offline_uids": [
+        "func:django/core/validators.py:django.core.validators.MaxLengthValidator.clean",
+        "func:django/core/validators.py:django.core.validators.int_list_validator",
+        "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean_fields",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.ModelAdminChecks._check_inlines_item",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_max_num",
+        "func:django/core/validators.py:django.core.validators.MinLengthValidator.clean",
+        "func:django/forms/fields.py:django.forms.fields.Field.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_extra"
+      ],
+      "live_uids": [
+        "func:django/core/validators.py:django.core.validators.MaxLengthValidator.clean",
+        "func:django/core/validators.py:django.core.validators.int_list_validator",
+        "func:django/db/models/base.py:django.db.models.base.Model.full_clean",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean_fields",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.ModelAdminChecks._check_inlines_item",
+        "func:django/db/models/base.py:django.db.models.base.Model.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_max_num",
+        "func:django/core/validators.py:django.core.validators.MinLengthValidator.clean",
+        "func:django/forms/fields.py:django.forms.fields.Field.clean",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_extra"
+      ]
+    },
+    {
+      "holdout_index": 194,
+      "ticket": 36979,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.08246996600064449,
+        "offline_serving": 0.18975490299635567,
+        "live_serving": 1.3453210680017946
+      },
+      "query_count": 97,
+      "benchmark_uids": [
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_exclude",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_relation",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdmin.get_formset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.__init__",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks.check",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.has_add_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_inlines",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_formset"
+      ],
+      "offline_uids": [
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_exclude",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_relation",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdmin.get_formset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.__init__",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks.check",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.has_add_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_inlines",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_formset"
+      ],
+      "live_uids": [
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_exclude",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdminChecks._check_relation",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks._check_exclude_of_parent_model",
+        "func:django/contrib/contenttypes/admin.py:django.contrib.contenttypes.admin.GenericInlineModelAdmin.get_formset",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.__init__",
+        "func:django/contrib/admin/checks.py:django.contrib.admin.checks.InlineModelAdminChecks.check",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.has_add_permission",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_inlines",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.InlineModelAdmin.get_formset"
+      ]
+    },
+    {
+      "holdout_index": 205,
+      "ticket": 37170,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.09703739899850916,
+        "offline_serving": 0.26030225599970436,
+        "live_serving": 1.3696377929954906
+      },
+      "query_count": 81,
+      "benchmark_uids": [
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_cleansed_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter._cleanse_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_post_parameters",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_setting",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters.decorator",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_request_meta",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_special_types",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_traceback_frame_variables",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_cookies"
+      ],
+      "offline_uids": [
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_cleansed_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter._cleanse_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_post_parameters",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_setting",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters.decorator",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_request_meta",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_special_types",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_traceback_frame_variables",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_cookies"
+      ],
+      "live_uids": [
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_cleansed_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter._cleanse_multivaluedict",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_post_parameters",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_setting",
+        "func:django/views/decorators/debug.py:django.views.decorators.debug.sensitive_post_parameters.decorator",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_request_meta",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.cleanse_special_types",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_traceback_frame_variables",
+        "func:django/views/debug.py:django.views.debug.SafeExceptionReporterFilter.get_safe_cookies"
+      ]
+    },
+    {
+      "holdout_index": 215,
+      "ticket": 37178,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.09469876300136093,
+        "offline_serving": 0.206376439993619,
+        "live_serving": 1.5380697200016584
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__call__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__acall__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__repr__",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_and_async_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.async_only_middleware",
+        "func:django/core/handlers/base.py:django.core.handlers.base.BaseHandler.load_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_only_middleware",
+        "func:django/middleware/common.py:django.middleware.common.CommonMiddleware.should_redirect_with_slash",
+        "func:django/middleware/common.py:django.middleware.common.BrokenLinkEmailsMiddleware.is_internal_request",
+        "func:django/middleware/cache.py:django.middleware.cache.UpdateCacheMiddleware.cache"
+      ],
+      "offline_uids": [
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__call__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__acall__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__repr__",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_and_async_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.async_only_middleware",
+        "func:django/core/handlers/base.py:django.core.handlers.base.BaseHandler.load_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_only_middleware",
+        "func:django/middleware/common.py:django.middleware.common.CommonMiddleware.should_redirect_with_slash",
+        "func:django/middleware/common.py:django.middleware.common.BrokenLinkEmailsMiddleware.is_internal_request",
+        "func:django/middleware/cache.py:django.middleware.cache.UpdateCacheMiddleware.cache"
+      ],
+      "live_uids": [
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__call__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__acall__",
+        "func:django/middleware/__init__.py:django.middleware.MiddlewareMixin.__repr__",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_and_async_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.async_only_middleware",
+        "func:django/core/handlers/base.py:django.core.handlers.base.BaseHandler.load_middleware",
+        "func:django/utils/decorators.py:django.utils.decorators.sync_only_middleware",
+        "func:django/middleware/common.py:django.middleware.common.CommonMiddleware.should_redirect_with_slash",
+        "func:django/middleware/common.py:django.middleware.common.BrokenLinkEmailsMiddleware.is_internal_request",
+        "func:django/middleware/cache.py:django.middleware.cache.UpdateCacheMiddleware.cache"
+      ]
+    },
+    {
+      "holdout_index": 225,
+      "ticket": 37233,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.1386557760051801,
+        "offline_serving": 0.23526672500156565,
+        "live_serving": 1.4842546729996684
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_sortable_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field_columns",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_ordering",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList._get_default_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.__init__",
+        "func:django/contrib/admin/templatetags/admin_list.py:django.contrib.admin.templatetags.admin_list.result_headers"
+      ],
+      "offline_uids": [
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_sortable_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field_columns",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_ordering",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList._get_default_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.__init__",
+        "func:django/contrib/admin/templatetags/admin_list.py:django.contrib.admin.templatetags.admin_list.result_headers"
+      ],
+      "live_uids": [
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_sortable_by",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field_columns",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.get_ordering_field",
+        "func:django/db/backends/mysql/operations.py:django.db.backends.mysql.operations.DatabaseOperations.force_no_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_ordering",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList._get_default_ordering",
+        "func:django/contrib/admin/options.py:django.contrib.admin.options.BaseModelAdmin.get_field_queryset",
+        "func:django/contrib/admin/views/main.py:django.contrib.admin.views.main.ChangeList.__init__",
+        "func:django/contrib/admin/templatetags/admin_list.py:django.contrib.admin.templatetags.admin_list.result_headers"
+      ]
+    },
+    {
+      "holdout_index": 235,
+      "ticket": 37239,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.14231350600311998,
+        "offline_serving": 0.2786429379993933,
+        "live_serving": 2.1425192340029753
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/db/models/base.py:django.db.models.base.Model.save",
+        "func:django/db/models/base.py:django.db.models.base.Model.save_base",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_table",
+        "func:django/db/models/base.py:django.db.models.base.Model._prepare_related_fields_for_save",
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForeignKeyDeferredAttribute.__set__",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.check",
+        "func:django/core/serializers/base.py:django.core.serializers.base.Serializer._resolve_fk_natural_key",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.to_python",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_parents"
+      ],
+      "offline_uids": [
+        "func:django/db/models/base.py:django.db.models.base.Model.save",
+        "func:django/db/models/base.py:django.db.models.base.Model.save_base",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_table",
+        "func:django/db/models/base.py:django.db.models.base.Model._prepare_related_fields_for_save",
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForeignKeyDeferredAttribute.__set__",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.check",
+        "func:django/core/serializers/base.py:django.core.serializers.base.Serializer._resolve_fk_natural_key",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.to_python",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_parents"
+      ],
+      "live_uids": [
+        "func:django/db/models/base.py:django.db.models.base.Model.save",
+        "func:django/db/models/base.py:django.db.models.base.Model.save_base",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.bulk_create",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_table",
+        "func:django/db/models/base.py:django.db.models.base.Model._prepare_related_fields_for_save",
+        "func:django/db/models/fields/related_descriptors.py:django.db.models.fields.related_descriptors.ForeignKeyDeferredAttribute.__set__",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.check",
+        "func:django/core/serializers/base.py:django.core.serializers.base.Serializer._resolve_fk_natural_key",
+        "func:django/db/models/fields/related.py:django.db.models.fields.related.ForeignKey.to_python",
+        "func:django/db/models/base.py:django.db.models.base.Model._save_parents"
+      ]
+    },
+    {
+      "holdout_index": 246,
+      "ticket": 37275,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.11927983700297773,
+        "offline_serving": 0.2524157040024875,
+        "live_serving": 1.4932142679972458
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.deconstruct",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.context"
+      ],
+      "offline_uids": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.deconstruct",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.context"
+      ],
+      "live_uids": [
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.to_python",
+        "func:django/db/backends/base/operations.py:django.db.backends.base.operations.BaseDatabaseOperations.adapt_decimalfield_value",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations._create_decimal",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.check",
+        "func:django/db/backends/sqlite3/operations.py:django.db.backends.sqlite3.operations.DatabaseOperations.get_decimalfield_converter",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.__init__",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField._check_decimal_places_and_max_digits",
+        "func:django/forms/fields.py:django.forms.fields.DecimalField.to_python",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.deconstruct",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.DecimalField.context"
+      ]
+    },
+    {
+      "holdout_index": 256,
+      "ticket": 37312,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.1546730469999602,
+        "offline_serving": 0.2681641549934284,
+        "live_serving": 2.164939417001733
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._annotate",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values_list",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ain_bulk",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.annotate",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_annotation_mask",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_annotation",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values"
+      ],
+      "offline_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._annotate",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values_list",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ain_bulk",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.annotate",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_annotation_mask",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_annotation",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values"
+      ],
+      "live_uids": [
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.in_bulk",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.annotation_select",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._annotate",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values_list",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ain_bulk",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.annotate",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.set_annotation_mask",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_annotation",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.select_related",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.values"
+      ]
+    },
+    {
+      "holdout_index": 266,
+      "ticket": 36806,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.10780120500567136,
+        "offline_serving": 0.49464693600020837,
+        "live_serving": 1.786809744000493
+      },
+      "query_count": 121,
+      "benchmark_uids": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._column_generated_sql",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField._check_blank_and_null_values",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_persistence",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_supported",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._set_field_new_type",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__"
+      ],
+      "offline_uids": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._column_generated_sql",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField._check_blank_and_null_values",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_persistence",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_supported",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._set_field_new_type",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__"
+      ],
+      "live_uids": [
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.check",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.is_nullable",
+        "func:django/db/backends/base/schema.py:django.db.backends.base.schema.BaseDatabaseSchemaEditor._column_generated_sql",
+        "func:django/db/models/fields/__init__.py:django.db.models.fields.GenericIPAddressField._check_blank_and_null_values",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._alter_column_null_sql",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_persistence",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField._check_supported",
+        "func:django/db/backends/mysql/schema.py:django.db.backends.mysql.schema.DatabaseSchemaEditor._set_field_new_type",
+        "func:django/db/models/fields/generated.py:django.db.models.fields.generated.GeneratedField.__init__"
+      ]
+    },
+    {
+      "holdout_index": 276,
+      "ticket": 37376,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.22750330199778546,
+        "offline_serving": 0.4041699410008732,
+        "live_serving": 1.8330566460062983
+      },
+      "query_count": 113,
+      "benchmark_uids": [
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_oracle",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_sql",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function_in_default",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_mysql",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_uuidfield_value",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_mysql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sqlite",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_postgresql"
+      ],
+      "offline_uids": [
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_oracle",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_sql",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function_in_default",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_mysql",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_uuidfield_value",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_mysql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sqlite",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_postgresql"
+      ],
+      "live_uids": [
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_oracle",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_sql",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function_in_default",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_mysql",
+        "func:django/db/backends/oracle/operations.py:django.db.backends.oracle.operations.DatabaseOperations.convert_uuidfield_value",
+        "func:django/db/backends/oracle/features.py:django.db.backends.oracle.features.DatabaseFeatures.supports_uuid4_function",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_mysql",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID7.as_sqlite",
+        "func:django/db/models/functions/uuid.py:django.db.models.functions.uuid.UUID4.as_postgresql"
+      ]
+    },
+    {
+      "holdout_index": 287,
+      "ticket": 28219,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.09171877300104825,
+        "offline_serving": 0.23667905600450467,
+        "live_serving": 1.7849952660035342
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator._check_object_list_is_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._next_is_sticky",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.extra",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginate_by",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator.__init__",
+        "func:django/core/paginator.py:django.core.paginator.Page.end_index",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginator",
+        "func:django/core/paginator.py:django.core.paginator.AsyncPaginator.__init__"
+      ],
+      "offline_uids": [
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator._check_object_list_is_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._next_is_sticky",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.extra",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginate_by",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator.__init__",
+        "func:django/core/paginator.py:django.core.paginator.Page.end_index",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginator",
+        "func:django/core/paginator.py:django.core.paginator.AsyncPaginator.__init__"
+      ],
+      "live_uids": [
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator._check_object_list_is_ordered",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet._next_is_sticky",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.extra",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginate_by",
+        "func:django/db/models/sql/query.py:django.db.models.sql.query.Query.add_ordering",
+        "func:django/core/paginator.py:django.core.paginator.BasePaginator.__init__",
+        "func:django/core/paginator.py:django.core.paginator.Page.end_index",
+        "func:django/db/models/query.py:django.db.models.query.QuerySet.ordered",
+        "func:django/views/generic/list.py:django.views.generic.list.MultipleObjectMixin.get_paginator",
+        "func:django/core/paginator.py:django.core.paginator.AsyncPaginator.__init__"
+      ]
+    },
+    {
+      "holdout_index": 297,
+      "ticket": 37447,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.18263842199667124,
+        "offline_serving": 0.2599279759961064,
+        "live_serving": 1.8602903629944194
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.process_locale_dir",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.postprocess_messages",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.TranslatableFile.__init__",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.find_files",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.is_valid_locale",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.write_po_file",
+        "func:django/core/mail/message.py:django.core.mail.message.EmailMessage._idna_encode_address_header_domains",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.work_path",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.preprocess",
+        "func:django/utils/encoding.py:django.utils.encoding.repercent_broken_unicode"
+      ],
+      "offline_uids": [
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.process_locale_dir",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.postprocess_messages",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.TranslatableFile.__init__",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.find_files",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.is_valid_locale",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.write_po_file",
+        "func:django/core/mail/message.py:django.core.mail.message.EmailMessage._idna_encode_address_header_domains",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.work_path",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.preprocess",
+        "func:django/utils/encoding.py:django.utils.encoding.repercent_broken_unicode"
+      ],
+      "live_uids": [
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.process_locale_dir",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.postprocess_messages",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.TranslatableFile.__init__",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.find_files",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.is_valid_locale",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.Command.write_po_file",
+        "func:django/core/mail/message.py:django.core.mail.message.EmailMessage._idna_encode_address_header_domains",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.work_path",
+        "func:django/core/management/commands/makemessages.py:django.core.management.commands.makemessages.BuildFile.preprocess",
+        "func:django/utils/encoding.py:django.utils.encoding.repercent_broken_unicode"
+      ]
+    },
+    {
+      "holdout_index": 307,
+      "ticket": 37469,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.12747997599944938,
+        "offline_serving": 0.29250832699472085,
+        "live_serving": 1.7965385719944607
+      },
+      "query_count": 105,
+      "benchmark_uids": [
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.quote_lexeme",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.psql_escape",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.UTF8Dumper.dump",
+        "func:django/utils/text.py:django.utils.text.unescape_string_literal",
+        "func:django/contrib/gis/db/backends/postgis/adapter.py:django.contrib.gis.db.backends.postgis.adapter.PostGISAdapter.getquoted",
+        "func:django/template/defaultfilters.py:django.template.defaultfilters.urlencode",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.Lexeme.as_sql",
+        "func:django/template/base.py:django.template.base.Lexer.create_token",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramWordBase.__init__",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramBase.__init__"
+      ],
+      "offline_uids": [
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.quote_lexeme",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.psql_escape",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.UTF8Dumper.dump",
+        "func:django/utils/text.py:django.utils.text.unescape_string_literal",
+        "func:django/contrib/gis/db/backends/postgis/adapter.py:django.contrib.gis.db.backends.postgis.adapter.PostGISAdapter.getquoted",
+        "func:django/template/defaultfilters.py:django.template.defaultfilters.urlencode",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.Lexeme.as_sql",
+        "func:django/template/base.py:django.template.base.Lexer.create_token",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramWordBase.__init__",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramBase.__init__"
+      ],
+      "live_uids": [
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.quote_lexeme",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.psql_escape",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.UTF8Dumper.dump",
+        "func:django/utils/text.py:django.utils.text.unescape_string_literal",
+        "func:django/contrib/gis/db/backends/postgis/adapter.py:django.contrib.gis.db.backends.postgis.adapter.PostGISAdapter.getquoted",
+        "func:django/template/defaultfilters.py:django.template.defaultfilters.urlencode",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.Lexeme.as_sql",
+        "func:django/template/base.py:django.template.base.Lexer.create_token",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramWordBase.__init__",
+        "func:django/contrib/postgres/search.py:django.contrib.postgres.search.TrigramBase.__init__"
+      ]
+    },
+    {
+      "holdout_index": 318,
+      "ticket": 37442,
+      "benchmark_to_serving": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "offline_to_live": {
+        "exact_order": true,
+        "top1_match": true,
+        "overlap": 1.0,
+        "max_common_score_delta": 0.0
+      },
+      "seconds": {
+        "benchmark": 0.5322096960007912,
+        "offline_serving": 0.3285754349999479,
+        "live_serving": 1.9042779669980519
+      },
+      "query_count": 129,
+      "benchmark_uids": [
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+        "func:django/http/request.py:django.http.request.bytes_to_text",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+        "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object"
+      ],
+      "offline_uids": [
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+        "func:django/http/request.py:django.http.request.bytes_to_text",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+        "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object"
+      ],
+      "live_uids": [
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+        "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+        "func:django/http/request.py:django.http.request.bytes_to_text",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+        "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+        "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object"
+      ]
+    }
+  ],
+  "checked_at": "2026-11-15T23:23:13.371001+00:00",
+  "source_sha256": {
+    "repocortex/serve/load.py": "9d70dca56ea0c0a4f198752d7d97e601264106dd0397b5ce33ad16a35c0bd3af",
+    "repocortex/retrieve/hybrid.py": "a626385113d70fc240164f48db394de6a18630aaf3f9be636ad7c59d950c29f0",
+    "repocortex/hydradb/bolt.py": "8d8adc14224ef7c9d778d6c5b4cec7862c8149c3fd26d5095b30a7863b6052ea",
+    "repocortex/retrieve/textutil.py": "6b0e806a792e765e5c8511c195a5bebba2c2c14262ae6e0865e82112e8665961"
+  },
+  "live_timing_seconds": {
+    "min": 1.3453210680017946,
+    "mean": 1.6738905451870778,
+    "max": 2.164939417001733
+  }
+}
