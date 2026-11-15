@@ -55,7 +55,7 @@ The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, 
 ## Demo
 
 - Video (90-second walkthrough): VIDEO_LINK
-- Live demo: https://treating-exercise-airport-subscriber.trycloudflare.com/app/locate (temporary preview; available while the host is running)
+- Live demo: https://repocortex.vercel.app/app/locate (Vercel frontend; live search currently depends on the demonstration host)
 - Screenshots: `docs/img/`
 - Recording walkthrough: [demo script](docs/demo-script.md)
 

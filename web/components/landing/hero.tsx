@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CurveData, ProvenanceIssue } from "@/lib/data";
 import { fixedInRoutes, hitSymbol } from "@/lib/landing";
-import { GraphPlate } from "./graph-plate";
 import { useInView, usePageVisible, useReducedMotion } from "./use-field-state";
 
 function typedLine(text: string, progress: number) {
@@ -12,10 +11,9 @@ function typedLine(text: string, progress: number) {
   return text.slice(0, count);
 }
 
-export function Hero({ ticket, evaluation, plate }: {
+export function Hero({ ticket, evaluation }: {
   ticket: ProvenanceIssue;
   evaluation: CurveData;
-  plate: ReactNode;
 }) {
   const ref = useRef<HTMLElement>(null);
   const visible = useInView(ref);
@@ -92,12 +90,10 @@ export function Hero({ ticket, evaluation, plate }: {
     <section className="hero" ref={ref} aria-labelledby="page-title">
       <div className="hero-running">
         <p className="sc"><span className="num">00</span> / A graph with a memory</p>
-        <p className="hero-counter"><span className="sc">PRs learned</span><span className="num">{String(last.step).padStart(4, "0")}</span><span className="news">django/django</span></p>
+        <p className="hero-counter"><span className="sc">Fixes learned</span><span className="num">{String(last.step).padStart(4, "0")}</span><span className="news">django/django</span></p>
       </div>
       <div className="hero-plate">
-        {plate}
         <div className="hero-live-graph">
-          <GraphPlate />
           <div className={`hero-route ${routeReady ? "is-seeded" : ""} ${found ? "is-found" : ""}`} role="group" aria-label={`Measured route for held-out issue #${ticket.ticket}`}>
           <p className="sc route-inset-label">Held-out issue → past fix → gold function</p>
           <svg viewBox="0 0 600 240" preserveAspectRatio="none" aria-hidden="true">
@@ -115,10 +111,10 @@ export function Hero({ ticket, evaluation, plate }: {
         </div>
       </div>
       <div className="hero-copy">
-        <p className="hero-eyebrow news">Not another search. A little more understanding.</p>
-        <h1 id="page-title">Every merged fix makes it better at finding <i>the next bug.</i></h1>
-        <p className="hero-dek">RepoCortex keeps a graph of your codebase in HydraDB. Hand it a bug report and it walks that graph to the functions that need changing. When the real fix lands, it checks its own answer and rewires itself.</p>
-        <div className="hero-actions"><a className="landing-primary" href="#replay">Watch it learn Django <span aria-hidden="true">↓</span></a><a className="text-link" href="#install">Add it to your agent <span aria-hidden="true">→</span></a></div>
+        <p className="hero-eyebrow news">Evidence from your code and its history.</p>
+        <h1 id="page-title">Find the functions.<br />Learn from <i>the fix.</i></h1>
+        <p className="hero-dek">Describe a bug. RepoCortex ranks candidate functions using your code graph and past fixes. Inspect the evidence, then feed back the confirmed fix so the next investigation can use it.</p>
+        <div className="hero-actions"><a className="landing-primary" href="/app/locate">Try a live search <span aria-hidden="true">→</span></a><a className="text-link" href="#replay">See the learning curve <span aria-hidden="true">↓</span></a></div>
       </div>
       <aside className="hero-ticket" aria-label="Measured held-out ticket">
         <div className="ticket-heading"><span className="sc">Held-out ticket / #{ticket.ticket}</span><span className="sc measured-label">Measured</span></div>
@@ -131,7 +127,7 @@ export function Hero({ ticket, evaluation, plate }: {
         <div className="ticket-controls"><span className="news">{found ? `Rank ${hit.rank}. Gold hit. Score ${hit.score}.` : routeReady ? "Following a past fix…" : "Reading the record…"}</span><button type="button" onClick={() => { autoStarted.current = true; play(); }}>{playing ? "Restart" : "Play"} <span aria-hidden="true">↻</span></button></div>
         <p className="sc ticket-space">Space replays this plate</p>
       </aside>
-      <div className="hero-bottom"><p className="news">Held-out routes &amp; evaluation are measured. The graph layout is a placeholder; the mycelium is an illustration.</p><a className="sc" href="#replay">Replay {last.step} merged fixes <span aria-hidden="true">↓</span></a></div>
+      <div className="hero-bottom"><p className="news">Recorded Django evidence. The route is schematic; the function, rank and supporting fix come from the measured replay.</p><a className="sc" href="#replay">Replay {last.step} merged fixes <span aria-hidden="true">↓</span></a></div>
     </section>
   );
 }

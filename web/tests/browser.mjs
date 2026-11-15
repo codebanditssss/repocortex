@@ -88,16 +88,13 @@ try {
           plates: [...document.querySelectorAll(".paper-plate img")].map(img => ({ alt: img.alt, source: img.getAttribute("src"), fit: getComputedStyle(img).objectFit })),
           loadRows: [...document.querySelectorAll(".load-table tbody tr")].map(row => [...row.children].map(cell => cell.textContent)),
           agentFixture: document.querySelector(".agent-section .fixture-label"),
-          plateBottom: document.querySelector(".hero-mycelium").getBoundingClientRect().bottom,
+          routeTop: document.querySelector(".hero-route").getBoundingClientRect().top,
           copyTop: document.querySelector(".hero-copy").getBoundingClientRect().top
         })`);
-        assert.equal(content.plates.length, 4);
-        assert.ok(content.plates[0].source.includes("hero-mycelium"));
-        assert.equal(content.plates[0].fit, "contain");
-        assert.ok(content.plates.every(plate => plate.alt.length > 20 && !plate.source.includes("teaser-")));
+        assert.equal(content.plates.length, 0);
         assert.deepEqual(content.loadRows, [["8", "21", "44", "0", "62.94"]]);
         assert.equal(content.agentFixture, null);
-        assert.ok(content.plateBottom <= content.copyTop, "the whole hero plate and caption must remain above the typography");
+        if (width < 768) assert.ok(content.copyTop < content.routeTop, "mobile hero leads with copy before the measured route");
       }
       if (route === "/" && width === 320) {
         const labels = evaluate(`({
@@ -216,12 +213,12 @@ try {
   run("open", `${base}#install`);
   evaluate('window.__copiedCommand = null; Object.defineProperty(navigator, "clipboard", {configurable:true,value:{writeText:async text=>{window.__copiedCommand=text}}})');
   run("click", ".command-line button");
-  assert.equal(evaluate("window.__copiedCommand"), "npx repocortex");
+  assert.equal(evaluate("window.__copiedCommand"), ".venv/bin/python scripts/mcp_server.py --http --port 8766");
   assert.equal(evaluate('document.querySelector(".copy-status").textContent'), "Copied");
   evaluate('Object.defineProperty(navigator, "clipboard", {configurable:true,value:{writeText:async ()=>{throw new Error("denied")}}})');
   run("click", ".command-line button");
   assert.equal(evaluate('document.querySelector(".copy-status").textContent'), "Select and copy the command");
-  assert.equal(evaluate("getSelection().toString()"), "npx repocortex");
+  assert.equal(evaluate("getSelection().toString()"), ".venv/bin/python scripts/mcp_server.py --http --port 8766");
   run("open", base);
   run("click", ".hero-ticket button");
   assert.equal(evaluate('document.querySelector(".hero-ticket button").textContent.includes("Restart")'), true);

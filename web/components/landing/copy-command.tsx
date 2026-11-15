@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 
-const command = "npx repocortex";
+const command = ".venv/bin/python scripts/mcp_server.py --http --port 8766";
 
 export function CopyCommand() {
   const [status, setStatus] = useState("");
@@ -29,7 +29,7 @@ export function CopyCommand() {
 
   return (
     <>
-      <div className="command-line"><code ref={commandRef} className="num">{command}</code><button type="button" onClick={copy} aria-label="Copy placeholder install command">{status === "Copied" ? "Copied" : "Copy"} <span aria-hidden="true">⧉</span></button></div>
+      <div className="command-line"><code ref={commandRef} className="num">{command}</code><button type="button" onClick={copy} aria-label="Copy local MCP startup command">{status === "Copied" ? "Copied" : "Copy"} <span aria-hidden="true">⧉</span></button></div>
       <span className="copy-status" role="status">{status}</span>
     </>
   );

@@ -3,7 +3,6 @@ import { Hero } from "@/components/landing/hero";
 import { Replay } from "@/components/landing/replay";
 import { CopyCommand } from "@/components/landing/copy-command";
 import { ProvenanceReceipt } from "@/components/landing/provenance-receipt";
-import { PlateImage } from "@/components/plate-image";
 import { fixedInRoutes, hitSymbol, selectHeroIssue } from "@/lib/landing";
 import type { CurveData, LoadTest, ProvenanceData } from "@/lib/data";
 import evaluationJson from "@/public/data/curve.json";
@@ -48,27 +47,13 @@ export default function Home() {
       </header>
 
       <main id="main-content" tabIndex={-1}>
-        <Hero
-          ticket={ticket}
-          evaluation={evaluation}
-          plate={
-            <PlateImage
-              className="hero-mycelium"
-              src="/art/hero-mycelium.webp"
-              alt="Branching ink mycelium connects clusters of dark nodes, with vermilion threads tracing a few routes."
-              caption="Fig. 0 / A graph with roots"
-              hairline
-              priority
-            />
-          }
-        />
+        <Hero ticket={ticket} evaluation={evaluation} />
 
         <section className="landing-section similarity" aria-labelledby="similar-title">
           <header className="section-heading">
             <p className="sc section-index"><span className="num">01</span> / Retrieval</p>
             <h2 id="similar-title">Similar is not relevant.</h2>
           </header>
-          <PlateImage className="section-ornament" src="/art/doodle-lens.webp" alt="An ink magnifying glass isolates a vermilion dot among scattered dark nodes." marginalia />
           <p className="section-dek">Close names are a starting point. For held-out issue #{ticket.ticket}, a learned link from a past fix brings the gold function to rank one.</p>
           <div className="comparison-ticket">
             <span className="sc">Held-out issue #{ticket.ticket}</span><p>{hitSymbol(hit)}</p><span className="sc measured-label">Measured</span>
@@ -157,7 +142,7 @@ export default function Home() {
           <div>
             <SectionHead number="05" label="Concurrency" title="Eight users. One measured run." />
             <p className="section-dek">{number(load.requests)} requests. {load.failures} failures.<br />Here&apos;s the field sheet.</p>
-            <p className="news source-note">{load.tool}, {load.duration_s} seconds, spawn rate {load.spawn_rate} users/s, against the local {load.endpoint} endpoint. One run, not a fleet-scale sweep.</p>
+            <p className="news source-note">{load.tool}, {load.duration_s} seconds, spawn rate {load.spawn_rate} users/s, against the local {load.endpoint} endpoint. Saved phase-2 run on the smaller cached ranker, not live HydraDB traversal latency.</p>
           </div>
           <div className="load-field">
             <div className="load-table-head"><span className="sc">{load.endpoint} / latency in ms</span><span className="sc measured-label">Measured</span></div>
@@ -175,7 +160,6 @@ export default function Home() {
         <section className="landing-section hydra-section">
           <div>
             <SectionHead number="06" label="Storage" title="Built on HydraDB." />
-            <PlateImage className="storage-ornament" src="/art/doodle-wire.webp" alt="A tangled ink wire resolves into a straight strand with a vermilion tip." marginalia />
             <p className="section-dek">The learning is ours.<br />The graph lives in HydraDB.</p>
             <a className="text-link" href="https://hydradb.com">Meet HydraDB <span aria-hidden="true">→</span></a>
           </div>
@@ -191,12 +175,11 @@ export default function Home() {
         <p className="sc section-index"><span className="num">07</span> / Take it with you</p>
         <div className="install-grid">
           <div><h2>It remembers<br /><i>every fix.</i></h2>
-            <PlateImage className="storage-ornament" src="/art/doodle-memory.webp" alt="Two ink graph clusters joined by a short vermilion filament, a remembered path." marginalia />
             <p className="section-dek">One MCP server. Works with Claude Code, Cursor and anything else that speaks MCP.</p></div>
           <div className="install-command">
-            <p className="sc">MCP install / placeholder command</p>
+            <p className="sc">Start the local MCP server</p>
             <CopyCommand />
-            <p className="news source-note">Installation is not wired yet. This command previews the intended setup, not a published package.</p>
+            <p className="news source-note">Run from the repository root after installing Python dependencies and restoring the runtime files. HTTP endpoint: http://127.0.0.1:8766/mcp.</p>
             <Link className="landing-primary" href="/app">Open the field manual <span aria-hidden="true">→</span></Link>
             <Link className="text-link" href="/app/connect">Connection notes <span aria-hidden="true">→</span></Link>
           </div>

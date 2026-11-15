@@ -6,7 +6,7 @@ import { functionName, pathKind, searchProvenance, shortFunctionName } from "@/l
 import { fixedInRoutes, selectHeroIssue } from "@/lib/landing";
 import { ProvenanceReceipt } from "@/components/landing/provenance-receipt";
 import { LiveLocate } from "./live-locate";
-import { PlateHeading, SpotArt } from "./plate-heading";
+import { PlateHeading } from "./plate-heading";
 
 function HitReceipt({ issue, hit }: { issue: ProvenanceIssue; hit: ProvenanceHit }) {
   const routes = fixedInRoutes(hit.path);
@@ -41,7 +41,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   return (
     <div className="manual-page"><LiveLocate /><div className="locate-layout">
       <section className="locate-composer" aria-label="Search held-out evidence">
-        <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} art={false} />
+        <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
           <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span>Saved evidence</span></div><textarea id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={4} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); search(event.currentTarget.value); }
@@ -51,7 +51,6 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
         <p id="locate-search-help" className="figure-note">Search this local evidence index by ticket number, function, or filename. Short phrases match those fields, not bug-report bodies. These saved results are separate from the fresh report search above.</p>
         <div className="sample-tickets"><h2 className="sc">Or try a held-out ticket</h2>{samples.map((sample) => <button type="button" key={sample.ticket} onClick={() => search(String(sample.ticket))}><span className="num">#{sample.ticket}</span><span>{shortFunctionName(sample.hits[0])}</span></button>)}</div>
         <dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl>
-        {issue && <SpotArt chapter="locate" />}
       </section>
       <section className="locate-results" aria-labelledby="locate-results-title">
         <div className="section-rule"><h2 id="locate-results-title">{issue ? <>Ranked <i>suspects</i></> : "The evidence index"}</h2><span className="cap" role="status">{issue ? `${issue.hits.length} captured hits · #${issue.ticket}` : submitted ? "No matches" : "No search yet"}</span></div>
@@ -64,7 +63,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
             {rank === hit.rank && <div id={`hit-receipt-${hit.rank}`} className="expanded-hit"><HitReceipt issue={issue} hit={hit} /></div>}
           </li></Fragment>)}</ol>
           <aside className="locate-endnote"><span className="sc">What this proves</span><p>These are saved predictions for real held-out issues, not fresh search results. A gold mark means the hit matches a function in the recorded fix. FIXED_IN and SHORTCUT expose the evidence behind a result; <b>dense + bm25</b> is a hybrid-search path, not a learned edge.</p></aside>
-        </> : <div className="locate-empty"><SpotArt chapter="locate" /><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Locate."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
+        </> : <div className="locate-empty"><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Locate."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
       </section>
     </div></div>
   );

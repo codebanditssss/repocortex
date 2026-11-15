@@ -9,7 +9,6 @@ import { MetricChart, metricLabels } from "@/components/metric-chart";
 import { GraphPlate } from "@/components/landing/graph-plate";
 import { usePageVisible } from "@/components/landing/use-field-state";
 import { EvaluationTable } from "./evaluation-table";
-import { SpotArt } from "./plate-heading";
 
 export function ReplayScreen({ data }: { data: CurveData }) {
   const [step, setStep] = useState(200);
@@ -61,7 +60,6 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <div className="replay-speeds" role="group" aria-label="Playback speed">{[1, 4, 8].map((value) => <button type="button" key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}</div>
         <button type="button" className="underlined-control" onClick={() => seek(data.train)}>Jump to the last step →</button>
         <figure className="replay-neighborhood"><figcaption className="cap"><b>FIG. 2</b> An illustrative neighborhood.</figcaption><div className="graph-stage"><GraphPlate step={step} /></div><p className="figure-note">Placeholder layout and deltas. Vermilion reweights are illustrative.</p></figure>
-        <SpotArt chapter="replay" />
       </section>
       <section className="replay-main" aria-label="Held-out learning curve and step ruler">
         <div className="section-rule"><h2><span className="sc">Fig. 1</span> The held-out record</h2><span className="cap">{data.holdout} chronological fix rows</span></div>

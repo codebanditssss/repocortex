@@ -7,7 +7,6 @@ import { formatPercent } from "@/lib/format";
 import { type LandingMetric } from "@/lib/landing";
 import { MetricChart, metricLabels } from "@/components/metric-chart";
 import { GraphPlate } from "./graph-plate";
-import { PlateImage } from "@/components/plate-image";
 import { useInView, usePageVisible } from "./use-field-state";
 
 export function Replay({ evaluation: data }: { evaluation: CurveData }) {
@@ -38,7 +37,6 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
         <p className="section-dek">Predict. See the real fix. Learn.<br />Then ask the same questions again.</p>
         <p className="news source-note">{data.train} fixes learned in time order. The same {data.holdout} held-out fixes scored at every checkpoint. Three test rows share tickets with training; this is a retrospective replay on a fixed code snapshot.</p>
       </div>
-      <PlateImage className="section-ornament" src="/art/doodle-shortcut.webp" alt="A wandering ink path takes a short vermilion connection between two points." marginalia />
       <div className="replay-instrument">
         <figure className="replay-graph">
           <figcaption><span className="sc">The graph, reweighted</span><span className="fixture-label sc">Placeholder layout &amp; deltas</span></figcaption>

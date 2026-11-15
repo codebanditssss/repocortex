@@ -76,3 +76,12 @@ this host's loopback Python service; it requires a separately reachable backend.
 
 `ngrok`, `vercel`, and `railway` clients are also installed. Account access and
 project targets have not been verified.
+
+## Current Vercel frontend
+
+The production website is https://repocortex.vercel.app. Its production
+`REPOCORTEX_API_URL` points to the Python service through a temporary Cloudflare
+tunnel. Vercel serves the interface and saved evidence independently; fresh
+searches require the laptop, recovered database, Python service, and tunnel to
+stay running. This is not a fully hosted backend. If the tunnel restarts, update
+the production environment variable and redeploy. Never use the Bolt URL here.
