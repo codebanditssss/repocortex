@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 import os
 import sys
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import time
+from threading import BoundedSemaphore
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer as _ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -16,6 +18,46 @@ from repocortex.serve.load import RankingBusyError, backend_status, load_ranker,
 MAX_REPORT_CHARACTERS = 12000
 # JSON can escape each character as six ASCII bytes, plus envelope overhead.
 MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 6 + 1024
+
+
+class ThreadingHTTPServer(_ThreadingHTTPServer):
+    """Bound idle uploads as well as active ranking work."""
+    def __init__(self, *args, max_connections=32, **kwargs):
+        self._slots = BoundedSemaphore(max_connections)
+        super().__init__(*args, **kwargs)
+
+    def process_request(self, request, client_address):
+        if not self._slots.acquire(blocking=False):
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except Exception:
+            self._slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self._slots.release()
+
+
+def read_request_body(stream, connection, length, timeout=15):
+    deadline = time.monotonic() + timeout
+    chunks = []
+    remaining = length
+    while remaining:
+        seconds = deadline - time.monotonic()
+        if seconds <= 0:
+            raise TimeoutError("body deadline exceeded")
+        connection.settimeout(seconds)
+        chunk = stream.read1(min(remaining, 8192))
+        if not chunk:
+            break
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
 
 
 def make_handler(ranker):
@@ -68,7 +110,7 @@ def make_handler(ranker):
                 self.close_connection = True
                 return
             try:
-                raw = self.rfile.read(length) if length else b"{}"
+                raw = read_request_body(self.rfile, self.connection, length) if length else b"{}"
             except TimeoutError:
                 self._send(408, {"error": "request body timed out"})
                 return

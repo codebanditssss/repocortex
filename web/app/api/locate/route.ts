@@ -2,6 +2,9 @@ import { readLimitedBody, BodyTooLargeError } from "@/lib/request-body";
 import { isLocateResult } from "@/lib/live";
 
 export async function POST(request: Request) {
+  if (request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") {
+    return Response.json({ error: "Send JSON with Content-Type: application/json." }, { status: 415 });
+  }
   let body;
   try {
     const text = await readLimitedBody(request, 12000 * 6 + 1024);

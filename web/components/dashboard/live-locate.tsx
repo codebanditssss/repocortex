@@ -54,7 +54,15 @@ export function LiveLocate() {
       if (!isLocateResult(value)) throw new Error("The search returned an incomplete result.");
       setResult(value); setStatus(value.backend);
     } catch (failure) {
-      if (!controller.signal.aborted) setStatus({ mode: "unavailable", connected: false });
+      if (!controller.signal.aborted) {
+        try {
+          const health = await fetch("/api/status", { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(5000)]) });
+          const value: unknown = await health.json();
+          setStatus(isBackendStatus(value) ? value : { mode: "unavailable", connected: false });
+        } catch {
+          if (!controller.signal.aborted) setStatus({ mode: "unavailable", connected: false });
+        }
+      }
       setError(controller.signal.aborted ? "Search cancelled. Your report is still here." : failure instanceof Error && failure.name === "TimeoutError" ? "The search timed out. Please try again." : failure instanceof Error ? failure.message : "The search failed. Please try again.");
     } finally { setPending(false); request.current = null; }
   }
