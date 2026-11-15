@@ -47,7 +47,7 @@ export function FieldShell({
             {" / "}<span className="num">{evaluation.holdout}</span> held out
           </div>
           <div title="Static demo status. A live backend connection has not been checked.">
-            {dashboard ? "HydraDB / recorded snapshot" : "HydraDB connected"}
+            HydraDB / recorded snapshot
           </div>
         </div>
       </header>
@@ -56,7 +56,7 @@ export function FieldShell({
       </main>
       <footer className="foot">
         <i>
-          Measured held-out numbers: {evaluation.train} training fixes, {evaluation.holdout} held-out issues.
+          Measured held-out numbers: {evaluation.train} training fixes, {evaluation.holdout} held-out fix rows.
           {dashboard && ["locate", "agent", "load", "graph", "replay"].includes(active.slug)
             ? " Illustrative fixtures are marked as placeholders."
             : ""}

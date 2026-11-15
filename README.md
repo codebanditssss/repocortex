@@ -14,7 +14,7 @@ A self-improving code graph on HydraDB · hackathon track 1
 
 RepoCortex helps maintainers and coding agents investigate unfamiliar code. Given a bug report, it ranks the functions likely to need changing and returns the relationships behind each suggestion. Confirmed fixes become memory for later reports.
 
-We replayed **1,281 Django fixes** in chronological order and evaluated on **319 held-out bugs**. Strict top-10 function accuracy increased from **45.1% with learning off to 48.3% after replay**. The paired improvement is **3.1 percentage points**, with a 95% bootstrap interval of **0.9–5.6 points**.
+We replayed **1,281 Django fixes** in chronological order and evaluated on **319 held-out fix commits**. Strict top-10 function accuracy increased from **45.1% with learning off to 48.3% after replay**. The paired improvement is **3.1 percentage points**, with a 95% bootstrap interval of **0.9–5.6 points**.
 
 Learning currently runs through historical replay or the `learn_from_fix` tool. Automatic ingestion from merged pull requests is planned.
 
@@ -29,7 +29,7 @@ Learning currently runs through historical replay or the `learn_from_fix` tool. 
 | Rerun the experiment | [reproduction instructions](#reproduce-the-replay) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |
 
-**Current demo:** the dashboard displays saved measurements and provenance records. Its locate screen does not accept arbitrary live bug reports. The graph drawings are illustrative layouts, not captured database traversals. Public demo and video links are still pending in [the submission](SUBMISSION.md).
+**Current demo:** paste a bug report into Locate to get fresh ranked functions. The local service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
 
 ## Measured results
 
@@ -39,6 +39,7 @@ All retrieval rows use the same 319 held-out fixes. Function accuracy at *k* req
 |---|---:|---:|---:|---:|
 | BM25 | 27.3% | 32.9% | 34.5% | 0.324 |
 | Dense vectors, MiniLM | 29.2% | 37.3% | 35.7% | 0.320 |
+| Dense + BM25, no graph | 34.5% | 41.7% | 39.2% | 0.388 |
 | Frozen hybrid graph | 35.4% | 45.1% | 41.1% | 0.402 |
 | **Learned hybrid graph** | **37.0%** | **48.3%** | **44.5%** | **0.430** |
 
@@ -46,7 +47,7 @@ Source: [full metrics, intervals and configuration](results/baselines.json).
 
 - **Learning over frozen:** +3.1 points of function accuracy @10, paired 95% interval [0.9, 5.6]. Function accuracy @5 does not show a statistically significant improvement.
 - **Learned over dense:** +11.0 points of function accuracy @10, paired 95% interval [7.5, 14.4]. This comparison includes keyword blending, graph structure and learning together.
-- **The missing control:** dense + BM25 without a graph hop has not been measured. The dense comparison alone does not isolate the graph's contribution.
+- **Learned over dense + BM25:** +6.6 points at function accuracy @10, paired 95% interval [3.8, 9.7]. The frozen graph adds 3.4 points over that same no-graph blend. [reproduced control and corrected paired intervals](results/lexical_gap.json)
 
 <img src="results/curve.png" alt="Measured holdout, validation and training-stream curves, shown separately with their baselines" width="900">
 
@@ -235,8 +236,8 @@ The saved run recorded 1,251 requests, zero failures and 44 ms p95 with eight us
 - **One repository and one source snapshot.** The evaluation uses Django at `f24f38c6b282`, including `django/` and `tests/`. The code snapshot already contains fixes; it is not a checkout-before-each-fix replay.
 - **A filtered task.** Fix subjects match `Fixed #NNNN`; ticket text comes from Trac. Diff hunks map to functions. Test-only fixes and fixes touching more than eight functions are excluded.
 - **Chronological split.** 1,281 fixes train the graph; the newest 319 are held out. Reported intervals use 1,000 bootstrap resamples. Stronger memory settings were tested on a training-side validation slice and rejected. [tuning log](results/tuning.json)
-- **Incomplete attribution.** A dense + BM25 no-graph control is still needed. The advantage over dense alone cannot all be credited to the graph.
-- **Saved evidence versus live behavior.** The website is a recorded-results explorer. The cached ranker needs untracked runtime files, and request-time database traversal is not established by the current dashboard.
+- **Split audit.** Three test rows refer to two tickets also present in training. Excluding those rows leaves 316 fixes: no-graph 42.1%, frozen 45.6%, learned 48.7%. Paired intervals resample fix rows, not independent ticket clusters. [audit and reproduction](docs/evaluation-audit.md)
+- **Saved evidence versus live behavior.** Evaluation uses the offline graph scorer. Live requests use bounded structural reads from HydraDB plus cached learned memory, so these measurements are not live-service latency or accuracy claims. Runtime files are required for serving.
 - **Limited agent and load studies.** Neither establishes production-scale reliability, generality across models, or guaranteed cost savings.
 
 ## Who this is for

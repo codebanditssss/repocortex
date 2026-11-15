@@ -12,9 +12,11 @@ One question every bug ticket starts with: where do I edit? Today an agent answe
 
 What we can already show on Django:
 
-- function Acc@10 0.483 vs 0.373 for a vector store on 319 held-out bugs
+- strict function Acc@10: 41.7% dense + BM25 without graph, 45.1% frozen graph, 48.3% after learning on 319 chronological fix-commit holdout rows; +3.4 percentage points from the structural graph, then +3.1 from learning
 - 16 to 27 percent fewer agent input tokens on 30 bugs
-- p95 44 ms per call
+- p95 44 ms in the saved smaller, cached phase-2 load test; not live HydraDB traversal latency
+
+This is a retrospective evaluation on a fixed Django snapshot that includes later fixes. Three test rows share tickets with training; excluding them leaves 316 rows and preserves the learning gain (45.6% to 48.7%). See the [evaluation audit](evaluation-audit.md).
 
 ## Distribution
 
@@ -38,10 +40,10 @@ The pitch to the buyer is a number they already track: agent spend per resolved 
 
 | | what it does | what RepoCortex adds |
 |---|---|---|
-| Vector code search (embeddings over chunks) | Finds text that looks like the report | Relations: past fixes, co-change, calls, tests. Beats dense by 11.0 points of fn Acc@10 here |
-| Static code graphs and repo maps | What calls what, at one point in time | Learns from fix history and keeps improving after every merge |
+| Vector code search (embeddings over chunks) | Finds text that looks like the report | Adds relations and fix history. The stronger dense + BM25 control scores 41.7%, frozen graph 45.1%, learned graph 48.3% on this replay |
+| Static code graphs and repo maps | What calls what, at one point in time | Learns from fix history; measured +3.1 points over the frozen graph on Django |
 | Agent-native search (grep and read loops) | Works, but starts from zero every task | A ranked, explained starting point. 27% fewer input tokens when called first |
-| Research localizers (LocAgent, SWE-bench tools) | Benchmarks, not a product | MCP server, self-hosted, ingest on merge |
+| Research localizers (LocAgent, SWE-bench tools) | Localize code for agent tasks | Self-hosted MCP workflow with explicit fix feedback; no head-to-head evaluation claimed |
 
 ## Metrics to track
 

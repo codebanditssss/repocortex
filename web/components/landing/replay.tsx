@@ -1,5 +1,6 @@
 "use client";
 
+import { EvaluationNote } from "@/components/evaluation-note";
 import { useEffect, useRef, useState } from "react";
 import type { CurveData } from "@/lib/data";
 import { formatPercent } from "@/lib/format";
@@ -35,7 +36,7 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
       <div className="replay-intro">
         <div className="section-heading"><p className="sc section-index"><span className="num">02</span> / The learning pass</p><h2 id="replay-title">Replay.</h2></div>
         <p className="section-dek">Predict. See the real fix. Learn.<br />Then ask the same questions again.</p>
-        <p className="news source-note">{data.train} fixes learned in time order. The same {data.holdout} held-out fixes scored at every checkpoint. None of those were learned from.</p>
+        <p className="news source-note">{data.train} fixes learned in time order. The same {data.holdout} held-out fixes scored at every checkpoint. Three test rows share tickets with training; this is a retrospective replay on a fixed code snapshot.</p>
       </div>
       <PlateImage className="section-ornament" src="/art/doodle-shortcut.webp" alt="A wandering ink path takes a short vermilion connection between two points." marginalia />
       <div className="replay-instrument">
@@ -73,7 +74,8 @@ export function Replay({ evaluation: data }: { evaluation: CurveData }) {
         ))}
       </div>
       <details className="replay-params"><summary className="sc">Ranker parameters / this pass</summary><dl>{Object.entries(data.params).map(([name, value]) => <div key={name}><dt className="num">{name}</dt><dd className="num">{value}</dd></div>)}</dl><p className="news">The frozen reference is this pass&apos;s step 0 graph, with learning off. Learning gain is measured from that starting point.</p></details>
-      <p className="replay-endnote news">A measured gain on {data.holdout} held-out issues. Not a claim about every codebase.</p>
+      <EvaluationNote />
+      <p className="replay-endnote news">A measured gain on {data.holdout} held-out fix rows. Not a claim about every codebase.</p>
     </section>
   );
 }

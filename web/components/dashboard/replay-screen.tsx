@@ -64,7 +64,7 @@ export function ReplayScreen({ data }: { data: CurveData }) {
         <SpotArt chapter="replay" />
       </section>
       <section className="replay-main" aria-label="Held-out learning curve and step ruler">
-        <div className="section-rule"><h2><span className="sc">Fig. 1</span> The held-out record</h2><span className="cap">{data.holdout} issues, never learned from</span></div>
+        <div className="section-rule"><h2><span className="sc">Fig. 1</span> The held-out record</h2><span className="cap">{data.holdout} chronological fix rows</span></div>
         <div className="replay-chart-meta"><div className="manual-metric-switch" role="group" aria-label="Evaluation metric">{(Object.keys(metricLabels) as LandingMetric[]).map((value) => <button type="button" key={value} aria-pressed={metric === value} onClick={() => setMetric(value)}>{metricLabels[value]}</button>)}</div><p className="cap">Checkpoint {point.step}: <span className="num">{formatPercent(point[metric])}</span></p></div>
         <div className="manual-chart-scroll replay-chart" tabIndex={0} role="region" aria-label="Held-out accuracy chart, use the step slider to seek"><MetricChart data={data} metric={metric} index={index} step={step} onSeek={seek} wide /></div>
         <p className="figure-note replay-chart-note">Lines join measured checkpoints, including the dip. Between checkpoints, the score stays at the last measurement. Function Acc@10 ends at {formatPercent(data.curve.at(-1)!["function_acc@10"])}. Baselines are single-point references.</p>

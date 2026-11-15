@@ -90,7 +90,7 @@ export default function Home() {
             <figure className="graph-example">
               <figcaption><span className="sc">A route from a past fix</span><span className="news">Learned FIXED_IN path</span></figcaption>
               <ol className="function-route">
-                <li><span className="num route-branch">┌</span><span>Issue #{ticket.ticket}<small className="sc">Held out / never trained on</small></span></li>
+                <li><span className="num route-branch">┌</span><span>Issue #{ticket.ticket}<small className="sc">Chronological holdout</small></span></li>
                 <li><span className="num route-branch">├</span><span>Issue #{route.ticket}<small className="sc">Past fix / similarity <span className="num">{route.similarity}</span></small></span></li>
                 <li><span className="num route-branch">└</span><span>{hitSymbol(hit).replace("django.db.models.query.", "")}<small className="sc">FIXED_IN / weight <span className="num">{route.weight}</span></small></span></li>
               </ol>
@@ -105,7 +105,7 @@ export default function Home() {
           <div>
             <SectionHead number="03" label="Provenance" title="Why it said that." />
             <p className="section-dek">The result carries its evidence: a past issue, a learned FIXED_IN link, and the function it reached.</p>
-            <p className="news source-note">Across {provenance.holdout} held-out issues, {provenance.hits_with_fixed_in} hits used FIXED_IN paths and {provenance.hits_with_shortcut} used SHORTCUT paths. These are hit counts, not issue-level accuracy.</p>
+            <p className="news source-note">Across {provenance.holdout} held-out fix rows, {provenance.hits_with_fixed_in} hits used FIXED_IN paths and {provenance.hits_with_shortcut} used SHORTCUT paths. These are hit counts, not issue-level accuracy.</p>
           </div>
           <figure className="provenance-figure">
             <figcaption><span className="sc">Route receipt / issue #{ticket.ticket}</span><span className="sc measured-label">Measured</span></figcaption>
@@ -150,7 +150,7 @@ export default function Home() {
               </figure>
             ))}
           </div>
-          <p className="figure-caption"><b>FIG. 4</b> Traces are one measured run on {agent.ticket}. Totals are means over {agent.n} held-out issues with {agent.model}: {agent.savings.with_input_tokens_pct}% fewer input tokens with the tool, {agent.savings.first_input_tokens_pct}% when told to call it first.</p>
+          <p className="figure-caption"><b>FIG. 4</b> Traces are one measured run on {agent.ticket}. Totals are means over {agent.n} held-out fix rows with {agent.model}: {agent.savings.with_input_tokens_pct}% fewer input tokens with the tool, {agent.savings.first_input_tokens_pct}% when told to call it first.</p>
         </section>
 
         <section className="landing-section load-section">
@@ -201,7 +201,7 @@ export default function Home() {
             <Link className="text-link" href="/app/connect">Connection notes <span aria-hidden="true">→</span></Link>
           </div>
         </div>
-        <div className="landing-colophon"><Link className="mark" href="/">Repo<i>Cortex</i></Link><p className="news">Measured on {evaluation.holdout} held-out Django issues. Fixtures marked where used.</p><a href="#main-content">Back to the graph ↑</a></div>
+        <div className="landing-colophon"><Link className="mark" href="/">Repo<i>Cortex</i></Link><p className="news">Measured on {evaluation.holdout} held-out Django fix rows. Fixtures marked where used.</p><a href="#main-content">Back to the graph ↑</a></div>
       </footer>
     </div>
   );

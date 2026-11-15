@@ -36,20 +36,21 @@ Agents use it through an MCP server with two tools, `locate_bug` and `learn_from
 
 ## Why a graph beats a vector store here
 
-Bug location depends on relations, not text: past fixes of similar tickets, co-change history, call paths, and test coverage. On held-out ticket #36865 ("Casting on __exact searches over non-text fields in admin misses indexes"), plain dense search ranks the fixed function `ModelAdmin.get_search_results` #134. RepoCortex ranks it #1 through two earlier fixes of similar tickets and a learned shortcut, and it shows that path. Across all 319 held-out bugs, function Acc@10 is 0.483 for RepoCortex against 0.373 for dense vectors and 0.329 for BM25. The paired gap over dense is +11.0 points, 95% interval [7.5, 14.4].
+Bug location depends on relations, not text: past fixes of similar tickets, co-change history, call paths, and test coverage. On held-out ticket #36865 ("Casting on __exact searches over non-text fields in admin misses indexes"), plain dense search ranks the fixed function `ModelAdmin.get_search_results` #134. RepoCortex ranks it #1 through two earlier fixes of similar tickets and a learned shortcut, and it shows that path. Across 319 chronological holdout fix rows, strict function Acc@10 is 0.483 for RepoCortex, 0.451 for the frozen graph, and 0.417 for dense + BM25 without graph. The learned-versus-no-graph gap is +6.58 percentage points, with a paired row-bootstrap 95% interval of [3.76, 9.72]. See the [reproduced comparison](results/lexical_gap.json).
 
 ## Results
 
-Replay of 1281 real Django fixes in commit order, scored on the 319 newest fixes it never trained on.
+Retrospective replay of 1,281 Django fix commits in time order, scored on 319 later fix rows using a fixed code snapshot. Three test rows share tickets with training; the set is not 319 unseen issues.
 
-- Function Acc@10: BM25 0.329, dense 0.373, RepoCortex step 0 0.451, RepoCortex after learning **0.483**.
+- Function Acc@10: BM25 0.329, dense 0.373, dense + BM25 without graph **0.417**, RepoCortex step 0 0.451, RepoCortex after learning **0.483**.
+- Excluding the three rows with train-seen tickets leaves 316 rows: dense + BM25 0.421, frozen graph 0.456, learned graph **0.487**. The learning gain remains +3.16 points [0.63, 5.70], without retraining.
 - Learning lift on the same held-out set: +3.1 points of function Acc@10 [0.9, 5.6], MRR 0.402 to 0.430. The held-out curve is flat for about 500 fixes, then climbs: early on, similar past tickets usually name a different function (at step 100 the nearest past fix shares a gold function 3.5% of the time), so memory only pays off once it has enough history. Storing fixes and reweighting edges do most of the lift. The ablation is in the README.
 - Two curves that rise earlier, both outside the holdout: on a validation slice of the newest 256 training issues, fn Acc@10 goes 0.414 to 0.449 (peak 0.453) and MRR 0.380 to 0.414. Scoring each training issue before learning from it, the learning graph ends +3.4 points of Acc@10 and +3.3 points of MRR above a frozen replay (0.472 vs 0.439). Over the last 100 issues learning holds 0.460 while frozen falls to 0.410.
 - Claude Sonnet 5.5 agent on 30 held-out bugs: 16% fewer input tokens with the tool, 27% fewer and 22% lower cost when told to call it first. Accuracy about the same.
 - `locate_bug` alone gets the top-1 function 0.47 of the time, the agent alone 0.40. Under a second, no model call.
-- Load test: 1,251 requests, 0 failures, p95 44 ms, 63 requests per second.
+- Saved phase-2 load test: 1,251 requests, 0 failures, p95 44 ms, 63 requests per second. This measured the smaller cached ranker, not live HydraDB traversal latency.
 
-Caveats we state up front: one repository, a small agent eval, and most of the gap over dense is already there before learning.
+The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, row-paired bootstrap corrections, and the 316-row sensitivity check. The code snapshot includes later fixes, so this is retrospective localization rather than a historical checkout for each issue. Results cover one repository and a small agent eval; they do not establish superiority over other projects.
 
 ## Demo
 
@@ -71,4 +72,4 @@ HydraDB 0.4.0 (self-hosted), Python, sentence-transformers MiniLM, BM25, MCP Pyt
 
 ## 60 second pitch
 
-Coding agents burn a lot of effort on one question: where is the bug? RepoCortex answers it from the repository's own history. It is a code graph in HydraDB that remembers every merged fix, reweights the paths that led to the right function, and adds shortcuts for the ones it keeps taking. On 319 held-out Django bugs it beats a vector store by 11.0 points of function Acc@10, and it keeps improving as fixes land. Every answer comes with its path. Plugged into a Claude agent over MCP, it cut input tokens by 16 to 27 percent. It runs self-hosted, so private code stays private.
+Coding agents burn a lot of effort on one question: where is the bug? RepoCortex answers it from the repository's own history. It is a code graph in HydraDB that remembers every merged fix, reweights the paths that led to the right function, and adds shortcuts for the ones it keeps taking. In a retrospective replay on 319 Django fix rows, function Acc@10 rises from 45.1% to 48.3%, against 41.7% for dense + BM25 without graph. Excluding tickets seen in training preserves the gain. Every answer comes with its path. Plugged into a Claude agent over MCP, it cut input tokens by 16 to 27 percent. It runs self-hosted, so private code stays private.

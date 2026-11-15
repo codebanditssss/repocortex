@@ -1,0 +1,208 @@
+{
+  "n": 319,
+  "note": "dense+bm25 is the published blend with graph_mix 0 and no memory. frozen is that blend plus the unlearned one-hop. learned is the saved replay. Same selected holdout fix rows, scored once; see methodology for overlaps.",
+  "dense_bm25": {
+    "n": 319,
+    "function_acc@5": 0.3448275862068966,
+    "function_acc@10": 0.4169278996865204,
+    "file_acc@1": 0.39184952978056425,
+    "file_acc@5": 0.7335423197492164,
+    "mrr": 0.3882967607105537,
+    "ci": {
+      "function_acc@5": {
+        "mean": 0.344828,
+        "lo": 0.291536,
+        "hi": 0.398119
+      },
+      "function_acc@10": {
+        "mean": 0.416928,
+        "lo": 0.360502,
+        "hi": 0.473354
+      },
+      "file_acc@1": {
+        "mean": 0.39185,
+        "lo": 0.338558,
+        "hi": 0.445141
+      },
+      "file_acc@5": {
+        "mean": 0.733542,
+        "lo": 0.680251,
+        "hi": 0.780564
+      },
+      "mrr": {
+        "mean": 0.388297,
+        "lo": 0.344431,
+        "hi": 0.431767
+      }
+    }
+  },
+  "frozen": {
+    "n": 319,
+    "function_acc@5": 0.3542319749216301,
+    "function_acc@10": 0.45141065830721006,
+    "file_acc@1": 0.4106583072100313,
+    "file_acc@5": 0.7335423197492164,
+    "mrr": 0.4022752152062496,
+    "ci": {
+      "function_acc@5": {
+        "mean": 0.354232,
+        "lo": 0.297806,
+        "hi": 0.404389
+      },
+      "function_acc@10": {
+        "mean": 0.451411,
+        "lo": 0.394984,
+        "hi": 0.504702
+      },
+      "file_acc@1": {
+        "mean": 0.410658,
+        "lo": 0.360423,
+        "hi": 0.460815
+      },
+      "file_acc@5": {
+        "mean": 0.733542,
+        "lo": 0.683307,
+        "hi": 0.780564
+      },
+      "mrr": {
+        "mean": 0.402275,
+        "lo": 0.358134,
+        "hi": 0.4428
+      }
+    }
+  },
+  "learned": {
+    "n": 319,
+    "function_acc@5": 0.36990595611285265,
+    "function_acc@10": 0.4827586206896552,
+    "file_acc@1": 0.445141065830721,
+    "file_acc@5": 0.7617554858934169,
+    "mrr": 0.4300306015823258,
+    "ci": {
+      "function_acc@5": {
+        "mean": 0.369906,
+        "lo": 0.31348,
+        "hi": 0.423197
+      },
+      "function_acc@10": {
+        "mean": 0.482759,
+        "lo": 0.423119,
+        "hi": 0.532915
+      },
+      "file_acc@1": {
+        "mean": 0.445141,
+        "lo": 0.39185,
+        "hi": 0.501567
+      },
+      "file_acc@5": {
+        "mean": 0.761755,
+        "lo": 0.711599,
+        "hi": 0.808777
+      },
+      "mrr": {
+        "mean": 0.430031,
+        "lo": 0.384671,
+        "hi": 0.474856
+      }
+    }
+  },
+  "gap_learned_minus_dense_bm25": {
+    "n": 319,
+    "function_acc@5": {
+      "mean": 0.025078,
+      "lo": -0.00627,
+      "hi": 0.05337
+    },
+    "function_acc@10": {
+      "mean": 0.065831,
+      "lo": 0.037618,
+      "hi": 0.097179
+    },
+    "file_acc@1": {
+      "mean": 0.053292,
+      "lo": 0.028213,
+      "hi": 0.081505
+    },
+    "file_acc@5": {
+      "mean": 0.028213,
+      "lo": 0.00627,
+      "hi": 0.053292
+    },
+    "mrr": {
+      "mean": 0.041734,
+      "lo": 0.018064,
+      "hi": 0.066591
+    }
+  },
+  "gap_learned_minus_frozen": {
+    "n": 319,
+    "function_acc@5": {
+      "mean": 0.015674,
+      "lo": -0.009404,
+      "hi": 0.040752
+    },
+    "function_acc@10": {
+      "mean": 0.031348,
+      "lo": 0.009404,
+      "hi": 0.056426
+    },
+    "file_acc@1": {
+      "mean": 0.034483,
+      "lo": 0.012539,
+      "hi": 0.059561
+    },
+    "file_acc@5": {
+      "mean": 0.028213,
+      "lo": 0.012539,
+      "hi": 0.0471
+    },
+    "mrr": {
+      "mean": 0.027755,
+      "lo": 0.007664,
+      "hi": 0.049053
+    }
+  },
+  "gap_frozen_minus_dense_bm25": {
+    "n": 319,
+    "function_acc@5": {
+      "mean": 0.009404,
+      "lo": -0.009404,
+      "hi": 0.028213
+    },
+    "function_acc@10": {
+      "mean": 0.034483,
+      "lo": 0.015674,
+      "hi": 0.056426
+    },
+    "file_acc@1": {
+      "mean": 0.018809,
+      "lo": 0.0,
+      "hi": 0.040752
+    },
+    "file_acc@5": {
+      "mean": 0.0,
+      "lo": -0.018809,
+      "hi": 0.018809
+    },
+    "mrr": {
+      "mean": 0.013978,
+      "lo": -0.000522,
+      "hi": 0.028143
+    }
+  },
+  "methodology": {
+    "unit": "chronological fix-commit row",
+    "pairing": "same ordered row, not ticket ID",
+    "train_test_ticket_overlap": [
+      27489,
+      32980
+    ],
+    "excluded_seen_ticket_rows": 0,
+    "duplicate_holdout_tickets": {
+      "26434": 3,
+      "36806": 2,
+      "27489": 2
+    },
+    "execution": "offline saved corpus and memory; no retraining; no live database queries"
+  }
+}

@@ -4,6 +4,8 @@ import { PlateHeading } from "@/components/dashboard/plate-heading";
 import { EvaluationTable } from "@/components/dashboard/evaluation-table";
 import { GraphPlate } from "@/components/landing/graph-plate";
 import { MetricChart } from "@/components/metric-chart";
+import lexical from "@/public/data/lexical_gap.json";
+import { EvaluationNote } from "@/components/evaluation-note";
 import evaluationJson from "@/public/data/curve.json";
 import type { CurveData } from "@/lib/data";
 import stats from "@/public/data/graph_stats.json";
@@ -20,7 +22,7 @@ export default function Overview() {
     <div className="manual-page overview-layout">
       <section className="overview-copy">
         <PlateHeading chapter="overview" title={<>A record of<br /><i>what it learns.</i></>}>
-          <p>Predict where a bug lives. See the real fix. Rewire the graph. RepoCortex learned from {evaluation.train} Django fixes in time order, then tested against the same {evaluation.holdout} held-out issues at every checkpoint.</p>
+          <p>Predict where a bug lives. See the real fix. Rewire the graph. RepoCortex learned from {evaluation.train} Django fixes in time order, then tested against the same {evaluation.holdout} held-out fix rows at every checkpoint.</p>
         </PlateHeading>
         <dl className="journal-metrics">
           <div><dt>Right file, first result</dt><dd>{formatPercent(end["file_acc@1"])}<small>from {formatPercent(start["file_acc@1"])} at step 0</small></dd></div>
@@ -37,10 +39,12 @@ export default function Overview() {
             <tr><th scope="row">Merge / split</th><td>Resolve shared names and separate meanings.</td><td>{evaluation.operators.entity_merge_split}</td></tr>
           </tbody></table>
         </section>
+        <EvaluationNote />
         <details className="baseline-summary">
-          <summary>All baselines, including BM25: {formatPercent(evaluation.baselines.bm25["file_acc@1"])} file / {formatPercent(evaluation.baselines.bm25["function_acc@10"])} function</summary>
+          <summary>All baselines, including dense + BM25 without graph</summary>
           <table className="manual-table"><caption>At the end of the pass / held-out accuracy</caption><thead><tr><th scope="col">Method</th><th scope="col">File Acc@1</th><th scope="col">Function Acc@10</th></tr></thead><tbody>
             <tr><th scope="row">RepoCortex</th><td>{formatPercent(end["file_acc@1"])}</td><td>{formatPercent(end["function_acc@10"])}</td></tr>
+            <tr><th scope="row">Dense + BM25 (no graph)</th><td>{formatPercent(lexical.dense_bm25["file_acc@1"])}</td><td>{formatPercent(lexical.dense_bm25["function_acc@10"])}</td></tr>
             {(["dense", "frozen", "bm25"] as const).map((key) => <tr key={key}><th scope="row">{key === "bm25" ? "BM25" : key === "dense" ? "Dense vectors" : "Frozen graph"}</th><td>{formatPercent(evaluation.baselines[key]["file_acc@1"])}</td><td>{formatPercent(evaluation.baselines[key]["function_acc@10"])}</td></tr>)}
           </tbody></table>
         </details>

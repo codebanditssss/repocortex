@@ -16,15 +16,15 @@ We built it on Django. Forty six thousand nodes and a hundred and thirty eight t
 
 ## 0:28 to 0:58  /app/replay, Function Acc@10, playhead swept from 0 to 1281
 
-Caption: 319 held-out bugs. fn Acc@10: 0.451 at step 0, 0.483 after replay. Dense 0.373, BM25 0.329
+Caption: 319 retrospective fix rows. fn Acc@10: dense + BM25 41.7%, frozen graph 45.1%, learned 48.3%. Three rows share training tickets.
 
-For each fix, the graph guesses first, then sees the real diff and rewires itself. It stores the fix, reweights the edges that led to the right function, and adds shortcuts for paths it keeps walking. On three hundred nineteen held out bugs it never trained on, function accuracy at ten rises from forty five to forty eight percent. A dense vector store gets thirty seven. BM25 gets thirty three. The climb is late, flat for the first five hundred fixes, and we show that as is.
+For each fix, the graph guesses first, then sees the real diff and rewires itself. It stores the fix, reweights the edges that led to the right function, and adds shortcuts for paths it keeps walking. On three hundred nineteen later fix commits, dense plus BM25 gets forty two percent. Adding the frozen graph gets forty five; learning gets forty eight. This is a retrospective replay on one snapshot. Three test rows share training tickets; excluding them preserves the gain. The climb is late, and we show it as is.
 
 ## 0:58 to 1:13  /app/locate, type 36605, open the full receipt
 
 Caption: Ticket #36605: rank 1 via past fix #35690 and two learned SHORTCUT edges
 
-Every answer comes with a receipt. For ticket three six six oh five, the top hit is QuerySet dot in bulk, reached through a past fix on a similar ticket and two learned shortcut edges. A vector store can give you a score. It cannot tell you why.
+Every answer comes with a receipt. For ticket three six six oh five, the top hit is QuerySet dot in bulk, reached through a past fix on a similar ticket and two learned shortcut edges. The receipt shows which stored fixes and graph links supported the ranking.
 
 ## 1:13 to 1:36  /app/agent, scroll through the with and without panes
 
@@ -34,9 +34,9 @@ We gave it to a Claude coding agent over MCP, on thirty held out bugs. The agent
 
 ## 1:36 to 1:44  /app/load
 
-Caption: Locust, 8 users, 20 s: 63 req/s, p95 44 ms, 0 failures
+Caption: Saved cached phase-2 test: 8 users, 20 s, 63 req/s, p95 44 ms, 0 failures
 
-Eight concurrent agents, sixty three requests a second, p95 of forty four milliseconds, zero failures.
+The smaller cached ranker handled eight concurrent users at forty four milliseconds p95. This is not live database latency.
 
 ## 1:44 to 1:58  /app/connect, MCP config
 
@@ -46,7 +46,8 @@ One MCP config for Cursor or Claude Code, on self hosted HydraDB, so your code s
 
 ## Sources
 
-- Accuracy and intervals: `results/baselines.json`, `results/curve.json`
+- Accuracy and intervals: `results/baselines.json`, `results/curve.json`, `results/lexical_gap.json`
+- Split, repeated tickets, and sensitivity: `docs/evaluation-audit.md`
 - Provenance: `results/provenance.json`
 - Agent eval: `results/agent_eval/results.json`, `tool_only.json`
 - Load: `results/loadtest.json`
