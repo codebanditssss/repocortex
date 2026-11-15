@@ -111,8 +111,8 @@ def backend_status(ranker) -> dict:
         return {"mode": "replay", "connected": False, "detail": "client has no ping"}
     try:
         info = ping()
-    except Exception as exc:
-        return {"mode": "error", "connected": False, "detail": str(exc)[:240]}
+    except Exception:
+        return {"mode": "error", "connected": False, "detail": "graph connection unavailable"}
     if not info.get("repo") or info.get("functions") != ranker.n:
         return {"mode": "error", "connected": False, "detail": "repository graph is missing or has an unexpected function count"}
     return {

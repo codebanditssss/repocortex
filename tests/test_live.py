@@ -107,6 +107,15 @@ class LiveTest(unittest.TestCase):
         self.assertEqual(acquired, [True])
 
 class HttpTest(unittest.TestCase):
+    def test_health_does_not_expose_connection_errors(self):
+        from repocortex.serve.load import backend_status
+        ranker = LiveTest().ranker()
+        with patch.object(ranker.client, "ping", side_effect=RuntimeError("secret-token@private-host")):
+            result = backend_status(ranker)
+        self.assertEqual(result["mode"], "error")
+        self.assertNotIn("secret", str(result))
+        self.assertNotIn("private-host", str(result))
+
     def test_invalid_reports_and_backend_failure_return_json(self):
         import threading, json, urllib.request, urllib.error
         from http.server import ThreadingHTTPServer
