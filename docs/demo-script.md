@@ -1,54 +1,84 @@
 # RepoCortex demo script
 
-About 2 minutes, 1080p. Screen recording of the web app with a voiceover and one caption line per scene. Every number is from `results/`.
+A 90-second walkthrough: one fresh query, its database receipts, the measured
+learning curve, and the agent workflow. Record at 1080p with captions.
 
-## 0:00 to 0:15  Landing page, hero and ticket animation
+Before recording, open `/app/locate`, `/app/replay`, and `/app/agent`. Confirm the
+Locate backend is reachable. Run the example once to check its actual response;
+do not promise a particular rank or latency. If the backend returns cached mode,
+label it cached and omit the live-database claim. Keep wait time visible or mark
+an edit as “search wait shortened.”
 
-Caption: RepoCortex: a code graph in HydraDB that learns from every merged fix
+## 0:00–0:10 · Start with the problem
 
-Coding agents spend a lot of their tokens just finding where a bug lives. Keyword search and vector stores treat every bug report like the first one they have ever seen. RepoCortex is a code graph in HydraDB that learns from every fix your team merges.
+Screen: landing page, then `/app/locate`.
 
-## 0:15 to 0:28  Landing page, slow scroll to the end
+Caption: Find the functions. Learn from the fix.
 
-Caption: Django: 46,443 nodes, 138,150 edges, 1,281 fixes replayed in time order
+Voiceover: “Where should a coding agent look first? RepoCortex uses a repository's
+code graph and past fixes to rank candidate functions, with evidence behind each
+suggestion.”
 
-We built it on Django. Forty six thousand nodes and a hundred and thirty eight thousand edges: files, functions, tests, calls, and twelve hundred eighty one real fixes, replayed in the order they happened.
+## 0:10–0:30 · Run a fresh search
 
-## 0:28 to 0:58  /app/replay, Function Acc@10, playhead swept from 0 to 1281
+Screen: click **Try a query compilation report**, then **Find functions**. Expand
+one returned function. Show the actual file, line, and supporting paths.
 
-Caption: 319 retrospective fix rows. fn Acc@10: dense + BM25 41.7%, frozen graph 45.1%, learned 48.3%. Three rows share training tickets.
+Caption: Fresh ranking · live structural graph + cached learned memory
 
-For each fix, the graph guesses first, then sees the real diff and rewires itself. It stores the fix, reweights the edges that led to the right function, and adds shortcuts for paths it keeps walking. On three hundred nineteen later fix commits, dense plus BM25 gets forty two percent. Adding the frozen graph gets forty five; learning gets forty eight. This is a retrospective replay on one snapshot. Three test rows share training tickets; excluding them preserves the gain. The climb is late, and we show it as is.
+Voiceover, only when the response says live: “This is a fresh search. HydraDB
+supplies the structural edges; saved fix memory adds what the replay learned.
+Here is a candidate function, and the paths that supported it.”
 
-## 0:58 to 1:13  /app/locate, type 36605, open the full receipt
+## 0:30–0:43 · Show what the database did
 
-Caption: Ticket #36605: rank 1 via past fix #35690 and two learned SHORTCUT edges
+Screen: expand **Database query receipts**, then a query. Show the Cypher,
+returned-row count, and any row-limit notice. Do not present the illustrative
+graph animation as a captured query or mutation log.
 
-Every answer comes with a receipt. For ticket three six six oh five, the top hit is QuerySet dot in bulk, reached through a past fix on a similar ticket and two learned shortcut edges. The receipt shows which stored fixes and graph links supported the ranking.
+Caption: Bounded HydraDB reads · query and row counts visible
 
-## 1:13 to 1:36  /app/agent, scroll through the with and without panes
+Voiceover: “These receipts show the database reads for this request. The search
+is bounded, and the interface tells us when a query reaches its row limit.”
 
-Caption: Claude agent, 30 held-out bugs: 16% fewer input tokens, 27% when told to call it first
+## 0:43–1:05 · Show the learning evidence
 
-We gave it to a Claude coding agent over MCP, on thirty held out bugs. The agent used sixteen percent fewer input tokens, and twenty seven percent fewer when told to call RepoCortex first. On its own, locate bug named the right function first forty seven percent of the time. The agent managed forty. That takes under a second, with no model call.
+Screen: `/app/replay`, select Function Acc@10, scrub from the first to last
+checkpoint. Open **What the benchmark measures** on the landing replay or overview.
 
-## 1:36 to 1:44  /app/load
+Caption: No graph 41.7% → frozen graph 45.1% → learned 48.3%
 
-Caption: Saved cached phase-2 test: 8 users, 20 s, 63 req/s, p95 44 ms, 0 failures
+Voiceover: “In the saved Django experiment, dense plus BM25 scores 41.7 percent.
+The frozen graph scores 45.1; learning reaches 48.3. This is a retrospective
+319-fix evaluation. Excluding three rows whose tickets appeared in training
+preserves the gain.”
 
-The smaller cached ranker handled eight concurrent users at forty four milliseconds p95. This is not live database latency.
+## 1:05–1:20 · Connect the evidence to agent work
 
-## 1:44 to 1:58  /app/connect, MCP config
+Screen: `/app/agent`, show the three conditions and sample size.
 
-Caption: One MCP config for Cursor or Claude Code. Self-hosted HydraDB.
+Caption: 30 tasks · 16–27% fewer input tokens · accuracy gain not established
 
-One MCP config for Cursor or Claude Code, on self hosted HydraDB, so your code stays on your machines. RepoCortex. Every merged fix makes it better at finding the next bug.
+Voiceover: “In a small, thirty-task agent study, the tool reduced input tokens
+by sixteen to twenty-seven percent. Accuracy differed by one task, so we do not
+claim an accuracy improvement.”
+
+## 1:20–1:30 · Close on the workflow
+
+Screen: `/app/connect`, show `locate_bug` and `learn_from_fix`.
+
+Caption: MCP · self-hosted HydraDB · confirmed fixes become memory
+
+Voiceover: “Use it over MCP. Ask where to look, inspect the evidence, and feed
+back the confirmed fix. RepoCortex gives the next investigation a better
+starting point.”
 
 ## Sources
 
-- Accuracy and intervals: `results/baselines.json`, `results/curve.json`, `results/lexical_gap.json`
+- Accuracy and paired intervals: `results/lexical_gap.json`, `results/curve.json`
 - Split, repeated tickets, and sensitivity: `docs/evaluation-audit.md`
-- Provenance: `results/provenance.json`
-- Agent eval: `results/agent_eval/results.json`, `tool_only.json`
-- Load: `results/loadtest.json`
-- Graph size: `results/graph_stats.json`
+- Agent study: `results/agent_eval/results.json`, `results/agent_eval/README.md`
+- Recorded example paths: `results/provenance.json`
+- Live receipts: the response captured during recording; not the saved benchmark
+
+The video URL belongs in `SUBMISSION.md` only after the recording is uploaded.

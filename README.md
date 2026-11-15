@@ -114,7 +114,7 @@ flowchart LR
 
 HydraDB 0.4.0 stores the graph and learned relationships. Ingestion and replay use batched writes; evaluation normally reloads the graph through paged, count-checked reads. The initial graph has **46,443 nodes and 138,150 edges**. The saved learned export has **48,663 nodes and 141,435 edges**. [initial counts](results/graph_stats.json) · [learned export](results/graph.json)
 
-**The serving boundary matters:** the main hybrid ranker scores an in-memory edge table. The HTTP loader uses local runtime files; the MCP server attempts to attach a database client for persistence. A bounded Cypher traversal implementation exists, but an ordinary hybrid prediction is not a fresh database traversal. Making that request-time database path explicit is ongoing work.
+**The serving boundary matters:** the HTTP and MCP locate tools read structural edges from HydraDB for each live request and use those edges in ranking. Responses include the executed Cypher, parameters, and returned row counts. Embeddings and learned fix memory load from the recovered runtime files. Without a database connection, the service labels its answers as cached replay; the recorded evaluation uses the offline scorer. See [the recovery guide](docs/recovery.md).
 
 Relationship types include `CALLS`, `CO_CHANGED`, `TESTED_BY`, `DEFINES`, `FIXED_IN` and `SHORTCUT`. Their exact spelling is retained in code and queries.
 

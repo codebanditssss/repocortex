@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import type { ProvenanceData, ProvenanceHit, ProvenanceIssue } from "@/lib/data";
 import { functionName, pathKind, searchProvenance, shortFunctionName } from "@/lib/dashboard";
 import { fixedInRoutes, selectHeroIssue } from "@/lib/landing";
@@ -27,7 +27,6 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   const [matches, setMatches] = useState<ProvenanceIssue[]>([demo]);
   const [matchIndex, setMatchIndex] = useState(0);
   const [rank, setRank] = useState(1);
-  const composer = useRef<HTMLTextAreaElement>(null);
   const issue = matches[matchIndex];
   const samples = [demo, ...data.issues.filter((value) => value.ticket !== demo.ticket).slice(0, 2)];
 
@@ -37,22 +36,14 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
     setMatchIndex(0); setRank(results[0]?.hits[0]?.rank ?? 1);
   };
 
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("focus")) composer.current?.focus();
-    const handle = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "k" || event.ctrlKey || event.metaKey || event.altKey || (event.target as HTMLElement)?.closest("input,textarea,select,[contenteditable=true]") || document.querySelector("dialog[open]")) return;
-      event.preventDefault(); composer.current?.focus();
-    };
-    window.addEventListener("keydown", handle);
-    return () => window.removeEventListener("keydown", handle);
-  }, []);
+
 
   return (
     <div className="manual-page"><LiveLocate /><div className="locate-layout">
       <section className="locate-composer" aria-label="Search held-out evidence">
         <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} art={false} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
-          <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span><kbd>K</kbd> to edit</span></div><textarea ref={composer} id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={4} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
+          <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span>Saved evidence</span></div><textarea id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={4} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); search(event.currentTarget.value); }
           }} /></div>
           <div className="locate-options"><span>repo <u>django</u></span><span>index <u>{data.holdout} issues</u></span><button className="btn" type="submit">Locate <kbd>Enter</kbd></button></div>

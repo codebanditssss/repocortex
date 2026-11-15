@@ -322,7 +322,7 @@ try {
     run("wait", "--url", `**/app/${route}`);
   }
   run("press", "k");
-  run("wait", "--fn", 'document.activeElement.id === "locate-query"');
+  run("wait", "--fn", 'document.activeElement.id === "live-report"');
   console.log("PASS Locate selected receipts, substring search, no matches, empty state, samples, text-field guards and global shortcuts");
 
   run("open", `${base}/app/connect`);

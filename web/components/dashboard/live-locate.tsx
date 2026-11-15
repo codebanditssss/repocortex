@@ -13,6 +13,16 @@ export function LiveLocate() {
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const request = useRef<AbortController | null>(null);
+  const composer = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("focus")) composer.current?.focus();
+    const handle = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "k" || event.ctrlKey || event.metaKey || event.altKey || (event.target as HTMLElement)?.closest("input,textarea,select,[contenteditable=true]") || document.querySelector("dialog[open]")) return;
+      event.preventDefault(); composer.current?.focus();
+    };
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, []);
   useEffect(() => {
     const controller = new AbortController();
     fetch("/api/status", { signal: controller.signal }).then((response) => response.json()).then((value) => {
@@ -49,8 +59,11 @@ export function LiveLocate() {
   return <section className="live-locate" aria-labelledby="live-locate-title">
     <div className="section-rule"><h2 id="live-locate-title">Follow a fresh <i>bug report.</i></h2><span className={`cap live-status${status?.connected ? " is-connected" : ""}`} role="status">{status === null ? "Checking service…" : status.connected ? "HydraDB connected" : status.mode === "replay" ? "Cached graph mode" : "Service offline"}</span></div>
     <div className="live-locate-grid"><form onSubmit={locate}>
-      <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="live-report">What is going wrong in Django?</label><span>Fresh search</span></div><textarea id="live-report" value={report} disabled={pending} onChange={(event) => setReport(event.target.value)} rows={5} maxLength={12000} required placeholder="Describe the error, expected behavior, and the code involved…" aria-describedby="live-search-help" /></div>
+      <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="live-report">What is going wrong in Django?</label><span><kbd>K</kbd> to edit</span></div><textarea ref={composer} id="live-report" value={report} disabled={pending} onChange={(event) => setReport(event.target.value)} onKeyDown={(event) => {
+        if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); }
+      }} rows={5} maxLength={12000} required placeholder="Describe the error, expected behavior, and the code involved…" aria-describedby="live-search-help" /></div>
       <div className="locate-options"><span>repo <u>django</u></span><button className="btn" type="submit" disabled={pending || !report.trim()}>{pending ? "Tracing the graph…" : "Find functions →"}</button></div>
+      <p className="live-keyboard-hint">Ctrl / ⌘ + Enter to search</p>
       <p id="live-search-help" className="figure-note">Search the recovered Django snapshot. Structural paths are queried in HydraDB when connected. Learned memory comes from the saved training run.</p>
       <button className="underlined-control" type="button" disabled={pending} onClick={() => setReport(example)}>Try a query compilation report →</button>
       <div className="live-method"><span className="sc">How to read a result</span><p>Start with the function, then open its evidence path. A ranking score compares candidates; it is not a probability that a function contains the bug.</p></div>
