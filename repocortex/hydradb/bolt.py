@@ -131,22 +131,52 @@ class BoltClient:
         return node_id
 
     def structural_edges(self, seeds: list[str]) -> list[tuple[tuple[str, str, str], float]]:
-        """Read bounded one-hop edges used by live structural scoring."""
+        """Read bounded one-hop edges, anchoring each traversal on node identity."""
+        if not seeds:
+            return []
+        # Resolve afresh so another process can restore or update the graph.
+        expected = set(seeds)
+        identity_limit = len(expected) + 1
+        identities = self.query(
+            "MATCH (n:Function) WHERE n.uid IN $seeds "
+            f"RETURN n.id AS id, n.uid AS uid LIMIT {identity_limit}",
+            {"seeds": seeds},
+        )
+        if self.trace:
+            self.last_queries[-1]["rows"] = len(identities.rows)
+            self.last_queries[-1]["limit_reached"] = len(identities.rows) == identity_limit
+        node_ids = sorted({int(row["id"]) for row in identities.rows})
+        if (len(identities.rows) != len(expected) or len(node_ids) != len(expected)
+                or {row["uid"] for row in identities.rows} != expected):
+            raise RuntimeError("structural seeds are missing or ambiguous; refusing partial ranking")
         found = []
         for rel in ("CALLS", "CO_CHANGED", "TESTED_BY", "DEFINES"):
-            result = self.query(
-                f"MATCH (a:Function)-[r:{rel}]->(b:Function) "
-                "WHERE a.uid IN $seeds OR b.uid IN $seeds "
-                "RETURN a.uid AS src, b.uid AS dst, r.w AS w ORDER BY a.uid, b.uid LIMIT 1000",
-                {"seeds": seeds},
-            )
-            if self.trace:
-                self.last_queries[-1]["rows"] = len(result.rows)
-                self.last_queries[-1]["limit_reached"] = len(result.rows) == 1000
-            if len(result.rows) == 1000:
-                raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
-            for row in result.rows:
-                found.append(((row["src"], rel, row["dst"]), float(row.get("w") or 1.0)))
+            edges = {}
+            for incoming in (False, True):
+                pattern = (
+                    f"(b:Function {{id: $id}})<-[r:{rel}]-(a:Function)" if incoming else
+                    f"(a:Function {{id: $id}})-[r:{rel}]->(b:Function)"
+                )
+                for node_id in node_ids:
+                    result = self.query(
+                        f"MATCH {pattern} "
+                        "RETURN a.uid AS src, b.uid AS dst, r.w AS w "
+                        "ORDER BY a.uid, b.uid LIMIT 1000",
+                        {"id": node_id},
+                    )
+                    if self.trace:
+                        self.last_queries[-1]["rows"] = len(result.rows)
+                        self.last_queries[-1]["limit_reached"] = len(result.rows) == 1000
+                    if len(result.rows) == 1000:
+                        raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
+                    for row in result.rows:
+                        key = (row["src"], rel, row["dst"])
+                        edges[key] = float(row.get("w") or 1.0)
+                    # The old global query used the same per-relation ceiling.
+                    if len(edges) >= 1000:
+                        raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
+            # Both seeds may touch an edge. Count it once, in the old query order.
+            found.extend(sorted(edges.items()))
         return found
 
     def _exec(self, cypher: str, params: dict | None = None) -> None:
