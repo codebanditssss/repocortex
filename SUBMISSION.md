@@ -22,16 +22,17 @@ Coding agents spend a large share of every task just finding where to edit. On a
 
 RepoCortex stores the codebase as a graph in HydraDB: files, classes, functions, tests, concepts, and the `CALLS`, `CO_CHANGED`, `TESTED_BY`, and `DEFINES` edges between them. Given a bug report it seeds from dense and BM25 hits, walks one weighted hop, mixes in the past fixes of similar tickets, and returns ranked functions with the path that got each one there.
 
-Then it learns. Historical replay or the `learn_from_fix` tool compares its guess with a confirmed fix diff and runs four operators: it stores the fix as a `FIXED_IN` memory edge and reweights the edges that led to the right or wrong answer, writes `SHORTCUT` edges for detours it keeps taking, links missing neighbors when the answer was out of reach, and merges or splits concepts. The changed edges go back to HydraDB.
+Then it learns. Historical replay or the `learn_from_fix` tool compares its guess with a confirmed fix diff and runs four operators: it stores the fix as a `FIXED_IN` memory edge and reweights the edges that led to the right or wrong answer, writes `SHORTCUT` edges for detours it keeps taking, links missing neighbors when the answer was out of reach, and merges or splits concepts. Historical replay writes the changed edges back to HydraDB. Live `learn_from_fix` saves confirmed feedback in a namespaced HydraDB journal and reconstructs its scoring updates in memory when the agent restarts.
 
-Agents use it through an MCP server with two tools, `locate_bug` and `learn_from_fix`, from Cursor, Claude Code, or any MCP client. Automatic ingestion from merged pull requests is not implemented.
+Agents use it through an MCP server with three tools, `locate_bug`, `learn_from_fix`, and `graph_status`, from Cursor, Claude Code, or any MCP client. Automatic ingestion from merged pull requests is not implemented.
 
 ## How we use HydraDB
 
 - Self-hosted open-source HydraDB 0.4.0 in Docker is the system of record for the graph: 46,443 nodes and 138,150 edges initially; the saved learned export has 48,663 nodes and 141,435 edges.
 - Batch loads with `UNWIND ... MERGE` on our own ids. Reads are paged and checked against `count(*)` so silent truncation would be caught. There was none.
 - Every edge carries `w`, `hits`, and `misses`. Learned edges (`FIXED_IN`, `SHORTCUT`, `SAME_AS`, `REFINES`) and new weights are written back with `UNWIND ... MATCH ... SET` during the replay.
-- Live serving can read bounded structural edges from HydraDB and return query receipts; learned fix memory remains cached. The published accuracy experiment uses the offline scorer, so it is not a measurement of the live serving path.
+- Live serving reads bounded structural edges from HydraDB and returns query receipts; learned fix memory remains cached. All 319 held-out rows match the offline scorer’s top ten rankings and four-decimal scores on the restored local serving path. A separate eight-query production check matches too. These are serving-parity checks, not new accuracy measurements.
+- A real confirmed Django fix is persisted and replayed in a fresh Python process with the same rankings. Repeated submission is idempotent; each feedback namespace is isolated. This demonstrates the learning mechanism, not an additional held-out accuracy gain.
 - The same client also speaks the hosted `POST /byog/query` API, so moving to HydraDB Cloud is a config change.
 
 ## Why a graph beats a vector store here
@@ -48,6 +49,7 @@ Retrospective replay of 1,281 Django fix commits in time order, scored on 319 la
 - Two curves that rise earlier, both outside the holdout: on a validation slice of the newest 256 training issues, fn Acc@10 goes 0.414 to 0.449 (peak 0.453) and MRR 0.380 to 0.414. Scoring each training issue before learning from it, the learning graph ends +3.4 points of Acc@10 and +3.3 points of MRR above a frozen replay (0.472 vs 0.439). Over the last 100 issues learning holds 0.460 while frozen falls to 0.410.
 - Claude Sonnet 5.5 agent on 30 held-out bugs: 16% fewer input tokens with the tool, 27% fewer and 22% lower cost when told to call it first. Top-1 correctness was 12/30 without the tool and 13/30 in both tool conditions; this does not establish an accuracy gain.
 - In the saved 30-task study, `locate_bug` alone gets the top-1 function 0.47 of the time, the agent alone 0.40. Retrieval makes no generation-model call.
+- Hosted search check: 40 requests at four concurrent clients, 40 successful live responses, p50 3.41 s and p95 3.69 s across four repeated reports. This is a small smoke test, not a sustained capacity measurement.
 - Saved phase-2 load test: 1,251 requests, 0 failures, p95 44 ms, 63 requests per second. This measured the smaller cached ranker, not live HydraDB traversal latency.
 
 The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, row-paired bootstrap corrections, and the 316-row sensitivity check. The code snapshot includes later fixes, so this is retrospective localization rather than a historical checkout for each issue. Results cover one repository and a small agent eval; they do not establish superiority over other projects.
@@ -55,7 +57,7 @@ The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, 
 ## Demo
 
 - Video (90-second walkthrough): VIDEO_LINK
-- Live demo: https://repocortex.vercel.app/app/locate (Vercel frontend; live search currently depends on the demonstration host)
+- Live demo: https://repocortex.vercel.app/app/locate (Vercel frontend with a Railway-hosted API and HydraDB)
 - Screenshots: `docs/img/`
 - Recording walkthrough: [demo script](docs/demo-script.md)
 

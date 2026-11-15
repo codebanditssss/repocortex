@@ -16,7 +16,7 @@ RepoCortex helps maintainers and coding agents investigate unfamiliar code. Give
 
 We replayed **1,281 Django fixes** in chronological order and evaluated on **319 held-out fix commits**. Strict top-10 function accuracy increased from **45.1% with learning off to 48.3% after replay**. The paired improvement is **3.1 percentage points**, with a 95% bootstrap interval of **0.9–5.6 points**.
 
-Learning currently runs through historical replay or the `learn_from_fix` tool. Automatic ingestion from merged pull requests is planned.
+Learning runs through historical replay or confirmed diffs submitted to `learn_from_fix`; merged pull requests are not ingested automatically.
 
 ## Start here
 
@@ -25,7 +25,7 @@ Learning currently runs through historical replay or the `learn_from_fix` tool. 
 | Inspect the measured learning curve | [results](#measured-results), [raw checkpoints](results/curve.json) |
 | Explore the recorded demo without a database or API key | [dashboard setup](#try-the-dashboard) |
 | Understand what HydraDB does | [architecture and database boundary](#how-it-works) |
-| Connect a coding agent | [MCP setup](#use-it-from-your-agent) |
+| Connect a coding agent | [Local setup and first feedback](docs/local-setup.md), [MCP tools](#use-it-from-your-agent) |
 | Rerun the experiment | [reproduction instructions](#reproduce-the-replay) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |
 
@@ -170,7 +170,15 @@ The screens below show the recorded-results explorer. They illustrate the interf
 
 ## Use it from your agent
 
-Requires the Python environment below and these runtime files, which are not included in a fresh clone:
+For a complete sequence, follow [local setup and first feedback](docs/local-setup.md). Start from the repository root with Python 3.11+:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -e .
+.venv/bin/python scripts/preflight.py
+```
+
+The preflight reports missing packages or runtime files without loading a model or writing to the database. A fresh clone needs these four runtime files:
 
 ```text
 data/corpus.json
@@ -181,9 +189,10 @@ data/learned_state.npz
 
 Recover them from the original experiment or generate a new runtime with the replay. The graph export alone does not include source text, embeddings or ordered fix memory.
 
-From the repository root:
+After recovering matching runtime files and restoring HydraDB, check the connection and launch the read-only HTTP MCP server:
 
 ```sh
+.venv/bin/python scripts/preflight.py --database
 .venv/bin/python scripts/mcp_server.py --http
 ```
 
