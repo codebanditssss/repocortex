@@ -121,7 +121,7 @@ export function Hero({ ticket, evaluation }: {
         <div className="hero-benchmark" aria-label="Strict function accuracy comparison">
           <p className="sc">Strict Function Acc@10</p>
           <dl>{([['No graph', lexical.dense_bm25], ['Frozen', lexical.frozen], ['Learned', lexical.learned]] as const).map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="num">{(value['function_acc@10'] * 100).toFixed(1)}%</dd></div>)}</dl>
-          <p className="hero-benchmark-scope">{lexical.n} retrospective Django fix rows · <a href="#replay">See the measured curve</a></p>
+          <p className="hero-benchmark-scope">{lexical.n} retrospective Django fix rows</p>
           <details><summary>Scope and limitations</summary><p>All gold functions must appear in the top ten. This is one recorded Django snapshot, which includes later fixes. Three test rows share tickets with training; excluding them preserves the gain. <a href="https://github.com/codebanditssss/hydradb-hack/blob/main/docs/evaluation-audit.md">Read the evaluation audit</a>.</p></details>
         </div>
       </div>

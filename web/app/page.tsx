@@ -41,8 +41,8 @@ export default function Home() {
         <Link className="mark" href="/" aria-label="RepoCortex home">Repo<i>Cortex</i></Link>
         <span className="running-note">A field manual for a codebase that learns.</span>
         <nav aria-label="Main navigation">
-          <Link href="/app">Field manual <span aria-hidden="true">→</span></Link>
-          <a href="#install">Install <span aria-hidden="true">↓</span></a>
+          <Link href="/app">Results <span aria-hidden="true">→</span></Link>
+          <a href="#install">Setup <span aria-hidden="true">↓</span></a>
         </nav>
       </header>
 
@@ -174,17 +174,17 @@ export default function Home() {
       <footer id="install" className="install-section">
         <p className="sc section-index"><span className="num">07</span> / Take it with you</p>
         <div className="install-grid">
-          <div><h2>It remembers<br /><i>every fix.</i></h2>
-            <p className="section-dek">One MCP server. Works with Claude Code, Cursor and anything else that speaks MCP.</p></div>
+          <div><h2>Search with<br /><i>your agent.</i></h2>
+            <p className="section-dek">Use local search from an MCP-compatible coding agent.</p></div>
           <div className="install-command">
-            <p className="sc">Start the local MCP server</p>
+            <p className="sc">Start read-only MCP search</p>
             <CopyCommand />
-            <p className="news source-note">Run from the repository root after installing Python dependencies and restoring the runtime files. HTTP endpoint: http://127.0.0.1:8766/mcp.</p>
-            <Link className="landing-primary" href="/app">Open the field manual <span aria-hidden="true">→</span></Link>
-            <Link className="text-link" href="/app/connect">Connection notes <span aria-hidden="true">→</span></Link>
+            <p className="news source-note">Requires the Python environment, runtime files and graph setup. HTTP: http://127.0.0.1:8766/mcp. For confirmed-fix feedback, use the local stdio setup below.</p>
+            <Link className="landing-primary" href="/app">Explore the results <span aria-hidden="true">→</span></Link>
+            <Link className="text-link" href="/app/connect">Connect your agent <span aria-hidden="true">→</span></Link>
           </div>
         </div>
-        <div className="landing-colophon"><Link className="mark" href="/">Repo<i>Cortex</i></Link><p className="news">Measured on {evaluation.holdout} held-out Django fix rows. Fixtures marked where used.</p><a href="#main-content">Back to the graph ↑</a></div>
+        <div className="landing-colophon"><Link className="mark" href="/">Repo<i>Cortex</i></Link><p className="news">Measured on {evaluation.holdout} held-out Django fix rows. Fixtures marked where used.</p><a href="#main-content">Back to top ↑</a></div>
       </footer>
     </div>
   );
