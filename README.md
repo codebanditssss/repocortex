@@ -135,7 +135,7 @@ Relationship types include `CALLS`, `CO_CHANGED`, `TESTED_BY`, `DEFINES`, `FIXED
 Requires Node.js 20.9+ and npm. No database, runtime dataset or model API key is needed to inspect the saved results.
 
 ```sh
-git clone https://github.com/codebanditssss/hydradb-hack.git
+git clone https://github.com/codebanditssss/repocortex.git
 cd hydradb-hack/web
 npm ci
 npm run dev

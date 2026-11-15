@@ -23,7 +23,7 @@ export default function Load() {
         </tbody></table>
         <p className="figure-note">{load.limitations}</p>
       </section>
-      <p className="manual-endnote"><a href="https://github.com/codebanditssss/hydradb-hack/blob/main/results/hosted_search_check_40.json" target="_blank" rel="noreferrer">Read all 40 response records →</a> · <a href="https://github.com/codebanditssss/hydradb-hack/blob/main/results/loadtest.json" target="_blank" rel="noreferrer">Earlier local cached Locust run</a></p>
+      <p className="manual-endnote"><a href="https://github.com/codebanditssss/repocortex/blob/main/results/hosted_search_check_40.json" target="_blank" rel="noreferrer">Read all 40 response records →</a> · <a href="https://github.com/codebanditssss/repocortex/blob/main/results/loadtest.json" target="_blank" rel="noreferrer">Earlier local cached Locust run</a></p>
     </div>
   );
 }

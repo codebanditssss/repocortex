@@ -63,7 +63,7 @@ The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, 
 
 ## Repository
 
-https://github.com/codebanditssss/hydradb-hack
+https://github.com/codebanditssss/repocortex
 
 ## Team
 
