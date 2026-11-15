@@ -32,8 +32,15 @@
   --font-hand: var(--font-reenie), cursive;
 }
 
-* { box-sizing: border-box; scrollbar-width: none; }
-*::-webkit-scrollbar { display: none; }
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink3) var(--paper);
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: var(--paper); }
+*::-webkit-scrollbar-thumb { background: var(--ink3); border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--ink2); }
 
 /* Native scrolling stays intact; motion follows the reader's scroll position. */
 @supports (animation-timeline: view()) {
