@@ -21,6 +21,9 @@ MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 6 + 1024
 def make_handler(ranker):
     class Handler(BaseHTTPRequestHandler):
         protocol_version = "HTTP/1.1"
+        timeout = 15
+        server_version = "RepoCortex"
+        sys_version = ""
 
         def log_message(self, fmt, *args):
             return
@@ -30,6 +33,10 @@ def make_handler(ranker):
             self.send_response(code)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Connection", "close")
+            self.close_connection = True
             self.end_headers()
             self.wfile.write(body)
 
@@ -47,8 +54,12 @@ def make_handler(ranker):
             if self.path.split("?", 1)[0] != "/locate":
                 self._send(404, {"error": "not found"})
                 return
+            lengths = self.headers.get_all("Content-Length", [])
+            if self.headers.get("Transfer-Encoding") or len(lengths) != 1 or not lengths[0].isascii() or not lengths[0].isdigit():
+                self._send(400, {"error": "send one valid content length without transfer encoding"})
+                return
             try:
-                length = int(self.headers.get("Content-Length") or 0)
+                length = int(lengths[0])
             except ValueError:
                 self._send(400, {"error": "invalid content length"})
                 return
@@ -56,7 +67,14 @@ def make_handler(ranker):
                 self._send(413, {"error": "report too large"})
                 self.close_connection = True
                 return
-            raw = self.rfile.read(length) if length else b"{}"
+            try:
+                raw = self.rfile.read(length) if length else b"{}"
+            except TimeoutError:
+                self._send(408, {"error": "request body timed out"})
+                return
+            if length and len(raw) != length:
+                self._send(400, {"error": "incomplete request body"})
+                return
             try:
                 body = json.loads(raw.decode("utf-8") or "{}")
             except (json.JSONDecodeError, UnicodeDecodeError):
@@ -69,10 +87,10 @@ def make_handler(ranker):
             if not report or len(report) > MAX_REPORT_CHARACTERS:
                 self._send(400, {"error": "report must contain 1 to 12000 characters"})
                 return
-            try:
-                k = int(body.get("k") or 10)
-            except (TypeError, ValueError):
-                k = 10
+            k = body.get("k", 10)
+            if type(k) is not int or not 1 <= k <= 20:
+                self._send(400, {"error": "k must be an integer from 1 to 20"})
+                return
             try:
                 payload = locate_report(ranker, report, k)
             except RankingBusyError:

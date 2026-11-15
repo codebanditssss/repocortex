@@ -1,12 +1,14 @@
+import { readLimitedBody, BodyTooLargeError } from "@/lib/request-body";
 import { isLocateResult } from "@/lib/live";
 
 export async function POST(request: Request) {
   let body;
   try {
-    const text = await request.text();
+    const text = await readLimitedBody(request, 12000 * 6 + 1024);
     if (text.length > 12000 * 6 + 1024) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
     body = JSON.parse(text);
-  } catch {
+  } catch (error) {
+    if (error instanceof BodyTooLargeError) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
     return Response.json({ error: "Send a valid bug report." }, { status: 400 });
   }
   if (!body || typeof body.report !== "string" || !body.report.trim() || body.report.length > 12000 || (body.k !== undefined && (!Number.isInteger(body.k) || body.k < 1 || body.k > 20))) {

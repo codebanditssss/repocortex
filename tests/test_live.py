@@ -123,6 +123,15 @@ class HttpTest(unittest.TestCase):
         try:
             for body in ([],{}, {"report":42},{"report":""}):
                 self.assertEqual(post(body)[0],400)
+            for k in (0, -1, 21, True, 1.5, "10", None):
+                self.assertEqual(post({"report": "bug", "k": k})[0], 400)
+            import socket
+            for framing in ("Content-Length: 2\r\nContent-Length: 2", "Content-Length: 2\r\nTransfer-Encoding: chunked", "Content-Length: +2"):
+                with socket.create_connection(server.server_address, timeout=2) as sock:
+                    sock.sendall(("POST /locate HTTP/1.1\r\nHost: localhost\r\n" + framing + "\r\n\r\n{}").encode())
+                    response = sock.recv(4096)
+                    self.assertIn(b"400 Bad Request", response)
+                    self.assertIn(b"Connection: close", response)
             for report, ascii_encoding in (("错" * 12000, False), ("错" * 12000, True), ("😀" * 12000, False)):
                 self.assertEqual(post({"report": report}, ensure_ascii=ascii_encoding)[0], 200)
             self.assertEqual(post({"report": "x" * 12001})[0], 400)
