@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -91,7 +92,8 @@ def make_handler(ranker):
 
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", "8765"))
+    host = os.environ.get("HOST", "127.0.0.1")
     ranker = load_ranker(root)
     try:
         from repocortex.config import Settings
@@ -100,8 +102,8 @@ def main() -> None:
         ranker.client = connect(Settings.load(root))
     except Exception:
         ranker.client = None
-    server = ThreadingHTTPServer(("127.0.0.1", port), make_handler(ranker))
-    print(f"listening http://127.0.0.1:{port}", flush=True)
+    server = ThreadingHTTPServer((host, port), make_handler(ranker))
+    print(f"listening http://{host}:{port}", flush=True)
     server.serve_forever()
 
 
