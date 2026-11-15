@@ -43,3 +43,13 @@ class BoltTimeoutTest(unittest.TestCase):
             self.assertEqual(args[0].timeout, 1.5)
             self.assertEqual(args[1], {"timeout": 99})
             self.assertEqual(driver_kwargs, {})
+
+    def test_writes_respect_hydradb_default_admission_limit(self):
+        with patch("repocortex.hydradb.bolt.GraphDatabase.driver") as connect:
+            session = connect.return_value.session.return_value.__enter__.return_value
+            session.run.return_value = []
+            client = BoltClient("bolt://unused", "unused", "unused")
+            client._exec("CREATE (n:Function {id: $id})", {"id": 1})
+            query = session.run.call_args.args[0]
+            self.assertGreater(query.timeout, 0)
+            self.assertLessEqual(query.timeout, 30.0)

@@ -180,7 +180,8 @@ class BoltClient:
         return found
 
     def _exec(self, cypher: str, params: dict | None = None) -> None:
-        self.query(cypher, params, timeout=60.0)
+        # HydraDB defaults to a 30-second admission limit, including writes.
+        self.query(cypher, params, timeout=30.0)
 
     def remember(self, uid: str, node_id: int) -> None:
         self.uid_to_id[uid] = node_id
