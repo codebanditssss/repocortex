@@ -1,0 +1,128 @@
+{
+  "scope": "synthetic persistence mechanism, not accuracy or generalization evidence",
+  "storage": "HydraDB journal; scoring edges reconstructed in memory",
+  "isolation": "random namespace, removed after verification; no corpus or benchmark edge writes",
+  "processes": [
+    {
+      "phase": "write",
+      "loaded": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-62afb878855a4a48be1439a72222e96a",
+        "replayed": 0
+      },
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "feedback": {
+        "ticket": 1202501695478588694,
+        "learned": [
+          "func:fixture.py:beta"
+        ],
+        "persistence": "hydradb feedback journal"
+      },
+      "memory_entries": 1,
+      "learned_edges": 1
+    },
+    {
+      "phase": "reload",
+      "loaded": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-62afb878855a4a48be1439a72222e96a",
+        "replayed": 1
+      },
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "feedback": {
+        "ticket": 1202501695478588694,
+        "learned": [
+          "func:fixture.py:beta"
+        ],
+        "skipped": "this report and diff were already learned"
+      },
+      "memory_entries": 1,
+      "learned_edges": 1
+    }
+  ],
+  "checks": {
+    "confirmed_function_promoted": true,
+    "fresh_process_restores_ranking": true,
+    "duplicate_not_relearned": true,
+    "journal_replayed": true,
+    "benchmark_function_count_unchanged": true
+  }
+}

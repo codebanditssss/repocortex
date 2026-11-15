@@ -1,10 +1,26 @@
 import asyncio
 import unittest
+from unittest.mock import patch
 
 from scripts.mcp_server import server
 
 
 class McpTest(unittest.TestCase):
+    def test_untrusted_feedback_and_invalid_inputs_do_not_load_ranker(self):
+        from scripts import mcp_server as m
+        with patch.object(m, "get_state") as state:
+            for report in ("", "x" * 12001):
+                with self.assertRaises(ValueError):
+                    m.locate_bug(report)
+            with self.assertRaises(ValueError):
+                m.locate_bug("bug", True)
+            with self.assertRaises(ValueError):
+                m.learn_from_fix("bug", "x" * 256001)
+            with patch.object(m, "_http_mode", True):
+                with self.assertRaises(ValueError):
+                    m.learn_from_fix("bug", "+++ b/a.py")
+            state.assert_not_called()
+
     def test_tools_are_registered(self):
         tools = asyncio.run(server.list_tools())
         names = sorted(tool.name for tool in tools)

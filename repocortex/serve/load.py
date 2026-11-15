@@ -125,9 +125,13 @@ def backend_status(ranker) -> dict:
 
 def locate_report(ranker, report: str, k: int = 10) -> dict:
     """Use live structural edges when connected; label cached learning separately."""
+    if getattr(ranker, "feedback_failed", False):
+        raise RuntimeError("feedback recovery required; restart the service")
     if not ranker.request_lock.acquire(timeout=REQUEST_LOCK_TIMEOUT_SECONDS):
         raise RankingBusyError("ranking is busy; try again shortly")
     try:
+        if getattr(ranker, "feedback_failed", False):
+            raise RuntimeError("feedback recovery required; restart the service")
         status = backend_status(ranker)
         if status.get("mode") == "error":
             raise RuntimeError("live graph health check failed; refusing cached fallback")

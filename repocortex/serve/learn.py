@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 from repocortex.learn.compress import PathCompressor
@@ -62,11 +61,14 @@ def functions_from_diff(diff: str, nodes: dict, limit: int = 8) -> list[str]:
 
 def learn_from_fix(ranker, report: str, diff: str, operators=None, state_path: Path | None = None) -> dict:
     """Predict, then learn from the functions the diff touches. The prediction is before the update."""
+    if getattr(ranker, "feedback_failed", False):
+        raise RuntimeError("feedback application failed; restart to replay the durable journal")
     golds = functions_from_diff(diff, ranker.nodes)
     if not golds:
         return {"learned": [], "predicted_before": locate(ranker, report, k=10), "error": "no functions in the diff matched the graph"}
-    digest = hashlib.sha256(f"{report}\n{diff}".encode("utf-8")).hexdigest()
-    ticket = 8_000_000 + (int(digest[:8], 16) % 1_000_000)
+    from repocortex.serve.feedback import feedback_ticket
+
+    ticket = feedback_ticket(report, diff)
     if any(int(item.get("ticket") or 0) == ticket for item in ranker.memory):
         return {
             "learned": golds,
@@ -84,20 +86,33 @@ def learn_from_fix(ranker, report: str, diff: str, operators=None, state_path: P
     }
     predicted = locate(ranker, report, k=10)
     if operators is None:
+        operators = getattr(ranker, "feedback_operators", None)
+    if operators is None:
         operators = make_operators(ranker, "full", lr=0.25, merger_every=40)
         for op in operators:
             if isinstance(op, PathCompressor):
                 op.hydrate(ranker.edges)
     from repocortex.learn.replay import learn_one
 
-    learn_one(ranker, issue, operators)
-    if hasattr(ranker, "flush"):
+    journal = getattr(ranker, "feedback_journal", None)
+    if journal is not None:
+        # Write ahead: a failed graph write must not create an in-memory success.
+        # On restart the committed event can be replayed if application crashes.
+        journal.append(report, diff, golds)
+    try:
+        learn_one(ranker, issue, operators)
+    except Exception:
+        if journal is not None:
+            ranker.feedback_failed = True
+        raise
+    if journal is None and hasattr(ranker, "flush"):
         ranker.flush()
-    if state_path is not None and hasattr(ranker, "save"):
+    if journal is None and state_path is not None and hasattr(ranker, "save"):
         ranker.save(state_path)
     return {
         "learned": golds,
         "ticket": ticket,
         "predicted_before": predicted,
         "files": files,
+        "persistence": "hydradb feedback journal" if journal is not None else "local snapshot" if state_path is not None else "memory",
     }

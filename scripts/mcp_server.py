@@ -12,6 +12,7 @@ streamable HTTP (http://127.0.0.1:8765/mcp):
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from threading import Lock
@@ -30,6 +31,14 @@ server = MCPServer(
 
 _state = None
 _state_lock = Lock()
+_http_mode = False
+MAX_DIFF_BYTES = 256_000
+
+def _validate_report(report: str) -> str:
+    if not isinstance(report, str) or not report.strip() or len(report) > 12000:
+        raise ValueError("report must contain 1 to 12000 characters")
+    return report.strip()
+
 
 
 def get_state():
@@ -60,6 +69,10 @@ def _load_state():
         ranker.client = client
     except Exception:
         client = None
+    namespace = os.environ.get("REPOCORTEX_FEEDBACK_NAMESPACE", "").strip()
+    if namespace:
+        from repocortex.serve.feedback import configure_feedback
+        configure_feedback(ranker, namespace, operators=operators)
     _state = {"ranker": ranker, "operators": operators, "root": root, "client": client}
     return _state
 
@@ -68,7 +81,9 @@ def _load_state():
 def locate_bug(report: str, k: int = 10) -> dict:
     from repocortex.serve.load import locate_report
 
-    k = max(1, min(int(k), 20))
+    report = _validate_report(report)
+    if type(k) is not int or not 1 <= k <= 20:
+        raise ValueError("k must be an integer from 1 to 20")
     return locate_report(get_state()["ranker"], report, k)
 
 
@@ -83,8 +98,16 @@ def graph_status() -> dict:
 def learn_from_fix(report: str, diff: str) -> dict:
     from repocortex.serve.learn import learn_from_fix as apply_fix
 
+    if _http_mode:
+        raise ValueError("feedback is available only through the trusted local stdio server")
+    report = _validate_report(report)
+    if not isinstance(diff, str) or not diff.strip() or len(diff.encode("utf-8")) > MAX_DIFF_BYTES:
+        raise ValueError("diff must contain 1 to 256000 UTF-8 bytes")
+    from repocortex.serve.load import RankingBusyError, REQUEST_LOCK_TIMEOUT_SECONDS
     state = get_state()
-    with state["ranker"].request_lock:
+    if not state["ranker"].request_lock.acquire(timeout=REQUEST_LOCK_TIMEOUT_SECONDS):
+        raise RankingBusyError("ranking is busy; try again shortly")
+    try:
         return apply_fix(
             state["ranker"],
             report,
@@ -92,15 +115,19 @@ def learn_from_fix(report: str, diff: str) -> dict:
             operators=state["operators"],
             state_path=state["root"] / "data" / "learned_state.npz",
         )
+    finally:
+        state["ranker"].request_lock.release()
 
 
 
 def main() -> None:
+    global _http_mode
     parser = argparse.ArgumentParser(description="RepoCortex MCP server")
     parser.add_argument("--http", action="store_true", help="serve streamable HTTP instead of stdio")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
+    _http_mode = args.http
     if args.http:
         server.run(
             "streamable-http",
