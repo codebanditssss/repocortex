@@ -445,3 +445,23 @@
 .live-examples { margin-top: 20px; }
 .live-examples > div { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; }
 .live-examples .underlined-control { font-size: 12px; }
+
+/* Narrow grid tracks must not inherit the intrinsic width of tables or code. */
+.overview-layout > *, .load-detail-grid > *, .graph-inventory-layout > *, .connect-layout > * { min-width: 0; }
+.replay-chart-meta, .manual-metric-switch { flex-wrap: wrap; }
+.run-record td, .connection-record code { overflow-wrap: anywhere; }
+@media (min-width: 768px) and (max-width: 1000px) {
+  .graph-inventory-layout { grid-template-columns: minmax(0, 1fr) minmax(240px, .8fr); gap: 24px; }
+  .replay-chart-meta { gap: 8px; }
+  .replay-main > .section-rule, .load-detail-grid .section-rule { flex-wrap: wrap; }
+  .replay-main > .section-rule .cap, .load-detail-grid .section-rule .cap { text-align: left; }
+}
+@media (max-width: 390px) {
+  .live-locate { padding-inline: 12px; }
+  .live-query-receipts > summary, .live-query-card > summary { gap: 10px; }
+  .live-query-card > summary > span { min-width: 0; overflow-wrap: anywhere; }
+  .shortcuts-dialog { padding: 18px; }
+  .shortcuts-dialog .section-rule h2 { font-size: 24px; }
+  .shortcuts-dialog dl > div { gap: 10px; }
+  .shortcuts-dialog dd { flex-shrink: 0; }
+}

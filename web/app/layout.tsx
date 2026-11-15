@@ -50,32 +50,33 @@ const departure = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://repocortex.vercel.app"),
+  applicationName: "RepoCortex",
   title: {
-    default: "RepoCortex | A repository field manual",
+    default: "RepoCortex | Find the functions. Learn from the fix.",
     template: "%s | RepoCortex",
   },
   description:
-    "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
+    "Find candidate functions for a bug report with a learning code graph. Inspect evidence from code relationships and past fixes in RepoCortex.",
   icons: { icon: "/icon.svg" },
   openGraph: {
-    title: "RepoCortex | A repository field manual",
+    type: "website",
+    siteName: "RepoCortex",
+    locale: "en_US",
+    title: "RepoCortex | Find the functions. Learn from the fix.",
     description:
-      "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
-    images: [
-      {
-        url: "/art/gh-social-1280x640.webp",
-        width: 1280,
-        height: 640,
-        alt: "RepoCortex: a code graph that learns from every fix. Plus 11.0 points over dense search, function Acc@10, interval 7.5 to 14.4.",
-      },
-    ],
+      "Find candidate functions for a bug report. Follow code relationships and past fixes, with evidence behind every result.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "RepoCortex | A repository field manual",
+    title: "RepoCortex | Find the functions. Learn from the fix.",
     description:
-      "A learning code graph that follows calls, imports, and past fixes to help find the next bug.",
-    images: ["/art/x-card-1200x675.webp"],
+      "Find candidate functions for a bug report. Follow code relationships and past fixes, with evidence behind every result.",
+    images: [{
+      url: "/opengraph-image",
+      width: 1200,
+      height: 630,
+      alt: "RepoCortex. Find the functions. Learn from the fix. A learning code graph powered by HydraDB.",
+    }],
   },
 };
 

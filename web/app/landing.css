@@ -420,3 +420,26 @@
 .hero-benchmark summary { cursor: pointer; }
 .hero-benchmark details p { margin-top: 8px; }
 @media (max-width: 480px) { .hero-benchmark dl { gap: 24px; } .hero-benchmark dd { font-size: 20px; } }
+
+/* Let code and data stay inside their grid columns instead of widening the page. */
+.hydra-section > *, .install-grid > *, .replay-intro > *, .curve-tables > * { min-width: 0; }
+.replay-controls { flex-wrap: wrap; }
+.replay-range { min-width: 140px; }
+.chart-heading, .terminal figcaption { flex-wrap: wrap; }
+.function-route li > span:last-child { min-width: 0; }
+@media (min-width: 768px) and (max-width: 1000px) {
+  .terminal-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding-inline: 14px; }
+  .terminal-stats > div + div { padding-left: 10px; }
+  .terminal-stats dd { font-size: 17px; }
+  .terminal-stats dt { overflow-wrap: anywhere; }
+}
+@media (max-width: 390px) {
+  .landing-head { flex-wrap: wrap; gap: 0 12px; padding-block: 8px; }
+  .landing-head nav { flex-wrap: wrap; gap: 8px 16px; }
+  .hero-bottom > a { flex-wrap: wrap; }
+  .replay-range label { flex-wrap: wrap; }
+  .terminal-stats { gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .terminal-stats > div + div { padding-left: 8px; }
+  .terminal-stats dd { font-size: 17px; }
+  .hero-benchmark dl { justify-content: space-between; gap: 12px; }
+}
