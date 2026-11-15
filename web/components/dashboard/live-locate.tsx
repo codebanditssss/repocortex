@@ -12,6 +12,7 @@ const examples = [
 export function LiveLocate() {
   const [report, setReport] = useState("");
   const [status, setStatus] = useState<BackendStatus | null>(null);
+  const [statusRevision, setStatusRevision] = useState(0);
   const [result, setResult] = useState<LocateResult | null>(null);
   const [pending, setPending] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -29,11 +30,15 @@ export function LiveLocate() {
   }, []);
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/status", { signal: controller.signal }).then((response) => response.json()).then((value) => {
+    fetch("/api/status", { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(5000)]) }).then((response) => {
+      if (!response.ok) throw new Error("Service status unavailable");
+      return response.json();
+    }).then((value) => {
       setStatus(isBackendStatus(value) ? value : { mode: "unavailable", connected: false });
     }).catch(() => { if (!controller.signal.aborted) setStatus({ mode: "unavailable", connected: false }); });
-    return () => { controller.abort(); request.current?.abort(); };
-  }, []);
+    return () => controller.abort();
+  }, [statusRevision]);
+  useEffect(() => () => request.current?.abort(), []);
   useEffect(() => {
     if (!pending) return;
     const started = Date.now();
@@ -75,8 +80,9 @@ export function LiveLocate() {
     entries.push({ query, index });
     receiptGroups.set(relation, entries);
   });
-  return <section className="live-locate" aria-labelledby="live-locate-title">
-    <div className="section-rule"><h2 id="live-locate-title">Follow a fresh <i>bug report.</i></h2><span className={`cap live-status${status?.connected ? " is-connected" : ""}`} role="status">{status === null ? "Checking service…" : status.connected ? "HydraDB connected" : status.mode === "replay" ? "Cached graph mode" : "Service offline"}</span></div>
+  return <section id="fresh-search" className="live-locate" aria-labelledby="live-locate-title" tabIndex={-1}>
+    <div className="section-rule"><h2 id="live-locate-title">Follow a fresh <i>bug report.</i></h2><span className={`cap live-status${status?.connected ? " is-connected" : ""}`} role="status">{status === null ? "Checking service…" : status.connected ? "HydraDB connected" : status.mode === "replay" ? "Cached graph mode" : "Status unavailable"}</span></div>
+    {status !== null && !status.connected && <div className="live-availability" role="note"><p>{status.mode === "replay" ? "The service is using a cached graph. Searches are fresh, but they will not produce live database query receipts." : "Live service status is unavailable. You can retry the connection or inspect saved predictions without a backend."}</p><div><button type="button" className="underlined-control" disabled={pending} onClick={() => { setStatus(null); setStatusRevision((value) => value + 1); }}>Check connection again</button><a className="underlined-control" href="#saved-evidence">Browse saved evidence →</a></div></div>}
     <div className="live-locate-grid"><form onSubmit={locate}>
       <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="live-report">What is going wrong in Django?</label><span><kbd>K</kbd> to edit</span></div><textarea ref={composer} id="live-report" value={report} disabled={pending} onChange={(event) => setReport(event.target.value)} onKeyDown={(event) => {
         if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); }
@@ -87,7 +93,7 @@ export function LiveLocate() {
       <div className="live-examples"><span className="sc">Try a report</span><div>{examples.map((example) => <button className="underlined-control" type="button" disabled={pending} key={example.label} onClick={() => { setReport(example.report); composer.current?.focus(); }}>{example.label} →</button>)}</div></div>
       <div className="live-method"><span className="sc">How to read a result</span><p>Start with the function, then open its evidence path. A ranking score compares candidates; it is not a probability that a function contains the bug.</p></div>
     </form><div className="live-search-results" aria-busy={pending}>
-      {error && <div className="live-error" role="alert"><strong>Search paused</strong><p>{error}</p><span>Saved evidence below remains available.</span></div>}
+      {error && <div className="live-error" role="alert"><strong>Search paused</strong><p>{error}</p><a className="underlined-control" href="#saved-evidence">Browse saved evidence while live search recovers →</a></div>}
       {pending && <div className="live-progress"><span className="sc" role="status">Searching · {elapsed}s elapsed</span><h3>Following the connections.</h3><p>Ranking candidates and collecting database query receipts. This can take several seconds.</p><button type="button" className="underlined-control" onClick={() => request.current?.abort()}>Cancel search</button></div>}
       {!result && !pending && !error && <div className="live-empty"><span className="sc">Report → functions → evidence</span><h3>A starting point for your next fix.</h3><p>Describe a bug to find functions worth investigating, with the graph evidence behind each suggestion.</p><div className="live-empty-steps"><span><b>01</b> Describe the failure</span><span><b>02</b> Inspect the suspects</span><span><b>03</b> Read the evidence</span></div></div>}
       {result && <><div className="live-result-heading"><h3>Functions to investigate</h3><span className="sc" role="status">{result.hits.length} candidates</span></div>

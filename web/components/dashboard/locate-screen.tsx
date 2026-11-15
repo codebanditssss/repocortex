@@ -41,7 +41,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
 
 
   return (
-    <div className="manual-page"><LiveLocate /><div className="locate-layout">
+    <div className="manual-page"><nav className="locate-modes" aria-label="Choose search mode"><a href="#fresh-search"><strong>Fresh report</strong><span>Rank functions for a new Django bug</span></a><a href="#saved-evidence"><strong>Saved evidence</strong><span>Inspect recorded held-out predictions · no live backend needed</span></a></nav><LiveLocate /><div id="saved-evidence" className="locate-layout" tabIndex={-1}>
       <section className="locate-composer" aria-label="Search held-out evidence">
         <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
@@ -72,7 +72,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
             {rank === hit.rank && <div id={`hit-receipt-${hit.rank}`} className="expanded-hit"><HitReceipt issue={issue} hit={hit} /></div>}
           </li></Fragment>)}</ol>
           <aside className="locate-endnote"><span className="sc">What this proves</span><p>These are saved predictions for real held-out issues, not fresh search results. A gold mark means the hit matches a function in the recorded fix. FIXED_IN and SHORTCUT expose the evidence behind a result; <b>dense + bm25</b> is a hybrid-search path, not a learned edge.</p></aside>
-        </> : <div className="locate-empty"><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Locate."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
+        </> : <div className="locate-empty"><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Search saved."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
       </section>
     </div></div>
   );
