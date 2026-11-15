@@ -2,51 +2,81 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from repocortex.learn.compress import PathCompressor
 from repocortex.learn.replay import make_operators
-from repocortex.mine.commits import hunk_lines
 from repocortex.serve.load import locate
 
 
 def functions_from_diff(diff: str, nodes: dict, limit: int = 8) -> list[str]:
-    """Map unified-diff hunks onto function nodes by file and line span."""
-    by_file: dict[str, list[int]] = {}
+    """Map changed new-file lines, excluding unchanged hunk context.
+
+    Deletion-only blocks map only when both surviving boundary lines belong to
+    the same function. Whole-function/boundary deletions require an old snapshot
+    and are deliberately not guessed from current line spans.
+    """
+    by_file: dict[str, set[int]] = {}
+    deletions: dict[str, list[tuple[int, int]]] = {}
     current = ""
-    pending: list[str] = []
-    for line in (diff or "").splitlines():
-        if line.startswith("+++ "):
-            if current:
-                new_lines, _old = hunk_lines("\n".join(pending))
-                by_file.setdefault(current, []).extend(new_lines)
-            pending = []
-            path = line[4:].strip()
-            if path == "/dev/null":
-                current = ""
-                continue
-            if path.startswith("b/"):
-                path = path[2:]
-            current = path
-            continue
-        if current:
-            pending.append(line)
-    if current:
-        new_lines, _old = hunk_lines("\n".join(pending))
-        by_file.setdefault(current, []).extend(new_lines)
+    new_line = None
+    pending_delete = False
+    old_remaining = new_remaining = 0
+
+    def finish_deletion():
+        nonlocal pending_delete
+        if pending_delete and current and new_line is not None:
+            deletions.setdefault(current, []).append((new_line - 1, new_line))
+        pending_delete = False
+
+    for line in (diff or "").split("\n"):
+        if line.startswith("diff --git "):
+            finish_deletion()
+            current, new_line = "", None
+        elif line.startswith("+++ ") and new_line is None:
+            path = line[4:].split("\t", 1)[0].strip()
+            current = "" if path == "/dev/null" else path.removeprefix("b/")
+        elif line.startswith("@@ "):
+            finish_deletion()
+            match = re.match(r"@@ -\d+(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
+            new_line = int(match.group(2)) if match else None
+            old_remaining = int(match.group(1) or 1) if match else 0
+            new_remaining = int(match.group(3) or 1) if match else 0
+        elif current and new_line is not None:
+            if line.startswith("-"):
+                pending_delete = True
+                old_remaining -= 1
+            elif line.startswith("+"):
+                # A replacement is represented by its added lines, not old offsets.
+                pending_delete = False
+                by_file.setdefault(current, set()).add(new_line)
+                new_line += 1
+                new_remaining -= 1
+            elif line.startswith(" "):
+                finish_deletion()
+                new_line += 1
+                old_remaining -= 1
+                new_remaining -= 1
+            if old_remaining <= 0 and new_remaining <= 0:
+                finish_deletion()
+                new_line = None
+    finish_deletion()
     scored: list[tuple[int, str]] = []
     for uid, node in nodes.items():
         if (node.get("label") or "") != "Function":
             continue
         path = node.get("file") or ""
-        lines = by_file.get(path)
-        if not lines:
+        lines = by_file.get(path, set())
+        removed = deletions.get(path, [])
+        if not lines and not removed:
             continue
         start = int(node.get("start") or 0)
         end = int(node.get("end") or start)
         if start <= 0:
             continue
         overlap = sum(1 for line_no in lines if start <= line_no <= end)
+        overlap += sum(1 for before, after in removed if start <= before <= after <= end)
         if overlap:
             scored.append((overlap, uid))
     scored.sort(key=lambda item: (-item[0], item[1]))

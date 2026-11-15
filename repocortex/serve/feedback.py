@@ -81,6 +81,8 @@ def configure_feedback(ranker, namespace: str, operators=None) -> dict:
         raise RuntimeError("durable feedback requires a connected HydraDB client")
     # Bind the journal to the exact base used for learning, not merely its paths.
     base = hashlib.sha256()
+    # Journal replay must use the same diff-label semantics as its writer.
+    base.update(b"repocortex-feedback-changed-lines-v2\0")
     base.update(json.dumps(ranker.nodes, sort_keys=True, separators=(",", ":")).encode())
     for key, props in sorted(ranker.edges.edges.items()):
         base.update(json.dumps([key, props], sort_keys=True, separators=(",", ":")).encode())

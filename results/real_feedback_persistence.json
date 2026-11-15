@@ -1,0 +1,487 @@
+{
+  "scope": "real Django report and confirmed diff; durability evidence, not held-out accuracy gain",
+  "snapshot": "f24f38c6b2825f15628c07bf2892f1664eed9361",
+  "ticket": 37442,
+  "dataset_split": "test",
+  "report_summary": "JSONL deserializer incorrectly treats Unicode line separators as record boundaries",
+  "commit": "c57c20ff4e8b98b21fa85029614f36c933830790",
+  "diff_source": "https://github.com/django/django/commit/c57c20ff4e8b98b21fa85029614f36c933830790.diff",
+  "diff_sha256": "64924e6ef6b6402cdcce829bf6473a16def3d5903a10b6e644a6dc15cf9bcba9",
+  "storage": "local HydraDB event journal; learned scoring state reconstructed in memory",
+  "model": "existing MiniLM embeddings and locally cached model; no retraining",
+  "runtime_sha256_before": {
+    "corpus.json": "3d5fcf21b9cfdd454d585e6bd6a7ad61f633e9693646e89f90536f48778052c8",
+    "embeddings.npz": "e956b93c4bee5c5482fd2ba984276e7b838637d8a90cd8f081275b8570ba1d24",
+    "learned_state.json": "8f5e45ebed9e4cc167b7f92e6f9d4856d0e485b59591d3f61e4fcc9c99e90cb1",
+    "learned_state.npz": "0f5bb7d8c79d10c025fa7d4d74e933e97696eff1042ae107108251205c6a4693",
+    "dataset.json": "eee50894a9fad293537fb41df531b106699f90164a0ced28dc996c519d3b3d49"
+  },
+  "runtime_sha256_after": {
+    "corpus.json": "3d5fcf21b9cfdd454d585e6bd6a7ad61f633e9693646e89f90536f48778052c8",
+    "embeddings.npz": "e956b93c4bee5c5482fd2ba984276e7b838637d8a90cd8f081275b8570ba1d24",
+    "learned_state.json": "8f5e45ebed9e4cc167b7f92e6f9d4856d0e485b59591d3f61e4fcc9c99e90cb1",
+    "learned_state.npz": "0f5bb7d8c79d10c025fa7d4d74e933e97696eff1042ae107108251205c6a4693",
+    "dataset.json": "eee50894a9fad293537fb41df531b106699f90164a0ced28dc996c519d3b3d49"
+  },
+  "graph_before": {
+    "labels": {
+      "Repo": 1,
+      "File": 2605,
+      "Class": 10510,
+      "Function": 8834,
+      "Test": 21603,
+      "Concept": 3222,
+      "Symptom": 622,
+      "Commit": 0,
+      "Issue": 1266,
+      "Episode": 0
+    }
+  },
+  "graph_after_cleanup": {
+    "labels": {
+      "Repo": 1,
+      "File": 2605,
+      "Class": 10510,
+      "Function": 8834,
+      "Test": 21603,
+      "Concept": 3222,
+      "Symptom": 622,
+      "Commit": 0,
+      "Issue": 1266,
+      "Episode": 0
+    }
+  },
+  "processes": [
+    {
+      "setup": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-real-f35bb786faf14c6e821041beb7e996c2",
+        "replayed": 0
+      },
+      "mapped_functions": [
+        {
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "start": 45,
+          "end": 50
+        }
+      ],
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._get_lines",
+          "line": 61,
+          "score": 0.6917,
+          "path": "django.core.serializers.jsonl.Deserializer.__init__ -CALLS-> django.core.serializers.jsonl.Deserializer._get_lines (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "line": 45,
+          "score": 0.677,
+          "path": "django.core.serializers.jsonl.Deserializer._get_lines -CALLS-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.00)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Serializer.end_object",
+          "line": 31,
+          "score": 0.6714,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._handle_object",
+          "line": 52,
+          "score": 0.6626,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_serialization",
+          "line": 38,
+          "score": 0.6572,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 6,
+          "uid": "func:django/http/request.py:django.http.request.bytes_to_text",
+          "file": "django/http/request.py",
+          "qualname": "django.http.request.bytes_to_text",
+          "line": 835,
+          "score": 0.653,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 7,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer.__init__",
+          "line": 64,
+          "score": 0.6451,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 8,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_object",
+          "line": 44,
+          "score": 0.6437,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 9,
+          "uid": "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+          "file": "django/core/serializers/base.py",
+          "qualname": "django.core.serializers.base.DeserializationError.WithData",
+          "line": 29,
+          "score": 0.6417,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 10,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer._handle_object",
+          "line": 75,
+          "score": 0.6341,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "line": 45,
+          "score": 0.758,
+          "path": "issue #2072322096363052628 sim 1.00 -FIXED_IN-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.00) | django.core.serializers.jsonl.Deserializer._get_lines -CALLS-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.08)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._get_lines",
+          "line": 61,
+          "score": 0.6927,
+          "path": "django.core.serializers.jsonl.Deserializer.__init__ -CALLS-> django.core.serializers.jsonl.Deserializer._get_lines (w 1.08)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Serializer.end_object",
+          "line": 31,
+          "score": 0.6714,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._handle_object",
+          "line": 52,
+          "score": 0.6626,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_serialization",
+          "line": 38,
+          "score": 0.6572,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 6,
+          "uid": "func:django/http/request.py:django.http.request.bytes_to_text",
+          "file": "django/http/request.py",
+          "qualname": "django.http.request.bytes_to_text",
+          "line": 835,
+          "score": 0.653,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 7,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer.__init__",
+          "line": 64,
+          "score": 0.6451,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 8,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_object",
+          "line": 44,
+          "score": 0.6437,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 9,
+          "uid": "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+          "file": "django/core/serializers/base.py",
+          "qualname": "django.core.serializers.base.DeserializationError.WithData",
+          "line": 29,
+          "score": 0.6417,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 10,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer._handle_object",
+          "line": 75,
+          "score": 0.6341,
+          "path": "dense + bm25"
+        }
+      ],
+      "memory_before": 1281,
+      "memory_after": 1282,
+      "feedback": {
+        "ticket": 2072322096363052628,
+        "learned": [
+          "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__"
+        ],
+        "persistence": "hydradb feedback journal"
+      },
+      "duplicate_skipped": true
+    },
+    {
+      "setup": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-real-f35bb786faf14c6e821041beb7e996c2",
+        "replayed": 1
+      },
+      "mapped_functions": [
+        {
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "start": 45,
+          "end": 50
+        }
+      ],
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "line": 45,
+          "score": 0.758,
+          "path": "issue #2072322096363052628 sim 1.00 -FIXED_IN-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.00) | django.core.serializers.jsonl.Deserializer._get_lines -CALLS-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.08)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._get_lines",
+          "line": 61,
+          "score": 0.6927,
+          "path": "django.core.serializers.jsonl.Deserializer.__init__ -CALLS-> django.core.serializers.jsonl.Deserializer._get_lines (w 1.08)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Serializer.end_object",
+          "line": 31,
+          "score": 0.6714,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._handle_object",
+          "line": 52,
+          "score": 0.6626,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_serialization",
+          "line": 38,
+          "score": 0.6572,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 6,
+          "uid": "func:django/http/request.py:django.http.request.bytes_to_text",
+          "file": "django/http/request.py",
+          "qualname": "django.http.request.bytes_to_text",
+          "line": 835,
+          "score": 0.653,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 7,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer.__init__",
+          "line": 64,
+          "score": 0.6451,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 8,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_object",
+          "line": 44,
+          "score": 0.6437,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 9,
+          "uid": "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+          "file": "django/core/serializers/base.py",
+          "qualname": "django.core.serializers.base.DeserializationError.WithData",
+          "line": 29,
+          "score": 0.6417,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 10,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer._handle_object",
+          "line": 75,
+          "score": 0.6341,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer.__init__",
+          "line": 45,
+          "score": 0.758,
+          "path": "issue #2072322096363052628 sim 1.00 -FIXED_IN-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.00) | django.core.serializers.jsonl.Deserializer._get_lines -CALLS-> django.core.serializers.jsonl.Deserializer.__init__ (w 1.08)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._get_lines",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._get_lines",
+          "line": 61,
+          "score": 0.6927,
+          "path": "django.core.serializers.jsonl.Deserializer.__init__ -CALLS-> django.core.serializers.jsonl.Deserializer._get_lines (w 1.08)"
+        },
+        {
+          "rank": 3,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Serializer.end_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Serializer.end_object",
+          "line": 31,
+          "score": 0.6714,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 4,
+          "uid": "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer._handle_object",
+          "file": "django/core/serializers/jsonl.py",
+          "qualname": "django.core.serializers.jsonl.Deserializer._handle_object",
+          "line": 52,
+          "score": 0.6626,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 5,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_serialization",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_serialization",
+          "line": 38,
+          "score": 0.6572,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 6,
+          "uid": "func:django/http/request.py:django.http.request.bytes_to_text",
+          "file": "django/http/request.py",
+          "qualname": "django.http.request.bytes_to_text",
+          "line": 835,
+          "score": 0.653,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 7,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer.__init__",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer.__init__",
+          "line": 64,
+          "score": 0.6451,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 8,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Serializer.end_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Serializer.end_object",
+          "line": 44,
+          "score": 0.6437,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 9,
+          "uid": "func:django/core/serializers/base.py:django.core.serializers.base.DeserializationError.WithData",
+          "file": "django/core/serializers/base.py",
+          "qualname": "django.core.serializers.base.DeserializationError.WithData",
+          "line": 29,
+          "score": 0.6417,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 10,
+          "uid": "func:django/core/serializers/json.py:django.core.serializers.json.Deserializer._handle_object",
+          "file": "django/core/serializers/json.py",
+          "qualname": "django.core.serializers.json.Deserializer._handle_object",
+          "line": 75,
+          "score": 0.6341,
+          "path": "dense + bm25"
+        }
+      ],
+      "memory_before": 1282,
+      "memory_after": 1282,
+      "feedback": {
+        "ticket": 2072322096363052628,
+        "learned": [
+          "func:django/core/serializers/jsonl.py:django.core.serializers.jsonl.Deserializer.__init__"
+        ],
+        "skipped": "this report and diff were already learned"
+      },
+      "duplicate_skipped": true
+    }
+  ],
+  "checks": {
+    "diff_matches_upstream_commit": true,
+    "actual_diff_maps_to_confirmed_function": true,
+    "one_feedback_event_learned": true,
+    "fresh_process_restores_exact_ranking": true,
+    "fresh_process_replays_one_event": true,
+    "duplicates_skipped": true,
+    "runtime_files_unchanged": true,
+    "benchmark_node_counts_unchanged_after_cleanup": true,
+    "namespace_cleaned": true
+  }
+}
