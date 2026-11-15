@@ -107,6 +107,17 @@ class LiveTest(unittest.TestCase):
         self.assertEqual(acquired, [True])
 
 class HttpTest(unittest.TestCase):
+    def test_failed_feedback_marks_health_degraded_even_with_reachable_database(self):
+        from repocortex.serve.load import backend_status
+        ranker = LiveTest().ranker()
+        ranker.feedback_failed = True
+        with patch.object(ranker.client, "ping") as ping:
+            result = backend_status(ranker)
+        self.assertEqual(result["mode"], "error")
+        self.assertFalse(result["connected"])
+        self.assertIn("recovery required", result["detail"])
+        ping.assert_not_called()
+
     def test_health_does_not_expose_connection_errors(self):
         from repocortex.serve.load import backend_status
         ranker = LiveTest().ranker()

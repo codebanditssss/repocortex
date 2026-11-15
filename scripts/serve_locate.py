@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import io
 import os
 import sys
 import time
@@ -18,6 +19,25 @@ from repocortex.serve.load import RankingBusyError, backend_status, load_ranker,
 MAX_REPORT_CHARACTERS = 12000
 # JSON can escape each character as six ASCII bytes, plus envelope overhead.
 MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 6 + 1024
+REQUEST_READ_TIMEOUT = 15
+
+
+class DeadlineSocketReader(io.RawIOBase):
+    """Apply one deadline across request-line, headers and body, even on drips."""
+    def __init__(self, connection, timeout):
+        super().__init__()
+        self.connection = connection
+        self.deadline = time.monotonic() + timeout
+
+    def readable(self):
+        return True
+
+    def readinto(self, buffer):
+        remaining = self.deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError("request read deadline exceeded")
+        self.connection.settimeout(remaining)
+        return self.connection.recv_into(buffer)
 
 
 class ThreadingHTTPServer(_ThreadingHTTPServer):
@@ -66,6 +86,11 @@ def make_handler(ranker):
         timeout = 15
         server_version = "RepoCortex"
         sys_version = ""
+
+        def setup(self):
+            super().setup()
+            self.rfile.close()
+            self.rfile = io.BufferedReader(DeadlineSocketReader(self.connection, REQUEST_READ_TIMEOUT))
 
         def log_message(self, fmt, *args):
             return
@@ -119,7 +144,7 @@ def make_handler(ranker):
                 return
             try:
                 body = json.loads(raw.decode("utf-8") or "{}")
-            except (json.JSONDecodeError, UnicodeDecodeError):
+            except (json.JSONDecodeError, UnicodeDecodeError, RecursionError):
                 self._send(400, {"error": "bad json"})
                 return
             if not isinstance(body, dict) or not isinstance(body.get("report"), str):

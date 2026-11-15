@@ -94,7 +94,7 @@ def graph_status() -> dict:
     return backend_status(get_state()["ranker"])
 
 
-@server.tool(description="Predict, then learn from a unified diff of the fix. The prediction is made before the graph changes.")
+@server.tool(description="Predict, then learn from a unified diff of the fix in a configured durable feedback namespace. The prediction is made before the graph changes.")
 def learn_from_fix(report: str, diff: str) -> dict:
     from repocortex.serve.learn import learn_from_fix as apply_fix
 
@@ -105,6 +105,11 @@ def learn_from_fix(report: str, diff: str) -> dict:
         raise ValueError("diff must contain 1 to 256000 UTF-8 bytes")
     from repocortex.serve.load import RankingBusyError, REQUEST_LOCK_TIMEOUT_SECONDS
     state = get_state()
+    if getattr(state["ranker"], "feedback_journal", None) is None:
+        raise ValueError(
+            "feedback requires a durable namespace; set REPOCORTEX_FEEDBACK_NAMESPACE "
+            "and restart the local stdio server before calling learn_from_fix"
+        )
     if not state["ranker"].request_lock.acquire(timeout=REQUEST_LOCK_TIMEOUT_SECONDS):
         raise RankingBusyError("ranking is busy; try again shortly")
     try:
@@ -113,7 +118,6 @@ def learn_from_fix(report: str, diff: str) -> dict:
             report,
             diff,
             operators=state["operators"],
-            state_path=state["root"] / "data" / "learned_state.npz",
         )
     finally:
         state["ranker"].request_lock.release()

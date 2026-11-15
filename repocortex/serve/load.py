@@ -99,6 +99,12 @@ def load_ranker(root: Path) -> HybridRanker:
 
 def backend_status(ranker) -> dict:
     """Report whether scoring can ask HydraDB, or is replaying the on-disk graph."""
+    if getattr(ranker, "feedback_failed", False):
+        return {
+            "mode": "error",
+            "connected": False,
+            "detail": "feedback recovery required; restart to replay the durable journal",
+        }
     client = getattr(ranker, "client", None)
     if client is None:
         return {

@@ -1,10 +1,36 @@
 import socket
+import io
+import threading
 import time
 import unittest
 from unittest.mock import patch
-from scripts.serve_locate import read_request_body, ThreadingHTTPServer
+from scripts.serve_locate import read_request_body, ThreadingHTTPServer, DeadlineSocketReader
 
 class DeadlineTest(unittest.TestCase):
+    def test_header_drips_cannot_extend_connection_deadline(self):
+        reader, writer = socket.socketpair()
+        stopped = threading.Event()
+        def drip():
+            while not stopped.wait(.01):
+                try:
+                    writer.sendall(b"x")
+                except OSError:
+                    break
+        worker = threading.Thread(target=drip)
+        stream = io.BufferedReader(DeadlineSocketReader(reader, .08))
+        worker.start()
+        started = time.monotonic()
+        try:
+            with self.assertRaises(TimeoutError):
+                stream.readline(65537)
+            self.assertLess(time.monotonic() - started, .5)
+        finally:
+            stopped.set()
+            worker.join()
+            stream.close()
+            reader.close()
+            writer.close()
+
     def test_drip_upload_has_total_deadline(self):
         class Stream:
             def read1(self, _size):
