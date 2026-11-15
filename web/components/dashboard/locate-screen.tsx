@@ -27,12 +27,14 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   const [matches, setMatches] = useState<ProvenanceIssue[]>([demo]);
   const [matchIndex, setMatchIndex] = useState(0);
   const [rank, setRank] = useState(1);
+  const [searchCount, setSearchCount] = useState(0);
   const issue = matches[matchIndex];
   const samples = [demo, ...data.issues.filter((value) => value.ticket !== demo.ticket).slice(0, 2)];
 
   const search = (text: string) => {
     const results = searchProvenance(data, text);
     setQuery(text); setSubmitted(text.trim()); setMatches(results);
+    setSearchCount((count) => count + 1);
     setMatchIndex(0); setRank(results[0]?.hits[0]?.rank ?? 1);
   };
 
@@ -46,8 +48,15 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
           <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span>Saved evidence</span></div><textarea id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={4} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); search(event.currentTarget.value); }
           }} /></div>
-          <div className="locate-options"><span>repo <u>django</u></span><span>index <u>{data.holdout} issues</u></span><button className="btn" type="submit">Locate <kbd>Enter</kbd></button></div>
+          <div className="locate-options"><span>repo <u>django</u></span><span>index <u>{data.holdout} issues</u></span><button className="btn" type="submit">Search saved <kbd>Enter</kbd></button></div>
         </form>
+        <div className="saved-search-feedback" role="status" aria-live="polite" aria-atomic="true">
+          <p key={searchCount}>{searchCount === 0
+            ? `Example shown: ticket #${demo.ticket}. Enter another ticket, function, or filename to search.`
+            : !submitted ? "Enter a ticket number, function, or filename."
+            : matches.length ? `${matches.length} saved ${matches.length === 1 ? "record" : "records"} found for “${submitted}”. Results are shown in Ranked suspects.`
+            : `No saved records match “${submitted}”. For a new bug report, use the live search above.`}</p>
+        </div>
         <p id="locate-search-help" className="figure-note">Search this local evidence index by ticket number, function, or filename. Short phrases match those fields, not bug-report bodies. These saved results are separate from the fresh report search above.</p>
         <div className="sample-tickets"><h2 className="sc">Or try a held-out ticket</h2>{samples.map((sample) => <button type="button" key={sample.ticket} onClick={() => search(String(sample.ticket))}><span className="num">#{sample.ticket}</span><span>{shortFunctionName(sample.hits[0])}</span></button>)}</div>
         <dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl>

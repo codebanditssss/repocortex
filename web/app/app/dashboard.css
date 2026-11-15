@@ -473,3 +473,6 @@
   .shortcuts-dialog dl > div { gap: 10px; }
   .shortcuts-dialog dd { flex-shrink: 0; }
 }
+
+.saved-search-feedback { margin-top: 16px; border-left: 2px solid var(--ink3); padding-left: 12px; font-size: 12px; line-height: 1.6; color: var(--ink2); }
+.saved-search-feedback p { margin: 0; }
