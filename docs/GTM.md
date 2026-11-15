@@ -14,7 +14,7 @@ What we can already show on Django:
 
 - strict function Acc@10: 41.7% dense + BM25 without graph, 45.1% frozen graph, 48.3% after learning on 319 chronological fix-commit holdout rows; +3.4 percentage points from the structural graph, then +3.1 from learning
 - 16 to 27 percent fewer agent input tokens on 30 bugs
-- 12/12 valid hosted searches at three concurrent clients; 2.58s p50 and 3.86s p95 including network and queueing. This is a small smoke check, not a capacity guarantee. [Evidence](../results/hosted_search_check.json)
+- 40/40 valid hosted searches at four concurrent clients; 3.41s p50 and 3.69s p95 including network and queueing. This is a small smoke check, not a capacity guarantee. [Evidence](../results/hosted_search_check_40.json)
 
 This is a retrospective evaluation on a fixed Django snapshot that includes later fixes. Three test rows share tickets with training; excluding them leaves 316 rows and preserves the learning gain (45.6% to 48.7%). See the [evaluation audit](evaluation-audit.md).
 
@@ -35,6 +35,18 @@ Private code is the first objection. RepoCortex runs on self-hosted HydraDB 0.4.
 - Enterprise: multi-repo graphs, SSO, on-prem support, and an eval on the customer's own history before purchase.
 
 The initial pilot measures input tokens per investigation and whether all changed functions appear in the suggested context. It does not yet establish fewer dollars per resolved ticket, faster completed fixes, or higher agent accuracy. Pricing and demand remain hypotheses, not validated customer traction.
+
+## A pilot a platform lead can evaluate
+
+Start with one mature Python backend and the developers who already investigate its bugs. The initial offer is a self-hosted evaluation of that repository's history using the open-source tools available today. The GitHub app, managed plans and enterprise features above are proposals, not services currently sold.
+
+1. Agree on the evaluation before running it: reserve later fixes as a holdout, group repeated tickets together, and compare dense + BM25, the frozen graph and learning on the same reports. Keep a separate development slice for configuration choices.
+2. Connect the local MCP server and inspect five representative reports. Check that candidate paths and lines refer to the indexed snapshot, that the service reports its live or replay mode, and that the returned graph queries explain the ranking workflow. See the [setup instructions](../README.md#use-it-from-your-agent).
+3. Run the same coding agent with and without `locate_bug` on the reserved tasks. Record input tokens, tool calls, wall time and correctness separately. Count failed searches and setup costs too; fewer tokens alone do not prove cheaper completed fixes.
+4. Try confirmed-fix feedback in a separate namespace. Restart the MCP process and check that the feedback is restored without changing the benchmark runtime. Use one writer for that namespace.
+5. Continue only if the team's predefined success criteria are met. If learning does not beat the frozen graph, retain that result and investigate before enabling it for everyday use.
+
+The Django curve's early dip and the flat Flask pilot make repository-specific evaluation essential. The roughly 500-fix crossover observed on Django is not a minimum-history guarantee for another codebase. Setup also requires local corpus and embedding artifacts; this is not a one-click import of arbitrary repositories.
 
 ## Competition
 

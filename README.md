@@ -79,9 +79,9 @@ The tool-available arm used **16% fewer input tokens**; the locate-first arm use
 
 ## Serving checks
 
-The public search runs on Vercel with a persistent Railway HydraDB backend. In a small read-only check, **12/12 searches returned live results and query receipts at three concurrent clients**. End-to-end latency was **2.58s p50 / 3.86s p95**, including network and queueing. Four reports were repeated; this is a smoke check, not sustained capacity or cold-start evidence. [Raw responses and method](results/hosted_search_check.json)
+The public search runs on Vercel with a persistent Railway HydraDB backend. In a small read-only check, **40/40 searches returned live results and query receipts at four concurrent clients**. End-to-end latency was **3.41s p50 / 3.69s p95**, including network and queueing. Four reports were repeated; this is a smoke check, not sustained capacity or cold-start evidence. [Raw responses and method](results/hosted_search_check_40.json)
 
-On **32 evenly spaced held-out queries**, the exported graph and restored local HydraDB produced identical top-10 rankings. Benchmark-shaped and serving-shaped inputs also matched. Runtime hashes stayed unchanged. This checks a sample of the direct serving functions, not all 319 queries or the production HTTP deployment. [Parity audit](results/serving_parity.json)
+Across **all 319 held-out fix rows**, the exported graph and restored local HydraDB produced identical top-10 rankings and scores at four-decimal response precision. Benchmark-shaped and serving-shaped inputs also matched on every row. The five runtime artifact hashes stayed unchanged; no retraining or graph writes were performed. This checks the direct serving functions locally, not all 319 cases through production HTTP. A health-guard edit made during the run was not loaded by the audit process; source provenance is recorded with the result. [Full parity audit](results/serving_parity_full.json)
 
 In a separate production check, **8/8 preselected HTTP searches** matched offline top-10 rankings and scores, with 928 query receipts preserved. This is a bounded parity sample, not a full deployed accuracy evaluation. [Production evidence](results/production_parity.json)
 
@@ -192,13 +192,14 @@ Configure an MCP client that supports streamable HTTP to use `http://127.0.0.1:8
 | Tool | Purpose |
 |---|---|
 | `locate_bug(report, k)` | Rank candidate functions with file, line, score and evidence |
-| `learn_from_fix(report, diff)` | Predict before applying a unified fix diff, then update learned state |
+| `graph_status()` | Check the live database connection or cached replay mode |
+| `learn_from_fix(report, diff)` | Predict before learning a confirmed fix in a configured durable namespace; local stdio only |
 
 Retrieval uses local embeddings and makes no generation-model API calls. Model-backed agent evaluations are separate and require provider credentials.
 
 ## Durable local feedback
 
-For a trusted local MCP client, set `REPOCORTEX_FEEDBACK_NAMESPACE` to a unique project-and-snapshot name before starting the stdio server. Configure HydraDB through the existing environment variables. The server must connect successfully before it accepts durable feedback.
+For a trusted local MCP client, set `REPOCORTEX_FEEDBACK_NAMESPACE` to a unique project-and-snapshot name before starting the stdio server. Configure HydraDB through the existing environment variables. The server must connect successfully before it accepts durable feedback. Without a namespace, MCP rejects feedback instead of overwriting the shared runtime files; search remains available.
 
 ```sh
 REPOCORTEX_FEEDBACK_NAMESPACE=myrepo-snapshot-v1 .venv/bin/python scripts/mcp_server.py
@@ -207,6 +208,10 @@ REPOCORTEX_FEEDBACK_NAMESPACE=myrepo-snapshot-v1 .venv/bin/python scripts/mcp_se
 Confirmed `learn_from_fix` calls write a namespaced feedback journal to HydraDB before updating scoring. On a fresh process, the server validates the base snapshot fingerprint and replays those records into scoring memory and learned edges. Exact repeats are idempotent. Keep the base runtime files unchanged and use **one writer per namespace**. Back up the database and runtime files together. This is a durable journal with reconstructed scoring state, not a claim that all embeddings or learned edge weights are served directly from HydraDB.
 
 The public website remains read-only. MCP HTTP transport also refuses feedback; use trusted local stdio for writes. Reports are bounded to 12,000 characters and diffs to 256,000 UTF-8 bytes. A failed post-commit application blocks reads and writes until restart/replay.
+
+A real Django check used ticket **#37442** and its exact upstream fix diff: the confirmed `Deserializer.__init__` moved from rank 2 to rank 1 after feedback. A fresh Python process restored the same top-10 ranking and provenance, and repeated feedback was skipped. All five runtime hashes and benchmark node counts stayed unchanged; the temporary namespace was removed. This deliberately learns one test example to verify durability, **not** to measure held-out accuracy or generalization. It tests process restart, not database-server restart. [Raw verification](results/real_feedback_persistence.json)
+
+Feedback maps added lines onto the indexed new-file snapshot and excludes unchanged diff context. Deletion-only changes are mapped conservatively; a deleted function requires an old snapshot and is not guessed. Journals written with the previous whole-hunk mapper are rejected by the updated fingerprint; use a new namespace rather than silently replaying different labels.
 
 A two-function synthetic fixture changed its first-ranked function after feedback and retained that ranking in a fresh subprocess reading real HydraDB. Namespace cleanup left the benchmark graph untouched. This is persistence evidence, not an accuracy result. [Verification](results/persistent_feedback.json)
 

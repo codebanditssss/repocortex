@@ -60,6 +60,8 @@ def main():
     files = [root / "data" / name for name in ("corpus.json", "dataset.json", "embeddings.npz", "learned_state.json", "learned_state.npz")]
     digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
     before = {p.name: digest(p) for p in files}
+    source_files = [root / "repocortex" / part for part in ("serve/load.py", "retrieve/hybrid.py", "hydradb/bolt.py", "retrieve/textutil.py")]
+    source_before = {str(p.relative_to(root)): digest(p) for p in source_files}
     dataset = json.loads(files[1].read_text())
     holdout = [i for i in dataset["issues"] if i["split"] == "test"]
     ranker = load_ranker(root)
@@ -106,7 +108,7 @@ def main():
         "checked_at": datetime.now(timezone.utc).isoformat(),
         "methodology": {
             "population": len(holdout), "sample": len(rows),
-            "selection": "evenly spaced chronological holdout row indices, including first and last; no outcome-based selection",
+            "selection": ("all chronological holdout rows; no exclusions" if len(rows) == len(holdout) else "evenly spaced chronological holdout row indices, including first and last; no outcome-based selection"),
             "execution": "sequential local restored HydraDB reads, same ranker and learned memory, no training or graph writes",
             "scope": "direct serving functions, not HTTP transport; this does not certify production database parity",
             "cache": "benchmark ticket-vector cache cleared for each sampled row; serving uses ticket 0",
@@ -114,7 +116,10 @@ def main():
             "input": "benchmark uses summary plus description; serving receives their 4000-character text stripped, as the HTTP handler does",
         },
         "runtime_sha256": before, "runtime_files_unchanged": True,
-        "source_sha256": {str(p.relative_to(root)): digest(p) for p in [root / "repocortex" / part for part in ("serve/load.py", "retrieve/hybrid.py", "hydradb/bolt.py", "retrieve/textutil.py")]},
+        "source_sha256_at_start": source_before,
+        "source_sha256_at_completion": {str(p.relative_to(root)): digest(p) for p in source_files},
+        "source_files_unchanged": all(digest(p) == source_before[str(p.relative_to(root))] for p in source_files),
+        "source_hash_scope": "on-disk files observed at audit start and completion; not a hash of imported Python objects",
         "live_timing_seconds": {"min": min(r["seconds"]["live_serving"] for r in rows), "mean": sum(r["seconds"]["live_serving"] for r in rows) / len(rows), "max": max(r["seconds"]["live_serving"] for r in rows)},
         "benchmark_to_serving": aggregate(rows, "benchmark_to_serving"),
         "offline_to_live": aggregate(rows, "offline_to_live"),

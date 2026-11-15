@@ -8,6 +8,7 @@ class ServingParityTest(unittest.TestCase):
         self.assertEqual((indices[0], indices[-1]), (0, 318))
         self.assertEqual(len(set(indices)), 32)
         self.assertEqual(sample_indices(3, 32), [0, 1, 2])
+        self.assertEqual(sample_indices(319, 319), list(range(319)))
         with self.assertRaises(ValueError):
             sample_indices(0, 1)
 
