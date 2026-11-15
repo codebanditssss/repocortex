@@ -24,6 +24,7 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from pathlib import Path
+from threading import RLock
 
 import numpy as np
 
@@ -78,6 +79,8 @@ class HybridRanker:
         self.bm25 = bm25
         self.embedder = embedder
         self.client = client
+        self.live_graph = False
+        self.request_lock = RLock()
         self.bm25_mix = bm25_mix
         self.memory_lam = memory_lam
         self.memory_thresh = memory_thresh
@@ -570,18 +573,25 @@ class HybridRanker:
         raw = np.zeros(self.n, dtype=np.float32)
         best: dict[int, tuple] = {}
         rels = {"CALLS", "CO_CHANGED", "TESTED_BY", "DEFINES"}
+        live_edges = None
+        if self.live_graph:
+            live_edges = self.client.structural_edges([self.func_uids[i] for i in seeds])
         for index in seeds:
             seed = self.func_uids[index]
             seed_mass = max(float(dense_scores[index]), float(bm25_norm[index]))
             neighbors = []
-            for key in self.edges.incident(seed):
+            candidates = (
+                [(key, weight) for key, weight in live_edges if seed in (key[0], key[2])]
+                if live_edges is not None else
+                [(key, float(self.edges.edges[key].get("w") or 1.0)) for key in self.edges.incident(seed)]
+            )
+            for key, weight in candidates:
                 if key[1] not in rels:
                     continue
                 other = key[2] if key[0] == seed else key[0]
                 column = self.uid_index.get(other)
                 if column is None:
                     continue
-                weight = float(self.edges.edges[key].get("w") or 1.0)
                 neighbors.append((column, weight, key, other))
             if not neighbors:
                 continue

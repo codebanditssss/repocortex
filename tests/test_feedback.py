@@ -6,6 +6,7 @@ from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import DenseIndex
 from repocortex.retrieve.frozen import EdgeTable
 from repocortex.retrieve.hybrid import HybridRanker
+from repocortex.serve.load import backend_status, locate_report
 from repocortex.serve.learn import functions_from_diff, learn_from_fix
 
 
@@ -64,6 +65,29 @@ class FeedbackTest(unittest.TestCase):
         operators_result = learn_from_fix(ranker, "prefetch broken again", diff)
         self.assertTrue(ranker.memory)
         self.assertTrue(operators_result["predicted_before"])
+
+    def test_locate_report_marks_replay_when_hydradb_is_absent(self):
+        nodes = {
+            "func:a": {"label": "Function", "name": "a", "file": "a.py", "qualname": "a", "doc": "a", "signature": ""},
+            "func:b": {"label": "Function", "name": "b", "file": "b.py", "qualname": "b", "doc": "b", "signature": ""},
+        }
+        matrix = np.array([[1.0, 0, 0, 0], [0, 1, 0, 0]], dtype=np.float32)
+        ranker = HybridRanker(
+            nodes,
+            EdgeTable({}),
+            BM25Index.from_nodes(nodes),
+            DenseIndex(["func:a", "func:b"], matrix),
+            ConstEmbedder(),
+            bm25_mix=0.0,
+            graph_mix=0.0,
+        )
+        payload = locate_report(ranker, "a", k=2)
+        self.assertEqual(payload["backend"]["mode"], "replay")
+        self.assertFalse(payload["backend"]["connected"])
+        self.assertEqual(payload["source"], "replay")
+        self.assertEqual(payload["queries"], [])
+        self.assertEqual(payload["hits"][0]["uid"], "func:a")
+        self.assertEqual(backend_status(ranker)["mode"], "replay")
 
 
 if __name__ == "__main__":

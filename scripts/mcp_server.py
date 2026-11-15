@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from threading import Lock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -28,9 +29,15 @@ server = MCPServer(
 )
 
 _state = None
+_state_lock = Lock()
 
 
 def get_state():
+    with _state_lock:
+        return _load_state()
+
+
+def _load_state():
     global _state
     if _state is not None:
         return _state
@@ -57,12 +64,19 @@ def get_state():
     return _state
 
 
-@server.tool(description="Rank functions for a bug report. Each hit includes file, line, score, and the provenance path.")
+@server.tool(description="Rank functions for a bug report. Each hit includes file, line, score, and the provenance path. The payload also says whether HydraDB answered, and which bounded queries ran.")
 def locate_bug(report: str, k: int = 10) -> dict:
-    from repocortex.serve.load import locate
+    from repocortex.serve.load import locate_report
 
     k = max(1, min(int(k), 20))
-    return {"hits": locate(get_state()["ranker"], report, k)}
+    return locate_report(get_state()["ranker"], report, k)
+
+
+@server.tool(description="Say whether the ranker is live on HydraDB, replaying the exported graph, or in error.")
+def graph_status() -> dict:
+    from repocortex.serve.load import backend_status
+
+    return backend_status(get_state()["ranker"])
 
 
 @server.tool(description="Predict, then learn from a unified diff of the fix. The prediction is made before the graph changes.")
@@ -70,13 +84,15 @@ def learn_from_fix(report: str, diff: str) -> dict:
     from repocortex.serve.learn import learn_from_fix as apply_fix
 
     state = get_state()
-    return apply_fix(
-        state["ranker"],
-        report,
-        diff,
-        operators=state["operators"],
-        state_path=state["root"] / "data" / "learned_state.npz",
-    )
+    with state["ranker"].request_lock:
+        return apply_fix(
+            state["ranker"],
+            report,
+            diff,
+            operators=state["operators"],
+            state_path=state["root"] / "data" / "learned_state.npz",
+        )
+
 
 
 def main() -> None:

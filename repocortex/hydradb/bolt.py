@@ -91,6 +91,8 @@ class BoltClient:
         self._next_id = 1
         self._ids_synced = False
         self._expand_cache: dict[tuple, list[ExpandHit]] = {}
+        self.last_queries: list[dict] = []
+        self.trace = False
 
     def close(self) -> None:
         self.driver.close()
@@ -98,11 +100,54 @@ class BoltClient:
     def verify(self) -> None:
         self.driver.verify_connectivity()
 
-    def query(self, cypher: str, params: dict | None = None, timeout: float = 20.0) -> QueryResult:
+    def query(self, cypher: str, params: dict | None = None, timeout: float = 20.0, record: bool = True) -> QueryResult:
+        if self.trace and record:
+            self.last_queries.append({"cypher": cypher, "params": params or {}})
         with self.driver.session(database=self.database) as session:
             cursor = session.run(cypher, params or {}, timeout=timeout)
             rows = [_plain(record.data()) for record in cursor]
         return QueryResult.from_rows(rows)
+
+    def ping(self) -> dict:
+        """Cheap live check. Does not load the graph."""
+        result = self.query("MATCH (n:Repo) RETURN n.uid AS uid LIMIT 1", record=False)
+        row = result.rows[0] if result.rows else {}
+        functions = self.query("MATCH (n:Function) RETURN count(*) AS n", record=False)
+        count = int(functions.rows[0]["n"]) if functions.rows else 0
+        return {"ok": bool(row and count), "repo": row.get("uid") or "", "functions": count}
+
+    def resolve_uid(self, uid: str) -> int | None:
+        """Look up the integer id for a uid, including nodes created in another process."""
+        if not uid:
+            return None
+        existing = self.uid_to_id.get(uid)
+        if existing is not None:
+            return existing
+        result = self.query("MATCH (n {uid: $uid}) RETURN n.id AS id LIMIT 1", {"uid": uid})
+        if not result.rows or result.rows[0].get("id") is None:
+            return None
+        node_id = int(result.rows[0]["id"])
+        self.remember(uid, node_id)
+        return node_id
+
+    def structural_edges(self, seeds: list[str]) -> list[tuple[tuple[str, str, str], float]]:
+        """Read bounded one-hop edges used by live structural scoring."""
+        found = []
+        for rel in ("CALLS", "CO_CHANGED", "TESTED_BY", "DEFINES"):
+            result = self.query(
+                f"MATCH (a:Function)-[r:{rel}]->(b:Function) "
+                "WHERE a.uid IN $seeds OR b.uid IN $seeds "
+                "RETURN a.uid AS src, b.uid AS dst, r.w AS w ORDER BY a.uid, b.uid LIMIT 1000",
+                {"seeds": seeds},
+            )
+            if self.trace:
+                self.last_queries[-1]["rows"] = len(result.rows)
+                self.last_queries[-1]["limit_reached"] = len(result.rows) == 1000
+            if len(result.rows) == 1000:
+                raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
+            for row in result.rows:
+                found.append(((row["src"], rel, row["dst"]), float(row.get("w") or 1.0)))
+        return found
 
     def _exec(self, cypher: str, params: dict | None = None) -> None:
         self.query(cypher, params, timeout=60.0)
@@ -303,7 +348,7 @@ class BoltClient:
             if len(hits) >= limit:
                 truncated = True
                 break
-            node_id = self.uid_to_id.get(uid)
+            node_id = self.resolve_uid(uid)
             if node_id is None:
                 continue
             cache_key = (uid, hops)

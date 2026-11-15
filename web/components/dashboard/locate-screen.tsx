@@ -5,6 +5,7 @@ import type { ProvenanceData, ProvenanceHit, ProvenanceIssue } from "@/lib/data"
 import { functionName, pathKind, searchProvenance, shortFunctionName } from "@/lib/dashboard";
 import { fixedInRoutes, selectHeroIssue } from "@/lib/landing";
 import { ProvenanceReceipt } from "@/components/landing/provenance-receipt";
+import { LiveLocate } from "./live-locate";
 import { PlateHeading, SpotArt } from "./plate-heading";
 
 function HitReceipt({ issue, hit }: { issue: ProvenanceIssue; hit: ProvenanceHit }) {
@@ -47,7 +48,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   }, []);
 
   return (
-    <div className="manual-page locate-layout">
+    <div className="manual-page"><LiveLocate /><div className="locate-layout">
       <section className="locate-composer" aria-label="Search held-out evidence">
         <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} art={false} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
@@ -56,7 +57,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
           }} /></div>
           <div className="locate-options"><span>repo <u>django</u></span><span>index <u>{data.holdout} issues</u></span><button className="btn" type="submit">Locate <kbd>Enter</kbd></button></div>
         </form>
-        <p id="locate-search-help" className="figure-note">Search this local evidence index by ticket number, function, or filename. Short phrases match those fields, not bug-report bodies. No live or semantic search is connected.</p>
+        <p id="locate-search-help" className="figure-note">Search this local evidence index by ticket number, function, or filename. Short phrases match those fields, not bug-report bodies. These saved results are separate from the fresh report search above.</p>
         <div className="sample-tickets"><h2 className="sc">Or try a held-out ticket</h2>{samples.map((sample) => <button type="button" key={sample.ticket} onClick={() => search(String(sample.ticket))}><span className="num">#{sample.ticket}</span><span>{shortFunctionName(sample.hits[0])}</span></button>)}</div>
         <dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl>
         {issue && <SpotArt chapter="locate" />}
@@ -74,6 +75,6 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
           <aside className="locate-endnote"><span className="sc">What this proves</span><p>These are saved predictions for real held-out issues, not fresh search results. A gold mark means the hit matches a function in the recorded fix. FIXED_IN and SHORTCUT expose the evidence behind a result; <b>dense + bm25</b> is a hybrid-search path, not a learned edge.</p></aside>
         </> : <div className="locate-empty"><SpotArt chapter="locate" /><h3>{submitted ? "Nothing in this index matches." : "Start with a ticket."}</h3><p>{submitted ? `No saved ticket, function, or filename matched “${submitted}”. Try a ticket number or a filename such as query.py.` : "Type a ticket number or filename, then press Locate."}</p><button type="button" className="underlined-control" onClick={() => search(String(demo.ticket))}>Load demo ticket #{demo.ticket} →</button></div>}
       </section>
-    </div>
+    </div></div>
   );
 }

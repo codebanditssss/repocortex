@@ -1,0 +1,27 @@
+import { isLocateResult } from "@/lib/live";
+
+export async function POST(request: Request) {
+  let body;
+  try {
+    const text = await request.text();
+    if (text.length > 16000) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
+    body = JSON.parse(text);
+  } catch {
+    return Response.json({ error: "Send a valid bug report." }, { status: 400 });
+  }
+  if (!body || typeof body.report !== "string" || !body.report.trim() || body.report.length > 12000 || (body.k !== undefined && (!Number.isInteger(body.k) || body.k < 1 || body.k > 20))) {
+    return Response.json({ error: "Enter a bug report (up to 12,000 characters) and request 1–20 results." }, { status: 400 });
+  }
+  try {
+    const upstream = await fetch(`${process.env.REPOCORTEX_API_URL || "http://127.0.0.1:8765"}/locate`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report: body.report.trim(), k: body.k ?? 10 }), cache: "no-store", signal: AbortSignal.timeout(60000),
+    });
+    if (!upstream.ok) return Response.json({ error: "The locate service could not complete this search. Try again." }, { status: 502 });
+    const result: unknown = await upstream.json();
+    if (!isLocateResult(result)) return Response.json({ error: "The locate service returned an incomplete result." }, { status: 502 });
+    return Response.json(result, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
+    return Response.json({ error: timedOut ? "The search timed out. Please try again." : "The locate service is unavailable. Saved evidence below is still available." }, { status: timedOut ? 504 : 503 });
+  }
+}

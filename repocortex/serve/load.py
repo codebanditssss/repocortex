@@ -90,6 +90,58 @@ def load_ranker(root: Path) -> HybridRanker:
     return ranker
 
 
+def backend_status(ranker) -> dict:
+    """Report whether scoring can ask HydraDB, or is replaying the on-disk graph."""
+    client = getattr(ranker, "client", None)
+    if client is None:
+        return {
+            "mode": "replay",
+            "connected": False,
+            "detail": "no HydraDB client; ranking uses the exported corpus",
+        }
+    ping = getattr(client, "ping", None)
+    if ping is None:
+        return {"mode": "replay", "connected": False, "detail": "client has no ping"}
+    try:
+        info = ping()
+    except Exception as exc:
+        return {"mode": "error", "connected": False, "detail": str(exc)[:240]}
+    if not info.get("repo") or info.get("functions") != ranker.n:
+        return {"mode": "error", "connected": False, "detail": "repository graph is missing or has an unexpected function count"}
+    return {
+        "mode": "live",
+        "connected": True,
+        "detail": "Bolt connected",
+        "repo": info.get("repo") or "",
+    }
+
+
+def locate_report(ranker, report: str, k: int = 10) -> dict:
+    """Use live structural edges when connected; label cached learning separately."""
+    with ranker.request_lock:
+        status = backend_status(ranker)
+        client = ranker.client
+        live = bool(status.get("connected") and hasattr(client, "structural_edges"))
+        ranker.live_graph = live
+        if live:
+            client.last_queries = []
+            client.trace = True
+        try:
+            hits = locate(ranker, report, k)
+            queries = list(client.last_queries) if live else []
+        finally:
+            ranker.live_graph = False
+            if live:
+                client.trace = False
+        return {
+            "hits": hits,
+            "backend": status,
+            "queries": queries,
+            "source": "live" if live else "replay",
+            "scoring": "live structural graph + cached learned memory" if live else "cached graph and learned memory",
+        }
+
+
 def locate(ranker, report: str, k: int = 10) -> list[dict]:
     k = max(1, min(int(k), 20))
     issue = {
