@@ -1,0 +1,466 @@
+{
+  "experiment_id": "correlated-url-specification-learning-v1",
+  "validation": {
+    "valid": true,
+    "phase": "outcomes",
+    "errors": [],
+    "attempts": [
+      {
+        "task": "httpx-3140",
+        "arm": "frozen",
+        "status": "completed",
+        "compliant_repair": true,
+        "before": {
+          "total": 91,
+          "regressions": 3,
+          "guards": 88,
+          "passed": 88,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 91,
+          "regressions": 3,
+          "guards": 88,
+          "passed": 91,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 7,
+        "known_token_totals": {
+          "prompt_tokens": 55990,
+          "completion_tokens": 1471
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "completed"
+      },
+      {
+        "task": "httpx-3140",
+        "arm": "learned",
+        "status": "completed",
+        "compliant_repair": true,
+        "before": {
+          "total": 91,
+          "regressions": 3,
+          "guards": 88,
+          "passed": 88,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 91,
+          "regressions": 3,
+          "guards": 88,
+          "passed": 91,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 8,
+        "known_token_totals": {
+          "prompt_tokens": 72809,
+          "completion_tokens": 1357
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "completed"
+      },
+      {
+        "task": "httpx-2883",
+        "arm": "learned",
+        "status": "budget_exhausted",
+        "compliant_repair": false,
+        "before": {
+          "total": 86,
+          "regressions": 3,
+          "guards": 83,
+          "passed": 83,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 86,
+          "regressions": 3,
+          "guards": 83,
+          "passed": 86,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 17,
+        "known_token_totals": {
+          "prompt_tokens": 212464,
+          "completion_tokens": 4442
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": true,
+        "wall_budget_exceeded": false,
+        "classification": "budget_exceeded"
+      },
+      {
+        "task": "httpx-2883",
+        "arm": "frozen",
+        "status": "completed",
+        "compliant_repair": false,
+        "before": {
+          "total": 86,
+          "regressions": 3,
+          "guards": 83,
+          "passed": 83,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 86,
+          "regressions": 3,
+          "guards": 83,
+          "passed": 85,
+          "failed": 1,
+          "all_pass": false
+        },
+        "model_calls": 10,
+        "known_token_totals": {
+          "prompt_tokens": 108847,
+          "completion_tokens": 2166
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "completed"
+      },
+      {
+        "task": "httpx-2721",
+        "arm": "frozen",
+        "status": "completed",
+        "compliant_repair": true,
+        "before": {
+          "total": 76,
+          "regressions": 3,
+          "guards": 73,
+          "passed": 73,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 76,
+          "regressions": 3,
+          "guards": 73,
+          "passed": 76,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 11,
+        "known_token_totals": {
+          "prompt_tokens": 151346,
+          "completion_tokens": 3785
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "completed"
+      },
+      {
+        "task": "httpx-2721",
+        "arm": "learned",
+        "status": "completed",
+        "compliant_repair": true,
+        "before": {
+          "total": 76,
+          "regressions": 3,
+          "guards": 73,
+          "passed": 73,
+          "failed": 3,
+          "all_pass": false
+        },
+        "after": {
+          "total": 76,
+          "regressions": 3,
+          "guards": 73,
+          "passed": 76,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 9,
+        "known_token_totals": {
+          "prompt_tokens": 83467,
+          "completion_tokens": 3173
+        },
+        "unknown_usage": [],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "completed"
+      },
+      {
+        "task": "httpx-2694",
+        "arm": "learned",
+        "status": "harness_error",
+        "compliant_repair": false,
+        "classification": "harness_error_usage_unknown"
+      },
+      {
+        "task": "httpx-2694",
+        "arm": "frozen",
+        "status": "error",
+        "compliant_repair": false,
+        "before": {
+          "total": 35,
+          "regressions": 2,
+          "guards": 33,
+          "passed": 33,
+          "failed": 2,
+          "all_pass": false
+        },
+        "after": {
+          "total": 35,
+          "regressions": 2,
+          "guards": 33,
+          "passed": 35,
+          "failed": 0,
+          "all_pass": true
+        },
+        "model_calls": 7,
+        "known_token_totals": {
+          "prompt_tokens": 55848,
+          "completion_tokens": 1927
+        },
+        "unknown_usage": [
+          {
+            "request_id": "httpx-2694-frozen-6",
+            "field": "prompt_tokens"
+          },
+          {
+            "request_id": "httpx-2694-frozen-6",
+            "field": "completion_tokens"
+          }
+        ],
+        "token_or_call_budget_exceeded": false,
+        "wall_budget_exceeded": false,
+        "classification": "provider_error"
+      }
+    ],
+    "limitations": [
+      "Requested model is registered; actual response model checked where reported.",
+      "Provider-missing usage remains unknown, never zero.",
+      "Four correlated reconstructed specifications, not original-report heldout evidence."
+    ]
+  },
+  "totals": {
+    "frozen": {
+      "raw_repairs": 3,
+      "compliant_repairs": 2,
+      "scheduled_attempts": 4,
+      "terminal_evaluations": 4,
+      "interrupted_attempts": 0
+    },
+    "learned": {
+      "raw_repairs": 3,
+      "compliant_repairs": 2,
+      "scheduled_attempts": 4,
+      "terminal_evaluations": 3,
+      "interrupted_attempts": 1
+    }
+  },
+  "activity": [
+    {
+      "task": "httpx-3140",
+      "history_count": 54,
+      "qualifying_history_count_all": 1,
+      "qualifying_selected_memory_count": 1,
+      "memory_bonus_recipient_count": 2,
+      "changed_score_count": 7,
+      "changed_rank_count": 36,
+      "positive_learned_score_delta_recipient_count": 6,
+      "top5_overlap_count": 5
+    },
+    {
+      "task": "httpx-2883",
+      "history_count": 50,
+      "qualifying_history_count_all": 1,
+      "qualifying_selected_memory_count": 1,
+      "memory_bonus_recipient_count": 2,
+      "changed_score_count": 40,
+      "changed_rank_count": 50,
+      "positive_learned_score_delta_recipient_count": 39,
+      "top5_overlap_count": 4
+    },
+    {
+      "task": "httpx-2721",
+      "history_count": 48,
+      "qualifying_history_count_all": 1,
+      "qualifying_selected_memory_count": 1,
+      "memory_bonus_recipient_count": 2,
+      "changed_score_count": 6,
+      "changed_rank_count": 10,
+      "positive_learned_score_delta_recipient_count": 6,
+      "top5_overlap_count": 4
+    },
+    {
+      "task": "httpx-2694",
+      "history_count": 46,
+      "qualifying_history_count_all": 1,
+      "qualifying_selected_memory_count": 1,
+      "memory_bonus_recipient_count": 2,
+      "changed_score_count": 6,
+      "changed_rank_count": 8,
+      "positive_learned_score_delta_recipient_count": 5,
+      "top5_overlap_count": 4
+    }
+  ],
+  "limitations": [
+    "Four related URL-parser behavioral specifications, reconstructed by evaluator from upstream regression tests. Not unseen original bug reports.",
+    "Original localization dataset previously inspected; these repair attempts are fresh.",
+    "Same task component and related chronological history; not independent task families or broad proof.",
+    "One attempt per arm; sampling variability and possible pretrained knowledge of historical public fixes remain.",
+    "Older failed pilot and two-task studies unchanged.",
+    "Seventh attempt interrupted after 12 durable responses; no retry, final evaluation unavailable, in-flight and total usage unknown. Four attempts scheduled per arm, only three learned terminal evaluations. Full paired superiority cannot be inferred."
+  ],
+  "operator_activity": [
+    {
+      "task": "httpx-3140",
+      "gap_ingestion": {
+        "invocations": 54,
+        "active_episodes": 19,
+        "applied_operations": 55
+      },
+      "path_compression": {
+        "invocations": 54,
+        "active_episodes": 3,
+        "applied_operations": 4
+      },
+      "entity_merge_split": {
+        "invocations": 54,
+        "active_episodes": 0,
+        "applied_operations": 0
+      },
+      "edge_reweight": {
+        "invocations": 54,
+        "active_episodes": 34,
+        "applied_operations": 67
+      }
+    },
+    {
+      "task": "httpx-2883",
+      "gap_ingestion": {
+        "invocations": 50,
+        "active_episodes": 19,
+        "applied_operations": 56
+      },
+      "path_compression": {
+        "invocations": 50,
+        "active_episodes": 3,
+        "applied_operations": 4
+      },
+      "entity_merge_split": {
+        "invocations": 50,
+        "active_episodes": 0,
+        "applied_operations": 0
+      },
+      "edge_reweight": {
+        "invocations": 50,
+        "active_episodes": 31,
+        "applied_operations": 59
+      }
+    },
+    {
+      "task": "httpx-2721",
+      "gap_ingestion": {
+        "invocations": 48,
+        "active_episodes": 18,
+        "applied_operations": 53
+      },
+      "path_compression": {
+        "invocations": 48,
+        "active_episodes": 3,
+        "applied_operations": 4
+      },
+      "entity_merge_split": {
+        "invocations": 48,
+        "active_episodes": 0,
+        "applied_operations": 0
+      },
+      "edge_reweight": {
+        "invocations": 48,
+        "active_episodes": 31,
+        "applied_operations": 57
+      }
+    },
+    {
+      "task": "httpx-2694",
+      "gap_ingestion": {
+        "invocations": 46,
+        "active_episodes": 18,
+        "applied_operations": 53
+      },
+      "path_compression": {
+        "invocations": 46,
+        "active_episodes": 3,
+        "applied_operations": 4
+      },
+      "entity_merge_split": {
+        "invocations": 46,
+        "active_episodes": 0,
+        "applied_operations": 0
+      },
+      "edge_reweight": {
+        "invocations": 46,
+        "active_episodes": 30,
+        "applied_operations": 56
+      }
+    }
+  ],
+  "graph_deltas": [
+    {
+      "task": "httpx-3140",
+      "added_edges": 147,
+      "removed_edges": 0,
+      "modified_edges": 50,
+      "added_nodes": 89
+    },
+    {
+      "task": "httpx-2883",
+      "added_edges": 141,
+      "removed_edges": 0,
+      "modified_edges": 46,
+      "added_nodes": 85
+    },
+    {
+      "task": "httpx-2721",
+      "added_edges": 135,
+      "removed_edges": 0,
+      "modified_edges": 44,
+      "added_nodes": 81
+    },
+    {
+      "task": "httpx-2694",
+      "added_edges": 132,
+      "removed_edges": 0,
+      "modified_edges": 43,
+      "added_nodes": 79
+    }
+  ],
+  "interrupted_attempt_partial_usage": {
+    "task": "httpx-2694",
+    "arm": "learned",
+    "durable_model_responses": 12,
+    "known_input_lower_bound": 139101,
+    "known_output_lower_bound": 6342,
+    "total_usage_known": false,
+    "final_evaluation": "unavailable"
+  },
+  "estimated_uncached_usage_usd_at_saved_rates": 1.02785,
+  "aggregate_usage": {
+    "frozen": {
+      "known_input": 372031,
+      "known_output": 9349,
+      "agent_seconds": 685.0151284029977
+    },
+    "learned": {
+      "known_input": 368740,
+      "known_output": 8972,
+      "agent_seconds": 601.5443063570056
+    }
+  },
+  "cost_note": "Known-token estimate includes separately reported interrupted-response lower bound; unknown in-flight usage excluded. Not provider billed total or complete cost.",
+  "aggregate_usage_scope": "Terminal receipts only; interrupted partial usage reported separately. Agent time excludes interruption and is not a complete arm total."
+}
