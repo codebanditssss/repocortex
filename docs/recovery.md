@@ -8,7 +8,19 @@ and SHA-256 checksums. It excludes credentials, database storage, and model weig
 The source snapshot is `f24f38c6b2825f15628c07bf2892f1664eed9361`; Django attribution
 and its BSD license are included with the release.
 
-From a fresh checkout on Linux, download and verify before extracting:
+From a fresh checkout, run this on Linux or macOS with Python 3.11+:
+
+```sh
+python3 scripts/download_runtime.py
+.venv/bin/python scripts/preflight.py
+```
+
+The downloader checks the pinned archive hash and each file's size and hash before
+installation. It rejects unexpected archive members, links, and existing runtime
+files. No dependencies beyond Python's standard library are needed to download.
+For an existing download, use `--archive /path/to/repocortex-django-runtime.tar.gz`.
+
+Alternatively, download and verify manually on Linux:
 
 ```sh
 mkdir -p work/runtime-download

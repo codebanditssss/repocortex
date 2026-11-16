@@ -137,12 +137,12 @@ Requires Node.js 20.9+ and npm. No database, runtime dataset or model API key is
 
 ```sh
 git clone https://github.com/codebanditssss/repocortex.git
-cd hydradb-hack/web
+cd repocortex/web
 npm ci
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000), then [/app](http://localhost:3000/app). Cloning requires repository access while the project is private.
+Open [localhost:3000](http://localhost:3000), then [/app](http://localhost:3000/app).
 
 Start with **replay** for the curve, **locate** for saved evidence, and **agent** for the token comparison. Graph layouts and edge-delta animations are fixtures; measured scores come from committed result files. See the [web guide](web/README.md) for routes and controls.
 
@@ -188,7 +188,14 @@ data/learned_state.json
 data/learned_state.npz
 ```
 
-Recover them from the original experiment or generate a new runtime with the replay. The graph export alone does not include source text, embeddings or ordered fix memory.
+Download the published matching runtime into a fresh checkout (Python standard library only):
+
+```sh
+python3 scripts/download_runtime.py
+.venv/bin/python scripts/preflight.py
+```
+
+The command pins the release checksum, verifies every file, and refuses existing runtime files. It does not retrain or write to HydraDB. See [recovery and database restore](docs/recovery.md). The graph export alone does not include source text, embeddings or ordered fix memory.
 
 After recovering matching runtime files and restoring HydraDB, check the connection and launch the read-only HTTP MCP server:
 
