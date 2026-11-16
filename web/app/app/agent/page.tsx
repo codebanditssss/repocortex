@@ -27,7 +27,7 @@ export default function Agent() {
   return (
     <div className="manual-page supporting-screen">
       <PlateHeading chapter="agent" title={<>A shorter route<br /><i>through the code.</i></>} placeholder={`Measured agent eval / ${agent.n} Django issues`}><p>{agent.note}</p></PlateHeading>
-      <div className="fixture-banner"><span className="sc">Measured</span><p>{agent.n} Django holdout fix rows, model <code>{agent.model}</code>, same checkout and tools in every arm. The ticket number is never shown.</p></div>
+      <div className="fixture-banner"><span className="sc">Measured</span><p>{agent.n} Django holdout fix rows, model <code>{agent.model}</code>, same checkout and tools in every arm. The ticket number is never shown. This evaluation measures locating functions. Separate <a href="https://github.com/codebanditssss/repocortex/blob/main/results/url_repair_followup.md">repair trials</a> have not established a learning advantage in fixing bugs.</p></div>
       <div className="agent-comparison agent-comparison-three">
         {arms.map((arm) => <section key={arm.key} aria-labelledby={`agent-${arm.key}-title`}><div className="section-rule"><h2 id={`agent-${arm.key}-title`}>{arm.title}</h2><span className="sc">{arm.note}</span></div>
           <dl className="agent-fixture-numbers"><div><dt>Input tokens</dt><dd>{n(agent[arm.key].tokens)}</dd></div><div><dt>Turns</dt><dd>{agent[arm.key].turns}</dd></div><div><dt>Files read</dt><dd>{agent[arm.key].files_read}</dd></div></dl>
