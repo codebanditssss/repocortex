@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { chapters, chapterForPath } from "@/lib/chapters";
 import evaluation from "@/public/data/curve.json";
@@ -16,8 +16,12 @@ export function FieldShell({
 }) {
   const pathname = usePathname();
   const active = chapterForPath(pathname);
+  const more = useRef<HTMLDetailsElement>(null);
+  const primary = chapters.filter((chapter) => ["overview", "locate", "connect"].includes(chapter.slug));
+  const secondary = chapters.filter((chapter) => !primary.includes(chapter));
 
   useEffect(() => {
+    if (more.current) more.current.open = false;
     if (!window.location.hash) {
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
@@ -30,17 +34,27 @@ export function FieldShell({
           Repo<i>Cortex</i>
         </Link>
         {dashboard ? (
-          <nav className="chap" aria-label="Field manual chapters">
-            {chapters.map((chapter) => (
-              <Link
-                key={chapter.slug}
-                href={chapter.href}
-                aria-current={active.slug === chapter.slug ? "page" : undefined}
-              >
-                <span className="roman" aria-hidden="true">{chapter.roman}</span>
+          <nav className="chap" aria-label="Main navigation">
+            {primary.map((chapter) => (
+              <Link key={chapter.slug} href={chapter.href}
+                aria-current={active.slug === chapter.slug ? "page" : undefined}>
                 {chapter.label}
               </Link>
             ))}
+            <details className="nav-more" ref={more} onKeyDown={(event) => {
+              if (event.key === "Escape" && more.current) {
+                more.current.open = false;
+                more.current.querySelector("summary")?.focus();
+              }
+            }} onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+            }}>
+              <summary>{secondary.some((chapter) => chapter.slug === active.slug) ? active.label : "More"}<span aria-hidden="true">⌄</span></summary>
+              <div className="nav-more-links">
+                {secondary.map((chapter) => <Link key={chapter.slug} href={chapter.href}
+                  aria-current={active.slug === chapter.slug ? "page" : undefined}>{chapter.label}</Link>)}
+              </div>
+            </details>
           </nav>
         ) : (
           <>
@@ -48,15 +62,7 @@ export function FieldShell({
             <Link className="home-nav" href="/app">Field manual</Link>
           </>
         )}
-        <div className="meta">
-          <div>
-            <b>django/django</b>, <span className="num">{evaluation.train}</span> train
-            {" / "}<span className="num">{evaluation.holdout}</span> held out
-          </div>
-          <div title="Static demo status. A live backend connection has not been checked.">
-            HydraDB / recorded snapshot
-          </div>
-        </div>
+
       </header>
       <main id="main-content" className="stage" tabIndex={-1}>
         {children}

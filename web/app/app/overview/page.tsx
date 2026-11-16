@@ -22,15 +22,15 @@ export default function Overview() {
     <div className="manual-page overview-layout">
       <section className="overview-copy">
         <PlateHeading chapter="overview" title={<>A record of<br /><i>what it learns.</i></>}>
-          <p>Predict where a bug lives. See the real fix. Rewire the graph. RepoCortex learned from {evaluation.train} Django fixes in time order, then tested against the same {evaluation.holdout} held-out fix rows at every checkpoint.</p>
+          <p>Find the function behind a bug report. Measured on {evaluation.holdout} held-out Django fixes after learning from {evaluation.train} earlier fixes.</p>
         </PlateHeading>
-        <dl className="journal-metrics">
+        <div className="overview-actions"><Link className="btn" href="/app/locate">Find a function <span aria-hidden="true">→</span></Link><Link className="text-control" href="/app/replay">Explore the learning curve</Link></div>
+        <dl className="journal-metrics overview-key-metrics">
           <div><dt>Right file, first result</dt><dd>{formatPercent(end["file_acc@1"])}<small>from {formatPercent(start["file_acc@1"])} at step 0</small></dd></div>
           <div><dt>Right function, top 10</dt><dd>{formatPercent(end["function_acc@10"])}<small>from {formatPercent(start["function_acc@10"])} at step 0</small></dd></div>
-          <div><dt>File lift over dense</dt><dd>+{Number(((end["file_acc@1"] - evaluation.baselines.dense["file_acc@1"]) * 100).toFixed(2))}<em> pp</em><small>dense: {formatPercent(evaluation.baselines.dense["file_acc@1"])}</small></dd></div>
-          <div><dt>File lift over frozen</dt><dd>+{Number(((end["file_acc@1"] - evaluation.baselines.frozen["file_acc@1"]) * 100).toFixed(2))}<em> pp</em><small>frozen: {formatPercent(evaluation.baselines.frozen["file_acc@1"])}</small></dd></div>
         </dl>
-        <section className="operator-ledger" aria-labelledby="operators-title">
+        <details className="dashboard-disclosure operator-ledger"><summary>What changed in the graph</summary>
+        <section aria-labelledby="operators-title">
           <div className="section-rule"><h2 id="operators-title">Amendments to the graph</h2><span className="cap">Totals across the training pass</span></div>
           <table className="manual-table operator-table"><caption className="sr-only">Measured operator counts</caption><thead className="sr-only"><tr><th scope="col">Operator</th><th scope="col">What changes</th><th scope="col">Count</th></tr></thead><tbody>
             <tr><th scope="row">Reweight</th><td>Strengthen useful paths; weaken misleading ones.</td><td>{evaluation.operators.edge_reweight}</td></tr>
@@ -38,7 +38,7 @@ export default function Overview() {
             <tr><th scope="row">Gap ingestion</th><td>Bring missing code into reach.</td><td>{evaluation.operators.gap_ingestion}</td></tr>
             <tr><th scope="row">Merge / split</th><td>Resolve shared names and separate meanings.</td><td>{evaluation.operators.entity_merge_split}</td></tr>
           </tbody></table>
-        </section>
+        </section></details>
         <EvaluationNote />
         <details className="baseline-summary">
           <summary>All baselines, including dense + BM25 without graph</summary>
@@ -50,10 +50,12 @@ export default function Overview() {
         </details>
       </section>
       <aside className="overview-figures" aria-label="Repository and evaluation figures">
-        <div className="figure-top"><p className="cap"><b>FIG. 1</b> A repository, connected.</p><Link className="btn" href="/app/replay">Replay history <kbd>R</kbd></Link></div>
-        <figure className="overview-graph"><div className="graph-stage"><GraphPlate step={evaluation.train} modules /></div><figcaption className="cap">{stats.local_nodes.toLocaleString("en-US")} nodes, {stats.local_edges.toLocaleString("en-US")} edges in the scoped graph. Counts are real. The layout and vermilion reweights are placeholders.</figcaption></figure>
-        <figure className="overview-curve"><figcaption className="cap"><b>FIG. 2</b> File Acc@1 as the graph learns.</figcaption><div className="manual-chart-scroll" tabIndex={0} role="region" aria-label="Overview held-out accuracy chart"><MetricChart data={evaluation} metric="file_acc@1" index={evaluation.curve.length - 1} /></div><p className="figure-note">{`All ${evaluation.curve.length} points are held-out evaluations. Rules show single-point baselines, not additional replay runs.`}</p></figure>
+        <div className="section-rule"><h2>Learning on held-out fixes</h2><span className="cap">Recorded evaluation</span></div>
+        <figure className="overview-curve"><figcaption className="cap">File accuracy at the first result.</figcaption><div className="manual-chart-scroll" tabIndex={0} role="region" aria-label="Overview held-out accuracy chart"><MetricChart data={evaluation} metric="file_acc@1" index={evaluation.curve.length - 1} /></div><p className="figure-note">{`All ${evaluation.curve.length} points are held-out evaluations. Rules show single-point baselines, not additional replay runs.`}</p></figure>
         <EvaluationTable data={evaluation} metric="file_acc@1" />
+        <details className="dashboard-disclosure"><summary>Explore the repository graph</summary>
+        <figure className="overview-graph"><div className="graph-stage"><GraphPlate step={evaluation.train} modules /></div><figcaption className="cap">{stats.local_nodes.toLocaleString("en-US")} nodes, {stats.local_edges.toLocaleString("en-US")} edges in the scoped graph. Counts are real. The layout and vermilion reweights are placeholders.</figcaption></figure>
+        </details>
         <p className="figure-note">Scope: {evaluation.scope.join(" · ")}. The frozen reference is this pass&apos;s step 0 graph, with learning off. Learning gain is measured from that starting point.</p>
       </aside>
     </div>

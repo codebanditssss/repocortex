@@ -443,3 +443,46 @@
   .terminal-stats dd { font-size: 17px; }
   .hero-benchmark dl { justify-content: space-between; gap: 12px; }
 }
+
+/* Keep the reading path short: the curve first, supporting records on demand. */
+.landing-head {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  margin-inline: calc(-1 * var(--page-inset));
+  padding-inline: var(--page-inset);
+  box-shadow: 0 3px 12px rgb(0 0 0 / 3%);
+}
+.landing-section, .install-section { scroll-margin-top: 96px; }
+.evidence-section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 64px; }
+.evidence-section > * { min-width: 0; }
+.evidence-list { border-top: 1px solid var(--rule-strong); }
+.evidence-list > * { border-bottom: 1px solid var(--rule); }
+.evidence-disclosure summary { padding-block: 24px; cursor: pointer; font-size: 17px; line-height: 1.5; }
+.evidence-value { float: right; margin-left: 16px; font: 14px/1.8 var(--font-mono), monospace; color: var(--ink2); }
+.evidence-body { display: grid; gap: 20px; padding: 0 0 24px; font-size: 15px; line-height: 1.65; color: var(--ink2); }
+.evidence-body .receipt { min-width: 0; }
+.evidence-body .text-link { justify-self: start; }
+.evidence-caveat { padding: 0 0 24px; max-width: 60ch; font-size: 13px; line-height: 1.6; color: var(--ink2); }
+.install-context { max-width: 42ch; font-size: 17px; line-height: 1.65; color: var(--ink2); }
+.install-command > .landing-primary { margin-top: 24px; }
+.replay-instrument { grid-template-columns: minmax(0, 1fr); }
+.replay-chart-figure { width: 100%; max-width: 1040px; margin-inline: auto !important; }
+.landing-method-details { border-top: 1px solid var(--rule); margin-top: 28px; }
+.landing-method-details > summary { cursor: pointer; padding-block: 20px; font-size: 14px; }
+.landing-method-details .operator-notes { margin-top: 0; padding-top: 8px; }
+@media (max-width: 767px) {
+  .landing-head { min-height: 64px; flex-wrap: nowrap; gap: 12px; padding-block: 0; }
+  .landing-head .mark { font-size: 23px; white-space: nowrap; }
+  .landing-head nav { gap: 12px; flex-wrap: nowrap; font-size: 11px; }
+  .landing-head nav a { min-width: 0; }
+  .landing-section, .install-section { scroll-margin-top: 80px; }
+  .evidence-section { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .evidence-disclosure summary { font-size: 15px; padding-block: 20px; }
+  .evidence-value { font-size: 12px; margin-left: 8px; }
+  .replay-intro { gap: 20px; }
+}
+@media print {
+  .landing-head { position: static; }
+}

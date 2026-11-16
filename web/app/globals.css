@@ -313,3 +313,22 @@ main:focus { outline: none; }
   .metrics { grid-template-columns: 1fr; gap: 18px; }
   .metrics > div + div { padding-left: 0; border-left: 0; }
 }
+
+/* Compact navigation keeps the primary workflow visible at every width. */
+.dashboard-shell .head { flex-wrap: nowrap; gap: 32px; min-height: 64px; padding-block: 0; }
+.dashboard-shell .head .mark { flex: 0 0 auto; }
+.dashboard-shell .chap { display: flex; flex: 0 1 auto; order: initial; margin: 0 0 0 auto; gap: 24px; padding: 0; align-items: center; }
+.dashboard-shell .chap a { min-height: 48px; font-size: 13px; }
+.nav-more { position: relative; }
+.nav-more summary { display: flex; align-items: center; gap: 8px; min-height: 48px; cursor: pointer; font-size: 13px; list-style: none; }
+.nav-more summary::-webkit-details-marker { display: none; }
+.nav-more-links { position: absolute; right: 0; top: calc(100% + 8px); width: 180px; padding: 8px 16px; background: var(--paper); border: 1px solid var(--rule-mid); box-shadow: 0 12px 28px #1c191414; }
+.dashboard-shell .nav-more-links a { border-bottom: 1px solid var(--rule); }
+.dashboard-shell .nav-more-links a:last-child { border-bottom: 0; }
+html { scroll-padding-top: 112px; }
+@media (max-width: 640px) {
+  .dashboard-shell .head { flex-wrap: wrap; gap: 0; padding-top: 4px; }
+  .dashboard-shell .head .mark { min-height: 40px; font-size: 24px; }
+  .dashboard-shell .chap { flex-basis: 100%; justify-content: space-between; gap: 12px; }
+  .dashboard-shell .chap a, .nav-more summary { min-height: 44px; font-size: 12px; }
+}

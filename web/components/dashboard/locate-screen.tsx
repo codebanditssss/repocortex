@@ -43,9 +43,9 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
   return (
     <div className="manual-page"><nav className="locate-modes" aria-label="Choose search mode"><a href="#fresh-search"><strong>Fresh report</strong><span>Rank functions for a new Django bug</span></a><a href="#saved-evidence"><strong>Saved evidence</strong><span>Browse 319 recorded predictions</span></a></nav><LiveLocate /><div id="saved-evidence" className="locate-layout" tabIndex={-1}>
       <section className="locate-composer" aria-label="Search held-out evidence">
-        <PlateHeading chapter="locate" title={<>Where it <i>hurts.</i></>} />
+        <PlateHeading chapter="locate" title={<>Saved <i>predictions.</i></>} />
         <form onSubmit={(event) => { event.preventDefault(); search(String(new FormData(event.currentTarget).get("query") ?? "")); }}>
-          <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span>Saved evidence</span></div><textarea id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={4} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
+          <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="locate-query">Ticket, function, or filename</label><span>Saved evidence</span></div><textarea id="locate-query" name="query" value={query} placeholder="Try a ticket number or a function name" rows={2} aria-describedby="locate-search-help" onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); search(event.currentTarget.value); }
           }} /></div>
           <div className="locate-options"><span>repo <u>django</u></span><span>index <u>{data.holdout} issues</u></span><button className="btn" type="submit">Search saved <kbd>Enter</kbd></button></div>
@@ -59,7 +59,7 @@ export function LocateScreen({ data }: { data: ProvenanceData }) {
         </div>
         <p id="locate-search-help" className="figure-note">Matches ticket numbers, functions and filenames—not bug-report text.</p>
         <div className="sample-tickets"><h2 className="sc">Or try a held-out ticket</h2>{samples.map((sample) => <button type="button" key={sample.ticket} onClick={() => search(String(sample.ticket))}><span className="num">#{sample.ticket}</span><span>{shortFunctionName(sample.hits[0])}</span></button>)}</div>
-        <dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl>
+        <details className="dashboard-disclosure"><summary>About this evidence index</summary><dl className="evidence-index"><div><dt>Held-out issues</dt><dd className="num">{data.holdout}</dd></div><div><dt>Hits using FIXED_IN</dt><dd className="num">{data.hits_with_fixed_in}</dd></div><div><dt>Hits using SHORTCUT</dt><dd className="num">{data.hits_with_shortcut}</dd></div></dl></details>
       </section>
       <section className="locate-results" aria-labelledby="locate-results-title">
         <div className="section-rule"><h2 id="locate-results-title">{issue ? <>Ranked <i>suspects</i></> : "The evidence index"}</h2><span className="cap" role="status">{issue ? `${issue.hits.length} captured hits · #${issue.ticket}` : submitted ? "No matches" : "No search yet"}</span></div>

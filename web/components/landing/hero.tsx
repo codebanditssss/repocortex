@@ -69,7 +69,7 @@ export function Hero({ ticket, evaluation }: {
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
       if (event.code !== "Space" || !visible || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.target instanceof Element && event.target.closest("a,button,input,textarea,select,[contenteditable]")) return;
+      if (event.target instanceof Element && event.target.closest("a,button,summary,input,textarea,select,[contenteditable]")) return;
       event.preventDefault();
       autoStarted.current = true;
       play();
@@ -116,7 +116,7 @@ export function Hero({ ticket, evaluation }: {
       <div className="hero-copy">
         <p className="hero-eyebrow news">Evidence from your code and its history.</p>
         <h1 id="page-title">Find the functions.<br />Learn from <i>the fix.</i></h1>
-        <p className="hero-dek">Describe a bug. RepoCortex ranks candidate functions using your code graph and past fixes. Inspect the evidence, then feed back the confirmed fix so the next investigation can use it.</p>
+        <p className="hero-dek">Describe a bug. Find candidate functions through the code graph and past fixes. Feed back the confirmed fix so the next investigation can use it.</p>
         <div className="hero-actions"><a className="landing-primary" href="/app/locate">Try a live search <span aria-hidden="true">→</span></a><a className="text-link" href="#replay">See the learning curve <span aria-hidden="true">↓</span></a></div>
         <div className="hero-benchmark" aria-label="Strict function accuracy comparison">
           <p className="sc">Strict Function Acc@10</p>
@@ -136,7 +136,7 @@ export function Hero({ ticket, evaluation }: {
         <div className="ticket-controls"><span className="news">{found ? `Rank ${hit.rank}. Gold hit. Score ${hit.score}.` : routeReady ? "Following a past fix…" : "Reading the record…"}</span><button type="button" onClick={() => { autoStarted.current = true; play(); }}>{playing ? "Restart" : "Play"} <span aria-hidden="true">↻</span></button></div>
         <p className="sc ticket-space">Space replays this plate</p>
       </aside>
-      <div className="hero-bottom"><p className="news">Recorded Django evidence. The route is schematic; the function, rank and supporting fix come from the measured replay.</p><a className="sc" href="#replay">Replay {last.step} merged fixes <span aria-hidden="true">↓</span></a></div>
+      <div className="hero-bottom"><p className="news">Recorded Django evidence. The route is schematic; the function, rank and supporting fix come from the measured replay.</p></div>
     </section>
   );
 }

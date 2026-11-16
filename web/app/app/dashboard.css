@@ -485,3 +485,31 @@
 .live-availability { padding: 14px 16px; margin: 0 0 24px; border: 1px solid var(--rule-mid); font-size: 13px; line-height: 1.6; }
 .live-availability p { margin: 0 0 10px; }
 .live-availability > div { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+
+/* Keep primary tasks visible; open supporting evidence when it is needed. */
+.overview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
+.overview-copy .manual-heading { min-height: 0; }
+.overview-key-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 32px; padding-block: 24px; }
+.overview-key-metrics > div:nth-child(2) { border-right: 0; }
+.overview-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.overview-copy { padding-block: 40px; }
+.overview-figures { padding-top: 40px; }
+.dashboard-disclosure { margin-top: 24px; border-top: 1px solid var(--rule); }
+.dashboard-disclosure > summary { min-height: 48px; padding-block: 16px; cursor: pointer; font-size: 13px; color: var(--ink2); }
+.dashboard-disclosure[open] > summary { margin-bottom: 12px; color: var(--ink); }
+.dashboard-disclosure .operator-table { margin-top: 12px; }
+.connect-screen .connect-layout { grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: 56px; }
+.connect-screen .setup-steps li + li { margin-top: 12px; }
+.connect-screen .mcp-contract { margin-top: 36px; }
+.connect-screen .mcp-contract > p { max-width: 62ch; }
+.connect-screen .config-sheet pre { max-height: 340px; overflow-y: auto; }
+.locate-composer .manual-heading h1 { font-size: 36px; }
+@media (max-width: 1000px) { .connect-screen .connect-layout { gap: 28px; } }
+@media (max-width: 767px) {
+  .overview-layout, .connect-screen .connect-layout { display: block; }
+  .overview-copy { padding-block: 32px; }
+  .overview-figures { padding-top: 28px; }
+  .overview-actions { gap: 8px 16px; }
+  .overview-actions .text-control { padding-left: 0; }
+  .overview-key-metrics { padding-block: 20px; }
+}
