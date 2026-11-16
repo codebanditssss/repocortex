@@ -48,6 +48,40 @@ class PersistentFeedbackTest(unittest.TestCase):
         configure_feedback(unrelated, "other")
         self.assertEqual(unrelated.memory, [])
 
+    def test_restart_retains_support_before_shortcut_is_materialized(self):
+        def ranker(client):
+            result = fixture_ranker(client)
+            result.add_node("concept:widget", "Concept", "widget")
+            return result
+
+        def apply(result, number):
+            return learn_from_fix(result, f"widget confirmed case {number}",
+                                  DIFF.replace("+fixed", f"+fixed{number}"))
+
+        client = JournalClient()
+        uninterrupted = ranker(client)
+        configure_feedback(uninterrupted, "subthreshold")
+        key = ("concept:widget", "SHORTCUT", "func:fixture.py:beta")
+        for number in range(2):
+            apply(uninterrupted, number)
+        self.assertNotIn(key, uninterrupted.edges.edges)
+
+        restarted = ranker(client)
+        setup = configure_feedback(restarted, "subthreshold")
+        self.assertEqual(setup["replayed"], 2)
+        self.assertNotIn(key, restarted.edges.edges)
+        self.assertTrue(apply(restarted, 1)["skipped"])
+        self.assertEqual(len(restarted.memory), 2)
+        self.assertEqual(len(client.records), 2)
+        self.assertNotIn(key, restarted.edges.edges)
+
+        apply(uninterrupted, 2)
+        apply(restarted, 2)
+        self.assertEqual(restarted.edges.edges[key], uninterrupted.edges.edges[key])
+        self.assertEqual(restarted.edges.edges[key]["hits"], 3)
+        self.assertEqual(len(restarted.memory), 3)
+        self.assertEqual(len(client.records), 3)
+
     def test_failed_journal_write_does_not_apply_fix(self):
         client = JournalClient()
         ranker = fixture_ranker(client)
