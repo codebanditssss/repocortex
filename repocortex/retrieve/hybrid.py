@@ -603,24 +603,19 @@ class HybridRanker:
                 raw[column] += gain
                 prev = best.get(column)
                 if prev is None or gain > prev[0]:
+                    arrow = f"-{key[1]}->" if key[0] == seed else f"<-{key[1]}-"
                     best[column] = (
                         gain,
                         key,
-                        f"{self._label(seed)} -{key[1]}-> {self._label(other)} (w {weight:.2f})",
+                        f"{self._label(seed)} {arrow} {self._label(other)} (w {weight:.2f})",
                     )
         peak = float(raw.max())
         if peak <= 0:
             return bonus
         scaled = np.float32(self.graph_mix) * (raw / np.float32(peak))
-        columns = list(best)
-        if len(columns) > 40:
-            vals = np.array([raw[column] for column in columns])
-            keep = np.argpartition(-vals, 39)[:40]
-            columns = [columns[int(i)] for i in keep]
-        for column in columns:
-            if raw[column] <= 0:
-                continue
-            _gain, key, note = best[column]
+        # Keep each recipient's strongest representative edge and truthful path.
+        # Display limits must not suppress credit or evidence for returned hits.
+        for column, (_gain, key, note) in best.items():
             used[column].append(key)
             notes[column].append(note)
         return scaled
