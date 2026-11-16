@@ -14,7 +14,7 @@ What we can already show on Django:
 
 - strict function Acc@10: 41.7% dense + BM25 without graph, 45.1% frozen graph, 48.3% after learning on 319 chronological fix-commit holdout rows; +3.4 percentage points from the structural graph, then +3.1 from learning
 - 16 to 27 percent fewer agent input tokens on 30 bugs
-- 40/40 valid hosted searches at four concurrent clients; 3.41s p50 and 3.69s p95 including network and queueing. This is a small smoke check, not a capacity guarantee. [Evidence](../results/hosted_search_check_40.json)
+- 120/120 valid live responses for distinct held-out reports at four concurrent clients; 3.51s p50 and 4.07s p95 including network and queueing, over 113 seconds. This short read-only test is not a capacity guarantee. [Evidence](../results/service_reliability_120.json)
 
 This is a retrospective evaluation on a fixed Django snapshot that includes later fixes. Three test rows share tickets with training; excluding them leaves 316 rows and preserves the learning gain (45.6% to 48.7%). See the [evaluation audit](evaluation-audit.md).
 
@@ -38,6 +38,8 @@ The initial pilot measures input tokens per investigation and whether all change
 
 ## A pilot a platform lead can evaluate
 
+Use the [maintainer trial instructions and feedback sheet](maintainer-pilot.md) to collect actual observations. No customer adoption or willingness to pay is claimed.
+
 Start with one mature Python backend and the developers who already investigate its bugs. The initial offer is a self-hosted evaluation of that repository's history using the open-source tools available today. The GitHub app, managed plans and enterprise features above are proposals, not services currently sold.
 
 1. Agree on the evaluation before running it: reserve later fixes as a holdout, group repeated tickets together, and compare dense + BM25, the frozen graph and learning on the same reports. Keep a separate development slice for configuration choices.
@@ -46,7 +48,7 @@ Start with one mature Python backend and the developers who already investigate 
 4. Try confirmed-fix feedback in a separate namespace. Restart the MCP process and check that the feedback is restored without changing the benchmark runtime. Use one writer for that namespace.
 5. Continue only if the team's predefined success criteria are met. If learning does not beat the frozen graph, retain that result and investigate before enabling it for everyday use.
 
-The Django curve's early dip and the flat Flask pilot make repository-specific evaluation essential. The roughly 500-fix crossover observed on Django is not a minimum-history guarantee for another codebase. Setup also requires local corpus and embedding artifacts; this is not a one-click import of arbitrary repositories.
+The Django curve's early dip, the flat Flask pilot and the one-report HTTPX gain make repository-specific evaluation essential. The roughly 500-fix crossover observed on Django is not a minimum-history guarantee for another codebase. Setup also requires local corpus and embedding artifacts; this is not a one-click import of arbitrary repositories.
 
 ## Competition
 

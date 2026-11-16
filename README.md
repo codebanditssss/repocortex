@@ -26,8 +26,10 @@ Learning runs through historical replay or confirmed diffs submitted to `learn_f
 | Explore the recorded demo without a database or API key | [dashboard setup](#try-the-dashboard) |
 | Understand what HydraDB does | [architecture and database boundary](#how-it-works) |
 | Verify search → fix → restart locally | [One-command learning check](docs/confirmed-fix.md) |
+| Review and retain a confirmed fix from the terminal | [Search, preview, apply, and restart](docs/feedback-cli.md) |
 | Connect a coding agent | [Local setup and first feedback](docs/local-setup.md), [MCP tools](#use-it-from-your-agent) |
 | Rerun the experiment | [reproduction instructions](#reproduce-the-replay) |
+| Build a structural index for another Python repository | [Isolated repository indexer](docs/index-repository.md) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |
 
 **Current demo:** paste a bug report into Locate to get fresh ranked functions. The hosted service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
@@ -76,17 +78,23 @@ A saved experiment compared the same 30 held-out bugs with the same model and co
 | Search tools + `locate_bug` | 53,888 | 13/30 |
 | Instructed to call `locate_bug` first | 46,361 | 13/30 |
 
+For a completed-fix study, the [outcome evaluation protocol](docs/agent-outcomes.md) separates regression-test evidence, elapsed time, cached tokens, errors and missing runs. No completed-fix benchmark result is claimed yet.
+
 The tool-available arm used **16% fewer input tokens**; the locate-first arm used **27% fewer**. A one-issue accuracy difference is too small to establish a gain. This is one model, one run per condition, and 30 tasks; input tokens include cached reads. [protocol, raw runs and caveats](results/agent_eval/README.md)
 
 ## Serving checks
 
 The public search runs on Vercel with a persistent Railway HydraDB backend. In a small read-only check, **40/40 searches returned live results and query receipts at four concurrent clients**. End-to-end latency was **3.41s p50 / 3.69s p95**, including network and queueing. Four reports were repeated; this is a smoke check, not sustained capacity or cold-start evidence. [Raw responses and method](results/hosted_search_check_40.json)
 
+A later varied-query check returned **120/120 valid live responses** for 120 distinct held-out reports at four concurrent clients, over **113 seconds**. Latency was **3.51s p50 / 4.07s p95**, with no retries. This short read-only exercise does not establish sustained capacity, cold-start behavior or uptime. [Protocol and all request records](results/service_reliability_120.json)
+
 Across **all 319 held-out fix rows**, the exported graph and restored local HydraDB produced identical top-10 rankings and scores at four-decimal response precision. Benchmark-shaped and serving-shaped inputs also matched on every row. The five runtime artifact hashes stayed unchanged; no retraining or graph writes were performed. This checks the direct serving functions locally, not all 319 cases through production HTTP. A health-guard edit made during the run was not loaded by the audit process; source provenance is recorded with the result. [Full parity audit](results/serving_parity_full.json)
 
 In a separate production check, **8/8 preselected HTTP searches** matched offline top-10 rankings and scores, with 928 query receipts preserved. This is a bounded parity sample, not a full deployed accuracy evaluation. [Production evidence](results/production_parity.json)
 
-### Independent repository pilot
+### Independent repository checks
+
+**HTTPX:** unchanged ranking defaults, 51 training reports and 33 chronologically held-out reports. Strict function accuracy@10 was **39.4% without graph, 42.4% frozen, and 45.5% learned**. Learning adds one successful report (14/33 → 15/33); the paired 95% interval is **0 to +9.1 points**, so a reliable transfer gain is not established. No ticket, commit or exact normalized report overlaps were found across the split. This is an offline retrospective evaluation at a fixed source snapshot, not a live HydraDB accuracy test. [Full protocol and results](results/transfer_httpx.md)
 
 The same pipeline was also run on actual linked Flask issue reports, with unchanged ranking parameters: 13 training reports and seven held out. **Frozen and learned both found all changed functions in the top 10 for 4/7 reports.** The no-graph blend had slightly higher MRR. This small retrospective pilot shows the pipeline runs on another repository; it does **not** demonstrate transferable learning gains. [Protocol, exclusions and reproduction](results/transfer_flask.md)
 
@@ -148,7 +156,7 @@ Start with **replay** for the curve, **locate** for saved evidence, and **agent*
 
 ### Dashboard screenshots
 
-Screenshots captured from the deployed site on 16 November 2026, with the current typography and navigation. Benchmark panels show recorded results; Locate includes live search and saved evidence.
+Screenshots captured from the site and current local build on 16 November 2026, with the current typography and navigation. Benchmark panels show recorded results; Locate includes live search and saved evidence.
 
 | Overview | Locate |
 |---|---|
