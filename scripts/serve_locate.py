@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from repocortex.serve.load import RankingBusyError, backend_status, load_ranker, locate_report
+from repocortex.serve.load import RankingBusyError, backend_status, load_ranker, locate_report, runtime_directory
 
 
 MAX_REPORT_CHARACTERS = 12000
@@ -179,7 +179,7 @@ def main() -> None:
     root = Path(__file__).resolve().parents[1]
     port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", "8765"))
     host = os.environ.get("HOST", "127.0.0.1")
-    ranker = load_ranker(root)
+    ranker = load_ranker(runtime_directory(root))
     try:
         from repocortex.config import Settings
         from repocortex.hydradb import connect

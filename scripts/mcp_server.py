@@ -24,7 +24,7 @@ from mcp.server.mcpserver import MCPServer
 server = MCPServer(
     "repocortex",
     instructions=(
-        "Locate the functions a bug report touches in the learned Django code graph, "
+        "Locate the functions a bug report touches in the configured repository code graph, "
         "and fold a unified diff back into that graph."
     ),
 )
@@ -53,28 +53,44 @@ def _load_state():
     from repocortex.config import Settings
     from repocortex.learn.compress import PathCompressor
     from repocortex.learn.replay import make_operators
-    from repocortex.serve.load import load_ranker
+    from repocortex.serve.load import load_ranker, runtime_directory
 
     root = Path(__file__).resolve().parents[1]
-    ranker = load_ranker(root)
+    ranker = load_ranker(runtime_directory(root))
     operators = make_operators(ranker, "full", lr=0.25, merger_every=40)
     for op in operators:
         if isinstance(op, PathCompressor):
             op.hydrate(ranker.edges)
+    namespace = os.environ.get("REPOCORTEX_FEEDBACK_NAMESPACE", "").strip()
+    settings = Settings.load(root)
+    if namespace and settings.backend != "bolt":
+        raise ValueError("durable feedback requires the Bolt backend")
     client = None
     try:
         from repocortex.hydradb import connect
 
-        client = connect(Settings.load(root))
+        client = connect(settings)
         ranker.client = client
     except Exception:
         client = None
-    namespace = os.environ.get("REPOCORTEX_FEEDBACK_NAMESPACE", "").strip()
     if namespace:
         from repocortex.serve.feedback import configure_feedback
-        configure_feedback(ranker, namespace, operators=operators)
+        try:
+            _require_feedback_backend(ranker)
+            configure_feedback(ranker, namespace, operators=operators)
+        except Exception:
+            if client is not None:
+                client.close()
+            raise
     _state = {"ranker": ranker, "operators": operators, "root": root, "client": client}
     return _state
+
+
+def _require_feedback_backend(ranker):
+    from repocortex.serve.load import backend_status
+    status = backend_status(ranker)
+    if status.get("mode") != "live" or not status.get("connected"):
+        raise RuntimeError("feedback requires a healthy HydraDB matching this runtime; no feedback was written")
 
 
 @server.tool(description="Rank functions for a bug report. Each hit includes file, line, score, and the provenance path. The payload also says whether HydraDB answered, and which bounded queries ran.")
@@ -113,6 +129,7 @@ def learn_from_fix(report: str, diff: str) -> dict:
     if not state["ranker"].request_lock.acquire(timeout=REQUEST_LOCK_TIMEOUT_SECONDS):
         raise RankingBusyError("ranking is busy; try again shortly")
     try:
+        _require_feedback_backend(state["ranker"])
         return apply_fix(
             state["ranker"],
             report,

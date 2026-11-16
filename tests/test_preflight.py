@@ -45,6 +45,20 @@ class PreflightTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_runtime(self.root)
 
+    def test_hosted_database_is_rejected_before_connection(self):
+        package = self.root / "repocortex"
+        package.mkdir()
+        (package / "__init__.py").touch()
+        (package / "config.py").write_text(
+            "from types import SimpleNamespace\nclass Settings:\n"
+            "    @staticmethod\n    def load(root): return SimpleNamespace(backend='hosted')\n")
+        marker = self.root / "connected"
+        (package / "hydradb.py").write_text(
+            "from pathlib import Path\ndef connect(settings):\n"
+            f"    Path({str(marker)!r}).touch()\n    raise RuntimeError('should not connect')\n")
+        self.assertFalse(check_database(self.root, 1))
+        self.assertFalse(marker.exists())
+
     @patch("scripts.preflight.subprocess.run")
     def test_database_probe_is_bounded_and_hides_diagnostics(self, run):
         run.side_effect = subprocess.TimeoutExpired("probe", 15)

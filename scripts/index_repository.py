@@ -1,9 +1,10 @@
-"""Index a local, trusted Python repository into a fresh, isolated output directory.
+"""Index a local, trusted source repository into a fresh, isolated output directory.
 
 This reuses the same parser and corpus format as scripts/build_graph.py, but it
 never touches the benchmark data (data/, results/), never writes to HydraDB, and
 never clones or downloads anything. The result is a structural code graph and a
-text corpus. It is NOT a learned runtime: learned edges and issue memory only
+text corpus. With --embed --runtime it also writes empty serving state. It is
+NOT a learned runtime: learned edges and issue memory only
 exist after real fix history or feedback has been replayed.
 
 Example:
@@ -32,12 +33,16 @@ from repocortex.graph.builder import build_graph  # noqa: E402
 EXCLUDED_DIRS = {
     ".git", ".hg", ".svn", ".venv", "venv", "env", ".env", ".tox", ".nox",
     "node_modules", "site-packages", "__pycache__", "build", "dist",
-    ".eggs", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".idea", ".vscode",
+    ".next", ".turbo", "out", "coverage", "vendor", ".eggs", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".idea", ".vscode",
 }
 # Names like build/ or env/ can be real packages when nested, so only skip them at top level.
 NESTED_EXCLUDED_DIRS = EXCLUDED_DIRS - {"build", "dist", "env"}
 MAX_FILE_BYTES = 2_000_000
 FORMAT_VERSION = 1
+LANGUAGE_SUFFIXES = {
+    "python": {".py"}, "go": {".go"},
+    "typescript": {".ts", ".tsx"}, "javascript": {".js", ".jsx", ".mjs", ".cjs"},
+}
 
 LIMITATIONS = [
     "Structural graph only: CONTAINS, DEFINES, IMPORTS, INHERITS, CALLS, TESTED_BY, "
@@ -50,7 +55,7 @@ LIMITATIONS = [
     "No database writes: nothing was ingested into HydraDB or Bolt.",
     "Embeddings are only present if --embed was used; without them, only lexical/graph "
     "signals are available.",
-    "Files that fail to parse with this Python's ast module are skipped (counted in "
+    "Files that fail static parsing are skipped (counted in "
     "manifest.json). Migrations directories and vendored/virtualenv directories are skipped.",
 ]
 
@@ -144,15 +149,16 @@ def parse_scope(value: str | None) -> tuple[str, ...] | None:
     return tuple(parts)
 
 
-def detect_scope(repo: Path) -> tuple[str, ...]:
-    """Top-level directories that contain Python files, skipping tooling/vendor dirs."""
+def detect_scope(repo: Path, suffixes: set[str] | None = None) -> tuple[str, ...]:
+    """Top-level directories that contain selected source files, skipping tooling/vendor dirs."""
+    suffixes = suffixes or {".py"}
     scope = []
     for child in sorted(repo.iterdir()):
         if not child.is_dir() or child.is_symlink():
             continue
         if child.name in EXCLUDED_DIRS or child.name.startswith("."):
             continue
-        if any(True for _ in child.rglob("*.py")):
+        if any(p.suffix in suffixes for p in child.rglob("*") if p.is_file()):
             scope.append(child.name)
     return tuple(scope)
 
@@ -175,17 +181,18 @@ def _keep(repo: Path, relpath: str) -> bool:
 
 
 def collect_sources(repo: Path, scope: tuple[str, ...], include_root_files: bool,
-                    max_files: int = 0) -> tuple[list[tuple[str, str]], int]:
+                    max_files: int = 0, suffixes: set[str] | None = None) -> tuple[list[tuple[str, str]], int]:
     """Filter paths and bound file counts before reading source contents."""
+    suffixes = suffixes or {".py"}
     for prefix in scope:
         base = repo / prefix
         if not base.is_dir() or not _is_within(base.resolve(), repo):
             raise ValidationError(f"--scope entry {prefix!r} is not a directory under {repo}.")
     def paths():
         for prefix in scope:
-            yield from sorted((repo / prefix).rglob("*.py"))
+            yield from sorted(p for p in (repo / prefix).rglob("*") if p.suffix in suffixes)
         if include_root_files:
-            yield from sorted(repo.glob("*.py"))
+            yield from sorted(p for p in repo.iterdir() if p.suffix in suffixes)
     seen = set()
     kept = []
     skipped = 0
@@ -199,7 +206,7 @@ def collect_sources(repo: Path, scope: tuple[str, ...], include_root_files: bool
             continue
         if max_files and len(kept) >= max_files:
             raise ValidationError(
-                f"Python files exceed --max-files {max_files}. Narrow --scope or raise --max-files."
+                f"Source files exceed --max-files {max_files}. Narrow --scope or raise --max-files."
             )
         try:
             with path.open("rb") as source:
@@ -307,33 +314,50 @@ def run(args: argparse.Namespace) -> dict:
     log(f"[1/{steps}] validating inputs")
     if args.max_files < 0:
         raise ValidationError("--max-files must be zero or positive")
+    if args.runtime:
+        if not args.embed:
+            raise ValidationError("--runtime requires --embed to produce a searchable runtime")
+        from repocortex.retrieve.dense import MODEL_NAME
+        if args.model and args.model != MODEL_NAME:
+            raise ValidationError(f"--runtime supports only the serving model {MODEL_NAME!r}")
     repo = validate_repo(args.repo)
     out = validate_out(args.out, repo)
+    languages = getattr(args, "languages", ["python"])
+    suffixes = set().union(*(LANGUAGE_SUFFIXES[name] for name in languages))
     scope = parse_scope(args.scope)
     auto_scope = scope is None
     if auto_scope:
-        scope = detect_scope(repo)
-    has_root_py = auto_scope and any(p.is_file() for p in repo.glob("*.py"))
-    if not scope and not has_root_py:
+        scope = detect_scope(repo, suffixes)
+    has_root_sources = auto_scope and any(p.is_file() and p.suffix in suffixes for p in repo.iterdir())
+    if not scope and not has_root_sources:
         raise ValidationError(
-            f"no Python files found under {repo} (skipping {', '.join(sorted(EXCLUDED_DIRS)[:6])}, ...). "
+            f"no selected-language files found under {repo} (skipping {', '.join(sorted(EXCLUDED_DIRS)[:6])}, ...). "
             "Pass --scope with the directories that contain your source."
         )
     log(f"      repo={repo}")
     log(f"      scope={','.join(scope) or '(root files only)'}{' (auto-detected)' if auto_scope else ''}")
     log(f"      out={out}")
 
-    log(f"[2/{steps}] reading Python sources")
-    files, skipped = collect_sources(repo, scope, include_root_files=has_root_py, max_files=args.max_files)
+    log(f"[2/{steps}] reading selected source files")
+    files, skipped = collect_sources(repo, scope, include_root_files=has_root_sources, max_files=args.max_files, suffixes=suffixes)
     if not files:
         raise ValidationError(
-            f"no indexable .py files in scope {scope} under {repo}. Check --scope; migrations, "
+            f"no indexable source files in scope {scope} under {repo}. Check --scope; migrations, "
             "virtualenv/vendor directories and files over 2 MB are skipped."
         )
     log(f"      files={len(files)} skipped={skipped}")
 
     log(f"[3/{steps}] parsing graph with repocortex.graph.builder")
-    graph = build_graph(files)
+    graph = build_graph([(path, text) for path, text in files if Path(path).suffix == ".py"])
+    other_files = [(path, text) for path, text in files if Path(path).suffix != ".py"]
+    if other_files:
+        try:
+            from repocortex.graph.multilang import build_multilang_graph
+            other = build_multilang_graph(other_files)
+        except ImportError as exc:
+            raise ValidationError("Go/TypeScript/JavaScript parsing requires pip install -e '.[multilang]'") from exc
+        graph.nodes.update(other.nodes)
+        graph.edges.update(other.edges)
     name_repository(graph, repo.name)
     stats = graph_stats(graph)
     parsed_files = stats["labels"].get("File", 0)
@@ -345,14 +369,26 @@ def run(args: argparse.Namespace) -> dict:
     if stats["labels"].get("Function", 0) == 0:
         log("      warning: no non-test functions found; rankers will have nothing to return")
 
+    if args.runtime and stats["labels"].get("Function", 0) == 0:
+        raise ValidationError("--runtime requires at least one non-test function to search")
+    limitations = list(LIMITATIONS)
+    if args.runtime:
+        limitations = [item for item in limitations if not item.startswith("No learned state:")]
+        limitations.append("Untrained runtime: serving state starts with zero learned edges and zero issue memories. "
+                            "Structural search can run offline; live HydraDB ingestion and confirmed-fix learning are separate steps.")
+    if other_files:
+        limitations.append("Go/TypeScript/JavaScript use Tree-sitter declarations and unambiguous same-file direct calls only; imports, inheritance and dynamic calls are not resolved.")
     manifest = {
         "format_version": FORMAT_VERSION,
-        "kind": "repocortex-structural-index",
+        "kind": "repocortex-untrained-runtime" if args.runtime else "repocortex-structural-index",
+        "runtime_ready": bool(args.runtime),
+        "training_reports": 0,
         "learned_runtime": False,
         "db_writes": False,
         "repo": str(repo),
         "git_head": read_git_head(repo),
         "scope": list(scope),
+        "languages": languages,
         "auto_scope": auto_scope,
         "files_indexed": len(files),
         "files_skipped": skipped,
@@ -360,7 +396,7 @@ def run(args: argparse.Namespace) -> dict:
         "graph": stats,
         "embeddings": None,
         "outputs": ["manifest.json", "data/corpus.json", "results/graph_stats.json"],
-        "limitations": LIMITATIONS,
+        "limitations": limitations,
     }
     if args.dry_run:
         log("dry run: nothing written")
@@ -380,6 +416,16 @@ def run(args: argparse.Namespace) -> dict:
             manifest["embeddings"] = write_embeddings(corpus, staging / "data" / "embeddings.npz", args.model)
             manifest["outputs"].append("data/embeddings.npz")
             log(f"      embedded={manifest['embeddings']['functions']}")
+        if args.runtime:
+            import numpy as np
+            if manifest["embeddings"]["dim"] != 384:
+                raise ValidationError("serving model must produce 384-dimensional embeddings")
+            (staging / "data" / "learned_state.json").write_text("[]\n", encoding="utf-8")
+            np.savez(staging / "data" / "learned_state.npz",
+                     vectors=np.empty((0, 384), dtype=np.float32),
+                     tickets=np.empty(0, dtype=np.int64),
+                     golds=np.empty(0, dtype="U1"))
+            manifest["outputs"].extend(["data/learned_state.json", "data/learned_state.npz"])
         manifest["elapsed_seconds"] = round(time.time() - started, 2)
         (staging / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         # Final no-overwrite check, then move into place in one rename.
@@ -392,7 +438,8 @@ def run(args: argparse.Namespace) -> dict:
         shutil.rmtree(staging, ignore_errors=True)
         raise
     log(f"done: {out}")
-    log("note: this is a structural index, not a learned runtime (see manifest.json limitations)")
+    log("note: this is an untrained runtime" if args.runtime else
+        "note: this is a structural index, not a learned runtime (see manifest.json limitations)")
     return manifest
 
 
@@ -400,7 +447,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="index_repository.py",
         description=(
-            "Parse a local, trusted Python repository into a RepoCortex structural graph and corpus, "
+            "Parse a local, trusted source repository into a RepoCortex structural graph and corpus, "
             "written to a new directory separate from the benchmark data. No network, no git clone, "
             "no database writes. The output is NOT a learned runtime: there is no fix history, "
             "learned edges or issue memory until history or feedback is replayed."
@@ -415,14 +462,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--scope", default=None,
         help="comma-separated directories under --repo to parse (default: auto-detect top-level "
-        "dirs with .py files, plus top-level .py files)",
+        "dirs with selected-language files, plus matching top-level files)",
     )
+    parser.add_argument("--languages", nargs="+", choices=list(LANGUAGE_SUFFIXES), default=["python"],
+                        help="languages to index; non-Python languages require the multilang extra")
     parser.add_argument("--max-files", type=int, default=20000, help="fail if more files than this (default 20000; 0 disables)")
     parser.add_argument("--dry-run", action="store_true", help="validate and parse, print the summary, write nothing")
     parser.add_argument(
         "--embed", action="store_true",
         help="also write data/embeddings.npz with a locally cached sentence-transformers model (offline only)",
     )
+    parser.add_argument("--runtime", action="store_true",
+                        help="with --embed, write empty serving state for untrained search; default model only")
     parser.add_argument("--model", default=None, help="embedding model name for --embed (default: the project model)")
     parser.add_argument("--json", action="store_true", help="print the manifest as JSON on stdout")
     return parser

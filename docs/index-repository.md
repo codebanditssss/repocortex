@@ -1,6 +1,6 @@
-# Index a new Python repository
+# Index a local repository
 
-`scripts/index_repository.py` parses a local Python repository into a RepoCortex
+`scripts/index_repository.py` parses a local source repository into a RepoCortex
 structural graph and text corpus. It writes to a new directory that is kept
 separate from the Django benchmark.
 
@@ -10,7 +10,8 @@ it never touches `data/` or `results/`, never connects to HydraDB or Bolt, and n
 loads `.env` files. It reads Python source, so review the selected source scope
 before sharing the generated corpus.
 
-> **This does not give you a trained runtime.** The output is a structural index.
+> **This does not train a model or graph.** By default the output is a structural index;
+> `--embed --runtime` additionally makes it loadable for untrained search.
 > It has no fix history, no learned edges, and no issue memory. Learning requires
 > real fix history or confirmed feedback; improvements must be measured separately.
 > Learning is not part of this command.
@@ -29,6 +30,9 @@ python scripts/index_repository.py --repo ~/src/myproject --scope src,tests --ou
 
 # Also compute local dense embeddings (optional, offline only)
 python scripts/index_repository.py --repo ~/src/myproject --out ~/rc-indexes/myproject --embed
+
+# Prepare an untrained search runtime with empty feedback memory
+python scripts/index_repository.py --repo ~/src/myproject --out ~/rc-indexes/myproject --embed --runtime
 ```
 
 Run `python scripts/index_repository.py --help` to see every flag.
@@ -66,6 +70,49 @@ The command exits with code 2 on any validation error, and the error message say
 - The parser only reads source with `ast`. It does not import or execute any of the
   indexed code. Still, use this command only on repositories you trust.
 
+## Optional Go, TypeScript and JavaScript indexing
+
+Install the optional pinned parser dependencies once:
+
+```sh
+.venv/bin/pip install -e '.[multilang]'
+```
+
+Then select languages and source-only directories explicitly. For example, from
+this RepoCortex checkout:
+
+```sh
+.venv/bin/python scripts/index_repository.py \
+  --repo /path/to/agent-orchestrator \
+  --scope backend/cmd,backend/internal,backend/pkg,frontend/src \
+  --languages go typescript javascript \
+  --out /tmp/agent-orchestrator-runtime --embed --runtime
+```
+
+`python` remains the default. TypeScript includes `.ts` and `.tsx`; JavaScript
+includes `.js`, `.jsx`, `.mjs` and `.cjs`. Avoid broad folders containing compiled
+bundles, generated clients or copied dependencies; use explicit source scopes.
+
+The optional parser uses tree-sitter without executing the input. It indexes Go
+functions and receiver methods, JavaScript/TypeScript function declarations and
+methods, named function expressions, and arrow/function expressions assigned to
+named variables, object properties or class fields. Named declarations
+inside IIFEs and anonymous callbacks are indexed with distinct lexical scope IDs;
+anonymous callbacks themselves do not become invented function nodes. File containment,
+class definitions and function definitions become structural graph edges.
+
+Call edges connect only unambiguous same-file top-level functions called through
+bare identifiers. Local shadows, reassigned targets, member calls, imports,
+dynamic dispatch, anonymous callbacks and calls inside nested functions are not
+resolved. There is no Go/TypeScript type checker or cross-file symbol resolver.
+Functions in conventional test files/directories are labeled `Test`, not search
+candidates; test discovery is a filename/name heuristic. Files with a tree-sitter
+syntax error are skipped completely and included in `files_unparseable`.
+
+This adds parsing coverage. It does not establish fault-localization accuracy or
+learning gains for these languages; Django and HTTPX results do not transfer to
+this new repository automatically.
+
 ## Outputs
 
 ```
@@ -73,6 +120,8 @@ The command exits with code 2 on any validation error, and the error message say
   manifest.json            inputs, git HEAD, counts, skipped/unparseable files, limitations
   data/corpus.json         nodes and edges in the build_graph.py corpus format
   data/embeddings.npz      only with --embed (uids, matrix, model), same format as the benchmark cache
+  data/learned_state.json  empty edge list, only with --embed --runtime
+  data/learned_state.npz   empty 384-dimensional memory, only with --embed --runtime
   results/graph_stats.json node counts by label and edge counts by relation
 ```
 
@@ -87,12 +136,26 @@ model (default `sentence-transformers/all-MiniLM-L6-v2`, or the one passed with
 `sentence-transformers` is not installed, the run fails with a clear message and
 nothing is written. Rerun without `--embed` to get the structural index alone.
 
+## Untrained search runtime (`--embed --runtime`)
+
+This option adds the empty state files required by `repocortex.serve.load.load_ranker`.
+It requires `--embed` and the default MiniLM model because the serving loader uses
+that model for queries. A different `--model` is rejected before source indexing.
+The output has zero learned edges and zero stored issue reports. `manifest.json`
+records `kind: repocortex-untrained-runtime`, `runtime_ready: true`,
+`learned_runtime: false`, and `training_reports: 0`.
+
+The runtime can perform offline structural and lexical/dense search. It has not
+been trained, evaluated on this repository, or ingested into HydraDB. Database
+restoration and durable confirmed-fix feedback are separate steps. An index with
+no non-test functions is rejected in runtime mode.
+
 ## Limitations
 
-- **Not a learned runtime.** `learned_state.json` and `learned_state.npz` are not
-  produced, so `repocortex.serve.load.load_ranker` cannot load this directory.
-  The output has no SHORTCUT or FIXED_IN edges and no issue memory. Those require
-  replaying real fix history or feedback.
+- **No learned history.** Without `--runtime`, learned-state files are absent and
+  the serving loader cannot load the output. With `--runtime`, those files exist
+  but start empty. Neither mode creates SHORTCUT/FIXED_IN edges or issue memory;
+  those require replaying real fix history or confirmed feedback.
 - **No co-change signal.** No commit history is mined, so there are no `CO_CHANGED` edges.
 - **Static, name-based structure.** CALLS edges are resolved by name. Calls with
   ambiguous targets are dropped, and dynamic dispatch is not modelled.
@@ -104,3 +167,18 @@ nothing is written. Rerun without `--embed` to get the structural index alone.
   use the same identifier. Keep indexes isolated when checkout names coincide.
 - **No benchmark results transfer.** Evaluation numbers measured on the Django
   benchmark do not apply to an index built with this command.
+
+## Use a separate runtime
+
+Keep each repository in its own runtime directory and dedicated database. Validate
+and restore the structural corpus using [the runtime restore command](restore-runtime.md).
+Then set `REPOCORTEX_RUNTIME=/absolute/path/to/index` before starting the local MCP
+or locate server. Database settings still come from the RepoCortex checkout and
+environment, never from the indexed repository.
+
+`python scripts/preflight.py --runtime /absolute/path/to/index --database` checks
+that the artifacts and configured database agree. For terminal feedback, pass
+`--runtime /absolute/path/to/index` to `scripts/feedback_cli.py` with a separate
+namespace. Follow the [search, preview and apply workflow](feedback-cli.md); review
+the mapped functions before applying a confirmed fix. New runtimes start with no
+learned history.

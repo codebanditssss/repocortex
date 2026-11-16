@@ -47,12 +47,55 @@ class McpTest(unittest.TestCase):
 
     def test_namespaced_feedback_never_passes_shared_snapshot_path(self):
         from scripts import mcp_server as m
-        ranker = SimpleNamespace(feedback_journal=object(), request_lock=Mock())
+        ranker = SimpleNamespace(feedback_journal=object(), request_lock=Mock(), n=2, nodes={},
+                                 client=SimpleNamespace(ping=lambda: {"repo": "repo:fixture", "functions": 2}))
         state = {"ranker": ranker, "operators": []}
         with patch.object(m, "_http_mode", False), patch.object(m, "get_state", return_value=state), patch("repocortex.serve.learn.learn_from_fix", return_value={"learned": ["function"]}) as apply_fix:
             self.assertEqual(m.learn_from_fix("bug", "+++ b/a.py"), {"learned": ["function"]})
         apply_fix.assert_called_once_with(ranker, "bug", "+++ b/a.py", operators=[])
         ranker.request_lock.release.assert_called_once()
+
+    def test_wrong_repository_refuses_feedback_under_lock(self):
+        from scripts import mcp_server as m
+        ranker = SimpleNamespace(feedback_journal=object(), request_lock=Mock(), n=2,
+                                 nodes={"repo:httpx": {"label": "Repo"}},
+                                 client=SimpleNamespace(ping=lambda: {"repo": "repo:django", "functions": 2}))
+        with patch.object(m, "_http_mode", False), patch.object(m, "get_state", return_value={"ranker": ranker, "operators": []}), patch("repocortex.serve.learn.learn_from_fix") as apply_fix:
+            with self.assertRaisesRegex(RuntimeError, "matching this runtime"):
+                m.learn_from_fix("bug", "+++ b/a.py")
+        apply_fix.assert_not_called()
+        ranker.request_lock.acquire.assert_called_once()
+        ranker.request_lock.release.assert_called_once()
+
+    def test_database_loss_after_startup_refuses_feedback(self):
+        from scripts import mcp_server as m
+        client = Mock()
+        client.ping.side_effect = RuntimeError("connection lost")
+        ranker = SimpleNamespace(feedback_journal=object(), request_lock=Mock(), n=2,
+                                 nodes={"repo:httpx": {"label": "Repo"}}, client=client)
+        with patch.object(m, "get_state", return_value={"ranker": ranker, "operators": []}), patch("repocortex.serve.learn.learn_from_fix") as apply_fix:
+            with self.assertRaisesRegex(RuntimeError, "no feedback was written"):
+                m.learn_from_fix("bug", "+++ b/a.py")
+        apply_fix.assert_not_called()
+        ranker.request_lock.release.assert_called_once()
+
+    def test_wrong_repository_refuses_namespaced_startup_before_journal(self):
+        from scripts import mcp_server as m
+        client = Mock()
+        client.ping.return_value = {"repo": "repo:django", "functions": 2}
+        ranker = SimpleNamespace(n=2, nodes={"repo:httpx": {"label": "Repo"}})
+        with patch.object(m, "_state", None), patch.dict(m.os.environ, {"REPOCORTEX_FEEDBACK_NAMESPACE": "isolated-httpx"}), patch("repocortex.serve.load.load_ranker", return_value=ranker), patch("repocortex.learn.replay.make_operators", return_value=[]), patch("repocortex.config.Settings.load", return_value=SimpleNamespace(backend="bolt")), patch("repocortex.hydradb.connect", return_value=client), patch("repocortex.serve.feedback.configure_feedback") as configure:
+            with self.assertRaisesRegex(RuntimeError, "matching this runtime"):
+                m._load_state()
+        configure.assert_not_called()
+        client.close.assert_called_once()
+
+    def test_namespaced_hosted_startup_refused_before_connection(self):
+        from scripts import mcp_server as m
+        with patch.object(m, "_state", None), patch.dict(m.os.environ, {"REPOCORTEX_FEEDBACK_NAMESPACE": "pilot"}), patch("repocortex.serve.load.load_ranker", return_value=SimpleNamespace()), patch("repocortex.learn.replay.make_operators", return_value=[]), patch("repocortex.config.Settings.load", return_value=SimpleNamespace(backend="hosted")), patch("repocortex.hydradb.connect") as connect:
+            with self.assertRaisesRegex(ValueError, "Bolt backend"):
+                m._load_state()
+        connect.assert_not_called()
 
     def test_tools_are_registered(self):
         tools = asyncio.run(server.list_tools())

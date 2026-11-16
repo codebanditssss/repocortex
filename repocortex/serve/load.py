@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -40,6 +41,11 @@ def _endpoint(nodes: dict, uid: str) -> None:
         "doc": "",
         "signature": "",
     }
+
+
+def runtime_directory(default: Path, explicit: Path | None = None) -> Path:
+    """Select data only; database configuration stays in the application checkout."""
+    return Path(explicit or os.environ.get("REPOCORTEX_RUNTIME") or default).expanduser().resolve()
 
 
 def load_ranker(root: Path) -> HybridRanker:
@@ -119,7 +125,10 @@ def backend_status(ranker) -> dict:
         info = ping()
     except Exception:
         return {"mode": "error", "connected": False, "detail": "graph connection unavailable"}
-    if not info.get("repo") or info.get("functions") != ranker.n:
+    expected_repos = {uid for uid, node in getattr(ranker, "nodes", {}).items()
+                      if node.get("label") == "Repo"}
+    if (not info.get("repo") or info.get("functions") != ranker.n
+            or (expected_repos and info.get("repo") not in expected_repos)):
         return {"mode": "error", "connected": False, "detail": "repository graph is missing or has an unexpected function count"}
     return {
         "mode": "live",

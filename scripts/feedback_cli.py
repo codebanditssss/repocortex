@@ -11,7 +11,7 @@ from repocortex.config import Settings
 from repocortex.hydradb import connect
 from repocortex.serve.feedback import configure_feedback, feedback_digest
 from repocortex.serve.learn import functions_from_diff, learn_from_fix
-from repocortex.serve.load import load_ranker, locate_report
+from repocortex.serve.load import load_ranker, locate_report, runtime_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -61,6 +61,7 @@ def read_input(path: Path, limit: int, label: str) -> str:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=["search", "preview", "apply"])
+    parser.add_argument("--runtime", type=Path, help="runtime root containing data/; defaults to REPOCORTEX_RUNTIME or this checkout")
     parser.add_argument("--namespace", required=True, help="one writer per namespace; retained across runs")
     parser.add_argument("--report", required=True, type=Path)
     parser.add_argument("--diff", type=Path)
@@ -73,9 +74,11 @@ def main(argv=None):
         parser.error("--diff is required for preview/apply and not accepted for search")
     if (args.command == "apply") != bool(args.review_token):
         parser.error("--review-token is required for apply and not accepted for search/preview")
+    runtime = runtime_directory(ROOT, args.runtime)
     if args.output:
         resolved = args.output.resolve()
-        if resolved == ROOT / "data" or (ROOT / "data").resolve() in resolved.parents:
+        if any(resolved == folder or folder in resolved.parents
+               for folder in ((ROOT / "data").resolve(), runtime / "data")):
             parser.error("output must be outside data/")
         if args.output.exists():
             parser.error("output already exists; choose a new receipt filename")
@@ -94,7 +97,7 @@ def main(argv=None):
             output = args.output.open("x")
             output.write('{"status": "incomplete", "instruction": "Do not treat this receipt as a successful operation."}\n')
             output.flush()
-        ranker = load_ranker(ROOT)
+        ranker = load_ranker(runtime)
         try:
             client = connect(settings)
         except Exception:

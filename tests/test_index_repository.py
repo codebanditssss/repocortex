@@ -189,7 +189,7 @@ class IndexRepositoryTest(unittest.TestCase):
         (empty / "docs" / "readme.md").write_text("hi")
         code, _, stderr = run_cli("--repo", str(empty), "--out", str(self.out))
         self.assertEqual(code, 2)
-        self.assertIn("no Python files", stderr)
+        self.assertIn("no selected-language files", stderr)
 
     def test_symlink_outside_repo_is_skipped(self):
         outside = self.base / "outside.py"
@@ -286,6 +286,65 @@ class IndexRepositoryTest(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("does not download models", stderr)
         self.assertEqual(sorted(p.name for p in self.base.iterdir()), ["sample"])
+
+    def test_runtime_loads_with_empty_memory_and_default_model(self):
+        import numpy as np
+        from repocortex.retrieve.dense import MODEL_NAME
+        from repocortex.serve.load import load_ranker
+
+        class FakeEmbedder:
+            def __init__(self, name=MODEL_NAME):
+                self.model_name = name
+            def encode(self, texts):
+                return np.ones((len(texts), 384), dtype=np.float32)
+            def encode_one(self, text):
+                return self.encode([text])[0]
+
+        with mock.patch("repocortex.retrieve.dense.Embedder", FakeEmbedder), \
+                mock.patch("repocortex.serve.load.Embedder", FakeEmbedder):
+            code, stdout, stderr = run_cli("--repo", str(self.repo), "--out", str(self.out),
+                                          "--embed", "--runtime", "--json")
+            self.assertEqual(code, 0, stderr)
+            ranker = load_ranker(self.out)
+            self.assertEqual(ranker.memory, [])
+            self.assertEqual(ranker.n, 4)
+            self.assertTrue(ranker.predict({"ticket": 1, "summary": "checkout order", "description": ""}, k=3).hits)
+        manifest = json.loads(stdout)
+        self.assertEqual(manifest["kind"], "repocortex-untrained-runtime")
+        self.assertTrue(manifest["runtime_ready"])
+        self.assertFalse(manifest["learned_runtime"])
+        self.assertEqual(manifest["training_reports"], 0)
+        self.assertEqual(json.loads((self.out / "data/learned_state.json").read_text()), [])
+        with np.load(self.out / "data/learned_state.npz", allow_pickle=False) as state:
+            self.assertEqual(state["vectors"].shape, (0, 384))
+            self.assertEqual(state["tickets"].dtype, np.dtype("int64"))
+            self.assertEqual(state["golds"].dtype.kind, "U")
+
+    def test_runtime_rejects_missing_embeddings_or_wrong_model_before_reading(self):
+        with mock.patch.object(ix, "collect_sources", side_effect=AssertionError("source read")):
+            for extra in (["--runtime"], ["--runtime", "--embed", "--model", "other/model"]):
+                code, _, stderr = run_cli("--repo", str(self.repo), "--out", str(self.out), *extra)
+                self.assertEqual(code, 2, stderr)
+        self.assertFalse(self.out.exists())
+
+    def test_mixed_language_cli_preserves_root_and_selected_scope(self):
+        import importlib.util
+        if any(importlib.util.find_spec(name) is None for name in
+               ("tree_sitter", "tree_sitter_go", "tree_sitter_typescript", "tree_sitter_javascript")):
+            self.skipTest("optional multilang dependencies are not installed")
+        (self.repo / "shop" / "worker.go").write_text("package shop\nfunc DispatchJob() {}\n")
+        (self.repo / "shop" / "view.tsx").write_text("export const Widget = () => <div>ready</div>;\n")
+        (self.repo / "shop" / "unselected.js").write_text("function hiddenLanguage() {}\n")
+        code, stdout, stderr = run_cli("--repo", str(self.repo), "--out", str(self.out),
+                                      "--scope", "shop", "--languages", "python", "go", "typescript", "--json")
+        self.assertEqual(code, 0, stderr)
+        nodes, edges = load_corpus(self.out / "data/corpus.json")
+        names = {n["name"] for n in nodes.values() if n["label"] == "Function"}
+        self.assertTrue({"save_record", "DispatchJob", "Widget"} <= names)
+        self.assertNotIn("hiddenLanguage", names)
+        self.assertEqual([uid for uid, n in nodes.items() if n["label"] == "Repo"], ["repo:sample"])
+        self.assertTrue(all(src in nodes and dst in nodes for src, _, dst in edges))
+        self.assertEqual(json.loads(stdout)["languages"], ["python", "go", "typescript"])
 
     def test_help_mentions_limits(self):
         text = " ".join(ix.build_parser().format_help().split())

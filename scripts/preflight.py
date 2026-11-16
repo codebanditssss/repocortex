@@ -47,24 +47,29 @@ def check_runtime(root: Path) -> int:
     return len(uids)
 
 
-def check_database(root: Path, functions: int, timeout: float = 15) -> bool:
+def check_database(root: Path, functions: int, timeout: float = 15, repositories: set[str] | None = None) -> bool:
     # A separate process bounds driver connection/retry time and suppresses
     # driver diagnostics, which may contain private connection details.
     probe = '''
-import sys
+import sys, json
 sys.path.insert(0, sys.argv[1])
 from pathlib import Path
 from repocortex.config import Settings
 from repocortex.hydradb import connect
-client = connect(Settings.load(Path(sys.argv[1])))
+settings = Settings.load(Path(sys.argv[1]))
+if settings.backend != "bolt":
+    sys.exit(1)
+client = connect(settings)
 try:
     status = client.ping()
-    sys.exit(0 if status.get("repo") and status.get("functions") == int(sys.argv[2]) else 1)
+    expected = json.loads(sys.argv[3])
+    sys.exit(0 if status.get("repo") and status.get("functions") == int(sys.argv[2])
+             and (not expected or status["repo"] in expected) else 1)
 finally:
     client.close()
 '''
     try:
-        result = subprocess.run([sys.executable, "-c", probe, str(root), str(functions)],
+        result = subprocess.run([sys.executable, "-c", probe, str(root), str(functions), json.dumps(sorted(repositories or []))],
                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                                 timeout=timeout, check=False)
         return result.returncode == 0
@@ -74,8 +79,11 @@ finally:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--database", action="store_true", help="also check configured HydraDB with a 15-second deadline")
+    parser.add_argument("--database", action="store_true", help="also check configured Bolt HydraDB with a 15-second deadline")
+    parser.add_argument("--runtime", type=Path, help="root containing data/; defaults to REPOCORTEX_RUNTIME or this checkout")
     args = parser.parse_args()
+    import os
+    runtime = Path(args.runtime or os.environ.get("REPOCORTEX_RUNTIME") or ROOT).expanduser().resolve()
     if sys.version_info < (3, 11):
         print("FAIL: Python 3.11+ is required.")
         return 1
@@ -83,24 +91,26 @@ def main() -> int:
     if missing:
         print("FAIL: missing Python packages: " + ", ".join(missing))
         print("Run: python -m pip install -e . (inside your virtual environment)")
-    absent = [name for name in RUNTIME_FILES if not (ROOT / "data" / name).is_file()]
+    absent = [name for name in RUNTIME_FILES if not (runtime / "data" / name).is_file()]
     if absent:
         print("FAIL: missing runtime files: " + ", ".join("data/" + name for name in absent))
         print("See docs/recovery.md. The graph export alone cannot replace these files.")
     if missing or absent:
         return 1
     try:
-        count = check_runtime(ROOT)
+        count = check_runtime(runtime)
     except Exception:
         print("FAIL: runtime artifacts are unreadable or inconsistent. Restore one matching snapshot; see docs/recovery.md.")
         return 1
     print(f"PASS: runtime artifacts are consistent ({count} indexed functions).")
     if args.database:
-        if not check_database(ROOT, count):
-            print("FAIL: HydraDB is unreachable, unconfigured, or has a different function count.")
+        nodes = json.loads((runtime / "data/corpus.json").read_text())["nodes"]
+        repositories = {uid for uid, node in nodes.items() if node.get("label") == "Repo"}
+        if not check_database(ROOT, count, repositories=repositories):
+            print("FAIL: HydraDB is unreachable, unconfigured, or its repository identity/function count differs.")
             print("Check .env against .env.example and docs/recovery.md. No database writes were performed.")
             return 1
-        print("PASS: configured HydraDB is reachable and its function count matches.")
+        print("PASS: configured HydraDB is reachable and its repository identity/function count match.")
     else:
         print("SKIP: database not checked; add --database before using live search or durable feedback.")
     print("The embedding model is not loaded by this check. First search may download MiniLM.")
