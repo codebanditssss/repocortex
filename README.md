@@ -235,6 +235,22 @@ Configure an MCP client that supports streamable HTTP to use `http://127.0.0.1:8
 
 Retrieval uses local embeddings and makes no generation-model API calls. Model-backed agent evaluations are separate and require provider credentials.
 
+For a newly indexed repository, you can inspect its first ranked result before
+provisioning HydraDB:
+
+```sh
+.venv/bin/python -m scripts.feedback_cli search \
+  --offline \
+  --runtime /absolute/path/to/myproject-runtime \
+  --report report.txt
+```
+
+This is a read-only cached preview. It cannot load or retain feedback and is
+not evidence of live HydraDB traversal. Restore the matching runtime into a
+dedicated HydraDB database, then use the normal search/preview/apply workflow
+for live query receipts and durable learning. See the
+[isolated repository guide](docs/index-repository.md).
+
 ## Durable local feedback
 
 For a trusted local MCP client, set `REPOCORTEX_FEEDBACK_NAMESPACE` to a unique project-and-snapshot name before starting the stdio server. Configure HydraDB through the existing environment variables. The server must connect successfully before it accepts durable feedback. Without a namespace, MCP rejects feedback instead of overwriting the shared runtime files; search remains available.

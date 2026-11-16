@@ -92,6 +92,63 @@ class FeedbackCLITest(TestCase):
                 cli.main(["search", "--namespace", "pilot", "--report", str(report)])
             execute.assert_not_called()
 
+    def test_offline_search_is_an_explicit_read_only_preview(self):
+        cached = {"hits": [{"uid": "func:example.py:fixed"}], "backend": {
+            "mode": "replay", "connected": False}, "source": "replay", "queries": []}
+        with TemporaryDirectory() as temp, patch.object(cli, "load_ranker", return_value=self.ranker), \
+             patch.object(cli, "locate_report", return_value=cached), \
+             patch.object(cli.Settings, "load") as settings, patch.object(cli, "connect") as connect, \
+             patch.object(cli, "configure_feedback") as feedback:
+            report = Path(temp) / "report.txt"
+            receipt = Path(temp) / "receipt.json"
+            report.write_text(self.report)
+            code = cli.main(["search", "--offline", "--runtime", temp, "--report", str(report),
+                             "--output", str(receipt)])
+            result = json.loads(receipt.read_text())
+        self.assertEqual(code, 0)
+        self.assertFalse(result["writes"])
+        self.assertIn("cached structural preview", result["scope"])
+        self.assertIn("not live HydraDB", result["scope"])
+        self.assertEqual(result["search"], cached)
+        self.assertNotIn("journal", result)
+        settings.assert_not_called()
+        connect.assert_not_called()
+        feedback.assert_not_called()
+
+    def test_offline_is_rejected_for_feedback_and_namespaces(self):
+        with patch.object(cli, "load_ranker") as load:
+            for args in [
+                ["preview", "--offline", "--report", "report.txt", "--diff", "fix.diff"],
+                ["apply", "--offline", "--report", "report.txt", "--diff", "fix.diff", "--review-token", "x"],
+                ["search", "--offline", "--namespace", "pilot", "--report", "report.txt"],
+                ["search", "--report", "report.txt"],
+            ]:
+                with self.subTest(args=args), self.assertRaises(SystemExit):
+                    cli.main(args)
+            load.assert_not_called()
+
+    def test_live_search_still_connects_and_recovers_the_namespace(self):
+        client = SimpleNamespace(close=lambda: None)
+        search = {"command": "search", "namespace": "pilot", "search": {"hits": []}}
+        with TemporaryDirectory() as temp, patch.object(cli, "load_ranker", return_value=self.ranker), \
+             patch.object(cli.Settings, "load", return_value=SimpleNamespace(backend="bolt")) as settings, \
+             patch.object(cli, "connect", return_value=client) as connect, \
+             patch.object(cli, "configure_feedback", return_value={"replayed": 2}) as feedback, \
+             patch.object(cli, "execute", return_value=search) as execute:
+            report = Path(temp) / "report.txt"
+            receipt = Path(temp) / "receipt.json"
+            report.write_text(self.report)
+            code = cli.main(["search", "--namespace", "pilot", "--report", str(report),
+                             "--output", str(receipt)])
+            result = json.loads(receipt.read_text())
+        self.assertEqual(code, 0)
+        self.assertEqual(result["journal"], {"replayed": 2})
+        self.assertIs(self.ranker.client, client)
+        settings.assert_called_once_with(cli.ROOT)
+        connect.assert_called_once()
+        feedback.assert_called_once_with(self.ranker, "pilot")
+        execute.assert_called_once_with(self.ranker, "search", "pilot", self.report, None, None)
+
     def test_input_limits_and_empty_files(self):
         with TemporaryDirectory() as temp:
             report = Path(temp) / "report.txt"

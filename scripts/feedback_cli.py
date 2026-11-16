@@ -49,6 +49,17 @@ def execute(ranker, command, namespace, report, diff=None, review_token=None):
             "storage": "hydradb feedback journal", "retained": True}
 
 
+def offline_search(ranker, report: str) -> dict:
+    """Preview a prepared runtime without database access or feedback recovery."""
+    result = locate_report(ranker, report, k=10)
+    return {
+        "command": "search",
+        "scope": "cached structural preview; not live HydraDB traversal or durable feedback",
+        "writes": False,
+        "search": result,
+    }
+
+
 def read_input(path: Path, limit: int, label: str) -> str:
     with path.open("rb") as stream:
         data = stream.read(limit + 1)
@@ -64,13 +75,24 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=["search", "preview", "apply"])
     parser.add_argument("--runtime", type=Path, help="runtime root containing data/; defaults to REPOCORTEX_RUNTIME or this checkout")
-    parser.add_argument("--namespace", required=True, help="one writer per namespace; retained across runs")
+    parser.add_argument("--namespace", help="one writer per namespace; required unless using search --offline")
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="preview search from a prepared runtime without HydraDB; accepted only for search",
+    )
     parser.add_argument("--report", required=True, type=Path)
     parser.add_argument("--diff", type=Path)
     parser.add_argument("--review-token", help="token from preview; required for apply")
     parser.add_argument("--output", type=Path, help="new JSON receipt file outside data/; defaults to stdout")
     args = parser.parse_args(argv)
-    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", args.namespace):
+    if args.offline and args.command != "search":
+        parser.error("--offline is accepted only for search; preview/apply require live HydraDB")
+    if args.offline and args.namespace:
+        parser.error("--namespace is not used with --offline; cached previews cannot read or write feedback")
+    if not args.offline and not args.namespace:
+        parser.error("--namespace is required unless using search --offline")
+    if args.namespace and not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", args.namespace):
         parser.error("namespace must be 1–100 letters, digits, dots, underscores or hyphens")
     if (args.command != "search") != bool(args.diff):
         parser.error("--diff is required for preview/apply and not accepted for search")
@@ -91,23 +113,27 @@ def main(argv=None):
         if len(report) > 12_000:
             raise ValueError("report exceeds 12000 characters")
         diff = read_input(args.diff, 256_000, "diff") if args.diff else None
-        settings = Settings.load(ROOT)
-        if settings.backend != "bolt":
-            raise ValueError("confirmed-fix CLI requires the Bolt backend; hosted HTTP is not supported")
+        if not args.offline:
+            settings = Settings.load(ROOT)
+            if settings.backend != "bolt":
+                raise ValueError("confirmed-fix CLI requires the Bolt backend; hosted HTTP is not supported")
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             output = args.output.open("x")
             output.write('{"status": "incomplete", "instruction": "Do not treat this receipt as a successful operation."}\n')
             output.flush()
         ranker = load_ranker(runtime)
-        try:
-            client = connect(settings)
-        except Exception:
-            raise ValueError("HydraDB connection failed; check local configuration") from None
-        ranker.client = client
-        setup = configure_feedback(ranker, args.namespace)
-        result = execute(ranker, args.command, args.namespace, report, diff, args.review_token)
-        result["journal"] = setup
+        if args.offline:
+            result = offline_search(ranker, report)
+        else:
+            try:
+                client = connect(settings)
+            except Exception:
+                raise ValueError("HydraDB connection failed; check local configuration") from None
+            ranker.client = client
+            setup = configure_feedback(ranker, args.namespace)
+            result = execute(ranker, args.command, args.namespace, report, diff, args.review_token)
+            result["journal"] = setup
         encoded = json.dumps(result, indent=2) + "\n"
         if output is not None:
             output.seek(0)

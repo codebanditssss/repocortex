@@ -160,6 +160,28 @@ been trained, evaluated on this repository, or ingested into HydraDB. Database
 restoration and durable confirmed-fix feedback are separate steps. An index with
 no non-test functions is rejected in runtime mode.
 
+### Preview the first search
+
+After building with `--embed --runtime`, save a real bug report as `report.txt`
+and inspect the prepared index before provisioning a database:
+
+```sh
+.venv/bin/python -m scripts.feedback_cli search \
+  --offline \
+  --runtime /absolute/path/to/myproject-runtime \
+  --report report.txt
+```
+
+The receipt labels this as a **cached structural preview**. It reads the generated
+corpus and embeddings, makes no database connection or writes, and cannot load or
+retain feedback. It is useful for checking source scope and the first ranked
+functions; it is not evidence of live HydraDB traversal or learning.
+
+To exercise the Track 1 product path, restore the same runtime into a dedicated
+HydraDB database as described below, then run the ordinary search/preview/apply
+workflow without `--offline`. That path verifies the database identity, records
+query receipts and retains confirmed fixes under a feedback namespace.
+
 ## Limitations
 
 - **No learned history.** Without `--runtime`, learned-state files are absent and
