@@ -76,8 +76,8 @@ export function FieldShell({
         </i>
         <span className="footer-actions">
           <a href="https://github.com/codebanditssss/repocortex" target="_blank" rel="noreferrer" aria-label="RepoCortex source on GitHub (opens in a new tab)">GitHub ↗</a>
-          <span>RepoCortex field manual{dashboard ? `, plate ${active.roman} of vii` : ""}</span>
           {dashboard && <KeyboardShortcuts />}
+          <span className="footer-edition">RepoCortex field manual{dashboard ? `, plate ${active.roman} of vii` : ""}</span>
         </span>
       </footer>
     </div>

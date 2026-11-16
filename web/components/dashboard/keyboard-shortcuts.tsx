@@ -44,7 +44,7 @@ export function KeyboardShortcuts() {
   }, [pathname, router, toggle]);
 
   return <>
-    <button ref={trigger} type="button" className="shortcuts-trigger" aria-label="Keyboard shortcuts" aria-haspopup="dialog" onClick={toggle}>?</button>
+    <button ref={trigger} type="button" className="shortcuts-trigger" aria-label="Keyboard shortcuts" aria-haspopup="dialog" onClick={toggle}>Shortcuts</button>
     <dialog ref={dialog} className="shortcuts-dialog" aria-labelledby="shortcuts-title" aria-describedby="shortcuts-description" onClose={() => trigger.current?.focus()} onClick={(event) => {
       if (event.target === event.currentTarget) {
         const bounds = event.currentTarget.getBoundingClientRect();

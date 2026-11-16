@@ -313,6 +313,7 @@ main:focus { outline: none; }
   .metrics dd { font-size: 23px; }
   .foot { flex-direction: column; gap: 6px; padding-block: 12px; }
   .foot span { flex: initial; }
+  .foot .footer-edition { flex-basis: 100%; }
 }
 
 @media (max-width: 359px) {
