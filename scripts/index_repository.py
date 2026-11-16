@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -221,6 +222,48 @@ def collect_sources(repo: Path, scope: tuple[str, ...], include_root_files: bool
     return kept, skipped
 
 
+def read_go_modules(repo: Path, files: list[tuple[str, str]]) -> dict[str, str]:
+    """Read only ancestor go.mod identities; never run Go or follow replacements."""
+    roots = set()
+    for path, _text in files:
+        if Path(path).suffix != ".go":
+            continue
+        relative = Path(path)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValidationError("Go source paths must be relative to the repository")
+        parent = relative.parent
+        while True:
+            roots.add(parent)
+            if parent == Path("."):
+                break
+            parent = parent.parent
+    modules = {}
+    declaration = re.compile(r'^\s*module\s+(?:"([A-Za-z0-9._~/-]+)"|([A-Za-z0-9._~/-]+))\s*(?://[^\n]*)?$', re.MULTILINE)
+    for root in sorted(roots):
+        path = repo / root / "go.mod"
+        if not path.exists() and not path.is_symlink():
+            continue
+        if path.is_symlink() or not path.is_file() or not _is_within(path.resolve(), repo.resolve()):
+            raise ValidationError(f"cannot safely read module identity from {root / 'go.mod'}")
+        with path.open("rb") as source:
+            raw = source.read(128_001)
+        if len(raw) > 128_000:
+            raise ValidationError(f"module file too large: {root / 'go.mod'}")
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValidationError(f"invalid UTF-8 module file: {root / 'go.mod'}") from exc
+        text = re.sub(r'/\*.*?\*/', '', text, flags=re.DOTALL)
+        matches = declaration.findall(text)
+        if len(matches) != 1 or len(re.findall(r"^\s*module\b", text, re.MULTILINE)) != 1:
+            raise ValidationError(f"expected one simple module declaration in {root / 'go.mod'}")
+        module = matches[0][0] or matches[0][1]
+        if any(part in {"", ".", ".."} for part in module.split("/")):
+            raise ValidationError(f"invalid module declaration in {root / 'go.mod'}")
+        modules[root.as_posix()] = module
+    return modules
+
+
 def name_repository(graph, name: str) -> None:
     """Replace the shared builder's historical root without changing benchmark code."""
     old_uid = "repo:django"
@@ -361,10 +404,11 @@ def run(args: argparse.Namespace) -> dict:
     log(f"[3/{steps}] parsing graph with repocortex.graph.builder")
     graph = build_graph([(path, text) for path, text in files if Path(path).suffix == ".py"])
     other_files = [(path, text) for path, text in files if Path(path).suffix != ".py"]
+    go_modules = read_go_modules(repo, other_files)
     if other_files:
         try:
             from repocortex.graph.multilang import build_multilang_graph
-            other = build_multilang_graph(other_files)
+            other = build_multilang_graph(other_files, go_modules=go_modules)
         except ImportError as exc:
             raise ValidationError("Go/TypeScript/JavaScript parsing requires pip install -e '.[multilang]'") from exc
         graph.nodes.update(other.nodes)
@@ -390,7 +434,7 @@ def run(args: argparse.Namespace) -> dict:
         limitations.append("Untrained runtime: serving state starts with zero learned edges and zero issue memories. "
                             "Structural search can run offline; live HydraDB ingestion and confirmed-fix learning are separate steps.")
     if other_files:
-        limitations.append("Go/TypeScript/JavaScript use Tree-sitter declarations and unambiguous same-file direct calls only; imports, inheritance and dynamic calls are not resolved.")
+        limitations.append("Go uses conservative same-package and explicitly mapped local package-function calls. JavaScript/TypeScript use same-file direct calls only. Receiver types, external imports and dynamic calls are not resolved.")
     manifest = {
         "format_version": FORMAT_VERSION,
         "kind": "repocortex-untrained-runtime" if args.runtime else "repocortex-structural-index",
@@ -403,6 +447,7 @@ def run(args: argparse.Namespace) -> dict:
         "scope": list(scope),
         "languages": languages,
         "source_context": bool(getattr(args, "source_context", False)),
+        "go_modules": go_modules,
         "auto_scope": auto_scope,
         "files_indexed": len(files),
         "files_skipped": skipped,

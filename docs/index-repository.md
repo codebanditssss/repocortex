@@ -101,10 +101,20 @@ inside IIFEs and anonymous callbacks are indexed with distinct lexical scope IDs
 anonymous callbacks themselves do not become invented function nodes. File containment,
 class definitions and function definitions become structural graph edges.
 
-Call edges connect only unambiguous same-file top-level functions called through
-bare identifiers. Local shadows, reassigned targets, member calls, imports,
-dynamic dispatch, anonymous callbacks and calls inside nested functions are not
-resolved. There is no Go/TypeScript type checker or cross-file symbol resolver.
+JavaScript/TypeScript call edges connect unambiguous same-file top-level functions
+called through bare identifiers. Go also connects unambiguous named functions
+across files in the same directory and declared package. Import-qualified Go
+calls resolve only to exported functions in indexed local packages whose exact
+import path matches an ancestor `go.mod` module declaration. Explicit import
+aliases and nested module boundaries are respected. The manifest records these
+module identities; module files are read without running Go or following
+`replace` directives. This is static declaration matching, not validation of
+`require`, workspace configuration, build tags, or a successful Go build.
+
+Ambiguous targets, shadowed bindings, receiver/member dispatch, external imports,
+dot imports, anonymous callbacks and calls inside nested functions remain
+unresolved. There is no Go/TypeScript type checker. Existing same-file resolution
+is unchanged.
 Functions in conventional test files/directories are labeled `Test`, not search
 candidates; test discovery is a filename/name heuristic. Files with a tree-sitter
 syntax error are skipped completely and included in `files_unparseable`.

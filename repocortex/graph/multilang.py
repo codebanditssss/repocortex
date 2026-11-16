@@ -2,7 +2,11 @@
 
 No code is executed. Files with syntax errors are skipped. CALLS connects only
 unambiguous same-file top-level functions invoked through bare identifiers,
-without a local binding shadowing the target. Member calls, cross-file imports,
+without a local binding shadowing the target. Go additionally resolves bare
+calls to a unique top-level function of the same declared package in the same
+directory, and, only when an authoritative ``go_modules`` mapping is supplied,
+``alias.Exported()`` calls through an import whose exact path maps to one
+indexed package. Member calls, receivers, dot imports, external imports,
 dynamic dispatch and anonymous callbacks are deliberately unresolved. This is
 structural indexing, not a language-server/type-checker or learned graph.
 """
@@ -73,11 +77,179 @@ def _is_test(path, name):
             or (file.suffix == ".go" and name.startswith("Test")))
 
 
-def build_multilang_graph(files: list[tuple[str, str]]) -> Graph:
+GO_SCOPE_DECLS = {
+    "short_var_declaration": ("left",), "var_spec": ("name",), "const_spec": ("name",),
+    "type_spec": ("name",), "type_alias": ("name",), "type_switch_statement": ("alias",),
+    "range_clause": ("left",), "receive_statement": ("left",), "parameter_declaration": ("name",),
+    "variadic_parameter_declaration": ("name",), "type_parameter_declaration": ("name",),
+}
+_GO_NAMES = {"identifier", "type_identifier", "package_identifier"}
+
+
+def _go_file_facts(root, source):
+    """Package name, imports [(name|None, path)] and non-function top-level names."""
+    package, imports, values = None, [], set()
+    for decl in root.named_children:
+        if decl.type == "package_clause":
+            package = next((_text(n, source) for n in decl.named_children if n.type == "package_identifier"), None)
+        elif decl.type == "import_declaration":
+            for spec in _walk(decl):
+                if spec.type == "import_spec":
+                    name = spec.child_by_field_name("name")
+                    path = spec.child_by_field_name("path")
+                    content = [n for n in _walk(path) if n.type == "interpreted_string_literal_content"] if path else []
+                    imports.append((_text(name, source) if name else None, _text(content[0], source) if content else ""))
+        elif decl.type in {"var_declaration", "const_declaration", "type_declaration"}:
+            for spec in _walk(decl):
+                if spec.type in {"var_spec", "const_spec", "type_spec", "type_alias"}:
+                    for name in spec.children_by_field_name("name"):
+                        values.add(_text(name, source))
+    return package, imports, values
+
+
+def _go_function_calls(fn, body, source):
+    """Bare and pkg.Name calls outside closures plus every locally declared name.
+
+    Declarations are collected flow-insensitively (including inside closures and
+    the signature) so any local binding of a name blocks resolution.
+    """
+    shadowed, bare, selectors = set(), [], []
+    for field in ("receiver", "parameters", "result", "type_parameters"):
+        part = fn.child_by_field_name(field)
+        if part:
+            shadowed.update(_text(n, source) for n in _walk(part) if n.type in _GO_NAMES)
+    for node in _walk(body):
+        for field in GO_SCOPE_DECLS.get(node.type, ()):
+            for binding in node.children_by_field_name(field):
+                shadowed.update(_text(n, source) for n in _walk(binding) if n.type in _GO_NAMES)
+
+    def scan(node):
+        if node.type == "func_literal":
+            return
+        if node.type == "call_expression":
+            callee = node.child_by_field_name("function")
+            if callee and callee.type == "identifier":
+                bare.append(_text(callee, source))
+            elif callee and callee.type == "selector_expression":
+                operand, field = callee.child_by_field_name("operand"), callee.child_by_field_name("field")
+                if operand and field and operand.type == "identifier" and field.type == "field_identifier":
+                    selectors.append((_text(operand, source), _text(field, source)))
+        for child in node.named_children:
+            scan(child)
+    scan(body)
+    return bare, selectors, shadowed
+
+
+def _norm_dir(path: str) -> str | None:
+    parts = [p for p in path.strip().strip("/").split("/") if p not in {"", "."}]
+    if ".." in parts:
+        return None
+    return "/".join(parts) or "."
+
+
+def _resolve_go_cross_file(graph, records, incomplete_dirs, go_modules):
+    packages = defaultdict(list)
+    for record in records:
+        if record["package"]:
+            packages[(record["dir"], record["package"])].append(record)
+    tables = {}
+    for key, members in packages.items():
+        funcs, blocked = defaultdict(list), set()
+        for record in members:
+            blocked |= record["values"] | record["reassigned"]
+            for fn in record["functions"]:
+                if fn["top"] and fn["node"].type == "function_declaration":
+                    funcs[fn["name"]].append((fn["uid"], record))
+        tables[key] = (funcs, blocked)
+
+    def unique(key, name, allow_tests):
+        funcs, blocked = tables[key]
+        choices = funcs.get(name, [])
+        if name in blocked or len(choices) != 1 or (choices[0][1]["test"] and not allow_tests):
+            return None
+        return choices[0]
+
+    roots = {}
+    for root, module in (go_modules or {}).items():
+        root, module = _norm_dir(root), str(module).strip().rstrip("/")
+        if root is not None and module:
+            roots[root] = module
+
+    def owner(directory):
+        found = [r for r in roots if r == "." or directory == r or directory.startswith(r + "/")]
+        return max(found, key=lambda r: (r != ".", len(r)), default=None)
+
+    def importable(path):
+        if not roots or not path or any(p in {"", ".", ".."} for p in path.split("/")):
+            return None
+        dirs = set()
+        for root, module in roots.items():
+            if path == module:
+                rest = ""
+            elif path.startswith(module + "/"):
+                rest = path[len(module) + 1:]
+            else:
+                continue
+            directory = _norm_dir(f"{'' if root == '.' else root}/{rest}")
+            if directory is not None and owner(directory) == root:
+                dirs.add(directory)
+        if len(dirs) != 1:
+            return None
+        directory = dirs.pop()
+        if directory in incomplete_dirs:
+            return None
+        names = {r["package"] for r in records if r["dir"] == directory and not r["test"]}
+        if len(names) != 1 or None in names or "main" in names:
+            return None
+        return (directory, names.pop())
+
+    for record in records:
+        key = (record["dir"], record["package"])
+        if not record["package"] or record["dir"] in incomplete_dirs:
+            continue
+        aliases, explicit = defaultdict(list), set()
+        has_dot = False
+        for name, path in record["imports"]:
+            if name == ".":
+                has_dot = True
+                continue
+            if name == "_":
+                continue
+            target = importable(path) if go_modules else None
+            alias = name or (target[1] if target else None)
+            if name:
+                explicit.add(name)
+            if alias:
+                aliases[alias].append(target)
+        funcs, blocked = tables[key]
+        local_names = {fn["name"] for fn in record["functions"] if fn["top"]}
+        for fn in record["functions"]:
+            if fn["nested"] or not fn["body"]:
+                continue
+            bare, selectors, shadowed = _go_function_calls(fn["node"], fn["body"], record["source"])
+            if not has_dot:
+                for name in bare:
+                    if name in shadowed or name in local_names or name in aliases or name in explicit:
+                        continue
+                    hit = unique(key, name, record["test"])
+                    if hit and hit[1] is not record:
+                        graph.add_edge(fn["uid"], hit[0], "CALLS")
+            for alias, name in selectors:
+                targets = aliases.get(alias, [])
+                if (len(targets) != 1 or targets[0] is None or targets[0] == key or targets[0] not in tables
+                        or alias in shadowed or alias in funcs or alias in blocked or not name[:1].isupper()):
+                    continue
+                hit = unique(targets[0], name, False)
+                if hit:
+                    graph.add_edge(fn["uid"], hit[0], "CALLS")
+
+
+def build_multilang_graph(files: list[tuple[str, str]], *, go_modules: dict[str, str] | None = None) -> Graph:
     graph = Graph()
     # Shared builder compatibility; index_repository replaces this root afterward.
     graph.add_node(Node(uid="repo:django", label="Repo", name="django", kind="repo"))
     parsers = {}
+    go_records, go_incomplete = [], set()
     for path, text in files:
         suffix = Path(path).suffix.lower()
         if suffix not in SUPPORTED_SUFFIXES:
@@ -88,6 +260,8 @@ def build_multilang_graph(files: list[tuple[str, str]]) -> Graph:
         source = text.encode("utf-8")
         root = parser.parse(source).root_node
         if root.has_error:
+            if suffix == ".go":
+                go_incomplete.add(_norm_dir(str(Path(path).parent)))
             continue
         file_uid = f"file:{path}"
         module = path.rsplit(".", 1)[0].replace("/", ".")
@@ -212,4 +386,10 @@ def build_multilang_graph(files: list[tuple[str, str]]) -> Graph:
                 choices = targets.get(name, [])
                 if name not in shadowed and len(choices) == 1:
                     graph.add_edge(fn["uid"], choices[0], "CALLS")
+        if suffix == ".go":
+            package, imports, values = _go_file_facts(root, source)
+            go_records.append({"path": path, "dir": _norm_dir(str(Path(path).parent)), "package": package,
+                               "imports": imports, "values": values, "reassigned": reassigned,
+                               "functions": functions, "source": source, "test": path.endswith("_test.go")})
+    _resolve_go_cross_file(graph, go_records, go_incomplete, go_modules)
     return graph
