@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from repocortex.graph.weights import edge_weight
+
 LEARNED_RELS = {"SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"}
 
 
@@ -26,7 +28,7 @@ def load_corpus(path: Path) -> tuple[dict, dict]:
     edges = {}
     for row in raw.get("edges") or []:
         edges[(row["src"], row["rel"], row["dst"])] = {
-            "w": float(row.get("w") or 1),
+            "w": edge_weight(row),
             "hits": int(row.get("hits") or 0),
             "misses": int(row.get("misses") or 0),
             "count": int(row.get("count") or 1),
@@ -52,7 +54,7 @@ def dump_graph(nodes: dict, edges, path: Path) -> dict:
     edge_rows = []
     for key, props in table.items():
         src, rel, dst = key
-        weight = round(float(props.get("w") or 1.0), 4)
+        weight = round(edge_weight(props), 4)
         learned = bool(props.get("learned")) or rel in LEARNED_RELS or abs(weight - 1.0) > 1e-6
         row = {"src": src, "dst": dst, "rel": rel, "w": weight}
         hits = int(props.get("hits") or 0)

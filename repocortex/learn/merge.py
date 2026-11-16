@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from repocortex.graph.weights import edge_weight
 from repocortex.learn.base import Episode, Operator, OperatorResult
 from repocortex.learn.gap import module_of
 
@@ -79,7 +80,7 @@ class EntityMerger(Operator):
                         "SHORTCUT",
                         dst,
                         # Inherit once; subsequent outcomes belong to the child.
-                        w=float(old.get("w") or 0.5),
+                        w=edge_weight(old, default=0.5),
                         hits=int(old.get("hits") or 0),
                         misses=int(old.get("misses") or 0),
                         count=int(old.get("count") or 0),

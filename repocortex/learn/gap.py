@@ -8,6 +8,7 @@ compress into a SHORTCUT. Nothing here is written for the held-out split.
 
 from __future__ import annotations
 
+from repocortex.graph.weights import edge_weight
 from repocortex.learn.base import Episode, Operator, OperatorResult
 from repocortex.retrieve.textutil import tokenize
 
@@ -56,7 +57,7 @@ class GapIngestor(Operator):
                 created = table.ensure(bridge, "CO_CHANGED", gold, learned=1)
                 props = table.edges[key]
                 props["learned"] = 1
-                if created or float(props.get("w") or 1.0) < 1.15:
+                if created or edge_weight(props) < 1.15:
                     props["w"] = 1.15
                 table.dirty.add(key)
                 applied += 1

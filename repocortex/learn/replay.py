@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from repocortex.graph.weights import edge_weight
 from repocortex.eval.metrics import bootstrap_ci, score_issue, summarize
 from repocortex.learn.base import Episode
 from repocortex.learn.compress import PathCompressor
@@ -55,7 +56,7 @@ def _legacy_steps(n: int, every: int) -> list[int]:
 
 
 def _touched(key, props) -> bool:
-    weight = float(props.get("w") or 1.0)
+    weight = edge_weight(props)
     return bool(
         props.get("learned")
         or key[1] in LEARNED_RELS
@@ -70,7 +71,7 @@ def _edge_row(key, props) -> dict:
         "src": key[0],
         "rel": key[1],
         "dst": key[2],
-        "w": round(float(props.get("w") or 1.0), 4),
+        "w": round(edge_weight(props), 4),
         "hits": int(props.get("hits") or 0),
         "misses": int(props.get("misses") or 0),
     }
@@ -307,7 +308,7 @@ def _snapshot(step, metrics, operators, ranker, seen_weight: dict) -> dict:
         if not _touched(key, props):
             continue
         counts[key[1]] = counts.get(key[1], 0) + 1
-        weight = round(float(props.get("w") or 1.0), 4)
+        weight = round(edge_weight(props), 4)
         previous = seen_weight.get(key)
         if previous is None:
             new_count += 1

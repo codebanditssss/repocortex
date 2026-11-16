@@ -28,6 +28,7 @@ from threading import RLock
 
 import numpy as np
 
+from repocortex.graph.weights import edge_weight
 from repocortex.learn.gap import gap_tokens, module_of
 from repocortex.retrieve.frozen import EdgeTable, Hit, Prediction
 from repocortex.retrieve.textutil import issue_text, tokenize
@@ -239,7 +240,7 @@ class HybridRanker:
                 or key[1] in {"SHORTCUT", "FIXED_IN", "SAME_AS", "REFINES"}
                 or int(props.get("hits") or 0)
                 or int(props.get("misses") or 0)
-                or abs(float(props.get("w") or 1.0) - 1.0) > 1e-6
+                or abs(edge_weight(props) - 1.0) > 1e-6
             )
             if not touched:
                 continue
@@ -248,7 +249,7 @@ class HybridRanker:
                     "src": key[0],
                     "rel": key[1],
                     "dst": key[2],
-                    "w": float(props.get("w") or 1),
+                    "w": edge_weight(props),
                     "hits": int(props.get("hits") or 0),
                     "misses": int(props.get("misses") or 0),
                     "tickets": props.get("tickets") or "",
@@ -401,7 +402,7 @@ class HybridRanker:
                 weight = 1.0
                 props = self.edges.edges.get(key)
                 if props is not None:
-                    weight = min(1.15, max(0.85, float(props.get("w") or 1.0)))
+                    weight = min(1.15, max(0.85, edge_weight(props)))
                 contrib = scale * weight
                 if self.memory_agg == "max":
                     if contrib <= float(raw[column]):
@@ -583,7 +584,7 @@ class HybridRanker:
             candidates = (
                 [(key, weight) for key, weight in live_edges if seed in (key[0], key[2])]
                 if live_edges is not None else
-                [(key, float(self.edges.edges[key].get("w") or 1.0)) for key in self.edges.incident(seed)]
+                [(key, edge_weight(self.edges.edges[key])) for key in self.edges.incident(seed)]
             )
             for key, weight in candidates:
                 if key[1] not in rels:

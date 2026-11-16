@@ -25,6 +25,7 @@ import time
 
 from neo4j import GraphDatabase, Query
 
+from repocortex.graph.weights import edge_weight
 from repocortex.hydradb.base import (
     LABELS,
     NODE_FIELDS,
@@ -204,7 +205,7 @@ class BoltClient:
                         raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
                     for row in result.rows:
                         key = (row["src"], rel, row["dst"])
-                        edges[key] = float(row.get("w") or 1.0)
+                        edges[key] = edge_weight(row)
                     # The old global query used the same per-relation ceiling.
                     if len(edges) >= 1000:
                         raise RuntimeError("structural traversal reached its limit; refusing partial ranking")
@@ -290,7 +291,7 @@ class BoltClient:
                 {
                     "src": src,
                     "dst": dst,
-                    "w": float(edge.get("w", 1.0)),
+                    "w": edge_weight(edge),
                     "hits": int(edge.get("hits", 0)),
                     "misses": int(edge.get("misses", 0)),
                     "count": int(edge.get("count", 1)),

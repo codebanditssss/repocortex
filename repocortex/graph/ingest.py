@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from repocortex.graph.weights import edge_weight
 from repocortex.graph.model import Graph
 from repocortex.hydradb.base import LABELS, REL_TYPES
 
@@ -83,7 +84,7 @@ def load_graph(client) -> tuple[dict, dict, dict]:
             src = str(row["src"])
             dst = str(row["dst"])
             edges[(src, rel, dst)] = {
-                "w": float(row.get("w") or 1.0),
+                "w": edge_weight(row),
                 "hits": int(row.get("hits") or 0),
                 "misses": int(row.get("misses") or 0),
                 "count": int(row.get("count") or 1),

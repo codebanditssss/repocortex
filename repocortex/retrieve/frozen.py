@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 
+from repocortex.graph.weights import edge_weight
 from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.ppr import personalized_pagerank
 from repocortex.retrieve.textutil import issue_text, tokenize
@@ -85,7 +86,7 @@ class EdgeTable:
         else:
             props["misses"] = int(props.get("misses") or 0) + 1
         target = 0.55 + 0.8 * float(reward)
-        weight = float(props.get("w") or 1.0)
+        weight = edge_weight(props)
         weight = weight + lr * (target - weight)
         weight = 1.0 + (weight - 1.0) * (1.0 - decay)
         props["w"] = min(2.2, max(0.35, weight))
@@ -95,7 +96,7 @@ class EdgeTable:
         adj: dict[str, list[tuple[str, float]]] = defaultdict(list)
         for (src, _rel, dst), props in self.edges.items():
             if src in nodes and dst in nodes:
-                weight = float(props.get("w") or 1.0)
+                weight = edge_weight(props)
                 adj[src].append((dst, weight))
                 adj[dst].append((src, weight))
         return adj
@@ -140,7 +141,7 @@ class EdgeTable:
                 props["hits"] = int(props.get("hits") or 0) + 1
             else:
                 props["misses"] = int(props.get("misses") or 0) + 1
-            weight = float(props.get("w") or 1.0)
+            weight = edge_weight(props)
             weight = weight + lr * (reward - weight)
             props["w"] = min(3.0, max(0.05, weight))
             self.dirty.add(key)
@@ -159,7 +160,7 @@ class EdgeTable:
             row = {
                 "src": src,
                 "dst": dst,
-                "w": float(props.get("w") or 1.0),
+                "w": edge_weight(props),
                 "hits": int(props.get("hits") or 0),
                 "misses": int(props.get("misses") or 0),
                 "count": int(props.get("count") or 1),

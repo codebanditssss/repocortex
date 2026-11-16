@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
+from repocortex.graph.weights import edge_weight
 from repocortex.retrieve.bm25 import BM25Index
 from repocortex.retrieve.dense import DenseIndex, Embedder
 from repocortex.retrieve.frozen import EdgeTable
@@ -59,7 +60,7 @@ def load_ranker(root: Path) -> HybridRanker:
     edges = {}
     for row in corpus.get("edges") or []:
         edges[(row["src"], row["rel"], row["dst"])] = {
-            "w": float(row.get("w") or 1),
+            "w": edge_weight(row),
             "hits": 0,
             "misses": 0,
             "count": 1,
@@ -68,7 +69,7 @@ def load_ranker(root: Path) -> HybridRanker:
         _endpoint(nodes, row["src"])
         _endpoint(nodes, row["dst"])
         edges[(row["src"], row["rel"], row["dst"])] = {
-            "w": float(row.get("w") or 1),
+            "w": edge_weight(row),
             "hits": int(row.get("hits") or 0),
             "misses": int(row.get("misses") or 0),
             "count": int(row.get("count") or row.get("hits") or 1),

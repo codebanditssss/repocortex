@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import httpx
 
+from repocortex.graph.weights import edge_weight
 from repocortex.hydradb.base import (
     NODE_FIELDS,
     ExpandHit,
@@ -174,7 +175,7 @@ class HostedClient:
             {
                 "src": str(edge["src"]),
                 "dst": str(edge["dst"]),
-                "w": float(edge.get("w", 1.0)),
+                "w": edge_weight(edge),
                 "hits": int(edge.get("hits", 0)),
                 "misses": int(edge.get("misses", 0)),
                 "count": int(edge.get("count", 1)),

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from repocortex.graph.weights import edge_weight
 from repocortex.learn.base import Episode, Operator, OperatorResult
 
 
@@ -100,7 +101,7 @@ class PathCompressor(Operator):
             return True
         if key in table.edges:
             props = table.edges[key]
-            props["w"] = round(min(float(props.get("w") or 0.0), precision), 4)
+            props["w"] = round(min(edge_weight(props, default=0.0), precision), 4)
             props["hits"] = hits
             props["misses"] = misses
             props["count"] = hits
