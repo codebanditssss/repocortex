@@ -101,7 +101,7 @@ export function Hero({ ticket, evaluation }: {
           <p className="sc route-inset-label">Held-out issue → past fix → gold function</p>
           <svg viewBox="0 0 600 240" preserveAspectRatio="none" aria-hidden="true">
             <path className="route-ink" d="M40 152 L240 70 L510 130" />
-            {routeReady && <path className={playing && visible && pageVisible ? "route-pulse" : "route-learned"} d="M40 152 L240 70 L510 130" />}
+            {routeReady && <path className="route-learned" d="M40 152 L240 70 L510 130" />}
             <path className="route-leader" d="M240 70 L240 35 M510 130 L510 169" />
             <circle cx="40" cy="152" r="4" /><circle cx="240" cy="70" r="4" /><circle cx="510" cy="130" r="4" />
           </svg>
