@@ -324,3 +324,7 @@ The graph and local embedding model can run on the team's infrastructure. Code s
 | `web/` | Landing page and recorded-results dashboard |
 
 Built for the HydraDB hackathon, November 14–16, 2026, track 1. Graph engine: [HydraDB](https://github.com/hydra-db/hydradb). Code and fix history: [Django](https://github.com/django/django) and its Trac tracker. Embeddings: [all-MiniLM-l6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2). Dependencies and datasets retain their respective licenses.
+
+## License
+
+RepoCortex's original code is available under the [MIT License](LICENSE). Third-party dependencies, model weights, repository source excerpts and issue datasets retain their respective licenses and attribution; this license does not relicense them.
