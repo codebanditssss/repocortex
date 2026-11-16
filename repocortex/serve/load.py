@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from contextlib import nullcontext
 import os
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from repocortex.retrieve.hybrid import HybridRanker
 
 
 REQUEST_LOCK_TIMEOUT_SECONDS = 5.0
+SEARCH_QUERY_BUDGET_SECONDS = 50.0
 
 
 class RankingBusyError(TimeoutError):
@@ -147,29 +149,37 @@ def locate_report(ranker, report: str, k: int = 10) -> dict:
     try:
         if getattr(ranker, "feedback_failed", False):
             raise RuntimeError("feedback recovery required; restart the service")
-        status = backend_status(ranker)
-        if status.get("mode") == "error":
-            raise RuntimeError("live graph health check failed; refusing cached fallback")
         client = ranker.client
-        live = bool(status.get("connected") and hasattr(client, "structural_edges"))
-        ranker.live_graph = live
-        if live:
-            client.last_queries = []
-            client.trace = True
+        budget = getattr(client, "query_budget", None)
         try:
-            hits = locate(ranker, report, k)
-            queries = list(client.last_queries) if live else []
-        finally:
-            ranker.live_graph = False
-            if live:
-                client.trace = False
-        return {
-            "hits": hits,
-            "backend": status,
-            "queries": queries,
-            "source": "live" if live else "replay",
-            "scoring": "live structural graph + cached learned memory" if live else "cached graph and learned memory",
-        }
+            with budget(SEARCH_QUERY_BUDGET_SECONDS) if budget else nullcontext():
+                status = backend_status(ranker)
+                if status.get("mode") == "error":
+                    raise RuntimeError("live graph health check failed; refusing cached fallback")
+                client = ranker.client
+                live = bool(status.get("connected") and hasattr(client, "structural_edges"))
+                ranker.live_graph = live
+                if live:
+                    client.last_queries = []
+                    client.trace = True
+                try:
+                    hits = locate(ranker, report, k)
+                    queries = list(client.last_queries) if live else []
+                finally:
+                    ranker.live_graph = False
+                    if live:
+                        client.trace = False
+                return {
+                    "hits": hits,
+                    "backend": status,
+                    "queries": queries,
+                    "source": "live" if live else "replay",
+                    "scoring": "live structural graph + cached learned memory" if live else "cached graph and learned memory",
+                }
+        except Exception:
+            if client is not None and hasattr(client, "last_queries"):
+                client.last_queries = []
+            raise
     finally:
         ranker.request_lock.release()
 

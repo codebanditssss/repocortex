@@ -24,7 +24,7 @@ test("locate proxy forwards Unicode reports and preserves upstream size errors",
     forwarded = JSON.parse(options.body);
     return Response.json({ error: "report too large" }, { status: 413 });
   });
-  for (const report of ["错".repeat(12000), "😀".repeat(6000)]) {
+  for (const report of ["错".repeat(12000), "😀".repeat(12000)]) {
     const request = new Request("http://localhost/api/locate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report }) });
     const result = await POST(request);
     assert.equal(result.status, 413);
@@ -37,5 +37,26 @@ test("locate proxy forwards Unicode reports and preserves upstream size errors",
   const fetch = t.mock.method(globalThis, "fetch", () => { throw new Error("must not call upstream"); });
   const result = await POST(new Request("http://localhost/api/locate", { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ report: "bug" }) }));
   assert.equal(result.status, 415);
+  assert.equal(fetch.mock.callCount(), 0);
+});
+
+test('locate proxy returns 408 for a stalled upload without contacting backend', async (t) => {
+  const schedule = globalThis.setTimeout;
+  t.mock.method(globalThis, 'setTimeout', (callback, milliseconds, ...args) => schedule(callback, milliseconds === 15000 ? 20 : milliseconds, ...args));
+  const fetch = t.mock.method(globalThis, 'fetch', () => { throw new Error('must not call backend'); });
+  let cancelled = false;
+  const body = new ReadableStream({ cancel() { cancelled = true; } });
+  const result = await POST(new Request('http://localhost/api/locate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, duplex: 'half' }));
+  assert.equal(result.status, 408);
+  assert.equal(cancelled, true);
+  assert.equal(fetch.mock.callCount(), 0);
+});
+
+test('proxy never starts ranking for an already cancelled request', async (t) => {
+  const fetch = t.mock.method(globalThis, 'fetch', () => { throw new Error('must not call backend'); });
+  const controller = new AbortController();
+  controller.abort();
+  const result = await POST(new Request('http://localhost/api/locate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ report: 'bug' }), signal: controller.signal }));
+  assert.equal(result.status, 400);
   assert.equal(fetch.mock.callCount(), 0);
 });

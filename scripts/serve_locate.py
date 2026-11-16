@@ -17,8 +17,8 @@ from repocortex.serve.load import RankingBusyError, backend_status, load_ranker,
 
 
 MAX_REPORT_CHARACTERS = 12000
-# JSON can escape each character as six ASCII bytes, plus envelope overhead.
-MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 6 + 1024
+# A non-BMP character can use a 12-byte escaped JSON surrogate pair.
+MAX_REQUEST_BYTES = MAX_REPORT_CHARACTERS * 12 + 1024
 REQUEST_READ_TIMEOUT = 15
 
 
@@ -144,7 +144,7 @@ def make_handler(ranker):
                 return
             try:
                 body = json.loads(raw.decode("utf-8") or "{}")
-            except (json.JSONDecodeError, UnicodeDecodeError, RecursionError):
+            except (ValueError, RecursionError):
                 self._send(400, {"error": "bad json"})
                 return
             if not isinstance(body, dict) or not isinstance(body.get("report"), str):

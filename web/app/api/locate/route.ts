@@ -1,4 +1,4 @@
-import { readLimitedBody, BodyTooLargeError } from "@/lib/request-body";
+import { readLimitedBody, BodyTooLargeError, BodyReadTimeoutError } from "@/lib/request-body";
 import { isLocateResult } from "@/lib/live";
 
 export async function POST(request: Request) {
@@ -7,19 +7,20 @@ export async function POST(request: Request) {
   }
   let body;
   try {
-    const text = await readLimitedBody(request, 12000 * 6 + 1024);
-    if (text.length > 12000 * 6 + 1024) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
+    const text = await readLimitedBody(request, 12000 * 12 + 1024);
+    if (text.length > 12000 * 12 + 1024) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
     body = JSON.parse(text);
   } catch (error) {
+    if (error instanceof BodyReadTimeoutError) return Response.json({ error: "Uploading the report timed out. Please try again." }, { status: 408 });
     if (error instanceof BodyTooLargeError) return Response.json({ error: "Keep the report under 12,000 characters." }, { status: 413 });
     return Response.json({ error: "Send a valid bug report." }, { status: 400 });
   }
-  if (!body || typeof body.report !== "string" || !body.report.trim() || body.report.length > 12000 || (body.k !== undefined && (!Number.isInteger(body.k) || body.k < 1 || body.k > 20))) {
+  if (!body || typeof body.report !== "string" || !body.report.trim() || Array.from(body.report).length > 12000 || (body.k !== undefined && (!Number.isInteger(body.k) || body.k < 1 || body.k > 20))) {
     return Response.json({ error: "Enter a bug report (up to 12,000 characters) and request 1–20 results." }, { status: 400 });
   }
   try {
     const upstream = await fetch(`${process.env.REPOCORTEX_API_URL || "http://127.0.0.1:8765"}/locate`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report: body.report.trim(), k: body.k ?? 10 }), cache: "no-store", signal: AbortSignal.timeout(60000),
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report: body.report.trim(), k: body.k ?? 10 }), cache: "no-store", signal: AbortSignal.any([request.signal, AbortSignal.timeout(60000)]),
     });
     if (upstream.status === 413) return Response.json({ error: "The report is too large. Shorten it and try again." }, { status: 413 });
     if (upstream.status === 503) return Response.json({ error: "Search is temporarily unavailable. Please try again shortly." }, { status: 503, headers: { "Retry-After": "5" } });

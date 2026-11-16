@@ -19,6 +19,10 @@ than hosted BYOG:
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+import time
+
 from neo4j import GraphDatabase, Query
 
 from repocortex.hydradb.base import (
@@ -93,6 +97,7 @@ class BoltClient:
         self._expand_cache: dict[tuple, list[ExpandHit]] = {}
         self.last_queries: list[dict] = []
         self.trace = False
+        self._query_deadline = ContextVar("bolt_query_deadline", default=None)
 
     def close(self) -> None:
         self.driver.close()
@@ -100,12 +105,40 @@ class BoltClient:
     def verify(self) -> None:
         self.driver.verify_connectivity()
 
+    @contextmanager
+    def query_budget(self, seconds: float):
+        """Share a cooperative deadline across serial queries in this context."""
+        previous = self._query_deadline.get()
+        deadline = time.monotonic() + seconds
+        token = self._query_deadline.set(min(previous, deadline) if previous is not None else deadline)
+        try:
+            yield
+            self._remaining_query_budget()
+        finally:
+            self._query_deadline.reset(token)
+
+    def _remaining_query_budget(self):
+        deadline = self._query_deadline.get()
+        if deadline is None:
+            return None
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError("graph request deadline exceeded")
+        return remaining
+
     def query(self, cypher: str, params: dict | None = None, timeout: float = 20.0, record: bool = True) -> QueryResult:
+        remaining = self._remaining_query_budget()
+        if remaining is not None:
+            timeout = min(timeout, remaining)
         if self.trace and record:
             self.last_queries.append({"cypher": cypher, "params": params or {}})
         with self.driver.session(database=self.database) as session:
             cursor = session.run(Query(cypher, timeout=timeout), params or {})
-            rows = [_plain(record.data()) for record in cursor]
+            rows = []
+            for record in cursor:
+                self._remaining_query_budget()
+                rows.append(_plain(record.data()))
+        self._remaining_query_budget()
         return QueryResult.from_rows(rows)
 
     def ping(self) -> dict:

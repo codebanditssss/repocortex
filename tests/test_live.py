@@ -130,7 +130,7 @@ class HttpTest(unittest.TestCase):
     def test_invalid_reports_and_backend_failure_return_json(self):
         import threading, json, urllib.request, urllib.error
         from http.server import ThreadingHTTPServer
-        from scripts.serve_locate import make_handler
+        from scripts.serve_locate import make_handler, MAX_REQUEST_BYTES
         ranker=LiveTest().ranker()
         server=ThreadingHTTPServer(("127.0.0.1",0),make_handler(ranker))
         worker=threading.Thread(target=server.serve_forever,daemon=True);worker.start()
@@ -155,7 +155,7 @@ class HttpTest(unittest.TestCase):
             for report, ascii_encoding in (("错" * 12000, False), ("错" * 12000, True), ("😀" * 12000, False)):
                 self.assertEqual(post({"report": report}, ensure_ascii=ascii_encoding)[0], 200)
             self.assertEqual(post({"report": "x" * 12001})[0], 400)
-            self.assertEqual(post({"report": "x" * 74000})[0], 413)
+            self.assertEqual(post({"report": "x" * (MAX_REQUEST_BYTES + 1)})[0], 413)
             with patch.object(ranker.client, "ping", side_effect=RuntimeError("offline")):
                 self.assertEqual(post({"report": "bug"})[0], 503)
             with patch("scripts.serve_locate.locate_report", side_effect=RankingBusyError("busy")):
