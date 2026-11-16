@@ -78,7 +78,7 @@ class EntityMerger(Operator):
                         child,
                         "SHORTCUT",
                         dst,
-                        replace=True,
+                        # Inherit once; subsequent outcomes belong to the child.
                         w=float(old.get("w") or 0.5),
                         hits=int(old.get("hits") or 0),
                         misses=int(old.get("misses") or 0),

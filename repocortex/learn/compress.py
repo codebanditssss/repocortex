@@ -33,6 +33,16 @@ class PathCompressor(Operator):
             raw = str(props.get("tickets") or "")
             self.tickets[pair] = [int(part) for part in raw.split(",") if part.strip().isdigit()]
 
+    def _load_pair(self, table, pair: tuple[str, str]) -> None:
+        """Seed counters for edges created by another operator after hydration."""
+        if pair in self.hits:
+            return
+        props = table.edges.get((pair[0], "SHORTCUT", pair[1]), {})
+        self.hits[pair] = int(props.get("hits") or 0)
+        self.misses[pair] = int(props.get("misses") or 0)
+        raw = str(props.get("tickets") or "")
+        self.tickets[pair] = [int(part) for part in raw.split(",") if part.strip().isdigit()]
+
     def on_outcome(self, table, episode: Episode) -> OperatorResult:
         applied = 0
         gold = [uid for uid in episode.gold if uid]
@@ -40,6 +50,7 @@ class PathCompressor(Operator):
         for concept in concepts:
             for target in gold:
                 pair = (concept, target)
+                self._load_pair(table, pair)
                 self.hits[pair] += 1
                 self.tickets[pair].append(episode.ticket)
                 if self._sync(table, concept, target):
@@ -50,6 +61,7 @@ class PathCompressor(Operator):
             pair = (src, dst)
             if pair[1] in gold:
                 continue
+            self._load_pair(table, pair)
             self.misses[pair] += 1
             self._sync(table, src, dst)
             applied += 1
