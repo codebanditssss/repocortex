@@ -6,6 +6,13 @@ package, and considers at most 300 merged pull requests with explicit linked
 GitHub issues. RepoCortex will report the resulting sample even if it is small
 or the result is flat or negative; no second repository will replace it.
 
+GitHub resolves that repository to its current canonical name,
+`Kludex/starlette`. The first mining request used the old owner in its URL
+allowlist and therefore rejected the canonical issue URLs. Repeating the same
+locked selection with the canonical owner retained 65 reports: 41 chronological
+training reports and 24 untouched holdout reports. This correction changed no
+repository, snapshot, PR limit, scope, query text, label, or scoring behavior.
+
 The issue and fix stream is ordered by merge time and grouped by fix commit.
 Every report in a group is predicted before that fix is learned. A final
 protocol registration will freeze the selected cases, source and dataset

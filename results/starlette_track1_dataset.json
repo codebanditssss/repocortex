@@ -1,0 +1,1262 @@
+{
+  "selection_counts": {
+    "unique_pr_references_scanned": 951,
+    "unmapped_or_more_than_eight_functions": 651,
+    "eligible_prs_without_closing_issue": 237,
+    "linked_issue_references": 68,
+    "duplicate_issue_references": 2,
+    "cross_repository_references": 1,
+    "eligible_pr_commits": 300,
+    "retained_unique_issues": 65
+  },
+  "repository": "Kludex/starlette",
+  "snapshot": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+  "scope": [
+    "starlette"
+  ],
+  "issues": [
+    {
+      "ticket": 1365,
+      "commit": "0aef1724cfafbe23f846979d427a5a173667f6b7",
+      "time": 1639744653,
+      "summary": "ETag checksum fails on FIPS-enabled systems when using MD5",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nThe ETag checksum fails when using MD5. This is causing Starlette to not work at all under Red Hat Enterprise Linux when FIPS mode is enabled.\r\n\r\n### Debugging material\r\n\r\nHere's the exception that's thrown:\r\n\r\n```\r\nINFO:     10.42.1.7:34422 - \"GET /app/static/foo.html HTTP/1.1\" 500 Internal Server Error\r\nERROR:    Exception in ASGI application\r\nTraceback (most recent call last):\r\n  File \"/usr/local/lib/python3.8/site-packages/uvicorn/protocols/http/h11_impl.py\", line 373, in run_asgi\r\n    result = await app(self.scope, self.receive, self.send)\r\n  File \"/usr/local/lib/python3.8/site-packages/uvicorn/middleware/proxy_headers.py\", line 75, in __call__\r\n    return await self.app(scope, receive, send)\r\n  File \"/usr/local/lib/python3.8/site-packages/fastapi/applications.py\", line 208, in __call__\r\n    await super().__call__(scope, receive, send)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/applications.py\", line 112, in __call__\r\n    await self.middleware_stack(scope, receive, send)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py\", line 181, in __call__\r\n    raise exc\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py\", line 159, in __call__\r\n    await self.app(scope, receive, _send)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/exceptions.py\", line 82, in __call__\r\n    raise exc\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/exceptions.py\", line 71, in __call__\r\n    await self.app(scope, receive, sender)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/routing.py\", line 656, in __call__\r\n    await route.handle(scope, receive, send)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/routing.py\", line 408, in handle\r\n    await self.app(scope, receive, send)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/staticfiles.py\", line 97, in __call__\r\n    response = await self.get_response(path, scope)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/staticfiles.py\", line 118, in get_response\r\n    return self.file_response(full_path, stat_result, scope)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/staticfiles.py\", line 173, in file_response\r\n    response = FileResponse(\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/responses.py\", line 267, in __init__\r\n    self.set_stat_headers(stat_result)\r\n  File \"/usr/local/lib/python3.8/site-packages/starlette/responses.py\", line 273, in set_stat_headers\r\n    etag = hashlib.md5(etag_base.encode()).hexdigest()\r\nValueError: [digital envelope routines: EVP_DigestInit_ex] disabled for FIPS\r\n```\r\n\r\n### Environment\r\n\r\n- OS: Red Hat Enterprise Linux 8 in FIPS mode\r\n- Python version: 3.8.8\r\n- Starlette version: 0.16.0\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1365",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1366",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.FileResponse.set_stat_headers"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1142,
+      "commit": "d0252aaf052a97e7f09c19d9bfa46d1c9501e910",
+      "time": 1640177848,
+      "summary": "mypy complains about `exception_handlers` dict with `HTTPException` key",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\nRelated, but not the same:\r\n* #1034 \r\n* #1139 \r\n* #949\r\n\r\n### Describe the bug\r\n\r\n<!-- A clear and concise description of what the bug is. -->\r\n\r\n### To reproduce\r\n\r\nGiven an example.py: \r\n\r\n```python\r\nfrom starlette.applications import Starlette\r\nfrom starlette.exceptions import HTTPException\r\nfrom starlette.requests import Request\r\nfrom starlette.responses import Response\r\nfrom starlette.routing import Route\r\n\r\ndef handle_http_exception(request: Request, exc: HTTPException) -> Response:\r\n    return Response('foo')\r\n\r\n\r\nexception_handlers = {\r\n    HTTPException: handle_http_exception\r\n}\r\napp = Starlette(exception_handlers=exception_handlers)\r\n```\r\n\r\n### Expected behavior\r\n\r\nMypy does not present an error.\r\n\r\n### Actual behavior\r\n\r\n```console\r\n$ mypy example.py\r\nexample.py:14: error: Argument \"exception_handlers\" to \"Starlette\" has incompatible type \"Dict[Type[HTTPException], Callable[[Request, HTTPException], Response]]\"; expected \"Optional[Dict[Union[int, Type[Exception]], Callable[..., Any]]]\"\r\nFound 1 error in 1 file (checked 1 source file)\r\n```\r\n\r\n### Debugging material\r\n\r\nNone\r\n\r\n### Environment\r\n\r\n- OS: Debian (`Linux ... 4.19.0-14-amd64 #1 SMP Debian 4.19.171-2 (2021-01-30) x86_64 GNU/Linux`)\r\n- Python version: `Python 3.9.1`\r\n- Starlette version: `starlette==0.14.2`\r\n\r\n### Additional context\r\n\r\nFor propriety:\r\n\r\nhttps://github.com/encode/starlette/blob/master/docs/exceptions.md#L42\r\n\r\nhttps://github.com/encode/starlette/blob/ed73b97c9b8f4aa527eed88032c04ce9fe109a3c/starlette/applications.py#L44\r\n\r\nI think this is a Starlette issue and not a mypy issue; apologies if I'm wrong here.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1142",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1360",
+      "gold_functions": [
+        "func:starlette/applications.py:starlette.applications.Starlette.__init__",
+        "func:starlette/applications.py:starlette.applications.Starlette.build_middleware_stack"
+      ],
+      "gold_files": [
+        "starlette/applications.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1099,
+      "commit": "46334278165d4e2dbf9c5c5d1878fd5184f43ba2",
+      "time": 1641556101,
+      "summary": "Missing content-length header field in some responses",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nThe Content-Length header field is not set for cases where body is empty. In some cases this seems to not be according to the HTTP/1.1 spec and creates troubles when using for example traefik as a proxy in front of a starlette-based backend.\r\n\r\nSee this issue for details: https://github.com/traefik/traefik/issues/4456\r\nSpecifically, the final conclusion: https://github.com/traefik/traefik/issues/4456#issuecomment-593539169\r\n\r\n### To reproduce\r\n\r\n```python\r\n>>> from starlette.responses import RedirectResponse\r\n>>> RedirectResponse(url=\"/\", status_code=302).headers\r\nMutableHeaders({'location': '/'})\r\n```\r\nHeader has not content-length field.\r\n\r\n### Expected behavior\r\n\r\n```python\r\n>>> from starlette.responses import RedirectResponse\r\n>>> RedirectResponse(url=\"/\", status_code=302).headers\r\nMutableHeaders({'content-length': '0', 'location': '/'})\r\n```\r\nI expect there to be a content-length field specifying zero length\r\n\r\n### Actual behavior\r\n\r\n```python\r\n>>> from starlette.responses import RedirectResponse\r\n>>> RedirectResponse(url=\"/\", status_code=302).headers\r\nMutableHeaders({'location': '/'})\r\n```\r\nHeader has no content-length field.\r\n\r\n### Debugging material\r\n\r\nN/A\r\n\r\n### Environment\r\n\r\n- OS: Linux (WSL2)\r\n- Python version: 3.8.2\r\n- Starlette version: 0.13.6\r\n\r\n### Additional context\r\n\r\nThis bug is probably also present for other type of responses (other status-codes). Last paragraph (in bold) from https://tools.ietf.org/html/rfc7230#section-3.3 is of interest:\r\n\r\n> 3.3.  Message Body\r\n> \r\n>    The message body (if any) of an HTTP message is used to carry the\r\n>    payload body of that request or response.  The message body is\r\n>    identical to the payload body unless a transfer coding has been\r\n>    applied, as described in Section 3.3.1.\r\n> \r\n>      message-body = *OCTET\r\n> \r\n>    The rules for when a message body is allowed in a message differ for\r\n>    requests and responses.\r\n> \r\n>    The presence of a message body in a request is signaled by a\r\n>    Content-Length or Transfer-Encoding header field.  Request message\r\n>    framing is independent of method semantics, even if the method does\r\n>    not define any use for a message body.\r\n> \r\n>    The presence of a message body in a response depends on both the\r\n>    request method to which it is responding and the response status code\r\n>    (Section 3.1.2).  Responses to the HEAD request method (Section 4.3.2\r\n>    of [RFC7231]) never include a message body because the associated\r\n>    response header fields (e.g., Transfer-Encoding, Content-Length,\r\n>    etc.), if present, indicate only what their values would have been if\r\n>    the request method had been GET (Section 4.3.1 of [RFC7231]). 2xx\r\n>    (Successful) responses to a CONNECT request method (Section 4.3.6 of\r\n>    [RFC7231]) switch to tunnel mode instead of having a message body.\r\n>    **All 1xx (Informational), 204 (No Content), and 304 (Not Modified)\r\n>    responses do not include a message body.  All other responses do\r\n>    include a message body, although the body might be of zero length.**",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1099",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1395",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.Response.init_headers",
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.get_path"
+      ],
+      "gold_files": [
+        "starlette/responses.py",
+        "starlette/staticfiles.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1178,
+      "commit": "2d6ddd386199e9e6cf0df0849e1de7d1a8c86b9d",
+      "time": 1641812911,
+      "summary": "Add EmptyResponse class",
+      "description": "HTTP responses with status codes 1xx, 204, 205, and 304 are special cases.  1xx, 204, 304 responses must not include a message body.  The empty message body for 205 responses can be handled in a few ways, but the only one that would make sense for Starlette would be to add a Content-Length header with value 0.\r\n\r\nCurrently it is not at all obvious to users how to implement these responses.  Starlette can make it explicit with the addition of an EmptyResponse class that does the right thing for each of the status codes cited above.\r\n\r\nThe \"right thing\" differs by status code. The key difference is \r\n\r\n* 1xx, 204: must not have a Content-Length header\r\n* 205: should have Content-Length: 0\r\n* 304: may have a Content-Length header if the value equals the length of the corresponding 200 response that could have been sent.\r\n\r\nThus, an EmptyResponse object should ensure no Content-Length header in the first case, ensure Content-Length: 0 in the second case, and pass along a Content-Length header if supplied in the third case; here it is the caller's responsibility to get the value right.\r\n\r\nIn all cases, an EmptyResponse object would send an 'http.response.body' event with body: b'', more_body: False so that the ASGI server knows to begin sending the response.\r\n\r\nThe addition of an EmptyResponse class should resolve at least one open issue (https://github.com/encode/starlette/issues/1099).",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1178",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1397",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.Response.init_headers"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1282,
+      "commit": "2d6ddd386199e9e6cf0df0849e1de7d1a8c86b9d",
+      "time": 1641812911,
+      "summary": "JSONResponse Wrong Content-Length Value",
+      "description": "### Describe the bug\r\n\r\n`JSONResponse` populates the response header with a **non-zero** `Content-Length` whenever the response object is instantiated **without any content**.\r\n\r\n### Checklist\r\n\r\n- [X] The bug is reproducible against the latest release and/or `master`.\r\n- [X] There are no similar issues or pull requests to fix it yet.\r\n\r\n### To reproduce\r\n\r\n```python\r\nfrom starlette.datastructures import MutableHeaders\r\nfrom starlette.responses import JSONResponse\r\n\r\nr1 = JSONResponse('')\r\nr1.headers\r\n\r\nr2 = JSONResponse()\r\nr2.headers\r\n```\r\n\r\n### Expected behavior\r\n\r\n```python\r\n( r1.headers == r2.headers\r\n  and\r\n  r1.headers == MutableHeaders({'content-length': '0', 'content-type': 'application/json'}) )\r\n```\r\n\r\n### Actual behavior\r\n\r\n```python\r\n( r1.headers != r2.headers\r\n  and\r\n  r1.headers == MutableHeaders({'content-length': '2', 'content-type': 'application/json'})\r\n  and\r\n  r2.headers == MutableHeaders({'content-length': '4', 'content-type': 'application/json'}))\r\n```\r\n\r\n### Debugging material\r\n\r\nAll that is needed is the currently stable release of `Starlette`, and the trusty `terminal`.\r\n\r\n### Environment\r\n\r\n- OS: same on all of Linux/Windows/macOS\r\n- Python version: 3.7.x\r\n- Starlette version: 0.14.x\r\n\r\n### Additional context\r\n\r\nI was trying to adhere to the HTTP ref spec when constructing responses to the OPTIONS and HEAD methods.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1282",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1397",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.Response.init_headers"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 427,
+      "commit": "3e6b26d83666e09fb7f7b3e280402afe6a7646f0",
+      "time": 1642599537,
+      "summary": "templateing: jinja2: pass kwargs for environment",
+      "description": "I think it would be good to pass something like `env_kwargs` via https://github.com/blueyed/starlette/blob/24c135de71ac56a73f7f797258115941579155bf/starlette/templating.py#L51-L53.\r\n\r\nWhile you can change the env afterwards, it would allow Jinja2 to validate e.g. `enable_async`, and call `load_extensions` etc.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/427",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1401",
+      "gold_functions": [
+        "func:starlette/templating.py:starlette.templating.Jinja2Templates.__init__"
+      ],
+      "gold_files": [
+        "starlette/templating.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 991,
+      "commit": "34d9f0f10f2e4706551acf340eb1eaf4d8c87b49",
+      "time": 1642867892,
+      "summary": "[Feature] Reason for websocket.close",
+      "description": "I've recently started actively developing with websockets in starlette. When closing a websocket you can provide a code e.g. 1000, 1008 \u2026 to tell the client the basic reason. But the websocket protocol allows the developer to also give UTF-8-encoded data as a complementary description/ reason. This would be useful in multiple cases such as mentioning the specific violitioan for code 1008 (POLICY VIOLIATION). [Websockets](https://websockets.readthedocs.io/en/stable/api.html?highlight=reason#websockets.protocol.WebSocketCommonProtocol.close) supports this too and their [implementation](https://websockets.readthedocs.io/en/stable/_modules/websockets/protocol.html#WebSocketCommonProtocol.close) could maybe help.\r\n\r\nSpecification: [https://tools.ietf.org/](https://tools.ietf.org/html/rfc6455#section-5.5.1)\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/991",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1417",
+      "gold_functions": [
+        "func:starlette/testclient.py:starlette.testclient.WebSocketTestSession._raise_on_close",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.close",
+        "func:starlette/websockets.py:starlette.websockets.WebSocketClose.__call__",
+        "func:starlette/websockets.py:starlette.websockets.WebSocketClose.__init__",
+        "func:starlette/websockets.py:starlette.websockets.WebSocketDisconnect.__init__"
+      ],
+      "gold_files": [
+        "starlette/testclient.py",
+        "starlette/websockets.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 231,
+      "commit": "199fc703f3078bd5b0e1aca0e9f4ab236b03f029",
+      "time": 1643388502,
+      "summary": "Add user-defined converters to routing",
+      "description": "To solve application task in https://github.com/encode/starlette/issues/230 I use my own defined convertor:\r\n```python\r\n#!/usr/bin/env python3\r\n# -*- coding: utf-8 -*-\r\n\r\nimport starlette.convertors as conv\r\n\r\nclass UnderscoreConvertor(conv.Convertor):\r\n    regex = \".*\"\r\n\r\n    def convert(self, value: str) -> str:\r\n        return \"_\" + value\r\n\r\n    def to_string(self, value: str) -> str:\r\n        return value[1:]\r\n\r\nconv.CONVERTOR_TYPES['underscore'] = UnderscoreConvertor()\r\n\r\n\r\n\r\nfrom starlette.applications import Starlette\r\n\r\nfrom starlette.responses import PlainTextResponse\r\n\r\nimport uvicorn\r\n\r\napp = Starlette()\r\n\r\n@app.route(\"/test/{username:underscore}\")\r\ndef http_test(request):\r\n    username = request.path_params['username']\r\n    return PlainTextResponse(username + \"\\n\")\r\n\r\nif __name__ == '__main__':\r\n    uvicorn.run(app, host='0.0.0.0', port=8080)\r\n```\r\n\r\nSo feature request is allowing user-defined converters in more acceptable way. Something like:\r\n`starlette.convertors.add(\"underscore\", UnderscoreConverter())`",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/231",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1437",
+      "gold_functions": [
+        "func:starlette/convertors.py:starlette.convertors.register_url_convertor"
+      ],
+      "gold_files": [
+        "starlette/convertors.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1433,
+      "commit": "aff548ab18bb5661d28503a98ab68737777a0b18",
+      "time": 1643623935,
+      "summary": "Raising Exceptions in sub-applications routes",
+      "description": "### Checklist\r\n\r\n- [X] The bug is reproducible against the latest release or `master`.\r\n- [X] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nLet's start with this PR: #1262\r\n\r\nIt's about preventing raise `anyio.ExceptionGroup` in views under a `BaseHTTPMiddleware`. PR resolve that problem with nonlocal variable that stores our exception. But in the case of sub-applications, it does not work. \r\n\r\nAs I can see (fyi I am not good at asyncio), in the case below, we reach and read a response before we raise an exception and store it to our nonlocal variable:\r\n\r\nfragment of `BaseHTTPMiddleware.__call__`\r\n```python\r\nasync def call_next(request: Request) -> Response:\r\n    app_exc: typing.Optional[Exception] = None\r\n    send_stream, recv_stream = anyio.create_memory_object_stream()\r\n\r\n    async def coro() -> None:\r\n        nonlocal app_exc\r\n\r\n        async with send_stream:\r\n            try:\r\n                task = await self.app(scope, request.receive, send_stream.send)\r\n            except Exception as exc:\r\n                app_exc = exc\r\n\r\n    task_group.start_soon(coro)\r\n\r\n    try:\r\n        message = await recv_stream.receive()\r\n    except anyio.EndOfStream:\r\n        if app_exc is not None:\r\n            raise app_exc\r\n        raise RuntimeError(\"No response returned.\")\r\n    \r\n    ...\r\n    response = StreamingResponse(\r\n        status_code=message[\"status\"], content=body_stream()\r\n    )\r\n    response.raw_headers = message[\"headers\"]\r\n    return response\r\n```\r\n\r\nin this moment: `except anyio.EndOfStream:` exception still no raised.\r\n\r\n### Steps to reproduce the bug\r\n\r\n```python\r\nimport httpx\r\nimport pytest\r\nfrom fastapi import FastAPI, APIRouter\r\nfrom starlette.middleware import Middleware\r\nfrom starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint\r\nfrom starlette.requests import Request\r\nfrom starlette.responses import Response\r\nfrom starlette.routing import Route\r\n\r\n\r\nclass SomeError(Exception):\r\n    pass\r\n\r\n\r\nclass SomeMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(\r\n        self, request: Request, call_next: RequestResponseEndpoint\r\n    ) -> Response:\r\n        return await call_next(request)\r\n\r\n# Drop (or use not BaseHTTPMiddleware based) middleware and test works fine\r\napp = FastAPI(middleware=[Middleware(SomeMiddleware), ])\r\n\r\n\r\nasync def simple_route(request: Request):\r\n    raise SomeError\r\n\r\n\r\nanother_router = APIRouter(\r\n    routes=[Route('/simple-route/', simple_route, methods=['GET'])]\r\n)\r\nsub_app = FastAPI()\r\nsub_app.include_router(another_router)\r\napp.router.mount(f'/api', sub_app)\r\n\r\n\r\n@pytest.mark.asyncio\r\nasync def test_simple_route():\r\n    async with httpx.AsyncClient(app=app) as client:\r\n        with pytest.raises(SomeError):\r\n            await client.get(\"http://testserver/api/simple-route/\")\r\n\r\n```\r\n\r\n### Expected behavior\r\n\r\nAn exception was raised and caught by pytest exception\r\n\r\n### Actual behavior\r\n\r\nAn exception wasn't raised\r\n\r\n### Debugging material\r\n\r\n_No response_\r\n\r\n### Environment\r\n\r\nmacOS Monterey 12.0.1, starlette 0.17.1, Python 3.9.9\r\n\r\n\r\n### Additional context\r\n\r\n_No response_",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1433",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1459",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.body_stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 739,
+      "commit": "400e240f84f987a27aba9c4bb7d0b228b47c5e14",
+      "time": 1643724504,
+      "summary": "Background tasks exception handler",
+      "description": "Currently, if a background task faces an exception, it isn't handled and there's no way to handle it (rather than wrapping the task)\r\nMy suggestion is to be able to add exception handler for background tasks, as there is for requests.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/739",
+      "pull_request": "https://github.com/Kludex/starlette/pull/761",
+      "gold_functions": [
+        "func:starlette/middleware/errors.py:starlette.middleware.errors.ServerErrorMiddleware.__call__"
+      ],
+      "gold_files": [
+        "starlette/middleware/errors.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1125,
+      "commit": "a6d3d8f0179cb1c2ac283bb5db779f6075854a66",
+      "time": 1643888065,
+      "summary": "Insufficient input validation of content-type 'multipart/form-data'",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nNot actually a bug, but insufficient input validation.\r\n\r\n### To reproduce\r\n\r\nProvide POST input (e.g. with postman) with content-type 'multipart/form-data' but without _boundary_ parameter.\r\n\r\n### Expected behavior\r\n\r\nShall return 4xx error code. According to rfc7578 boundary is a required parameter.\r\n\r\n### Actual behavior\r\n\r\n_None_ boundary is passed to multipart library and an exception is raised there.\r\n\r\n### Debugging material\r\n\r\n```\r\nTypeError: can't concat NoneType to bytes\r\n  File \"starlette/middleware/trustedhost.py\", line 51, in __call__\r\n    await self.app(scope, receive, send)\r\n  File \"starlette/middleware/sessions.py\", line 75, in __call__\r\n    await self.app(scope, receive, send_wrapper)\r\n  File \"cpms/middleware.py\", line 55, in __call__\r\n    await self.app(scope, receive, send)\r\n  File \"starlette/middleware/authentication.py\", line 48, in __call__\r\n    await self.app(scope, receive, send)\r\n  File \"starlette/exceptions.py\", line 82, in __call__\r\n    raise exc from None\r\n  File \"starlette/exceptions.py\", line 71, in __call__\r\n    await self.app(scope, receive, sender)\r\n  File \"starlette/routing.py\", line 582, in __call__\r\n    await route.handle(scope, receive, send)\r\n  File \"starlette/routing.py\", line 243, in handle\r\n    await self.app(scope, receive, send)\r\n  File \"starlette/routing.py\", line 54, in app\r\n    response = await func(request)\r\n  File \"starlette/authentication.py\", line 69, in async_wrapper\r\n    return await func(*args, **kwargs)\r\n  File \"cpms/views/files.py\", line 90, in decorator\r\n    return await endpoint(request)\r\n  File \"cpms/views/files.py\", line 133, in upload_files\r\n    for f_name, f_value in (await request.form()).items():\r\n  File \"starlette/requests.py\", line 240, in form\r\n    self._form = await multipart_parser.parse()\r\n  File \"starlette/formparsers.py\", line 181, in parse\r\n    parser = multipart.MultipartParser(boundary, callbacks)\r\n  File \"multipart/multipart.py\", line 1042, in __init__\r\n    self.boundary = b'\\r\\n--' + boundary\r\n```\r\n\r\n### Environment\r\n\r\n- OS: OpenBSD 6.7\r\n- Python version: 3.7.9\r\n- Starlette version: 0.14.1\r\n\r\n### Additional context\r\n\r\nThe problem occurs due insufficient checking of the input on line 166 of starlette/formparsers.py\r\n`      boundary = params.get(b\"boundary\")`\r\n\r\nIt is better to replace it with:\r\n`      boundary = params[b\"boundary\"]`\r\nso exception at early stage will be raised.\r\n\r\nOr make an additional input validation.\r\n```\r\n      boundary = params.get(b\"boundary\")\r\n      if not boundary:\r\n          raise HTTPException(status_code=400)\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1125",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1349",
+      "gold_functions": [
+        "func:starlette/formparsers.py:starlette.formparsers.MultiPartParser.parse"
+      ],
+      "gold_files": [
+        "starlette/formparsers.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1471,
+      "commit": "424351cb231c67798a65c091b0b7d42790f5e444",
+      "time": 1643971864,
+      "summary": "Where assert statements are guarding against invalid ASGI messaging, use RuntimeError instead.",
+      "description": "### Checklist\r\n\r\n- [X] There are no similar issues or pull requests for this yet.\r\n- [X] I discussed this idea on the [community chat](https://gitter.im/encode/community) and feedback is positive.\r\n\r\n### Is your feature related to a problem? Please describe.\r\n\r\nThere are `assert` statements in the source code which raise a vague and hard to debug `AssertionError`. For example on [this line](https://github.com/encode/starlette/blob/f12c92a21500d484b3d48f965bb605c1bbe193bc/starlette/websockets.py#L58).\r\n\r\nIf some kind of exception (for example something along the lines of: `WebSocketMessageType`) were raised it would make debugging a lot clearer. I spent a lot more time than I should have just working out where exactly this `AssertionError` was coming from and what the root cause was.\r\n\r\n\r\n\r\n### Describe the solution you would like.\r\n\r\nThis is by no means the right solution but at least it's an idea of the kind of thing that might help:\r\n\r\n```python\r\nclass WebSocketMessageType(Exception):\r\n    pass\r\n\r\nclass WebSocket(HTTPConnection):\r\n    ...\r\n    async def send(self, message: Message) -> None:\r\n        \"\"\"\r\n        Send ASGI websocket messages, ensuring valid state transitions.\r\n        \"\"\"\r\n        if self.application_state == WebSocketState.CONNECTING:\r\n            message_type = message[\"type\"]\r\n            if message_type not in {\"websocket.accept\", \"websocket.close\"}:\r\n                raise WebSocketMessageType(\"expected message_type to be websocket.accept or websocket.close\")\r\n            if message_type == \"websocket.close\":\r\n                self.application_state = WebSocketState.DISCONNECTED\r\n            else:\r\n                self.application_state = WebSocketState.CONNECTED\r\n            await self._send(message)\r\n        elif self.application_state == WebSocketState.CONNECTED:\r\n            message_type = message[\"type\"]\r\n            if message_type not in {\"websocket.send\", \"websocket.close\"}:\r\n                raise WebSocketMessageType(\"expected message_type to be websocket.send or websocket.close\")\r\n            if message_type == \"websocket.close\":\r\n                self.application_state = WebSocketState.DISCONNECTED\r\n            await self._send(message)\r\n        else:\r\n            raise RuntimeError('Cannot call \"send\" once a close message has been sent.')\r\n```\r\n\r\n### Describe alternatives you considered\r\n\r\n_No response_\r\n\r\n### Additional context\r\n\r\nThe error I was seeing:\r\n\r\n```\r\nERROR    root:a_file.py:31 {'message': 'Job processing failed', 'job': <Job coro=<<coroutine object a_class.a_method at 0x7f6d7a7c1ec0>>>, 'exception': AssertionError()}\r\nNoneType: None\r\n```\r\n\r\nAnd this would be it with a `raise` statement: admittedly there is still no mention of `starlette` so a user would still have to diagnose that as the root cause.\r\n\r\n```\r\nERROR    root:a_file.py:31 {'message': 'Job processing failed', 'job': <Job coro=<<coroutine object a_class.a_method at 0x7fb99c2ed940>>>, 'exception': WebSocketMessageType('expected message_type to be websocket.accept or websocket.close')}\r\nNoneType: None\r\n```\r\n\r\nAlso, I have no idea where that `NoneType: None` is coming from or what that means.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1471",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1472",
+      "gold_functions": [
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_bytes",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_json",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_text",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.send",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.send_json"
+      ],
+      "gold_files": [
+        "starlette/websockets.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1261,
+      "commit": "62428c585db9e15bea56c1d03f4632742e9bc6f4",
+      "time": 1644851114,
+      "summary": "Starlette 0.15.0 breaks SessionMiddleware by adding ASGI Path for Subroutes using Mount",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nAs discussed with @mahmoudhossam on #1147, I am creating this issue.\r\n\r\n<!-- A clear and concise description of what the bug is. -->\r\nUpdate 0.15.0 broke my session checking function to ensure users are logged in. I mount all the sub routes (users, etc..). The request.session has data in it when set, but when I redirect back to the start page then session is now null. I see no documentation on how to have the session across Mounts?\r\n\r\nBelow is example of what I am doing...\r\n\r\n```\r\n# Routes\r\nroutes = [\r\n    Route(\"/\", main_pages.homepage, name=\"dashboard\", methods=[\"GET\", \"POST\"]),\r\n    Route(\"/about\", main_pages.about_page, methods=[\"GET\"]),\r\n    Mount(\"/user\", routes=\r\n    [\r\n        Route(\r\n            \"/forgot\", routes=user_pages.forgot_password, methods=[\"GET\", \"POST\"]\r\n        ),\r\n        Route(\"/login\", routes=user_pages.login, methods=[\"GET\", \"POST\"]),\r\n        Route(\"/logout\", routes=user_pages.logout, methods=[\"GET\", \"POST\"]),\r\n        Route(\r\n            \"/password-change\",\r\n            routes=user_pages.password_change,\r\n            methods=[\"GET\", \"POST\"],\r\n        ),\r\n        Route(\"/profile\", routes=user_pages.profile, methods=[\"GET\"]),\r\n        Route(\"/register\", routes=user_pages.register, methods=[\"GET\", \"POST\"]),\r\n    ],\r\n    name=\"user\",\r\n    ),\r\n\r\n# Session Checking\r\ndef require_login(endpoint: Callable) -> Callable:\r\n    async def check_login(request: Request) -> Response:\r\n        if \"user_name\" not in request.session:\r\n            logger.error(\r\n                f\"user page access without being logged in from {request.client.host}\"\r\n            )\r\n            return RedirectResponse(url=\"/user/login\", status_code=303)\r\n\r\n        else:\r\n            one_twenty = datetime.now() - timedelta(\r\n                minutes=config_settings.login_timeout\r\n            )\r\n            current: bool = one_twenty < datetime.strptime(\r\n                request.session[\"updated\"], \"%Y-%m-%d %H:%M:%S.%f\"\r\n            )\r\n\r\n            if current == False:\r\n                logger.error(\r\n                    f\"user {request.session['user_name']} outside window: {current}\"\r\n                )\r\n                return RedirectResponse(url=\"/user/login\", status_code=303)\r\n\r\n            # update datetime of last use\r\n            logger.info(\r\n                f\"user {request.session['id']} within timeout window: {current}\"\r\n            )\r\n            request.session[\"updated\"] = str(datetime.now())\r\n        return await endpoint(request)\r\n\r\n    return check_login\r\n```\r\n### To reproduce\r\n\r\n<!-- Provide a *minimal* example with steps to reproduce the bug locally.\r\n\r\nNOTE: try to keep any external dependencies *at an absolute minimum*\r\n(middleware, servers, proxies, certificates...).\r\nIn other words, remove anything that doesn't make the bug go away.\r\n-->\r\nCreate basic app, using greater than 0.14.2, using Mount add subroutes and then check the session cookies for the subroutes as there will be a new session cookie as it it now acting like a submounted app, instead of subroutes.\r\n### Expected behavior\r\n\r\n<!-- A clear and concise description of what you expected to happen. -->\r\nMounts should not create a new session cookie, unless Mounting a sub application. See [Routing](https://www.starlette.io/routing/) and using Mounts in the documentation. It shows you need to add \"app=\" for the submounted app. If left out/none, it is just a submounted route and should not be treated as an submounted app.\r\n\r\nMount(\"/static\", app=StaticFiles(directory=\"static\"), name=\"static\")\r\n\r\n### Actual behavior\r\n\r\n<!-- A clear and concise description of what actually happens. -->\r\nUsing Mount it will create new session cookies.\r\n\r\n### Debugging material\r\n\r\n<!-- Any tracebacks, screenshots, etc. that can help understanding the problem.\r\n\r\nNOTE:\r\n- Please list tracebacks in full (don't truncate them).\r\n- Consider using `<details>` to make tracebacks/logs collapsible if they're very large (see https://gist.github.com/ericclemmons/b146fe5da72ca1f706b2ef72a20ac39d).\r\n-->\r\n\r\n### Environment\r\n\r\n- OS: <!-- eg Linux/Windows/macOS. --> Windows/Linux\r\n- Python version: <!-- eg 3.8.5 (get it with `$ python -V`). --> 3.8+\r\n- Starlette version: <!-- eg 0.13.8 (get it with `$ pip show starlette`). --> 0.15.0 + created in release #1147 by issue #233\r\n### Additional context\r\n\r\n<!-- Any additional information that can help understanding the problem.\r\n\r\nEg. linked issues, or a description of what you were trying to achieve. -->\r\n\r\nI would suggest checking if in Mount app=None as a way to determine whether to use ASGI path or \"/\". \r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1261",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1512",
+      "gold_functions": [
+        "func:starlette/middleware/sessions.py:starlette.middleware.sessions.SessionMiddleware.__call__",
+        "func:starlette/middleware/sessions.py:starlette.middleware.sessions.SessionMiddleware.__call__.send_wrapper",
+        "func:starlette/middleware/sessions.py:starlette.middleware.sessions.SessionMiddleware.__init__"
+      ],
+      "gold_files": [
+        "starlette/middleware/sessions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1239,
+      "commit": "b1ae0c3621034f1531b9983389ce90be8d140bc6",
+      "time": 1645009136,
+      "summary": "Unable to merge MutableHeaders with dict",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nUnable to merge `MutableHeaders` with `dict`.\r\n\r\n### To reproduce\r\n\r\n```python3\r\nfrom starlette.datastructures import MutableHeaders\r\n\r\nresponse = MutableHeaders()\r\nresponse |= {\"X-Header\": \"string\"}\r\n```\r\n### Expected behavior\r\n\r\n```python3\r\n>>> response\r\nMutableHeaders({'x-header': 'string'})\r\n```\r\n\r\n### Actual behavior\r\n\r\nRaised exception:\r\n```\r\nTypeError: unsupported operand type(s) for |=: 'MutableHeaders' and 'dict'\r\n```\r\n\r\n### Environment\r\n\r\n- OS: Ubuntu 21.04\r\n- Python version: 3.9.6\r\n- Starlette version: 0.15.0\r\n\r\n### Additional context\r\n\r\nMethod `MutableHeaders.update()` can resolve the issue but I think comfortable is used to operators `|` (for `merge`) and `|=` (for `update`).\r\n\r\nIt's comfortable if you have many headers like:\r\n\r\n```python3\r\n...\r\n\r\nheaders = {\r\n    \"X-Header-1\": \"string-1\",\r\n    \"X-Header-1\": \"string-2\",\r\n    \"X-Header-3\": \"string-3\",\r\n    \"X-Header-...\": \"string-...\",\r\n    \"X-Header-N\": \"string-N\",\r\n}\r\n\r\nresponse.headers |= headers  # equals to: response.headers.update(headers)\r\n\r\nreturn response\r\n\r\n...\r\n```\r\nIt's like [Dictionary Merge & Update Operators in Python 3.9](https://docs.python.org/3/whatsnew/3.9.html#dictionary-merge-update-operators).\r\n\r\n\r\nWhat do you think about it? Thank you.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1239",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1240",
+      "gold_functions": [
+        "func:starlette/datastructures.py:starlette.datastructures.MutableHeaders.__ior__",
+        "func:starlette/datastructures.py:starlette.datastructures.MutableHeaders.__or__",
+        "func:starlette/datastructures.py:starlette.datastructures.MutableHeaders.update"
+      ],
+      "gold_files": [
+        "starlette/datastructures.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1560,
+      "commit": "487f05dfc641a0632be8bd405add6454cab4f6b0",
+      "time": 1649228467,
+      "summary": "Denying WebSocket connection in WebSocketEndpoint.on_connect leads to Exception",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1555\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **dingensundso** March 27, 2022</sup>\r\nI created a WebSocketEndpoint class in which I want to deny the connection in certain conditions.\r\nWhen the WebSocket is closed in on_connect I receive the following exception:\r\n\r\n```\r\n  File \"starlette/endpoints.py\", line 83, in dispatch\r\n    close_code = int(message.get(\"code\", status.WS_1000_NORMAL_CLOSURE))\r\nTypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'\r\n```\r\nSo code is None when the server denies the connection instead of non-existant.\r\n\r\nhttps://github.com/encode/starlette/blob/e086fc2da361767b532cf690e5203619bbae98aa/starlette/endpoints.py#L72-L87\r\n\r\nChanging line 83 to the following should fix the issue:\r\n```python\r\nclose_code = int(message.get(\"code\") or status.WS_1000_NORMAL_CLOSURE)               \r\n````\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1560",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1574",
+      "gold_functions": [
+        "func:starlette/endpoints.py:starlette.endpoints.WebSocketEndpoint.dispatch"
+      ],
+      "gold_files": [
+        "starlette/endpoints.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1552,
+      "commit": "d7cbe2a4887ad6b15fe7523ed62e28a426b7697d",
+      "time": 1649443997,
+      "summary": "Route naming introspection always return \"method\" for method endpoints ",
+      "description": "Discussion was done at https://gitter.im/encode/community. Bug was confirmed by @Kludex.\r\n\r\n## Description\r\nmethods don't get detected on `is_function`, then we assume that `<object>.__class__.__name__ ` will give the right name (my_method on the example below) for it, but it actually gets the \"method\" name, which is wrong.\r\n\r\nUnexpected behaviour seem to originate from: https://github.com/encode/starlette/blob/e086fc2da361767b532cf690e5203619bbae98aa/starlette/routing.py#L87\r\n\r\n## Minimal example\r\n```python\r\nfrom starlette.responses import JSONResponse\r\nfrom starlette.routing import Route\r\n\r\n\r\nasync def my_function(request):\r\n    return JSONResponse({'endpoint_type': 'function'})\r\n\r\n\r\nclass MyClass:\r\n    def __call__(self, request):\r\n        return JSONResponse({'endpoint_type': 'class'})\r\n\r\n\r\nclass MySpecialEndpointObject:\r\n    async def my_method(self, request):\r\n        return JSONResponse({'endpoint_type': 'method'})\r\n\r\n\r\nendpoint_obj = MySpecialEndpointObject()\r\nfunction_route = Route('/functionEndpoint', my_function)\r\nclass_route = Route('/classEndpoint', MyClass())\r\nmethod_route = Route('/methodEndpoint', endpoint_obj.my_method)\r\n\r\nassert function_route.name == \"my_function\"\r\nassert class_route.name == \"MyClass\"\r\nassert method_route.name == \"my_method\"  # AssertionError\r\n```\r\n\r\n## Actual behavior\r\n\r\nValue of `method_route.name` is `\"method\"`.\r\n\r\n## Expected behavior\r\n\r\nValue of `method_route.name` is `\"my_method\"`.\r\n\r\nIt could also be `\"MySpecialEndpointObject_my_method\"`. Reason here is to prevent ambiguity.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1552",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1553",
+      "gold_functions": [
+        "func:starlette/routing.py:starlette.routing.get_name"
+      ],
+      "gold_files": [
+        "starlette/routing.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1578,
+      "commit": "9329160428776896f55757b1387496953fd47b81",
+      "time": 1650603310,
+      "summary": "BUG: Incorrect WebSocket status code 1005 description, missing status code 1006",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1577\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **vbsd** April  7, 2022</sup>\r\nIt seems that there is a mistake in starlette's WebSocket [status code list](https://github.com/encode/starlette/blob/0.19.0/starlette/status.py#L83).\r\n\r\nStatus code 1005 has the name `1005_ABNORMAL_CLOSURE` and 1006 is missing altogether. However, [Mozilla MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code) indicate that 1005 actually means \"no status received\". It is status code 1006 that means \"abnormal closure\".\r\n\r\nIt looks like what should have been\r\n```\r\nWS_1005_NO_STATUS_RECEIVED = 1005\r\nWS_1006_ABNORMAL_CLOSURE = 1006\r\n```\r\ngot mashed together and became just one line:\r\n```\r\nWS_1006_NO_STATUS_RECEIVED = 1005\r\n```\r\n\r\nMaking starlette backwards-incompatible over this wouldn't make much sense, but it seems reasonable to at least add the two correct lines and document `WS_1005_ABNORMAL_CLOSURE` as deprecated/wrong.</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1578",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1580",
+      "gold_functions": [
+        "func:starlette/status.py:starlette.status.__dir__",
+        "func:starlette/status.py:starlette.status.__getattr__"
+      ],
+      "gold_files": [
+        "starlette/status.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 803,
+      "commit": "b8ea367b4304a98653ec8ce9c794ad0ba6dcaf4b",
+      "time": 1651816996,
+      "summary": "Gzip Middleware content-length is incorrect",
+      "description": "The following exception is thrown when I use uvicorn to drive my starlette project. After control variates, I am sure this is caused by Gzip Middleware.\r\n\r\n```\r\n  File \"C:\\Users\\AberS\\Documents\\Github\\index.py\\.venv\\lib\\site-packages\\h11\\_writers.py\", line 102, in send_eom\r\n    raise LocalProtocolError(\"Too little data for declared Content-Length\") \r\nh11._util.LocalProtocolError: Too little data for declared Content-Length\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/803",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1609",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.body_stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1588,
+      "commit": "3453fd6b6259393f3744815b49af297c934f32d0",
+      "time": 1652985183,
+      "summary": "Send 400 on missing `boundary`",
+      "description": "I did some research about this PR, and to understand if the issue was reasonable.\r\n\r\nHere's what I've found out:\r\n- Flask raises `ValueError` when the `boundary` is not found: https://github.com/pallets/werkzeug/blob/dae7e0d06651e54a74f04e1cf24d806c4e2e9be9/src/werkzeug/formparser.py#L270-L291\r\n- Django raises a custom exception: https://github.com/django/django/blob/abfdb4d7f384fb06ed9b7ca37b548542df7b5dda/django/http/multipartparser.py#L79-L83\r\n- Django also verifies if the `boundary` is valid with https://github.com/python/cpython/blob/27ee43183437c473725eba00def0ea7647688926/Lib/cgi.py#L991-L997\r\n- After that raise, Django catches that exception and raises a 400: https://github.com/django/django/blob/abfdb4d7f384fb06ed9b7ca37b548542df7b5dda/django/core/handlers/exception.py#L84-L94\r\n\r\nOn Starlette, we raise `KeyError` with \"boundary key missing\". Although this PR follows the issue that was raised, and it's actually an improvement, I think we should follow Django's lead, and also create a 400 response on this case.\r\n\r\n_Originally posted by @Kludex in https://github.com/encode/starlette/issues/1544#issuecomment-1080197920_",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1588",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1617",
+      "gold_functions": [
+        "func:starlette/formparsers.py:starlette.formparsers.MultiPartException.__init__",
+        "func:starlette/formparsers.py:starlette.formparsers.MultiPartParser.parse",
+        "func:starlette/middleware/exceptions.py:starlette.middleware.exceptions.ExceptionMiddleware.__call__",
+        "func:starlette/middleware/exceptions.py:starlette.middleware.exceptions.ExceptionMiddleware.__init__",
+        "func:starlette/middleware/exceptions.py:starlette.middleware.exceptions.ExceptionMiddleware.add_exception_handler",
+        "func:starlette/middleware/exceptions.py:starlette.middleware.exceptions.ExceptionMiddleware.http_exception",
+        "func:starlette/requests.py:starlette.requests.Request.form"
+      ],
+      "gold_files": [
+        "starlette/formparsers.py",
+        "starlette/middleware/exceptions.py",
+        "starlette/requests.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1303,
+      "commit": "7b9fcaf31d4d23f91ca96181188f5440c3f63201",
+      "time": 1653370317,
+      "summary": "multipart/form-data subpart without name causes internal error",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\n<!-- A clear and concise description of what the bug is. -->\r\n\r\nIf attempting to read a multipart/form-data content type from a request and one of the subparts' Content-Disposition headers doesn't contain a \"name\" parameter, the form parser throws a KeyError.\r\n\r\n### To reproduce\r\n\r\n<!-- Provide a *minimal* example with steps to reproduce the bug locally.\r\n\r\nNOTE: try to keep any external dependencies *at an absolute minimum*\r\n(middleware, servers, proxies, certificates...).\r\nIn other words, remove anything that doesn't make the bug go away.\r\n-->\r\n\r\nmultipart-buglette.py :\r\n```python\r\nfrom starlette.applications import Starlette\r\nfrom starlette.responses import JSONResponse\r\nfrom starlette.routing import Route\r\n\r\n\r\nasync def handler(request):\r\n    return JSONResponse({k: v for k, v in (await request.form()).items()})\r\n\r\n\r\napp = Starlette(\r\n    debug=True,\r\n    routes=[\r\n        Route(\"/\", handler, methods=[\"POST\"]),\r\n    ],\r\n)\r\n```\r\nRun with:\r\n```sh\r\nuvicorn multipart-buglette:app\r\n```\r\nOK response:\r\n```sh\r\n% curl -F 'foo=bar' localhost:8000\r\n{\"foo\":\"bar\"}\r\n```\r\nError response:\r\n```sh\r\n% curl -F '=bar' localhost:8000\r\nTraceback (most recent call last):\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/middleware/errors.py\", line 159, in __call__\r\n    await self.app(scope, receive, _send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/exceptions.py\", line 82, in __call__\r\n    raise exc\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/exceptions.py\", line 71, in __call__\r\n    await self.app(scope, receive, sender)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 656, in __call__\r\n    await route.handle(scope, receive, send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 259, in handle\r\n    await self.app(scope, receive, send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 61, in app\r\n    response = await func(request)\r\n  File \"/tmp/github/./multipart-buglette.py\", line 7, in handler\r\n    return JSONResponse({k: v for k, v in (await request.form()).items()})\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/requests.py\", line 247, in form\r\n    self._form = await multipart_parser.parse()\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/formparsers.py\", line 212, in parse\r\n    field_name = _user_safe_decode(options[b\"name\"], charset)\r\nKeyError: b'name'\r\n```\r\n\r\n### Expected behavior\r\n\r\n<!-- A clear and concise description of what you expected to happen. -->\r\n\r\n[RFC 7578 (Returning Values from Forms: multipart/form-data)](https://www.rfc-editor.org/rfc/rfc7578#section-4.2) does state that:\r\n> The Content-Disposition header field MUST also contain an additional parameter of \"name\"\r\n\r\nSo, one might expect a parsing ValueError subtype rejecting the multipart/form-data, similar to getting a `json.decoder.JSONDecodeError` when attempting to read bad JSON.\r\n\r\nOr, one might be more lenient and map the lack of \"name\" to the empty string \"\".\r\n\r\n### Actual behavior\r\n\r\n<!-- A clear and concise description of what actually happens. -->\r\nAn internal KeyError exception is thrown for the missing \"name\" parameter.\r\n\r\n### Debugging material\r\n\r\n<!-- Any tracebacks, screenshots, etc. that can help understanding the problem.\r\n\r\nNOTE:\r\n- Please list tracebacks in full (don't truncate them).\r\n- Consider using `<details>` to make tracebacks/logs collapsible if they're very large (see https://gist.github.com/ericclemmons/b146fe5da72ca1f706b2ef72a20ac39d).\r\n-->\r\nPlease refer to the \"to reproduce\" section.\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.9.7\r\n- Starlette version: master @ 3282d2364119c205adcd13b4e1db8a53af2202c7\r\n\r\n### Additional context\r\n\r\n<!-- Any additional information that can help understanding the problem.\r\n\r\nEg. linked issues, or a description of what you were trying to achieve. -->\r\n\r\nUnfortunately, other more egregiously malformed multipart/form-data doesn't fare much better in raising an easily identifiable parsing error; e.g.\r\n\r\n```sh\r\n% curl -H 'Content-Type: multipart/form-data' -d 'bogus' localhost:8000\r\nTraceback (most recent call last):\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/middleware/errors.py\", line 159, in __call__\r\n    await self.app(scope, receive, _send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/exceptions.py\", line 82, in __call__\r\n    raise exc\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/exceptions.py\", line 71, in __call__\r\n    await self.app(scope, receive, sender)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 656, in __call__\r\n    await route.handle(scope, receive, send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 259, in handle\r\n    await self.app(scope, receive, send)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/routing.py\", line 61, in app\r\n    response = await func(request)\r\n  File \"/tmp/github/./multipart-buglette.py\", line 7, in handler\r\n    return JSONResponse({k: v for k, v in (await request.form()).items()})\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/requests.py\", line 247, in form\r\n    self._form = await multipart_parser.parse()\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/starlette/formparsers.py\", line 177, in parse\r\n    parser = multipart.MultipartParser(boundary, callbacks)\r\n  File \"/tmp/github/venv/lib/python3.9/site-packages/multipart/multipart.py\", line 1042, in __init__\r\n    self.boundary = b'\\r\\n--' + boundary\r\nTypeError: can't concat NoneType to bytes\r\n```\r\n...though in this case it is an issue in the underlying `python-multipart` package and not `starlette` itself.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1303",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1643",
+      "gold_functions": [
+        "func:starlette/formparsers.py:starlette.formparsers.MultiPartParser.parse"
+      ],
+      "gold_files": [
+        "starlette/formparsers.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 746,
+      "commit": "795cf608f6af27f8169368afbe315a63e86213b2",
+      "time": 1656393807,
+      "summary": "Endpoint path parameters type specification compatibility with OAS",
+      "description": "When specifying a convertor type for a path parameter like so:\r\n```\r\n...\r\nRoute('/users/{user_id:int}', user, methods=[\"GET\", \"POST\"])\r\n...\r\n```\r\n\r\nThe OAS schema generated using `SchemaGenerator` interprets the whole portion within `{}`  eg. `'user_id:int'` as the required path parameter variable name, which then requires the parameter name in OAS to be `user_id:int` instead of just `user_id`.\r\n\r\n![user_idint](https://user-images.githubusercontent.com/26809407/70369654-50312280-18eb-11ea-9089-53743115394c.png)\r\n\r\nI think the convertor is great in that a GET request to `/users/foo` will result in `404: NOT FOUND`. Of course, another option is to have a `try-except` clause to handle non-integer values within the method... but I was wondering what the community thinks about this and if this even should be supported by the `SchemaGenerator`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/746",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1648",
+      "gold_functions": [
+        "func:starlette/schemas.py:starlette.schemas.BaseSchemaGenerator._remove_converter",
+        "func:starlette/schemas.py:starlette.schemas.BaseSchemaGenerator.get_endpoints"
+      ],
+      "gold_files": [
+        "starlette/schemas.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1646,
+      "commit": "795cf608f6af27f8169368afbe315a63e86213b2",
+      "time": 1656393807,
+      "summary": "SchemaGenerator and path parameter converters",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1645\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **jvail** May 23, 2022</sup>\r\nHi,\r\n\r\nif I use type converters in a route definition ('/somepath/{parameter:int}') and generate an openAPI schema then I'd expect that the type, the converter is stripped from the URL template. But currently i get \r\n\r\n```json\r\n\"paths\": {\r\n        \"//somepath/{parameter:int}\": {}\r\n}\r\n```\r\n\r\ninstead of \r\n\r\n```json\r\n\"paths\": {\r\n        \"//somepath/{parameter}\": {}\r\n}\r\n```\r\n\r\nIs that by purpose?\r\nIf so the parameter names inside the doc string don't match anymore if parsed e.g. inside postman. Postman would create a parameter named \"parameter:int\" instead of just \"parameter\".\r\n\r\nThank you\r\nJan\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1646",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1648",
+      "gold_functions": [
+        "func:starlette/schemas.py:starlette.schemas.BaseSchemaGenerator._remove_converter",
+        "func:starlette/schemas.py:starlette.schemas.BaseSchemaGenerator.get_endpoints"
+      ],
+      "gold_files": [
+        "starlette/schemas.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 919,
+      "commit": "040d8c86b09f34be49e8c253d97a588973bc7308",
+      "time": 1663997348,
+      "summary": "Background tasks don't work with middleware that subclasses `BaseHTTPMiddleware`",
+      "description": "When using background tasks with middleware, requests are not processed until the background task has finished.\r\n\r\n1. Use the example below\r\n2. Make several requests in a row - works as expected\r\n3. Uncomment `app.add_middleware(TransparentMiddleware)` and re-run\r\n4. Make several requests in a row - subsequent ones are not processed until the 10 second sleep has finished (the first request returns before then though).\r\n\r\nThe same behaviour occurs with `asyncio.sleep` (async) and `time.sleep` (sync, run in threadpool)\r\n\r\n```python\r\nimport asyncio\r\nimport uvicorn\r\nfrom starlette.applications import Starlette\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\nfrom starlette.background import BackgroundTask\r\nfrom starlette.responses import JSONResponse\r\n\r\n\r\nclass TransparentMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(self, request, call_next):\r\n        # simple middleware that does absolutely nothing\r\n        response = await call_next(request)\r\n        return response\r\n\r\n\r\napp = Starlette(debug=True)\r\n# uncomment to break\r\n# app.add_middleware(TransparentMiddleware)\r\n\r\n\r\n@app.route(\"/\")\r\nasync def test(_):\r\n    task = BackgroundTask(asyncio.sleep, 10)\r\n    return JSONResponse(\"hello\", background=task)\r\n\r\n\r\nif __name__ == '__main__':\r\n    uvicorn.run(app)\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/919",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1715",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.coro",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.receive_or_disconnect",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.send_no_error"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1438,
+      "commit": "040d8c86b09f34be49e8c253d97a588973bc7308",
+      "time": 1663997348,
+      "summary": "Background tasks are cancelled if the client closes connection",
+      "description": "### Checklist\n\n- [X] The bug is reproducible against the latest release or `master`.\n- [X] There are no similar issues or pull requests to fix it yet.\n\n### Describe the bug\n\nWhen the HTTP client closes the TCP socket immediately after receiving the HTTP response, background tasks are cancelled.\r\n\r\nThis bug only happens when running the ASGI under uvicorn, and only if at least one HTTP Middleware is defined in the user middleware chain.\n\n### Steps to reproduce the bug\n\n1. Write the following ASGI Starlette application in `repro.py`:\r\n```python\r\nimport traceback\r\n\r\nimport anyio\r\nfrom starlette.applications import Starlette\r\nfrom starlette.background import BackgroundTasks\r\nfrom starlette.middleware import Middleware\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\nfrom starlette.responses import Response\r\nfrom starlette.routing import Route\r\n\r\n\r\nasync def passthrough(request, call_next):\r\n    return await call_next(request)\r\n\r\n\r\nasync def _sleep(identifier, delay):\r\n    print(identifier, \"started\")\r\n    try:\r\n        await anyio.sleep(delay)\r\n        print(identifier, \"completed\")\r\n    except BaseException:\r\n        print(identifier, \"error\")\r\n        traceback.print_exc()\r\n        raise\r\n\r\n\r\nasync def response_with_sleeps(request):\r\n    background_tasks = BackgroundTasks()\r\n    background_tasks.add_task(_sleep, \"background task 1\", 2)\r\n    background_tasks.add_task(_sleep, \"background task 2\", 2)\r\n    return Response(background=background_tasks)\r\n\r\n\r\napplication = Starlette(\r\n    middleware=[\r\n        Middleware(BaseHTTPMiddleware, dispatch=passthrough),\r\n    ],\r\n    routes=[\r\n        Route(\"/\", response_with_sleeps),\r\n    ],\r\n)\r\n```\r\n2. Run that application using `uvicorn` (either uvloop or regular asyncio will reproduce the issue) on localhost:8000\r\n```bash\r\nuvicorn repro:application --port 8000\r\n```\r\n3. Run the following client script\r\n```python\r\n#!/usr/bin/env python\r\nimport socket\r\n\r\nconnection = socket.create_connection((\"localhost\", 8000))\r\nconnection.sendall(b\"GET / HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n\")\r\nprint(connection.recv(10000).decode(\"utf8\"))\r\nconnection.close()\r\n```\r\n\n\n### Expected behavior\n\nThe client script gets the HTTP response, and both background tasks should complete successfully.\r\n\r\nThe expected behavior will be detectable by the following content in standard output:\r\n\r\n```\r\nbackground task 1 started\r\nbackground task 1 completed\r\nbackground task 2 started\r\nbackground task 2 completed\r\n```\n\n### Actual behavior\n\nBackground task 1 is interrupted at the `await` point and background task 2 is never started.\r\n\r\nThat results in the following content in the output (when running the `repro.py` application):\r\n```\r\nbackground task 1 started\r\nbackground task 1 error\r\nTraceback (most recent call last):\r\n  File \"/Users/jean/PycharmProjects/starlette-bg-cancelled/./repro.py\", line 19, in _sleep\r\n    await anyio.sleep(delay)\r\n  File \"/Users/jean/PycharmProjects/starlette-bg-cancelled/venv/lib/python3.9/site-packages/anyio/_core/_eventloop.py\", line 69, in sleep\r\n    return await get_asynclib().sleep(delay)\r\n  File \"/usr/local/Cellar/python@3.9/3.9.6/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 654, in sleep\r\n    return await future\r\nasyncio.exceptions.CancelledError\r\n```\n\n### Debugging material\n\n_No response_\n\n### Environment\n\n- MacOS 10.14.6 / Python 3.9 / Starlette 0.18.0\n\n### Additional context\n\n * When I remove the `passthrough` middleware, the bug goes away.\r\n * When I run the same application in `hypercorn`, the bug goes away.\r\n * There does not seem to be a difference between using `uvloop` or not.\r\n * If the client script (e.g. with a `time.sleep(10)`) maintains the TCP connection open, the bug goes away.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1438",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1715",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.coro",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.receive_or_disconnect",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.send_no_error"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1977,
+      "commit": "9ae4ee5f1707dc8ea6bd5a1f26c2a7a35e3d2059",
+      "time": 1670487530,
+      "summary": "middleware causes exceptions to not be raised/handled silently",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1976\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **fraser-langton** December  6, 2022</sup>\r\nFrom [issue in FastAPI](https://github.com/tiangolo/fastapi/issues/5173) - issue was said to be from starlette\r\n\r\nWas initially noticed in FastAPI 0.74.0, was fixed after 0.79.0 but has since regressed (FastAPI 0.88.0 it isn't working)\r\n\r\nWhen exceptions are raised on a subapp, the exceptions are not propagated all the way to see in console\r\nIn the example code\r\n/info raises an exception and the full stacktrace is seen in console\r\n/private/info does not raise the exception and only `INFO: 127.0.0.1:56308 - \"GET /info HTTP/1.1\" 500 Internal Server Error` is shown in console\r\n\r\n```python\r\nimport uvicorn\r\nfrom fastapi import FastAPI\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\n\r\n\r\napp = FastAPI()\r\n\r\n\r\n@app.get(\"/info\")\r\ndef info():\r\n    # raises Exception as expected, the traceback is seen in console\r\n    raise Exception\r\n\r\n\r\nprivate_api = FastAPI()\r\n\r\n\r\n@private_api.get(\"/info\")\r\ndef info():\r\n    # exception is handled silently, no traceback is seen in console\r\n    raise Exception\r\n\r\n\r\napp.mount(\"/private\", private_api)\r\n\r\n\r\nclass Middleware(BaseHTTPMiddleware):\r\n\r\n    async def dispatch(self, request, call_next):\r\n        return await call_next(request)\r\n\r\n\r\napp.add_middleware(Middleware)  # when this is removed, the exceptions are raised for all routes\r\n\r\n\r\nif __name__ == '__main__':\r\n    uvicorn.run(app, port=8000)\r\n```\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1977",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1940",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.body_stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1083,
+      "commit": "ea2e7942fcee8ed0f94ba4e12ca368f91ac8f798",
+      "time": 1675531356,
+      "summary": "StaticFiles middleware doesn't follow symlinks",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nThe StaticFiles middleware is checking the `os.realpath` of a file and returning a 404 for symlinks that lead outside the static directory.\r\n\r\n### To reproduce\r\n\r\n1. create a minimal app with a staticfiles middleware\r\n1. put a symlink in your static directory. the link's target must be above the static directory.\r\n1. you'll get a 404\r\n\r\n### Expected behavior\r\n\r\nSupport symlinks in static directory.\r\n\r\nThe use case for symlinks in static is to target frontend assets that are being generated in file-watch mode.\r\n\r\n### Actual behavior\r\n\r\n404.\r\n\r\n### Debugging material\r\n\r\nIt's happening here:\r\nhttps://github.com/encode/starlette/blob/b95acea973c20eea3e7cbbca42d09b1f5d4a3412/starlette/staticfiles.py#L147-L149\r\n\r\n### Environment\r\n\r\n- OS: linux\r\n- Python version: 3.7.5\r\n- Starlette version: 0.13.8\r\n\r\n### Additional context\r\n\r\nI'm happy to post a PR for this if useful, ideally adding a bool param to the StaticFiles middleware that allows symlinks.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1083",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1683",
+      "gold_functions": [
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.__init__",
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.lookup_path"
+      ],
+      "gold_files": [
+        "starlette/staticfiles.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 472,
+      "commit": "ca1711fab7653c53ce9275a89233508c70396ae1",
+      "time": 1675661508,
+      "summary": "AssertionError with middleware and TemplateResponse",
+      "description": "```diff\r\ndiff --git i/tests/test_templates.py w/tests/test_templates.py\r\nindex b48373e..57dee91 100644\r\n--- i/tests/test_templates.py\r\n+++ w/tests/test_templates.py\r\n@@ -20,6 +20,11 @@ def test_templates(tmpdir):\r\n     async def homepage(request):\r\n         return templates.TemplateResponse(\"index.html\", {\"request\": request})\r\n\r\n+    @app.middleware(\"http\")\r\n+    async def noop(request, call_next):\r\n+        response = await call_next(request)\r\n+        return response\r\n+\r\n     client = TestClient(app)\r\n     response = client.get(\"/\")\r\n     assert response.text == \"<html>Hello, <a href='http://testserver/'>world</a></html>\"\r\n```\r\n\r\ncauses:\r\n```\r\ntests/test_templates.py:29: in test_templates\r\n    response = client.get(\"/\")\r\n.venv/lib/python3.7/site-packages/requests/sessions.py:546: in get\r\n    return self.request('GET', url, **kwargs)\r\nstarlette/testclient.py:421: in request\r\n    json=json,\r\n.venv/lib/python3.7/site-packages/requests/sessions.py:533: in request\r\n    resp = self.send(prep, **send_kwargs)\r\n.venv/lib/python3.7/site-packages/requests/sessions.py:646: in send\r\n    r = adapter.send(request, **kwargs)\r\nstarlette/testclient.py:238: in send\r\n    raise exc from None\r\nstarlette/testclient.py:235: in send\r\n    loop.run_until_complete(self.app(scope, receive, send))\r\n/usr/lib/python3.7/asyncio/base_events.py:584: in run_until_complete\r\n    return future.result()\r\nstarlette/applications.py:134: in __call__\r\n    await self.error_middleware(scope, receive, send)\r\nstarlette/middleware/errors.py:122: in __call__\r\n    raise exc from None\r\nstarlette/middleware/errors.py:100: in __call__\r\n    await self.app(scope, receive, _send)\r\nstarlette/middleware/base.py:25: in __call__\r\n    response = await self.dispatch_func(request, self.call_next)\r\ntests/test_templates.py:21: in noop\r\n    response = await call_next(request)\r\nstarlette/middleware/base.py:47: in call_next\r\n    assert message[\"type\"] == \"http.response.start\"\r\nE   AssertionError\r\n```\r\n`message` is `{'type': 'http.response.template', 'template': <Template 'index.html'>, 'context': {'request': <starlette.requests.Request object at 0x7ff4a2d21e48>}}` there.\r\n\r\nThis appears to be an issue with the test client only though.\r\nDo I understand it correctly that the \"http.response.template\" extension is only used with tests?",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/472",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1991",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base._StreamingResponse.__init__",
+        "func:starlette/templating.py:starlette.templating._TemplateResponse.__call__",
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.handle_request",
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.handle_request.send"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py",
+        "starlette/templating.py",
+        "starlette/testclient.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2002,
+      "commit": "51c1de1839ee187bb20de5748fca23baa37369c6",
+      "time": 1675661709,
+      "summary": "Middleware stacking and recursive initialization",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1161\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **euri10** April  1, 2021</sup>\r\nlong story short I was writing a logging middleware whose handlers are initialized in the `__init__` of the middleware and ended up with multiple logs.\r\n\r\nit seems to me the `__init__` of the middlewarea are recursively called  because of the `build_middleware_stack` method and I'm not sure if this is intended or a bug.\r\n\r\nhere's a test case that shows what I think is an issue:\r\n\r\n```\r\nclass SimpleInitializableMiddleware:\r\n    def __init__(self, app, counter: int):\r\n        self.app = app\r\n        self.counter = counter\r\n        print(self.counter)\r\n\r\n\r\ndef test_middleware_stack_init():\r\n    app = Starlette()\r\n    app.add_middleware(SimpleInitializableMiddleware, counter=1)\r\n    app.add_middleware(SimpleInitializableMiddleware, counter=2)\r\n    app.add_middleware(SimpleInitializableMiddleware, counter=3)\r\n    app.add_middleware(SimpleInitializableMiddleware, counter=4)\r\n```\r\n\r\nI would expect to see `1 2 3 4` as the output.\r\nhowever it prints `1 1 2 1 2 3 1 2 3 4` because for each add_middlware call it goes down the stack and reinitialize it.\r\n\r\nwhat you think @tomchristie ?</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2002",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2017",
+      "gold_functions": [
+        "func:starlette/applications.py:starlette.applications.Starlette.__call__",
+        "func:starlette/applications.py:starlette.applications.Starlette.__init__",
+        "func:starlette/applications.py:starlette.applications.Starlette.add_exception_handler",
+        "func:starlette/applications.py:starlette.applications.Starlette.add_middleware"
+      ],
+      "gold_files": [
+        "starlette/applications.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1878,
+      "commit": "0a63a6e586ababc932d57e7751187d4ff2d7ca18",
+      "time": 1675662330,
+      "summary": "Wrong typing for expires in set_cookie",
+      "description": "I think the type for \r\nhttps://github.com/encode/starlette/blob/55b0cbd045269a28a3f1b18f32ae3cb47226ab65/starlette/responses.py#L108\r\n\r\nThis should be a date according to https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie \r\n\r\nSo I think a better type is `Optional[str]` , or Optional[str | datetime] and provide the right formatting.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1878",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1908",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.Response.set_cookie"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 608,
+      "commit": "b3add7e7ac61c16af953644e2778ea32d9e125ba",
+      "time": 1678093200,
+      "summary": "\"url_for\" signature prevents use of \"name\" in path arguments",
+      "description": "I'm implementing an API in Fastapi, using `APIRouter`s for different resources.\r\nWhen I want to get the URL of an item in a resource, I use the `starlette.requests.Request` objects `url_for()` method.\r\nWhen I have a function with a path `/resource/{name}` I cannot use `url_for()` to get the URL, because it will result in:\r\n```\r\nTypeError: url_for() got multiple values for argument 'name'\r\n```\r\nReproduce with:\r\n```\r\ndef func(name, **path_params):\r\n    pass\r\nfunc(\"foo\", name=\"bar\")\r\n```\r\n\r\nAs a workaround I have renamed the path variable in my API, but `name` was really fitting, and what I wanted to use, and not at all an uncommon variable name.\r\nFrom what I see, `name` in `url_for()` seems to be the name of the referenced method in `APIRouter`. Changing the signature of `url_for()` to use `router_method` instead of `name`, would make a collision with the key word arguments in `path_params` less likely. Result would be:\r\n```\r\ndef url_path_for(self, router_method: str, **path_params: str) -> URLPath:\r\n```\r\nAn inspection on the used arguments could be used to log a deprecation warning until the next release, when `url_path_for()` is used with a named `name=...` instead of positional.\r\n\r\nIf this proposal is acceptable, I'd create a PR.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/608",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2050",
+      "gold_functions": [
+        "func:starlette/applications.py:starlette.applications.Starlette.url_path_for",
+        "func:starlette/requests.py:starlette.requests.HTTPConnection.url_for",
+        "func:starlette/routing.py:starlette.routing.BaseRoute.url_path_for",
+        "func:starlette/routing.py:starlette.routing.Host.url_path_for",
+        "func:starlette/routing.py:starlette.routing.Mount.url_path_for",
+        "func:starlette/routing.py:starlette.routing.Route.url_path_for",
+        "func:starlette/routing.py:starlette.routing.Router.url_path_for",
+        "func:starlette/routing.py:starlette.routing.WebSocketRoute.url_path_for"
+      ],
+      "gold_files": [
+        "starlette/applications.py",
+        "starlette/requests.py",
+        "starlette/routing.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 493,
+      "commit": "554b9e21f6161a6d83b4ebb90909282114266317",
+      "time": 1685645848,
+      "summary": "Question about Request.Body()",
+      "description": "Hi dears developers, how can I retrieve the request.body inside an exception_handler? \r\n\r\nMy scenario:\r\n\r\nI have an exception_handler hook that receives a request and an exception, I'm also using FastApi which tries to parse the body to a JSON, if it does not work it raises an HTTPException. So I'm trying to build a hook to log invalid JSON requests, this exception is being correctly captured by my exception_handler but when I'm trying to retrieve the body I can't it hangs, it simple doesn't work. It does make sense as after reading for the first time it is being cached inside the Request object but the Request object is being recreated before calling the exception_handler so I'm losing my cache and I'm able to ready from the stream again.\r\n\r\nhttps://github.com/encode/starlette/blob/d23bfd0d8ff68d535d0283aa4099e5055da88bb9/starlette/exceptions.py#L79\r\n\r\nNot sure if it is supposed to be like this by design, but I think my scenario is not that fancy, it should be something possible, what do you guys think? Any workaround?\r\n\r\nMy code:\r\n\r\n```@app.exception_handler(HTTPException)  \r\nasync def httpexception_logger(request: Request, exc: HTTPException):\r\n    body = await request.body()\r\n    text: str = bytes.decode(body)\r\n    logger.error(\"Exception at %s, status code: %s, body: %s: exception %s\", request.url, exception.status_code, text, exc)\r\n    ... other stuff...\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/493",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1692",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.receive_or_disconnect",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.__init__",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.wrapped_receive",
+        "func:starlette/requests.py:starlette.requests.Request.stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py",
+        "starlette/requests.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 495,
+      "commit": "554b9e21f6161a6d83b4ebb90909282114266317",
+      "time": 1685645848,
+      "summary": "Consume request body in middleware is problematic",
+      "description": "```\r\nfrom starlette.applications import Starlette\r\nfrom starlette.requests import Request\r\nfrom starlette.responses import PlainTextResponse\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\n\r\n\r\nclass SampleMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(self, request: Request, call_next):\r\n        _ = await request.form()\r\n        return await call_next(request)\r\n\r\n\r\napp = Starlette()\r\n\r\n\r\n@app.route('/test', methods=['POST'])\r\nasync def test(request):\r\n    _ = await request.form()  # blocked, because middleware already consumed request body\r\n    return PlainTextResponse('Hello, world!')\r\n\r\n\r\napp.add_middleware(SampleMiddleware)\r\n```\r\n\r\n```\r\n$ uvicorn test:app --reload\r\n```\r\n\r\n```\r\n$ curl -d \"a=1\" http://127.0.0.1:8000/test\r\n# request is blocked\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/495",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1692",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.receive_or_disconnect",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.__init__",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.wrapped_receive",
+        "func:starlette/requests.py:starlette.requests.Request.stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py",
+        "starlette/requests.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 847,
+      "commit": "554b9e21f6161a6d83b4ebb90909282114266317",
+      "time": 1685645848,
+      "summary": "Middleware Request parse Hangs forever",
+      "description": "I'm currently trying to integrate some metrics tooling in a middleware where I need to inspect the request body. The problem I am seeing is that this triggers the request to hang forever. The following is how you can reproduce it.\r\n\r\n```py\r\napp = Starlette()\r\nclass ParseRequestMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint):\r\n        # payload = await request.json()  # This will cause test() to hang\r\n        response = await call_next(request)\r\n        payload = await request.json()  # Hangs forever\r\n        return response\r\n\r\n\r\nasync def test(scope: Scope, receive: Receive, send: Send):\r\n    request = Request(scope=scope, receive=receive)\r\n    data = await request.json()\r\n    response = Response(status_code=405)\r\n    await response(scope, receive, send)\r\n\r\n\r\napp.mount(\"/test\", test)\r\napp.add_middleware(ParseRequestMiddleware)\r\n```\r\n\r\nI'm still pretty new to starlette but it seems to be an issue with the fact that the middleware and ASGI app use different Request objects and therefore can't share the Request._body cache. Which means they exhaust the stream on the first read and the second read isn't correctly detecting that the stream is exhausted and so gets stuck in that [`while True`](https://github.com/encode/starlette/blob/master/starlette/requests.py#L178) loop. I'm not sure I haven't dove deeper than the Request object. I'm not sure where the code is for the `receive` function that gets passed into the ASGI App is.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/847",
+      "pull_request": "https://github.com/Kludex/starlette/pull/1692",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.receive_or_disconnect",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.__init__",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.wrapped_receive",
+        "func:starlette/requests.py:starlette.requests.Request.stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py",
+        "starlette/requests.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2093,
+      "commit": "11a3f1227e69a29fc9dc56f348f982cb5372a1d1",
+      "time": 1689234490,
+      "summary": "`HTTPMiddleware` breaks `BackgroundTasks` in the same connection",
+      "description": "- [x] Initially raised as a discussion in [the FastAPI repo](https://github.com/tiangolo/fastapi/discussions/7168#discussioncomment-5387343).\r\n\r\nConsider the following simple example of background tasks through Starlette:\r\n`server.py`\r\n```py\r\nimport logging\r\nfrom time import sleep\r\n\r\nfrom starlette.applications import Starlette\r\nfrom starlette.background import BackgroundTasks\r\nfrom starlette.middleware import Middleware\r\nfrom starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint\r\nfrom starlette.requests import Request\r\nfrom starlette.responses import JSONResponse, Response\r\nfrom starlette.routing import Route\r\n\r\nlogging.basicConfig(\r\n    level=logging.INFO,\r\n    format=\"[%(asctime)s] [%(levelname)s] %(message)s\",\r\n    datefmt=\"%Y-%m-%d %H:%M:%S\",\r\n)\r\n\r\n\r\nclass CustomMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(\r\n        self, request: Request, call_next: RequestResponseEndpoint\r\n    ) -> Response:\r\n        return await call_next(request)\r\n\r\n\r\ndef create_task(request: Request) -> JSONResponse:\r\n    logging.info(\"Entered POST method\")\r\n    tasks = BackgroundTasks()\r\n    tasks.add_task(background_task)\r\n    message = {\"status\": \"Task created\"}\r\n    return JSONResponse(message, background=tasks, status_code=201)\r\n\r\n\r\ndef background_task() -> None:\r\n    logging.info(\"Started background task\")\r\n    sleep(10)\r\n    logging.info(\"Finished background task\")\r\n\r\n\r\nroutes = [Route(\"/task\", endpoint=create_task, methods=[\"POST\"])]\r\nmiddleware = [Middleware(CustomMiddleware)]\r\napp = Starlette(routes=routes, middleware=middleware)\r\n```\r\n\r\nI start this code with `uvicorn server:app --reload`.\r\n\r\nThen I start the task twice in one connection using this code:\r\n`client.py`\r\n```py\r\nfrom httpx import Client\r\n\r\nwith Client(base_url=\"http://localhost:8000\") as client:\r\n    client.post(\"/task\")\r\n    client.post(\"/task\")\r\n```\r\n\r\nWhich results in a sequential execution of background tasks (and read timeout from the client as a consequence):\r\n```\r\n[2023-03-23 19:32:08] [INFO] Entered POST method\r\nINFO:     127.0.0.1:51448 - \"POST /task HTTP/1.1\" 201 Created\r\n[2023-03-23 19:32:08] [INFO] Started background task\r\n[2023-03-23 19:32:18] [INFO] Finished background task\r\n[2023-03-23 19:32:18] [INFO] Entered POST method\r\n[2023-03-23 19:32:18] [INFO] Started background task\r\n[2023-03-23 19:32:29] [INFO] Finished background task\r\n```\r\n\r\nIf I just send simple curl requests (`curl -X 'POST' 'http://127.0.0.1:8000/task'`) one after the other (so they are different connections), everything works as expected:\r\n```\r\n[2023-03-23 19:44:35] [INFO] Entered POST method\r\nINFO:     127.0.0.1:55528 - \"POST /task HTTP/1.1\" 201 Created\r\n[2023-03-23 19:44:35] [INFO] Started background task\r\n[2023-03-23 19:44:37] [INFO] Entered POST method\r\nINFO:     127.0.0.1:55532 - \"POST /task HTTP/1.1\" 201 Created\r\n[2023-03-23 19:44:37] [INFO] Started background task\r\n[2023-03-23 19:44:45] [INFO] Finished background task\r\n[2023-03-23 19:44:47] [INFO] Finished background task\r\n```\r\n\r\nIt looks like this regression was introduced in Starlette [0.23.1](https://github.com/encode/starlette/releases/tag/0.23.1), [this PR](https://github.com/encode/starlette/pull/1940). If I pin Starlette to 0.23.0 everything works fine.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2093",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2194",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.body_stream"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2227,
+      "commit": "7349c60a813972b902a7be6daa7b9916668201ab",
+      "time": 1692988184,
+      "summary": "No module named 'exceptiongroup' when upgraded to starlette 0.31.0",
+      "description": "After upgrading to starlette 0.31.0 today, we run into the following exception when importing starlette:\r\n\r\n```\r\nfrom starlette import applications, requests, responses, routing\r\n2023-07-24 15:47:43    File \"/opt/conda/lib/python3.8/site-packages/starlette/applications.py\", line 8, in <module>\r\n2023-07-24 15:47:43      from starlette.middleware.base import BaseHTTPMiddleware\r\n2023-07-24 15:47:43    File \"/opt/conda/lib/python3.8/site-packages/starlette/middleware/base.py\", line 14, in <module>\r\n2023-07-24 15:47:43      from exceptiongroup import BaseExceptionGroup\r\n2023-07-24 15:47:43  ModuleNotFoundError: No module named 'exceptiongroup'\r\n```\r\n\r\nThis is likely introduced from https://github.com/encode/starlette/pull/2211/files",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2227",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2231",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2242,
+      "commit": "bc7d0957f54a40d6445b40c8225d8cf4206f4ed7",
+      "time": 1693580091,
+      "summary": "Liskov substitution problems in new `Response.render` type signature",
+      "description": "I recently updated to 0.31.0 and found I had a new type checking error (I run with `mypy --strict`).\r\n\r\n```\r\nmyfile.py:28: error: Argument 1 of \"render\" is incompatible with supertype \"Response\"; supertype defines the argument type as \"str | bytes | None\"  [override]\r\n        def render(self, model: Model) -> bytes:\r\n                         ^~~~~~~~~~~~\r\nsrc/ibeks/server/response.py:28: note: This violates the Liskov substitution principle\r\nsrc/ibeks/server/response.py:28: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides\r\n```\r\n\r\nThis is due to the base class `Response` having the type signature for `render` being constrained to `str | bytes | None`.  From this PR: #2183 @Viicos @Kludex \r\n\r\nHere is my derived class using starlette 0.28.0:\r\n\r\n```python\r\nclass JSONSerializedResponse(Response):\r\n    media_type = \"application/json\"\r\n    charset = CHARSET\r\n\r\n    def render(self, model: str | bytes | None) -> bytes:\r\n        # unstructure the model to JSON using its registered converter, then\r\n        # encode the payload\r\n        return model.to_json().encode(self.charset)\r\n```\r\n\r\nNow I could put the encoding from my arbitrary Python object `Model` into the application code, but I quite like it being part of the response. In any case this is how it is advertised in the documentation and indeed the derived class `JSONResponse` in that same module re-types it to `Any`: https://github.com/encode/starlette/blob/master/starlette/responses.py#L180.\r\n\r\nWhatever the final decision is I think this contradiction needs to be clarified.\r\n\r\nPossible solutions would be (in order of preference):\r\n\r\n- create a new generic base class that that uses a type variable (see below for example)\r\n- revert `Response.render` type signature to accept `Any` (Any is typically the wrong solution for most issues and especially this, but it at least works with subtyping to more specific types)\r\n\r\n---\r\n\r\n```python\r\nfrom typing import Generic, TypeVar\r\n\r\nAnyContent = TypeVar(\"AnyContent\")\r\nclass AbstractResponse(Generic[AnyContent]):\r\n\r\n    def render(self, content: AnyContent) -> bytes:\r\n        ...\r\n\r\n\r\nclass Response(AbstractResponse[str | bytes | None]):\r\n    def render(self, content: str | bytes | None) -> bytes:\r\n        ...\r\n\r\n```\r\n\r\nAnd my class could be:\r\n\r\n```python\r\nclass JSONSerializedResponse(AbstractResponse[Model):\r\n    media_type = \"application/json\"\r\n    charset = CHARSET\r\n\r\n    def render(self, model: Model) -> bytes:\r\n        # unstructure the model to JSON using its registered converter, then\r\n        # encode the payload\r\n        return model.to_json().encode(self.charset)\r\n\r\n```\r\n\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2242\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2242/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2242/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2242",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2264",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.Response.render"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1336,
+      "commit": "e8f0dcd54e4ceec47e02c45f5275374e292339ad",
+      "time": 1701435346,
+      "summary": "Handling of `scope[\"root_path\"]` and `scope[\"path\"]` differs from ASGI spec",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\n<!-- A clear and concise description of what the bug is. -->\r\n\r\nAccoring to https://github.com/django/asgiref/issues/229#issuecomment-765583185, `scope[\"path\"]` includes the `scope[\"root_path\"]`.\r\nSo if root_path is `/foo` and request for `/foo/bar` has come, the upstream application servers (such as uvicorn) are passing `scope[\"path\"] == \"/foo/bar\" and scope[\"root_path\"] == \"/foo\"`, which is correct behavior. \r\n\r\nBut starlette does not conform this. It assumes `scope[\"path\"]` is a remainder of stripping `scope[\"root_path\"]` from original request path. In this case, `scope[\"path\"] == \"/bar\" and scope[\"root_path\"] == \"/foo\"`. This ASGI incompatible assumption can be seen [here](https://github.com/encode/starlette/blob/6af5c515e0a896cbf3f86ee043b88f6c24200bcf/starlette/routing.py#L368) or [here](https://github.com/encode/starlette/blob/6af5c515e0a896cbf3f86ee043b88f6c24200bcf/starlette/datastructures.py#L23) and many other places.\r\n\r\nThe following \"To reproduce\" section shows just one aspect of this wrong assumption.\r\n\r\n### To reproduce\r\n\r\n<!-- Provide a *minimal* example with steps to reproduce the bug locally.\r\n\r\nNOTE: try to keep any external dependencies *at an absolute minimum*\r\n(middleware, servers, proxies, certificates...).\r\nIn other words, remove anything that doesn't make the bug go away.\r\n-->\r\n\r\n1. Save `main.py` as follows.\r\n```python\r\nfrom starlette.applications import Starlette\r\nfrom starlette.responses import PlainTextResponse\r\nfrom starlette.routing import Route, Mount\r\n\r\n\r\nclass Bar:\r\n    async def __call__(self, scope, receive, send):\r\n        await PlainTextResponse(f\"bar {scope['root_path']=} {scope['path']=}\")(scope, receive, send)\r\n\r\nclass FooBar:\r\n    async def __call__(self, scope, receive, send):\r\n        await PlainTextResponse(f\"foobar {scope['root_path']=} {scope['path']=}\")(scope, receive, send)\r\n\r\nroutes =[\r\n    Route('/bar', endpoint=Bar()),\r\n    Mount('/foo', routes=[\r\n        Route('/bar', endpoint=FooBar())\r\n    ])\r\n]\r\napp = Starlette(routes=routes)\r\n```\r\n\r\n2. Run `uvicorn main:app --port 8000 --root-path /foo`\r\n3. Access by `curl http://localhost:8000/foo/bar`\r\n\r\n### Expected behavior\r\n\r\n<!-- A clear and concise description of what you expected to happen. -->\r\nReceives\r\n```\r\nbar scope['root_path']='/foo' scope['path']='/foo/bar'\r\n```\r\n\r\n### Actual behavior\r\n\r\n<!-- A clear and concise description of what actually happens. -->\r\nReceives\r\n```\r\nfoobar scope['root_path']='/foo/foo' scope['path']='/bar'\r\n```\r\n\r\nSome points here are,\r\n1. `scope['path']` does not include `scope['root_path']` , which is ASGI incompatible.\r\n2. `FooBar` ASGI handler is called. It does not take `scope['root_path']` into account when routing.\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.8.2\r\n- Starlette version: 0.17.0\r\n\r\n### Additional context\r\n\r\n<!-- Any additional information that can help understanding the problem.\r\n\r\nEg. linked issues, or a description of what you were trying to achieve. -->\r\n\r\nThis may be a root cause of [this issue in fastapi](https://github.com/tiangolo/fastapi/issues/2872)\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/1336\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/1336/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/1336/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1336",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2352",
+      "gold_functions": [
+        "func:starlette/requests.py:starlette.requests.HTTPConnection.base_url",
+        "func:starlette/routing.py:starlette.routing.Mount.matches",
+        "func:starlette/routing.py:starlette.routing.Route.matches",
+        "func:starlette/routing.py:starlette.routing.Router.__call__",
+        "func:starlette/routing.py:starlette.routing.WebSocketRoute.matches",
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.get_path"
+      ],
+      "gold_files": [
+        "starlette/requests.py",
+        "starlette/routing.py",
+        "starlette/staticfiles.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2298,
+      "commit": "3c8ab8e74a8c773624d6149d8c04cf5a09d4f1c4",
+      "time": 1702736001,
+      "summary": "Strong and weak etags for StaticFiles",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/2297\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **markus1978** October  6, 2023</sup>\r\ntl;tr: It seems that `starlette.staticfiles.StaticFiles` does not use \"proper\" HTTP etags which causes issues with reverse proxies and browsers.\r\n\r\nThe `starlette.staticfiles.StaticFiles` class supports etags, e.g. it creates a `Etag` header in all responses and considers `If-None-Match` headers in its `is_not_modified` method. However, it only puts the plain hash values in the response `Etag` header and also only interprets `If-None-Match` values as plain hash values . HTTP Etags are either weak or strong and the values are supposed to be wrapped in `W/\"...\"` or `\"...\"` respectively (https://datatracker.ietf.org/doc/html/rfc7232#section-2.3.1).\r\n\r\nThis causes two problems for me. First, nginx as a reverse proxy is considering all starlette etag headers as weak etags and the gzip module removes. Secondly, when the browser sends a strong or weak etag in the `If-None-Match` header, it never matches because `'...some-tag...' != '\"...some-tag...\"'`. \r\n\r\nI currently use this work arround  to solve my issues:\r\n```python\r\nclass StaticFiles(StarletteStaticFiles):\r\n\r\n    etag_re = r'^(W/)?\"?([^\"]*)\"?$'\r\n\r\n    def is_not_modified(\r\n        self, response_headers: Headers, request_headers: Headers\r\n    ) -> bool:\r\n        try:\r\n            if_none_match = request_headers[\"if-none-match\"]\r\n            # I remove all weak/strong etag syntax, basically doing a weak match \r\n            match = re.match(StaticFiles.etag_re, if_none_match)\r\n            if_none_match = match.group(2)\r\n            etag = response_headers[\"etag\"]\r\n            if if_none_match == etag:\r\n                return True\r\n        except KeyError:\r\n            pass\r\n\r\n        return super().is_not_modified(response_headers, request_headers)\r\n\r\n    def file_response(\r\n        self, full_path: PathLike, stat_result: os.stat_result, scope: Scope, \r\n        status_code: int = 200,\r\n    ) -> Response:\r\n        response = super().file_response(full_path, stat_result, scope, status_code)\r\n        # I add strong etag syntax, basically wrapping the etag value in \"...\"\r\n        if 'etag' in response.headers:\r\n            response.headers['etag'] = f'\"{response.headers.get(\"etag\")}\"'\r\n        return response\r\n```\r\n\r\nI am not an expert in etags, just trying to make it work in our app. I am glad for any hints, if i am getting it wrong or missing anything here.\r\n\r\nFor reference, the relevant part from the current starlette.\r\nFrom `staticfiles.py::StaticFiles`\r\n```python\r\n    def is_not_modified(\r\n        self, response_headers: Headers, request_headers: Headers\r\n    ) -> bool:\r\n        \"\"\"\r\n        Given the request and response headers, return `True` if an HTTP\r\n        \"Not Modified\" response could be returned instead.\r\n        \"\"\"\r\n        try:\r\n            if_none_match = request_headers[\"if-none-match\"]\r\n            etag = response_headers[\"etag\"]\r\n            if if_none_match == etag:\r\n                return True\r\n        except KeyError:\r\n            pass\r\n\r\n        try:\r\n            if_modified_since = parsedate(request_headers[\"if-modified-since\"])\r\n            last_modified = parsedate(response_headers[\"last-modified\"])\r\n            if (\r\n                if_modified_since is not None\r\n                and last_modified is not None\r\n                and if_modified_since >= last_modified\r\n            ):\r\n                return True\r\n        except KeyError:\r\n            pass\r\n\r\n        return False\r\n```\r\n\r\nFrom `responses.py::FileResponse`\r\n```python\r\n    def set_stat_headers(self, stat_result: os.stat_result) -> None:\r\n        content_length = str(stat_result.st_size)\r\n        last_modified = formatdate(stat_result.st_mtime, usegmt=True)\r\n        etag_base = str(stat_result.st_mtime) + \"-\" + str(stat_result.st_size)\r\n        etag = md5_hexdigest(etag_base.encode(), usedforsecurity=False)\r\n\r\n        self.headers.setdefault(\"content-length\", content_length)\r\n        self.headers.setdefault(\"last-modified\", last_modified)\r\n        self.headers.setdefault(\"etag\", etag)\r\n```</div>\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2298\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2298/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2298/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2298",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2334",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.FileResponse.set_stat_headers",
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.is_not_modified"
+      ],
+      "gold_files": [
+        "starlette/responses.py",
+        "starlette/staticfiles.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2638,
+      "commit": "07427f86474b15d648497014eb19c41f01317f15",
+      "time": 1721809439,
+      "summary": "Python 3.13.0b3: AttributeError: 'functools.partial' object has no attribute '__name__'",
+      "description": "```\r\n$ gh repo clone encode/starlette\r\n$ cd starlette\r\n$ python3.13 --version\r\nPython 3.13.0b3\r\n$ python3.13 -m venv _e\r\n$ . _e/bin/activate\r\n(_e) $ pip install -r requirements.txt\r\n(_e) $ pip install -e .\r\n(_e) $ python -m pytest\r\n_e/lib64/python3.13/site-packages/trio/_path.py:164: in generate_forwards\r\n    raise TypeError(attr_name, type(attr))\r\nE   TypeError: ('parser', <class 'module'>)\r\n(_e) $ pip install --upgrade trio\r\n(_e) $ python -m pytest\r\n==================================================================================================== ERRORS ====================================================================================================\r\n____________________________________________________________________________________ ERROR collecting tests/test_routing.py ____________________________________________________________________________________\r\ntests/test_routing.py:135: in <module>\r\n    Route(\"/\", endpoint=functools.partial(partial_endpoint, \"foo\")),\r\nstarlette/routing.py:227: in __init__\r\n    self.name = get_name(endpoint) if name is None else name\r\nstarlette/routing.py:103: in get_name\r\n    return endpoint.__name__\r\nE   AttributeError: 'functools.partial' object has no attribute '__name__'. Did you mean: '__ne__'?\r\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\r\n=============================================================================================== 1 error in 0.64s ===============================================================================================\r\n```\r\n\r\nThis appears to be a new regression in Python 3.13.0b3 (vs. 3.13.0b2).\r\n\r\n---\r\n\r\n- [x] Initially raised as discussion #2610 \u2013 \u201cPlease file an issue in this repo for any incompatibility you encounter with 3.13.\u201d\r\n\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2638\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2638/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2638/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2638",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2648",
+      "gold_functions": [
+        "func:starlette/routing.py:starlette.routing.get_name"
+      ],
+      "gold_files": [
+        "starlette/routing.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2516,
+      "commit": "d771bb7a5ecfcd658735cf07ba6f1dd4ac057ccd",
+      "time": 1725174290,
+      "summary": "`RuntimeError(\"No response returned\")` in `BaseHTTPMiddleware`",
+      "description": "Previously, a \"No response returned\"-error has been discussed in this discussion: https://github.com/encode/starlette/discussions/1527, and was supposedly fixed in this PR: https://github.com/encode/starlette/pull/1715\r\n\r\nHowever, the bug is still present. It's a race condition, so quite tough to reproduce, but the following reproducer works.\r\n\r\nReproducer\r\n--\r\n\r\nUse anyio 4.2.0 It does happen also with anyio 3.0.0, but it happens much more regularly on 4.2.\r\n\r\nFirst, apply the following patch to the Starlette codebase, so that we have a breakpoint in case it happens:\r\n```diff\r\n--- a/starlette/middleware/base.py\r\n+++ b/starlette/middleware/base.py\r\n@@ -134,7 +134,8 @@ class BaseHTTPMiddleware:\r\n             async def send_no_error(message: Message) -> None:\r\n                 try:\r\n@@ -163,6 +164,7 @@ class BaseHTTPMiddleware:\r\n             except anyio.EndOfStream:\r\n                 if app_exc is not None:\r\n                     raise app_exc\r\n+                breakpoint()\r\n                 raise RuntimeError(\"No response returned.\")\r\n\r\n             assert message[\"type\"] == \"http.response.start\"\r\n```\r\n\r\nThen run this code:\r\n\r\n```python\r\nimport asyncio\r\nfrom hypercorn.asyncio import serve\r\nfrom hypercorn.config import Config\r\n\r\nfrom starlette.applications import Starlette\r\nfrom starlette.responses import JSONResponse\r\nfrom starlette.routing import Route\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\nfrom starlette.requests import Request\r\nfrom starlette.responses import Response\r\nfrom starlette.middleware.base import RequestResponseEndpoint\r\nfrom starlette.middleware import Middleware\r\n\r\n\r\nclass DummyMiddleware(BaseHTTPMiddleware):\r\n    async def dispatch(\r\n        self, request: Request, call_next: RequestResponseEndpoint\r\n    ) -> Response:\r\n        return await call_next(request)\r\n\r\n\r\nasync def homepage(request):\r\n    return JSONResponse({})\r\n\r\n\r\napp = Starlette(\r\n    routes=[\r\n        Route(\"/\", homepage),\r\n    ],\r\n    middleware=[Middleware(DummyMiddleware) for i in range(100)],  # Yes, 100x the same middleware.\r\n)\r\n\r\nconfig = Config.from_mapping({})\r\nconfig.bind = [\"127.0.0.1:8000\"]\r\nasyncio.run(serve(app, config))\r\n```\r\n\r\nOpen either Firefox or Chrome, navigate to http://localhost:8000 and hold down command-r (refresh) to repeatedly have the browser refresh the page. After a couple of seconds, we'll enter the breakpoint.\r\n\r\n(Feel free to turn this issue into a discussion if that's more appropriate. I'm also looking for a fix but have a hard time understanding `BaseHTTPMiddleware`.)\r\n\r\nedit: I updated the above snippet and added the missing imports.\r\n\r\nThis PR contains a possible fix: https://github.com/encode/starlette/pull/2519\r\n\r\n<!-- POLAR PLEDGE BADGE START -->\r\n> [!IMPORTANT]\r\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\r\n> - We receive the funding once the issue is completed & confirmed by you.\r\n> - Thank you in advance for helping prioritize & fund our backlog.\r\n\r\n<a href=\"https://polar.sh/encode/starlette/issues/2516\">\r\n<picture>\r\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2516/pledge.svg?darkmode=1\">\r\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2516/pledge.svg\">\r\n</picture>\r\n</a>\r\n<!-- POLAR PLEDGE BADGE END -->\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2516",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2620",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.wrapped_receive",
+        "func:starlette/middleware/base.py:starlette.middleware.base._StreamingResponse.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base._StreamingResponse.__init__"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2692,
+      "commit": "9dc9d2e92919306fae683746e38530ff55ed3092",
+      "time": 1731958123,
+      "summary": "Mismatch Between ASGI Specification and httpx's `raw_path` Definition in TestClient",
+      "description": "According to the ASGI specification [1](https://asgi.readthedocs.io/en/latest/specs/www.html#http-connection-scope), the `raw_path` field is defined as:\r\n\r\n> raw_path (byte string) \u2013 The original HTTP path component, excluding any query string, unmodified from the bytes that were received by the web server.\r\n\r\nIn Starlette's `TestClient`, the `raw_path` is directly taken from the `httpx` request without modification:\r\n\r\nhttps://github.com/encode/starlette/blob/2d0dde8defe9e3d4df0baacdb20faf273152f1cb/starlette/testclient.py#L307\r\nhttps://github.com/encode/starlette/blob/2d0dde8defe9e3d4df0baacdb20faf273152f1cb/starlette/testclient.py#L254\r\n\r\nHowever, `httpx`'s definition of `raw_path` includes the query string, which differs from the ASGI specification. This discrepancy was previously noted in a related issue on `httpx` [2](https://github.com/encode/httpx/issues/2810).\r\n\r\n### Proposed Solution:\r\n\r\nTo align with the ASGI specification, the `raw_path` in Starlette's `TestClient` should be adjusted to exclude the query string before being passed to the ASGI application.\r\n\r\n### References:\r\n- [1] ASGI Specification: [https://asgi.readthedocs.io/en/latest/specs/www.html#http-connection-scope](https://asgi.readthedocs.io/en/latest/specs/www.html#http-connection-scope)\r\n- [2] Related httpx Issue: [https://github.com/encode/httpx/issues/2810](https://github.com/encode/httpx/issues/2810)",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2692",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2716",
+      "gold_functions": [
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.handle_request"
+      ],
+      "gold_files": [
+        "starlette/testclient.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2646,
+      "commit": "eee4cdcb9a4e787d53df88ccbee2861a0bb9b0a8",
+      "time": 1733071576,
+      "summary": "When the directory itself being a symlink does not work.",
+      "description": "My test code:\r\n\r\n```python\r\nfrom fastapi import FastAPI\r\nimport uvicorn\r\n\r\nfrom staticfiles import StaticFiles\r\n\r\napp = FastAPI()\r\napp.mount(\"/music\", StaticFiles(directory=\"/home/hanxi/work/xiaomusic/music\", follow_symlink=True), name=\"music\")\r\n\r\nuvicorn.run(\r\n    app,\r\n    host=[\"::\", \"0.0.0.0\"],\r\n    port=3333,\r\n)\r\n```\r\n\r\nThe directory /home/hanxi/work/xiaomusic/music is a symlink.\r\n\r\n```\r\n> ls -l /home/hanxi/work/xiaomusic/music\r\nlrwxrwxrwx 1 hanxi hanxi 26 Apr 30 12:10 /home/hanxi/work/xiaomusic/music -> /home/hanxi/nas/data/music\r\n```\r\n\r\nI fix this in https://github.com/hanxi/starlette/commit/831cb5d255832d9f704ffd7be49b4184cd301dd6\r\n\r\nNeed pr?\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2646\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2646/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2646/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2646",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2711",
+      "gold_functions": [
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.lookup_path"
+      ],
+      "gold_files": [
+        "starlette/staticfiles.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2785,
+      "commit": "cef7834e2b9eec9ec7bd1e00f9dacf7c3048c65e",
+      "time": 1735361840,
+      "summary": "MultiPartException:  Part exceeded maximum size 1M",
+      "description": "It came from [here](https://github.com/encode/starlette/commit/fd038f3070c302bff17ef7d173dbb0b007617733#diff-59eaf7e36ef8b186735f99bca714455f02f04cee26e014dc89120417996d35b2R121).  @ version [0.41.3](https://github.com/encode/starlette/releases/tag/0.41.3)\r\n\r\nNeed to make this variable customizable.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2785",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2815",
+      "gold_functions": [
+        "func:starlette/formparsers.py:starlette.formparsers.MultiPartParser.__init__",
+        "func:starlette/requests.py:starlette.requests.Request._get_form",
+        "func:starlette/requests.py:starlette.requests.Request.form"
+      ],
+      "gold_files": [
+        "starlette/formparsers.py",
+        "starlette/requests.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2295,
+      "commit": "20066626dbf785789c37b216e34b076284373038",
+      "time": 1735365909,
+      "summary": "invalid format of client's host in testclient",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/2109\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **pjknkda** April  3, 2023</sup>\r\nAccording to ASGI specification, `scope[\"client\"]` for HTTP and Websocket protocol should have its host value in either IPv4 or IPv6 address formats.\r\n\r\nHowever, in `starlette/testclient.py`, the `_TestClientTransport` set its host value to `\"testclient\"` and breaks applications that expect IPv4 or IPv6 address formats during tests.\r\n\r\nhttps://github.com/encode/starlette/blob/f7bf74194358cceb5708f758989df89240c0c1aa/starlette/testclient.py#L246\r\n\r\nhttps://github.com/encode/starlette/blob/f7bf74194358cceb5708f758989df89240c0c1aa/starlette/testclient.py#L264</div>\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2295\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2295/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2295/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2295",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2810",
+      "gold_functions": [
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.__init__",
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.handle_request"
+      ],
+      "gold_files": [
+        "starlette/testclient.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2625,
+      "commit": "5cc4ddf1a5d07388015458e7c6b2ae5df617c372",
+      "time": 1740231706,
+      "summary": "middleware causes exceptions to not be raised/handled silently (back again)",
+      "description": "Regression of #1976 #1977 #1609 #1940 \r\n\r\nThis time I have noticed that changing `MyExc(Exception)` to `MyExc(BaseException)` means the error does get sent to stdout (if that helps) I tried to have a dig but I am not too sure where that catch exception is that is catching the Exception (and silently passing) and not the BaseException \r\n\r\nstarlette==0.37.2\r\nfastapi==0.111.0\r\n\r\n```python\r\nimport uvicorn\r\nfrom fastapi import FastAPI\r\nfrom starlette.middleware.base import BaseHTTPMiddleware\r\n\r\napp = FastAPI()\r\n\r\n\r\nclass MyExc(Exception):  # change to BaseException and then both exceptions are sent to stdout\r\n    ...\r\n\r\n\r\n@app.get(\"/info\")\r\ndef info():\r\n    # raises Exception as expected, the traceback is seen in console\r\n    raise MyExc\r\n\r\n\r\nprivate_api = FastAPI()\r\n\r\n\r\n@private_api.get(\"/info\")\r\ndef info():\r\n    # exception is handled silently, no traceback is seen in console\r\n    raise MyExc\r\n\r\n\r\napp.mount(\"/private\", private_api)\r\n\r\n\r\nclass Middleware(BaseHTTPMiddleware):\r\n    async def dispatch(self, request, call_next):\r\n        return await call_next(request)\r\n\r\n\r\napp.add_middleware(Middleware)  # when this is removed, the exceptions are raised for all routes\r\n\r\nif __name__ == \"__main__\":\r\n    uvicorn.run(app, port=8000)\r\n```\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/2625\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/2625/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/2625/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2625",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2812",
+      "gold_functions": [
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next.body_stream",
+        "func:starlette/responses.py:starlette.responses.StreamingResponse.__call__"
+      ],
+      "gold_files": [
+        "starlette/middleware/base.py",
+        "starlette/responses.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2906,
+      "commit": "bcdf0ad017168408060b6faab156636ced4c94f7",
+      "time": 1742127480,
+      "summary": "Index Errors in old-style Jinja2Templates.TemplateResponse",
+      "description": "The parsing logic for the backward-compatible (pre-0.29.0) list of positional arguments uses index 2 twice:\n\nhttps://github.com/encode/starlette/blob/c8a46925366361e40b65b117473db1342895b904/starlette/templating.py#L168-L173\n\n`headers`, `media_type` and `background` should be at indices 3, 4 and 5, respectively.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2906",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2909",
+      "gold_functions": [
+        "func:starlette/templating.py:starlette.templating.Jinja2Templates.TemplateResponse"
+      ],
+      "gold_files": [
+        "starlette/templating.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2977,
+      "commit": "7f78881448d06ac2b296fc3533abbb0148fb9402",
+      "time": 1758404606,
+      "summary": "Request Header cookie parsing doesn't follow RFC 7540 spec",
+      "description": "Only the first cookie in a header gets parsed. but multiple \"cookie\" headers may be sent and the server should concatenate them per [RFC 7540](https://datatracker.ietf.org/doc/html/rfc7540)\n\n```\n...\n   If there are multiple Cookie header fields after\n   decompression, these MUST be concatenated into a single octet string\n   using the two-octet delimiter of 0x3B, 0x20 (the ASCII string \"; \")\n   before being passed into a non-HTTP/2 context, such as an HTTP/1.1\n   connection, or a generic HTTP server application.\n\n   Therefore, the following two lists of Cookie header fields are\n   semantically equivalent.\n\n     cookie: a=b; c=d; e=f\n\n     cookie: a=b\n     cookie: c=d\n     cookie: e=f\n```\n\nThe issue lies here\nhttps://github.com/encode/starlette/blob/6ee94f2cac955eeae68d2898a8dec8cf17b48736/starlette/requests.py#L143\n\n---\n\n- [ ] Initially raised as discussion #2916 \n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2977",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3029",
+      "gold_functions": [
+        "func:starlette/requests.py:starlette.requests.HTTPConnection.cookies"
+      ],
+      "gold_files": [
+        "starlette/requests.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3052,
+      "commit": "3d480dd7d5adf474d0736c67a2a3064e88226837",
+      "time": 1761995854,
+      "summary": "staticfile caching breaks if mtimes are not available even though etags differ.",
+      "description": "I have spent the day debugging into a caching problem that is already described in #2891 .\n\nThis problem might not appear so bad, because usually when you change the file, the mtime of the file changes as well. I am, however currently in an environment where the mtime of each static file is always set to unix epoch zero and i have no influence on changing that.\n\nThis leads to the following behavior:\n\n1. check wheter if-none-match equals etag\n2. get resulting difference, falsely leading to the if-modified-since check instead of returning false\n3. comparing if-modified-since (which in my case is unix epoch zero) which the file's mtime (which is always unix epoch zero)\n4. falsely determining that the files must be the same thus falsely returning 304\n\nIf this was implemented according to RFC7232, this would work without a problem even for my weird case.\n\nPlease consider merging #2891 . The problem is already solved.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3052",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3057",
+      "gold_functions": [
+        "func:starlette/staticfiles.py:starlette.staticfiles.StaticFiles.is_not_modified"
+      ],
+      "gold_files": [
+        "starlette/staticfiles.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2912,
+      "commit": "c4433960ccc07289e0963df94dc5c2746f07ca1a",
+      "time": 1762006409,
+      "summary": "incompatible type and expected \"type[_MiddlewareClass[[]]]\"  [arg-type]",
+      "description": "Hi ,\n\nam using `asgi-logger` and extended `AccessLoggerMiddleware` to customise the logging in the application and when I upgrade fastapi to 0.109.x version getting issue on mypy, any suggestions ?\n\nerror: Argument 1 to \"Middleware\" has incompatible type \"type[AccessLoggerMiddleware]\"; expected \"type[_MiddlewareClass[[]]]\"  [arg-type]\n\n```\nmiddleware = [\n    Middleware(\n        CORSMiddleware,\n        allow_origins=[\"*\"],\n        allow_methods=[\"PUT\", \"GET\", \"DELETE\"],\n        allow_headers=[\"Authorization\"],\n    ),\n    Middleware(access_logger.AccessLoggerMiddleware),\n]\n```\n\nand this is my customise version of logging.\n\n```\nimport structlog\nfrom asgi_logger import middleware as asl\nfrom asgiref.typing import ASGI3Application, HTTPScope\n\n\nclass AccessLoggerMiddleware(asl.AccessLoggerMiddleware):\n   //code\n\n```\n\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2912",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3059",
+      "gold_functions": [
+        "func:starlette/middleware/__init__.py:starlette.middleware.Middleware.__init__",
+        "func:starlette/middleware/__init__.py:starlette.middleware._MiddlewareFactory.__call__"
+      ],
+      "gold_files": [
+        "starlette/middleware/__init__.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3064,
+      "commit": "49d4de92867cb38a781069701ad57cecab4a1a36",
+      "time": 1762241363,
+      "summary": "CORSMiddleware with Access-Control-Allow-Private-Network header",
+      "description": "\n### Discussed in https://github.com/Kludex/starlette/discussions/2509\n\n<div type='discussions-op-text'>\n\n<sup>Originally posted by **Impro02** February 14, 2024</sup>\nIs it possible to add the allow_private_network parameter to the CORSMiddleware __init__ like the following example ?\r\n\r\n````\r\nclass CORSMiddleware:\r\n    def __init__(\r\n        self,\r\n        app: ASGIApp,\r\n        allow_origins: typing.Sequence[str] = (),\r\n        allow_methods: typing.Sequence[str] = (\"GET\",),\r\n        allow_headers: typing.Sequence[str] = (),\r\n        allow_credentials: bool = False,\r\n        allow_private_network: bool = False,\r\n        allow_origin_regex: typing.Optional[str] = None,\r\n        expose_headers: typing.Sequence[str] = (),\r\n        max_age: int = 600,\r\n    ) -> None:\r\n        if \"*\" in allow_methods:\r\n            allow_methods = ALL_METHODS\r\n\r\n        compiled_allow_origin_regex = None\r\n        if allow_origin_regex is not None:\r\n            compiled_allow_origin_regex = re.compile(allow_origin_regex)\r\n\r\n        allow_all_origins = \"*\" in allow_origins\r\n        allow_all_headers = \"*\" in allow_headers\r\n        preflight_explicit_allow_origin = not allow_all_origins or allow_credentials\r\n\r\n        simple_headers = {}\r\n        if allow_all_origins:\r\n            simple_headers[\"Access-Control-Allow-Origin\"] = \"*\"\r\n        if allow_credentials:\r\n            simple_headers[\"Access-Control-Allow-Credentials\"] = \"true\"\r\n        if allow_private_network:\r\n            simple_headers[\"Access-Control-Allow-Private-Network\"] = \"true\"\r\n        if expose_headers:\r\n            simple_headers[\"Access-Control-Expose-Headers\"] = \", \".join(expose_headers)\r\n\r\n        preflight_headers = {}\r\n        if preflight_explicit_allow_origin:\r\n            # The origin value will be set in preflight_response() if it is allowed.\r\n            preflight_headers[\"Vary\"] = \"Origin\"\r\n        else:\r\n            preflight_headers[\"Access-Control-Allow-Origin\"] = \"*\"\r\n        preflight_headers.update(\r\n            {\r\n                \"Access-Control-Allow-Methods\": \", \".join(allow_methods),\r\n                \"Access-Control-Max-Age\": str(max_age),\r\n            }\r\n        )\r\n        allow_headers = sorted(SAFELISTED_HEADERS | set(allow_headers))\r\n        if allow_headers and not allow_all_headers:\r\n            preflight_headers[\"Access-Control-Allow-Headers\"] = \", \".join(allow_headers)\r\n        if allow_credentials:\r\n            preflight_headers[\"Access-Control-Allow-Credentials\"] = \"true\"\r\n        if allow_private_network:\r\n            preflight_headers[\"Access-Control-Allow-Private-Network\"] = \"true\"\r\n\r\n        self.app = app\r\n        self.allow_origins = allow_origins\r\n        self.allow_methods = allow_methods\r\n        self.allow_headers = [h.lower() for h in allow_headers]\r\n        self.allow_all_origins = allow_all_origins\r\n        self.allow_all_headers = allow_all_headers\r\n        self.preflight_explicit_allow_origin = preflight_explicit_allow_origin\r\n        self.allow_origin_regex = compiled_allow_origin_regex\r\n        self.simple_headers = simple_headers\r\n        self.preflight_headers = preflight_headers\r\n````</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3064",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3065",
+      "gold_functions": [
+        "func:starlette/middleware/cors.py:starlette.middleware.cors.CORSMiddleware.__init__",
+        "func:starlette/middleware/cors.py:starlette.middleware.cors.CORSMiddleware.preflight_response"
+      ],
+      "gold_files": [
+        "starlette/middleware/cors.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3005,
+      "commit": "d8c7cf9aca95b31c7a70473d03c26bc8ce33cd74",
+      "time": 1768729794,
+      "summary": "Make request.state generic",
+      "description": "\n### Discussed in https://github.com/Kludex/starlette/discussions/2562\n\n<div type='discussions-op-text'>\n\n<sup>Originally posted by **patrick91** April  3, 2024</sup>\nHi there! \r\n\r\nI was playing around with `request.state`, and I was wondering if we could make it generic, so that users can get better autocomplete on it (and maybe a bit of type safety too).\r\n\r\nThe way this would work is where you accept a `Request` you could also do `Request[MyStateType]`, and `request.state` would be of type `MyStateType`\r\n\r\nI think we can implement this in a backwards compatible way if we use `TypeVar` from typing extensions with a default value of any, like this:\r\n\r\n```python\r\nfrom typing import Any\r\nfrom typing_extensions import TypeVar\r\n\r\nRequestState = TypeVar(\"RequestState\", default=Any)  # this could also be `State`\r\n```\r\n\r\nThis means that any current code wouldn't throw an error, and power users could type the state var \ud83d\ude0a\r\n\r\nThe only issue I see at the moment is that `State` is a wrapper on a dict, but doesn't provide `getitem`, and my assumption is that types for State would be `TypedDicts` \ud83d\ude0a but is should be easy to add support for that. But I'm also saying this without knowing the reason why the state is a class on top of a dict, so I might be wrong :D </div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3005",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3036",
+      "gold_functions": [
+        "func:starlette/datastructures.py:starlette.datastructures.State.__delitem__",
+        "func:starlette/datastructures.py:starlette.datastructures.State.__getitem__",
+        "func:starlette/datastructures.py:starlette.datastructures.State.__iter__",
+        "func:starlette/datastructures.py:starlette.datastructures.State.__len__",
+        "func:starlette/datastructures.py:starlette.datastructures.State.__setitem__",
+        "func:starlette/requests.py:starlette.requests.HTTPConnection.state"
+      ],
+      "gold_files": [
+        "starlette/datastructures.py",
+        "starlette/requests.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 1832,
+      "commit": "02b6ed7b18c741c00795010e9d716b58006af2c3",
+      "time": 1771065217,
+      "summary": "CORSMiddleware does not provide explicit origin although Authorization header is present",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/1823\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **gyusang** August 26, 2022</sup>\r\nWhen sending a CORS request with credentials, wildcard origin is rejected by the standard.\r\nThe CORS middleware handles this case when cookies are included, but is missing the case when `Authorization` header is present.\r\nhttps://github.com/encode/starlette/blob/31164e346b9bd1ce17d968e1301c3bb2c23bb418/starlette/middleware/cors.py#L164-L165\r\nSince Token authentication is also widely used these days, I believe explicit header should be returned when `Authorization` header is present.</div>\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/1832\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/1832/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/1832/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/1832",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3137",
+      "gold_functions": [
+        "func:starlette/middleware/cors.py:starlette.middleware.cors.CORSMiddleware.__init__",
+        "func:starlette/middleware/cors.py:starlette.middleware.cors.CORSMiddleware.send"
+      ],
+      "gold_files": [
+        "starlette/middleware/cors.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3048,
+      "commit": "9ee951980bae776103715b66305f807d9e8245da",
+      "time": 1773575955,
+      "summary": "Can not use `send_denial_response` with `StreamingResponse`",
+      "description": "\n### Discussed in https://github.com/Kludex/starlette/discussions/2566\n\n<div type='discussions-op-text'>\n\n<sup>Originally posted by **WSH032** April  6, 2024</sup>\n## Describe the bug\r\n\r\nIf we use `FileResponse` or `StreamingResponse` when sending the Websocket Denial Response, a `RuntimeError` will occur.\r\n\r\n## To Reproduce\r\n\r\n```py\r\nfrom fastapi import FastAPI, WebSocket\r\nfrom fastapi.responses import StreamingResponse\r\nfrom uvicorn import run\r\n\r\napp = FastAPI()\r\n\r\n\r\n@app.websocket(\"/\")\r\nasync def _(ws: WebSocket):\r\n    async def foo():\r\n        yield \"hello\"\r\n        yield \"world\"\r\n\r\n    resp = StreamingResponse(content=foo())\r\n    await ws.send_denial_response(resp)\r\n\r\n\r\nrun(app)\r\n```\r\n\r\nSteps to reproduce the behavior:\r\n1. Launch the server\r\n2. Try to establish the websocket connection\r\n3. You will see following error\r\n\r\n```console\r\n  |   File \"e:\\GitHub\\fastapi-proxy\\Untitled-8.py\", line 16, in _\r\n  |     await ws.send_denial_response(resp)\r\n  |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\starlette\\websockets.py\", line 209, in send_denial_response        \r\n  |     await response(self.scope, self.receive, self.send)\r\n  |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\starlette\\responses.py\", line 258, in __call__\r\n  |     async with anyio.create_task_group() as task_group:\r\n  |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\anyio\\_backends\\_asyncio.py\", line 678, in __aexit__\r\n  |     raise BaseExceptionGroup(\r\n  | exceptiongroup.ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\r\n  +-+---------------- 1 ----------------\r\n    | Traceback (most recent call last):\r\n    |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\starlette\\responses.py\", line 261, in wrap\r\n    |     await func()\r\n    |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\starlette\\responses.py\", line 243, in stream_response\r\n    |     await send(\r\n    |   File \"E:\\GitHub\\fastapi-proxy\\.venv\\lib\\site-packages\\starlette\\websockets.py\", line 75, in send\r\n    |     raise RuntimeError(\r\n    | RuntimeError: Expected ASGI message \"websocket.accept\",\"websocket.close\" or \"websocket.http.response.start\",but got 'http.response.start'\r\n    +------------------------------------\r\n```\r\n\r\n## Expected behavior\r\n\r\n`FileResponse` and `StreamingResponse` override the `__call__` method, but they do not add the `\"websocket.\"` prefix like the parent class `Response` does.\r\n\r\nhttps://github.com/encode/starlette/blob/4e453ce91940cc7c995e6c728e3fdf341c039056/starlette/responses.py#L151-L154\r\n\r\nIf this is expected behavior, I didn't see any relevant information in the documentation, and at least the type checker didn't raise any errors\r\n\r\n## Configuration\r\n```\r\nstarlette == 0.37.2\r\n```\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3048",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3189",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.FileResponse.__call__",
+        "func:starlette/responses.py:starlette.responses.Response.__call__",
+        "func:starlette/responses.py:starlette.responses.Response._wrap_websocket_denial_send",
+        "func:starlette/responses.py:starlette.responses.Response._wrap_websocket_denial_send.wrapped",
+        "func:starlette/responses.py:starlette.responses.StreamingResponse.__call__",
+        "func:starlette/responses.py:starlette.responses.StreamingResponse.stream_response"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3388,
+      "commit": "78ae82cad482fe66a73fb1217f0a6609b3f998f6",
+      "time": 1786179367,
+      "summary": "FileResponse accepts inverted single-byte Range like bytes=5-4",
+      "description": "### Bug\n\n`FileResponse._parse_range_header` rejects a Range only when `start > end`, but `bytes=5-4` parses to the empty half-open range `(5, 5)` and slips past that guard. The result is a malformed `206 Partial Content` (`Content-Length: 0`, a backwards `Content-Range: bytes 5-4/...`) instead of a `400`.\n\n`bytes=10-5` is caught (it parses to `(10, 6)`, so `10 > 6`), but the off-by-one boundary case where `end + 1 == start` is not.\n\n### Reproduce\n\n```python\nfrom starlette.responses import FileResponse\nFileResponse._parse_range_header(\"bytes=5-4\", 100)   # -> [(5, 5)]  (accepted; should be 400)\nFileResponse._parse_range_header(\"bytes=5-5\", 100)   # -> [(5, 6)]  (valid one-byte range)\nFileResponse._parse_range_header(\"bytes=10-5\", 100)  # -> MalformedRangeHeader (already correct)\n```\n\n### Fix\n\nThe guard should be `start >= end` (an empty range is not satisfiable). A genuine one-byte request `bytes=5-5` parses to `(5, 6)` and is unaffected.\n\nI have a fix + tests ready and opened it as a draft PR for reference. Happy to adjust or drop it if you'd prefer to handle it differently.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3388",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3389",
+      "gold_functions": [
+        "func:starlette/responses.py:starlette.responses.FileResponse._parse_range_header"
+      ],
+      "gold_files": [
+        "starlette/responses.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 685,
+      "commit": "9c594b56e8da9c3d8c35baa40f357e7bc94f6d02",
+      "time": 1787467782,
+      "summary": "Include routing information for middleware",
+      "description": "Is there a way to obtain which route the request is taking in middleware? Right now, the only available thing is `request.url.path`, which doesn't give me a nice name for metrics.\r\n\r\nI see in https://github.com/steinnes/timing-asgi/blob/master/timing_asgi/integrations/starlette.py that it basically just loops through all the routes to obtain the matching one. Is there a better way to do it?\r\n\r\nLooping in that manner also runs into an issue where if there are multiple matching routes, like\r\n`/resource/default/1`\r\n`/resource/1/1`\r\nit can't find the right one since they both match.\n\n<!-- POLAR PLEDGE BADGE START -->\n> [!IMPORTANT]\n> - We're using [Polar.sh](https://polar.sh/encode) so you can upvote and help fund this issue.\n> - We receive the funding once the issue is completed & confirmed by you.\n> - Thank you in advance for helping prioritize & fund our backlog.\n\n<a href=\"https://polar.sh/encode/starlette/issues/685\">\n<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://polar.sh/api/github/encode/starlette/issues/685/pledge.svg?darkmode=1\">\n  <img alt=\"Fund with Polar\" src=\"https://polar.sh/api/github/encode/starlette/issues/685/pledge.svg\">\n</picture>\n</a>\n<!-- POLAR PLEDGE BADGE END -->\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/685",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3438",
+      "gold_functions": [
+        "func:starlette/middleware/opentelemetry.py:starlette.middleware.opentelemetry.OpenTelemetryMiddleware.__call__",
+        "func:starlette/middleware/opentelemetry.py:starlette.middleware.opentelemetry.OpenTelemetryMiddleware.__init__",
+        "func:starlette/routing.py:starlette.routing.Router.app"
+      ],
+      "gold_files": [
+        "starlette/middleware/opentelemetry.py",
+        "starlette/routing.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3357,
+      "commit": "6ad24bb7809c2d833445d5b1cfb9e95c26260e56",
+      "time": 1787664229,
+      "summary": "TrustedHostMiddleware Doesn't handle IPv6 properly",
+      "description": "- Initially raised as discussion #3321 \n\nSay I have the below Starlette app,\n```python\n# main.py\nfrom starlette.applications import Starlette\nfrom starlette.middleware import Middleware\nfrom starlette.middleware.trustedhost import TrustedHostMiddleware\nfrom starlette.responses import JSONResponse\nfrom starlette.routing import Route\n\n\nasync def homepage(request):\n    return JSONResponse({'hello': 'world'})\n\nroutes = [\n    Route(\"/\", endpoint=homepage)\n]\n\nmiddleware = [\n    Middleware(TrustedHostMiddleware, allowed_hosts=[\"[::1]\"])\n]\n\napp = Starlette(debug=True, routes=routes, middleware=middleware)\n```\n\nand run it with `uvicorn main:app --host '::1'`. When I go to http://[::1]:8000 in my browser, I get the \"Invalid host header\" response. This appears to be because Starlette is thinking the host is `\"[\"` based on the splitting logic in the middleware, https://github.com/Kludex/starlette/blob/70a3bd4276712f0ee11b161c8b14225a84316df1/starlette/middleware/trustedhost.py#L40.\nWhen I remove the `TrustedHostMiddleware`, I get the hello world response as expected.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3357",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3471",
+      "gold_functions": [
+        "func:starlette/_utils.py:starlette._utils.parse_host_header",
+        "func:starlette/datastructures.py:starlette.datastructures.URL.__init__",
+        "func:starlette/middleware/trustedhost.py:starlette.middleware.trustedhost.TrustedHostMiddleware.__call__",
+        "func:starlette/testclient.py:starlette.testclient._TestClientTransport.handle_request"
+      ],
+      "gold_files": [
+        "starlette/_utils.py",
+        "starlette/datastructures.py",
+        "starlette/middleware/trustedhost.py",
+        "starlette/testclient.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2766,
+      "commit": "e7a0b007b601f5e4ff98424333fd2fb794a3f1e6",
+      "time": 1788072120,
+      "summary": "Replace `RuntimeError` with `WebSocketDisconnected` once the socket has been disconnected",
+      "description": "### Discussed in https://github.com/encode/starlette/discussions/2762",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/2766",
+      "pull_request": "https://github.com/Kludex/starlette/pull/2767",
+      "gold_functions": [
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_bytes",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_json",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.receive_text",
+        "func:starlette/websockets.py:starlette.websockets.WebSocket.send"
+      ],
+      "gold_files": [
+        "starlette/websockets.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3308,
+      "commit": "c67ca4eeef171c679074f4ebc579ee5dbd657aa8",
+      "time": 1791144887,
+      "summary": "Support 103 Early Hints",
+      "description": "If you have interest for https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/103 support, please put a \ud83d\udc4d in this issue.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3308",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3435",
+      "gold_functions": [
+        "func:starlette/endpoints.py:starlette.endpoints.HTTPEndpoint.dispatch",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__",
+        "func:starlette/middleware/base.py:starlette.middleware.base.BaseHTTPMiddleware.__call__.call_next",
+        "func:starlette/middleware/base.py:starlette.middleware.base._CachedRequest.__init__",
+        "func:starlette/middleware/gzip.py:starlette.middleware.gzip.IdentityResponder.send_with_compression",
+        "func:starlette/requests.py:starlette.requests.Request.send_early_hints"
+      ],
+      "gold_files": [
+        "starlette/endpoints.py",
+        "starlette/middleware/base.py",
+        "starlette/middleware/gzip.py",
+        "starlette/requests.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3645,
+      "commit": "96d5023c55b29224edb8d684868c49f681d079a9",
+      "time": 1791555902,
+      "summary": "SessionMiddleware omits Max-Age=0 in Set-Cookie header when max_age=0 is configured",
+      "description": "### Problem\nWhen configuring `SessionMiddleware` with `max_age=0` (for example, to immediately expire cookies on client browsers or disable session persistence), the `Set-Cookie` header sent to the client does not include `Max-Age=0`.\n\nBecause `0` is falsy in Python (`bool(0) is False`), the formatting expression `if self.max_age else \"\"` in `SessionMiddleware` evaluates to an empty string. Consequently:\n1. The browser receives a cookie without `Max-Age` or `Expires`, which RFC 6265 defines as a session cookie (retained until browser close).\n2. On subsequent requests, the server-side validator calls `self.signer.unsign(data, max_age=self.max_age)`. Since `self.max_age == 0`, `itsdangerous` immediately raises `SignatureExpired`, silently dropping the session data on every request.\n\n---\n\n### Evidence\nIn `starlette/middleware/sessions.py` (lines 71\u201378):\n```python\nheader_value = \"{session_cookie}={data}; path={path}; {max_age}{security_flags}\".format(\n    session_cookie=self.session_cookie,\n    data=data.decode(\"utf-8\"),\n    path=self.path,\n    max_age=f\"Max-Age={self.max_age}; \" if self.max_age else \"\",\n    security_flags=self.security_flags,\n)\n### Suggestion\nUpdate the condition in `SessionMiddleware` to check `if self.max_age is not None:` instead of `if self.max_age:`:\n\n```python\nheader_value = \"{session_cookie}={data}; path={path}; {max_age}{security_flags}\".format(\n    session_cookie=self.session_cookie,\n    data=data.decode(\"utf-8\"),\n    path=self.path,\n    max_age=f\"Max-Age={self.max_age}; \" if self.max_age is not None else \"\",\n    security_flags=self.security_flags,\n)\n### Example\n```python\nfrom starlette.middleware.sessions import SessionMiddleware\nfrom starlette.responses import PlainTextResponse\nimport anyio\n\nasync def app(scope, receive, send):\n    scope[\"session\"][\"user\"] = \"alice\"\n    await PlainTextResponse(\"OK\")(scope, receive, send)\n\nasync def main():\n    middleware = SessionMiddleware(app, secret_key=\"secret-key\", max_age=0)\n    messages = []\n    \n    async def dummy_send(msg):\n        messages.append(msg)\n        \n    await middleware({\"type\": \"http\", \"headers\": []}, lambda: None, dummy_send)\n    \n    start_message = [m for m in messages if m[\"type\"] == \"http.response.start\"][0]\n    headers = dict([(k.decode(), v.decode()) for k, v in start_message[\"headers\"]])\n    \n    # Expected: 'session=...; path=/; Max-Age=0; httponly; samesite=lax'\n    # Actual:   'session=...; path=/; httponly; samesite=lax'\n    print(headers.get(\"set-cookie\"))\n\nanyio.run(main)",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3645",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3651",
+      "gold_functions": [
+        "func:starlette/middleware/sessions.py:starlette.middleware.sessions.SessionMiddleware.__call__",
+        "func:starlette/middleware/sessions.py:starlette.middleware.sessions.SessionMiddleware.__call__.send_wrapper"
+      ],
+      "gold_files": [
+        "starlette/middleware/sessions.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3630,
+      "commit": "5b544ced7345d8b2315419ecaded4b52bffe6b76",
+      "time": 1791877499,
+      "summary": "GZipMiddleware delays http.response.start even when it cannot compress",
+      "description": "`GZipMiddleware` stores `http.response.start` in `initial_message` and only forwards it with the first `http.response.body` message. `exclude_content_types` was added to disable buffering for streaming responses (#3091, #3418), but only the body is unbuffered today: the response start still waits for the first chunk. The same delay applies when the response already sets `Content-Encoding` or the status is `206`.\n\nFor those responses the first body cannot change anything: `Content-Encoding` and `Vary` are never added, so the held start only delays the headers and the status code. A streaming response that stays silent (an SSE stream with no events yet, which the spec lets wait for its keepalive interval) sends no headers until its first chunk. When such a request ends before that chunk \u2014 a client disconnects or cancels \u2014 instrumentation layered outside this middleware records a duration with no status (for example, an OpenTelemetry `http.server.duration` datapoint with no `http.status_code` attribute). Normal completion records the status once the first chunk is sent; instrumentation layered inside the middleware sees the original start either way.\n\nMinimal reproduction:\n\n```python\nimport anyio\nfrom starlette.middleware.gzip import GZipMiddleware\n\n\nasync def app(scope, receive, send):\n    await send(\n        {\n            \"type\": \"http.response.start\",\n            \"status\": 200,\n            \"headers\": [(b\"content-type\", b\"text/event-stream\")],\n        }\n    )\n    await anyio.sleep(1)\n    await send({\"type\": \"http.response.body\", \"body\": b\": keepalive\\n\\n\"})\n\n\nevents = []\n\n\nasync def send(message):\n    events.append(message)\n\n\nasync def receive():\n    return {\"type\": \"http.request\"}\n\n\nscope = {\n    \"type\": \"http\",\n    \"method\": \"GET\",\n    \"path\": \"/\",\n    \"headers\": [(b\"accept-encoding\", b\"gzip\")],\n}\n\n\nasync def main():\n    async with anyio.create_task_group() as tg:\n        tg.start_soon(GZipMiddleware(app), scope, receive, send)\n        await anyio.sleep(0.1)\n        print([event[\"type\"] for event in events])\n\n\nanyio.run(main)\n# Actual:   []                       (the start waits for the first body chunk)\n# Expected: ['http.response.start']\n```\n\nForwarding the start as soon as `content_encoding_set`, `partial_response`, or `content_type_is_excluded` is known fixes this. The body path for those cases is already a pass-through; the middleware stops withholding the start.\n\nTradeoff: forwarding the start commits the response. Today an exception raised before the first body can still be replaced by a 500 from `ServerErrorMiddleware`, because the middleware has not forwarded the start. After this change the response is already committed and the server closes the connection instead. That is the same behavior `StreamingResponse` has without this middleware, but it is a real change from the current buffered path.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3630",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3631",
+      "gold_functions": [
+        "func:starlette/middleware/gzip.py:starlette.middleware.gzip.IdentityResponder.send_with_compression"
+      ],
+      "gold_files": [
+        "starlette/middleware/gzip.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3579,
+      "commit": "3214cd069e1b3c11628d172df387ded973934db2",
+      "time": 1792230688,
+      "summary": "Request.url turns a // path into an authority when the scope has no host",
+      "description": "When a request scope has neither a `Host` header nor a `server` entry, `Request.url` places `scope[\"path\"]` directly after the scheme, so a path that starts with `//` is parsed as an authority. A response built from that URL then emits a scheme-relative `Location`.\n\n### Reproduction\n\n```python\nfrom starlette.requests import Request\nfrom starlette.responses import RedirectResponse\n\nscope = {\n    \"type\": \"http\",\n    \"scheme\": \"http\",\n    \"path\": \"//evil.example/x\",\n    \"query_string\": b\"a=1\",\n    \"headers\": [],\n    \"server\": None,\n}\n\nurl = Request(scope).url\nprint(str(url), url.netloc)\nprint(RedirectResponse(url).headers[\"location\"])\n```\n\nOn current `main` (1.7.0) this prints:\n\n```text\n//evil.example/x?a=1 evil.example\n//evil.example/x?a=1\n```\n\nThe `Location` value is scheme-relative, so a browser resolves it to `http://evil.example/x?a=1`.\n\nAs soon as any origin information is present the result is same-origin, which is the expected behaviour:\n\n```python\nscope[\"headers\"] = [(b\"host\", b\"victim.example\")]   # or scope[\"server\"] = (\"victim.example\", 80)\n# -> http://victim.example//evil.example/x?a=1\n```\n\n### Why this looks wrong\n\n#3326 says the path should not be placed directly against the authority and that the resulting URL should parse back into the components it was built from. That holds when `Host` or `server` is available, but the branch that builds the URL without origin metadata still uses the raw path as the whole URL, so the path ends up in `netloc`.\n\n`server` is optional in the ASGI HTTP scope, so a scope without it and without a `Host` header is legal. An application that redirects to `request.url` then sends the visitor to the host taken from the path.\n\n### Suggested fix\n\nIn the branch that builds the URL without origin metadata, keep a `//`-prefixed path out of the authority position, for example by percent-encoding its first character or by producing a URL without a netloc, so `urlsplit` cannot turn the first path segment into a host.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3579",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3671",
+      "gold_functions": [
+        "func:starlette/datastructures.py:starlette.datastructures.URL.__init__",
+        "func:starlette/datastructures.py:starlette.datastructures.URLPath.__new__"
+      ],
+      "gold_files": [
+        "starlette/datastructures.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3683,
+      "commit": "61123a5c76ebb9d5786758008945c4fbbb380bf6",
+      "time": 1792707566,
+      "summary": "FloatConvertor.to_string produces misleading error messages for NaN and -inf",
+      "description": "## Description\n\nWhen `FloatConvertor.to_string()` is called with `NaN` or `-inf`, the assertion error message is incorrect because the validation checks are in the wrong order.\n\n### Current behavior\n\n```python\nfrom starlette.convertors import FloatConvertor\nfc = FloatConvertor()\n\nfc.to_string(float('nan'))\n# AssertionError: Negative floats are not supported  (should be: NaN values are not supported)\n\nfc.to_string(float('-inf'))\n# AssertionError: Negative floats are not supported  (should be: Infinite values are not supported)\n```\n\n### Root cause\n\nThe validation checks in `to_string` are ordered:\n\n```python\nassert value >= 0.0, \"Negative floats are not supported\"      # NaN and -inf fail HERE\nassert not math.isnan(value), \"NaN values are not supported\"    # never reached for NaN\nassert not math.isinf(value), \"Infinite values are not supported\"  # never reached for -inf\n```\n\nSince `NaN >= 0.0` is `False` in Python (NaN comparisons are always False), NaN fails the first check and gets the wrong error message. Similarly, `-inf >= 0.0` is False.\n\n### Fix\n\nReorder the checks so NaN and Inf are checked before the sign check (PR submitted).\n\n### Found via\n\nFormal verification using Dafny. The validation logic was modeled and the proof revealed that the check ordering causes NaN and -inf to be misclassified. See `verification/dafny/FloatConvertor.dfy`.\n\n### Impact\n\nLow severity \u2014 the values are still correctly rejected, but with misleading error messages that could confuse debugging.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3683",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3716",
+      "gold_functions": [
+        "func:starlette/convertors.py:starlette.convertors.FloatConvertor.to_string"
+      ],
+      "gold_files": [
+        "starlette/convertors.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3689,
+      "commit": "438cbeda1a2e3b315a82e206cbc007626a96f2ad",
+      "time": 1792758353,
+      "summary": "WSGI build_environ incorrectly strips PATH_INFO when root_path is a prefix but not a boundary",
+      "description": "## Description\n\nWhen `root_path` is a prefix of the request path (but not a path boundary), `build_environ` incorrectly strips characters from `PATH_INFO`.\n\n### Reproduction\n\n```python\nfrom starlette.middleware.wsgi import build_environ\n\nscope = {\n    \"type\": \"http\", \"method\": \"GET\",\n    \"path\": \"/application\", \"root_path\": \"/app\",\n    \"query_string\": b\"\", \"headers\": [], \"http_version\": \"1.1\",\n    \"scheme\": \"http\", \"server\": (\"localhost\", 80),\n}\nenv = build_environ(scope, b\"\")\nprint(env[\"PATH_INFO\"])  # '/lication' (wrong!)\n# Expected: '/application'\n```\n\n### Root cause\n\nThe code uses `path_info.startswith(script_name)` which matches `/application` starting with `/app`. Then it strips 4 characters, producing `/lication`.\n\n### Fix\n\nUse `path_info.startswith(script_name + \"/\")` or exact equality, so partial prefix matches don't cause incorrect stripping.\n\n### Found via\n\nManual code review of the `build_environ` function.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3689",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3718",
+      "gold_functions": [
+        "func:starlette/middleware/wsgi.py:starlette.middleware.wsgi.build_environ"
+      ],
+      "gold_files": [
+        "starlette/middleware/wsgi.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3687,
+      "commit": "8ec9638ffc211b4561366ce634a4770acf26695c",
+      "time": 1792758856,
+      "summary": "Config._read_file incorrectly strips inner quotes from quoted values",
+      "description": "## Description\n\nWhen a config value is quoted with one type of quote but contains the other type of quote, the `_read_file` method incorrectly strips inner quotes.\n\n### Reproduction\n\n```python\n# .env file content:\n# KEY='say \"hi\"'\n\nfrom starlette.config import Config\nconfig = Config(env_file=\"test.env\")\nprint(config(\"KEY\"))  # 'say \"hi'  (wrong! missing trailing \")\n```\n\n### Root cause\n\nThe code uses `value.strip().strip(\"\\\"'\")` which strips ALL characters in the set `{'\"', \"'\"}` from both ends of the string. So a value like `'say \"hi\"'` has its leading `'` and trailing `'` stripped, but then the `\"` before `hi` is also in the strip set, so it gets stripped too, along with the trailing `\"`.\n\n### Fix\n\nOnly strip a matching pair of quotes (both `\"` or both `'`), not all quote characters:\n\n```python\nvalue = value.strip()\nif len(value) >= 2 and value[0] == value[-1] and value[0] in (\"\\\"\", \"'\"):\n    value = value[1:-1]\n```\n\n### Found via\n\nManual testing of the `_read_file` method with quoted values containing inner quotes.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3687",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3720",
+      "gold_functions": [
+        "func:starlette/config.py:starlette.config.Config._read_file"
+      ],
+      "gold_files": [
+        "starlette/config.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3528,
+      "commit": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+      "time": 1793961363,
+      "summary": "`include_query_params` doesn't support multi valued values",
+      "description": "- [x] Initially raised as discussion #3481 \n\nExample Starlette app:\n\n```python\n# main.py\nfrom starlette.applications import Starlette\nfrom starlette.requests import Request\nfrom starlette.responses import JSONResponse\nfrom starlette.routing import Route\n\n\nasync def homepage(request: Request) -> JSONResponse:\n    return JSONResponse({\"next\": str(request.url_for(\"homepage\").include_query_params(a=\"b\", c=[\"d\", \"e\"]))})\n\n\nroutes = [\n    Route(\"/\", endpoint=homepage)\n]\n\napp = Starlette(debug=True, routes=routes)\n```\n\nWhen I run this with `uvicorn main:app` and go to http://localhost:8000/ in my browser, I get this output:\n```json\n{\n  \"next\": \"http://localhost:8000/?a=b&c=%5B%27d%27%2C+%27e%27%5D\"\n}\n```\n\nwhen ideally I would get:\n```json\n{\n  \"next\": \"http://localhost:8000/?a=b&c=d&c=e\"\n}\n```\n\n`starlette.datastructures.URL` does seem to have some support for multi-valued values, but it's `include_query_params` doesn't seem to interrogate the type to check if it's a `list`/`tuple` before stringifying the value.\n\nThis is on Starlette main (d9ed5b0f98fdf081fb138473129b72eb035153a3) and `uvicorn==0.52.4`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/Kludex/starlette/issues/3528",
+      "pull_request": "https://github.com/Kludex/starlette/pull/3544",
+      "gold_functions": [
+        "func:starlette/datastructures.py:starlette.datastructures.URL.append_query_params"
+      ],
+      "gold_files": [
+        "starlette/datastructures.py"
+      ],
+      "split": "test"
+    }
+  ]
+}
