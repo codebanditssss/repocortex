@@ -1,7 +1,7 @@
-.provenance-tree { max-width: 100%; margin: 26px 0; font: 11px/1.95 var(--font-departure); overflow: auto; padding: 6px 0 12px; color: var(--ink2); }
+.provenance-tree { max-width: 100%; margin: 26px 0; font: 14px/1.7 var(--font-departure); overflow: auto; padding: 6px 0 12px; color: var(--ink2); }
 .provenance-tree > span { display: block; min-width: max-content; }
 .receipt-reveal > span { animation: receipt-reveal .1s steps(1, end) both; }
 @keyframes receipt-reveal { from { opacity: 0; } to { opacity: 1; } }
 .provenance-tree .actual-line { color: var(--ink); }
-@media (max-width: 767px) { .provenance-tree { font-size: 10px; } }
+@media (max-width: 767px) { .provenance-tree { font-size: 14px; } }
 @media (prefers-reduced-motion: reduce) { .receipt-reveal > span { animation: none; } }
