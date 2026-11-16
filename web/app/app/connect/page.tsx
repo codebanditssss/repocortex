@@ -9,6 +9,8 @@ export default function Connect() {
   const snippet = JSON.stringify({
     mcpServers: { repocortex: { command: "/absolute/path/to/RepoCortex/.venv/bin/python", args: ["/absolute/path/to/RepoCortex/scripts/mcp_server.py"], env: { REPOCORTEX_FEEDBACK_NAMESPACE: "my-team-django" } } },
   }, null, 2);
+  const verificationCommand = `.venv/bin/python scripts/preflight.py --database &&
+.venv/bin/python -m scripts.verify_real_feedback --ticket 37442 --fetch-diff --output work/feedback-receipt.json`;
   const feedbackPrompt = `Use RepoCortex for this confirmed Django fix.
 
 Report: [paste the original bug report]
@@ -23,8 +25,20 @@ Unified diff: [paste the reviewed fix diff]
 Only learn the reviewed fix I supply. A gain on this same report demonstrates feedback behavior, not held-out accuracy.`;
   return (
     <div className="manual-page supporting-screen connect-screen">
-      <PlateHeading chapter="connect" title={<>Give the next agent<br /><i>a memory.</i></>}><p>Connect your coding agent to local search and confirmed-fix memory in HydraDB.</p></PlateHeading>
-      <div className="connect-layout"><section aria-labelledby="connect-config-title"><div className="section-rule"><h2 id="connect-config-title">Connect <i>your agent.</i></h2><span className="sc">Setup example</span></div><CopyConfig snippet={snippet} /><ol className="setup-steps"><li>Set up the backend checkout, Python environment and HydraDB using the <a href="https://github.com/codebanditssss/repocortex#use-it-from-your-agent" target="_blank" rel="noreferrer">README instructions</a>.</li><li>Replace both paths and choose a separate feedback namespace in the configuration above.</li><li>Add this configuration to your MCP client, restart it, then call <code>graph_status</code> to check the connection.</li></ol><p className="figure-note">Local stdio feedback requires <code>REPOCORTEX_FEEDBACK_NAMESPACE</code>. Without it, feedback is rejected. The public website accepts no feedback writes.</p>
+      <PlateHeading chapter="connect" title={<>Search a bug.<br /><i>Keep the fix.</i></>}><p>Check one complete learning cycle, then connect your coding agent to the same workflow.</p></PlateHeading>
+      <div className="connect-layout"><section aria-labelledby="connect-config-title">
+        <div className="section-rule"><h2 id="connect-config-title">Verify one learning cycle.</h2><span className="sc">Local HydraDB</span></div>
+        <p>Start with the <a href="https://github.com/codebanditssss/repocortex/blob/main/docs/confirmed-fix.md" target="_blank" rel="noreferrer">verification guide</a>. You need the recovered Django runtime, its dataset, a cached MiniLM model, and a restored local HydraDB instance. The repository alone is not enough.</p>
+        <CopyConfig snippet={verificationCommand} title="Run from the repository root" buttonLabel="Copy verification command" note="Fetches the original Django fix from GitHub. Refuses remote databases; no retraining." />
+        <ol className="setup-steps">
+          <li><strong>Search before learning.</strong> Rank the functions for Django issue #37442.</li>
+          <li><strong>Record the confirmed fix.</strong> Verify the upstream diff, then write one event into an isolated HydraDB namespace.</li>
+          <li><strong>Search again after restart.</strong> Start a fresh Python process and check that it reconstructs the same result. Remove the temporary namespace and verify the base runtime is unchanged.</li>
+        </ol>
+        <p className="figure-note">The command saves its full receipt to <code>work/feedback-receipt.json</code>. This checks persistence for one known fix; it does not measure accuracy on unseen reports.</p>
+        <section className="mcp-contract" aria-labelledby="agent-setup-title">
+          <div className="section-rule"><h2 id="agent-setup-title">Connect your agent.</h2><span className="sc">Local stdio</span></div>
+          <details className="dashboard-disclosure"><summary>Open the MCP configuration</summary><CopyConfig snippet={snippet} /></details><ol className="setup-steps"><li>Set up the backend checkout, Python environment and HydraDB using the <a href="https://github.com/codebanditssss/repocortex#use-it-from-your-agent" target="_blank" rel="noreferrer">README instructions</a>.</li><li>Replace both paths and choose a separate feedback namespace in the configuration above.</li><li>Add this configuration to your MCP client, restart it, then call <code>graph_status</code> to check the connection.</li></ol><p className="figure-note">Local stdio feedback requires <code>REPOCORTEX_FEEDBACK_NAMESPACE</code>. Without it, feedback is rejected. The public website accepts no feedback writes.</p></section>
         <section id="confirmed-fix" className="mcp-contract" aria-labelledby="feedback-workflow-title">
           <div className="section-rule"><h2 id="feedback-workflow-title">Teach it a <i>confirmed fix.</i></h2><span className="sc">After setup</span></div>
           <p>Use the original bug report and a reviewed unified diff from the indexed Django snapshot. Search first, record the fix, then compare the next search.</p>

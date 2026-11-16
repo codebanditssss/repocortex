@@ -25,6 +25,7 @@ Learning runs through historical replay or confirmed diffs submitted to `learn_f
 | Inspect the measured learning curve | [results](#measured-results), [raw checkpoints](results/curve.json) |
 | Explore the recorded demo without a database or API key | [dashboard setup](#try-the-dashboard) |
 | Understand what HydraDB does | [architecture and database boundary](#how-it-works) |
+| Verify search → fix → restart locally | [One-command learning check](docs/confirmed-fix.md) |
 | Connect a coding agent | [Local setup and first feedback](docs/local-setup.md), [MCP tools](#use-it-from-your-agent) |
 | Rerun the experiment | [reproduction instructions](#reproduce-the-replay) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |

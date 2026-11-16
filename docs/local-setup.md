@@ -8,6 +8,11 @@ agent. It does not train a new model or index an arbitrary repository. The four
 runtime files must come from the same experiment; a fresh Git clone alone cannot
 serve searches.
 
+For a complete, repeatable search → fix → restart → search check, follow
+[Verify a confirmed fix](confirmed-fix.md) after steps 1–2. It supplies a real
+Django case, fetches its original diff and writes a receipt. Use steps 3–4 below
+when you want to keep your own agent feedback between sessions.
+
 ## 1. Install and check the runtime
 
 From the repository root, with Python 3.11 or newer:
@@ -96,12 +101,17 @@ learned by supplying its diff to this runtime.
 After reviewing the fix, ask the agent to call `learn_from_fix(report, diff)` with
 the exact report and confirmed diff. Then call `locate_bug` again. Feedback may
 change rankings, but an improvement for the same report is not held-out accuracy.
-An identical feedback submission should be skipped as a duplicate.
+Check that `learned` contains the expected function IDs and `persistence` is
+`hydradb feedback journal`. A response containing `error` with an empty `learned`
+list has not learned the fix. An identical feedback submission should return a
+`skipped` reason rather than add another event.
 
 Restart the MCP process with the **same namespace and unchanged runtime files**,
 then repeat the search. The server reconstructs scoring state from its HydraDB
 feedback journal. Use one writer per namespace and back up both the database and
-runtime files. This does not install an automatic merge webhook.
+runtime files. The journal stores the report and diff in that database. Feedback
+changes the namespace’s reconstructed scoring state; it does not rewrite the
+published benchmark snapshot. This does not install an automatic merge webhook.
 
 For read-only HTTP MCP instead, run:
 

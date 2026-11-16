@@ -1,7 +1,7 @@
 """Check real Django feedback durability on local HydraDB, without retraining.
 
-Example: python -m scripts.verify_real_feedback --ticket 37442 --diff fix.diff
-Obtain the original diff from the exact dataset commit's GitHub .diff URL.
+Example: python -m scripts.verify_real_feedback --fetch-diff --output work/feedback-receipt.json
+Uses the exact dataset commit from GitHub; --diff accepts an existing copy.
 A held-out example deliberately becomes feedback here: this is NOT an accuracy
 measurement. Only a temporary FeedbackRecord namespace is written and removed.
 """
@@ -9,12 +9,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from contextlib import ExitStack
 import json
 import os
 import subprocess
 import sys
 import uuid
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
@@ -60,27 +62,74 @@ def worker(root, client, namespace, issue, diff):
         "duplicate_skipped": bool(duplicate.get("skipped"))}
 
 
+def print_summary(result: dict, receipt: Path) -> None:
+    print("Real Django confirmed-fix workflow (mechanism check, not an accuracy benchmark)")
+    print(f"Ticket #{result['ticket']}: {result['report_summary']}")
+    first, reloaded = result["processes"]
+    for function in first["mapped_functions"]:
+        uid = function["uid"]
+        def rank(hits):
+            return next((str(hit["rank"]) for hit in hits if hit["uid"] == uid), "outside top 10")
+        print(f"{function['qualname']}: {rank(first['before'])} -> {rank(first['after'])} -> {rank(reloaded['before'])} after restart")
+    for name, passed in result["checks"].items():
+        print(f"{'PASS' if passed else 'FAIL'}: {name.replace('_', ' ')}")
+    print(f"Receipt: {receipt}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ticket", type=int, default=37442)
-    parser.add_argument("--diff", required=True, type=Path)
+    source_group = parser.add_mutually_exclusive_group(required=True)
+    source_group.add_argument("--diff", type=Path, help="local exact upstream unified diff")
+    source_group.add_argument("--fetch-diff", action="store_true", help="download the dataset commit's diff into temporary storage")
+    parser.add_argument("--output", type=Path, help="write full JSON evidence here and print a concise summary")
     parser.add_argument("--phase", choices=["write", "reload"])
     parser.add_argument("--namespace")
     args = parser.parse_args()
+    if args.phase and args.fetch_diff:
+        parser.error("internal worker phases require --diff")
     root = Path(__file__).resolve().parents[1]
+    missing = [name for name in RUNTIME_FILES if not (root / "data" / name).is_file()]
+    if missing:
+        parser.error("missing runtime: " + ", ".join(missing) + "; see docs/recovery.md")
+    if args.output and (root / "data").resolve() in args.output.resolve().parents:
+        parser.error("the evidence output must be outside data/ to preserve runtime files")
+    if args.output and args.output.exists():
+        parser.error("evidence output already exists; choose a new receipt filename")
+    with ExitStack() as stack:
+        if args.fetch_diff:
+            args.diff = Path(stack.enter_context(TemporaryDirectory(prefix="repocortex-confirmed-fix-"))) / "fix.diff"
+        try:
+            run_verification(args, root)
+        except subprocess.TimeoutExpired:
+            raise SystemExit("verification worker exceeded 300 seconds; its temporary feedback namespace was cleaned up") from None
+        except (OSError, ValueError, RuntimeError) as error:
+            raise SystemExit(str(error)) from None
+
+
+def run_verification(args, root):
     settings = Settings.load(root)
     if settings.backend != "bolt" or urlparse(settings.bolt_uri).hostname not in {"localhost", "127.0.0.1", "::1"}:
         raise SystemExit("verification requires local Bolt; remote databases are refused")
     dataset = json.loads((root / "data/dataset.json").read_text())
-    issue = next(row for row in dataset["issues"] if row["ticket"] == args.ticket)
-    diff = args.diff.read_text()
+    issue = next((row for row in dataset["issues"] if row["ticket"] == args.ticket), None)
+    if issue is None:
+        raise SystemExit(f"ticket #{args.ticket} is not in this dataset; choose an indexed Django ticket")
     source = f"https://github.com/django/django/commit/{issue['commit']}.diff"
     if not args.phase:
         with urlopen(source, timeout=30) as response:
             original = response.read(2_000_000)
+        if len(original) >= 2_000_000:
+            raise ValueError("upstream diff exceeds the verification size limit")
+        if args.fetch_diff:
+            args.diff.write_bytes(original)
         if hashlib.sha256(original).hexdigest() != hashlib.sha256(args.diff.read_bytes()).hexdigest():
             raise ValueError("provided diff does not match the upstream dataset commit")
-    client = connect(settings)
+    diff = args.diff.read_text()
+    try:
+        client = connect(settings)
+    except Exception:
+        raise RuntimeError("local HydraDB is unavailable; start it using docs/recovery.md, then run python -m scripts.preflight --database") from None
     try:
         if args.phase:
             if not args.namespace or not args.namespace.startswith("verify-real-"):
@@ -94,10 +143,10 @@ def main():
             for phase in ("write", "reload"):
                 process = subprocess.run([sys.executable, "-m", "scripts.verify_real_feedback",
                     "--ticket", str(args.ticket), "--diff", str(args.diff.resolve()),
-                    "--phase", phase, "--namespace", namespace], capture_output=True, text=True,
+                    "--phase", phase, "--namespace", namespace], capture_output=True, text=True, timeout=300,
                     env={**os.environ, "HF_HUB_OFFLINE": "1", "TOKENIZERS_PARALLELISM": "false", "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2"})
                 if process.returncode:
-                    raise RuntimeError(f"{phase} verification failed; inspect the local worker without exposing connection details")
+                    raise RuntimeError(f"{phase} verification failed; run scripts.preflight --database and check that the MiniLM model is cached locally. Workers run offline and do not download or retrain models.")
                 phases.append(json.loads(process.stdout))
         finally:
             client.query("MATCH (n:FeedbackRecord) WHERE n.namespace = $namespace DETACH DELETE n", {"namespace": namespace})
@@ -115,7 +164,7 @@ def main():
             "benchmark_node_counts_unchanged_after_cleanup": graph_before == graph_after,
             "namespace_cleaned": cleanup,
         }
-        print(json.dumps({"scope": "real Django report and confirmed diff; durability evidence, not held-out accuracy gain",
+        result = {"scope": "real Django report and confirmed diff; durability evidence, not held-out accuracy gain",
             "snapshot": dataset["snapshot"], "ticket": issue["ticket"], "dataset_split": issue["split"],
             "report_summary": issue["summary"], "commit": issue["commit"],
             "diff_source": f"https://github.com/django/django/commit/{issue['commit']}.diff",
@@ -124,7 +173,14 @@ def main():
             "model": "existing MiniLM embeddings and locally cached model; no retraining",
             "runtime_sha256_before": runtime_before, "runtime_sha256_after": runtime_after,
             "graph_before": graph_before, "graph_after_cleanup": graph_after,
-            "processes": phases, "checks": checks}, indent=2))
+            "processes": phases, "checks": checks}
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            with args.output.open("x") as receipt:
+                receipt.write(json.dumps(result, indent=2) + "\n")
+            print_summary(result, args.output)
+        else:
+            print(json.dumps(result, indent=2))
         if not all(checks.values()):
             raise SystemExit(1)
     finally:
