@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Install CPU wheels first; ordinary torch wheels include large CUDA libraries.
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE ./
 COPY repocortex/ ./repocortex/
 RUN pip install .
 # Bake public model weights only. Runtime graph exports and credentials are mounted.

@@ -2,6 +2,7 @@
 **
 !pyproject.toml
 !README.md
+!LICENSE
 !repocortex/
 !repocortex/**
 !scripts/
