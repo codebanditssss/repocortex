@@ -9,8 +9,14 @@ in the same project/environment:
 - **api**: `deploy/backend.Dockerfile`, public HTTPS domain targeting `$PORT`.
   Set `HOST=0.0.0.0`, `HYDRADB_BACKEND=bolt`,
   `HYDRADB_BOLT_URI=bolt://hydradb.railway.internal:7687`, and
-  `HYDRADB_BOLT_PASSWORD` to the same token. Use the actual private hostname
-  supplied by Railway if the database service has another name.
+  `HYDRADB_BOLT_PASSWORD` to the same token. Set a separate strong random
+  `REPOCORTEX_API_TOKEN` and configure the same value on the Vercel server.
+  Vercel sends it only on server-to-server `POST /locate` requests; `/health`
+  remains public. `REPOCORTEX_RATE_LIMIT_PER_MINUTE` defaults to 30 search
+  attempts per client per 60-second fixed window. Authenticated Vercel requests
+  are limited by the rightmost valid forwarded client IP; requests without a
+  configured token are limited by their direct peer IP. Use the actual private
+  hostname supplied by Railway if the database service has another name.
 
 The existing snapshot needs about 535 MiB for HydraDB and 650 MiB for Python
 at idle on the recovered host. Plan for at least 1 GiB per service and verify

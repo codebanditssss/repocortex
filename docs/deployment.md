@@ -86,3 +86,19 @@ receives a Bolt URL or database credential. Fresh searches use the live graph,
 while saved benchmark evidence remains available if the API is unavailable.
 Verify `/api/status` reports `mode: live` and `connected: true` after every
 deployment.
+
+For a public split deployment, set the same strong random
+`REPOCORTEX_API_TOKEN` on Vercel and Railway. Next adds it as a Bearer token to
+server-to-server `POST /locate` requests; it is never sent to browser code.
+Python requires that token when configured. `/health` stays public for platform
+readiness checks.
+
+Python also applies a bounded, per-client fixed-window search limit. The
+default is 30 authenticated search attempts per 60 seconds (or 30 direct
+attempts when the token is disabled) and can be changed with
+`REPOCORTEX_RATE_LIMIT_PER_MINUTE`. With the token configured, Next forwards
+the rightmost valid IP in `x-forwarded-for` (the hop added by the nearest
+trusted proxy) through a private header. Python trusts it only after successful
+token authentication. Without a token, Python ignores that header and limits
+by the direct socket peer IP. Rejected bursts return `429` with `Retry-After`
+before ranking begins.
