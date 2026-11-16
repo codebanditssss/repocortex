@@ -122,6 +122,10 @@ def learn_from_fix(ranker, report: str, diff: str, operators=None, state_path: P
         for op in operators:
             if isinstance(op, PathCompressor):
                 op.hydrate(ranker.edges)
+        # Keep below-threshold support and merger progress between local calls.
+        # A freshly loaded ranker can hydrate materialized edges, not counters
+        # that were never saved; durable restart semantics require the journal.
+        ranker.feedback_operators = operators
     from repocortex.learn.replay import learn_one
 
     journal = getattr(ranker, "feedback_journal", None)

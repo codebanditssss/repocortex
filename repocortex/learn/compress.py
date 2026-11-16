@@ -47,14 +47,20 @@ class PathCompressor(Operator):
         applied = 0
         gold = [uid for uid in episode.gold if uid]
         concepts = list(dict.fromkeys(episode.concepts))
-        for concept in concepts:
-            for target in gold:
-                pair = (concept, target)
-                self._load_pair(table, pair)
-                self.hits[pair] += 1
-                self.tickets[pair].append(episode.ticket)
-                if self._sync(table, concept, target):
-                    applied += 1
+        # A refined child can supply a prediction without being a lexical concept
+        # seed. Preserve successes on the actual supporting shortcut as well.
+        pairs = dict.fromkeys((concept, target) for concept in concepts for target in gold)
+        for key in episode.credit or []:
+            src, rel, dst = key
+            if rel == "SHORTCUT" and dst in gold and key in table.edges:
+                pairs[(src, dst)] = None
+        for concept, target in pairs:
+            pair = (concept, target)
+            self._load_pair(table, pair)
+            self.hits[pair] += 1
+            self.tickets[pair].append(episode.ticket)
+            if self._sync(table, concept, target):
+                applied += 1
         for src, rel, dst in episode.debit or []:
             if rel != "SHORTCUT":
                 continue
