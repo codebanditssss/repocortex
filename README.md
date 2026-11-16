@@ -147,7 +147,7 @@ Start with **replay** for the curve, **locate** for saved evidence, and **agent*
 
 ### Dashboard screenshots
 
-The screens below show the recorded-results explorer. They illustrate the interface, not a live database session.
+Screenshots captured from the deployed site on 16 November 2026, with the current typography and navigation. Benchmark panels show recorded results; Locate includes live search and saved evidence.
 
 | Overview | Locate |
 |---|---|
@@ -162,7 +162,7 @@ The screens below show the recorded-results explorer. They illustrate the interf
 |---|---|
 | <img src="docs/img/landing.webp" alt="RepoCortex landing page" width="440"> | <img src="docs/img/replay.webp" alt="Replay dashboard showing recorded checkpoints" width="440"> |
 | **Load test** | **Connect** |
-| <img src="docs/img/load.webp" alt="Load dashboard showing the saved phase-2 test" width="440"> | <img src="docs/img/connect.webp" alt="Connect dashboard with local MCP setup guidance" width="440"> |
+| <img src="docs/img/load.webp" alt="Load dashboard showing the hosted search check" width="440"> | <img src="docs/img/connect.webp" alt="Connect dashboard with local MCP setup guidance" width="440"> |
 
 <img src="docs/img/replay.gif" alt="Animated playback of recorded learning checkpoints" width="900">
 
