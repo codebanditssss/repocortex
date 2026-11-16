@@ -1,0 +1,1580 @@
+{
+  "selection_counts": {
+    "unique_pr_references_scanned": 1267,
+    "unmapped_or_more_than_eight_functions": 1008,
+    "eligible_prs_without_closing_issue": 175,
+    "linked_issue_references": 86,
+    "duplicate_issue_references": 2,
+    "eligible_pr_commits": 259,
+    "retained_unique_issues": 84
+  },
+  "repository": "encode/httpx",
+  "snapshot": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+  "scope": [
+    "httpx"
+  ],
+  "issues": [
+    {
+      "ticket": 824,
+      "commit": "2714f32238077fa5975531c76b816ca07ba10861",
+      "time": 1582836088,
+      "summary": "Too many open files if keep changing proxy",
+      "description": "Here is the codes:\r\n```python\r\nimport os,httpx,asyncio\r\nasync def main():\r\n    proxies_list=[\r\n        {'all':'http://4.3.2.1:8080'},\r\n        {'all':'http://1.2.3.4:8080'},\r\n    ]\r\n    for i in range(10):\r\n        proxies=proxies_list[i%2]\r\n        async with httpx.AsyncClient(proxies=proxies) as client:\r\n            r=await client.get('http://my-url.com/')\r\n    print('lsof -np',os.getpid())\r\n    for i in range(60):\r\n        print(i)\r\n        await asyncio.sleep(3)\r\nasyncio.run(main())\r\n```\r\nAfter sleep **5 seconds** as defined in httpx.dispatch.connection_pool.ConnectionPool.KEEP_ALIVE_EXPIRY, I run this commend line:\r\n`lsof -np 18532 | grep 8080`\r\nThen I get this:\r\n```\r\npython  19034 root    6u     IPv4            6658191      0t0     TCP 192.168.1.1:41922->4.3.2.1:8080(ESTABLISHED)\r\npython  19034 root    7u     IPv4            6658192      0t0     TCP 192.168.1.1:63358->1.2.3.4:8080(ESTABLISHED)\r\npython  19034 root    8u     IPv4            6658193      0t0     TCP 192.168.1.1:41926->4.3.2.1:8080(ESTABLISHED)\r\npython  19034 root    9u     IPv4            6658194      0t0     TCP 192.168.1.1:63362->1.2.3.4:8080(ESTABLISHED)\r\npython  19034 root    8u     IPv4            6658195      0t0     TCP 192.168.1.1:41926->4.3.2.1:8080(ESTABLISHED)\r\npython  19034 root    9u     IPv4            6658196      0t0     TCP 192.168.1.1:63362->1.2.3.4:8080(ESTABLISHED)\r\npython  19034 root    10u     IPv4            6658197      0t0     TCP 192.168.1.1:41926->4.3.2.1:8080(ESTABLISHED)\r\npython  19034 root    11u     IPv4            6658198      0t0     TCP 192.168.1.1:63362->1.2.3.4:8080(ESTABLISHED)\r\npython  19034 root    12u     IPv4            6658198      0t0     TCP 192.168.1.1:41926->4.3.2.1:8080(ESTABLISHED)\r\npython  19034 root    13u     IPv4            6658200      0t0     TCP 192.168.1.1:63362->1.2.3.4:8080(ESTABLISHED)\r\n```\r\nIt means httpx dosn't close the connection correctly. If I keep changing proxy, I will get \"too many open files\" error at the end.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/824",
+      "pull_request": "https://github.com/encode/httpx/pull/826",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.Client.close"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 782,
+      "commit": "53804173bb734ce94d13d1b34c0ebaab46abd8c3",
+      "time": 1582836138,
+      "summary": "Drop `backend=...` argument.",
+      "description": "Now that we have async autodetection, I think we ought to consider dropping the `backend` argument from `AsyncClient.__init__(...)`, since it's not really required.\r\n\r\nIf anything it'd be better to find out if/when there are any cases that `sniffio` isn't able to correctly detect, and fix them, rather than having users be able to flick an override switch.\r\n\r\n(It'd also potentially make it easier to have a clear split if we wanted to factor the dispatch out into an entirely independant package at some point, since we'd want the backend implementations to reside in the core networking package, rather than in `httpx`.)",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/782",
+      "pull_request": "https://github.com/encode/httpx/pull/791",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 831,
+      "commit": "112fb9c07dbe4b4cb9ffa60df8a23b2fb86ec169",
+      "time": 1583091256,
+      "summary": "proxies argument in httpx.request method is missing",
+      "description": "    * **proxies** - *(optional)* A dictionary mapping HTTP protocols to proxy\r\n    URLs.\r\nproxies support has been mentioned in docstring for [request](https://github.com/encode/httpx/blob/50d337e807839c21e796fd8b01c67d8a672a9721/httpx/_api.py#L18) method but it's not even included in args.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/831",
+      "pull_request": "https://github.com/encode/httpx/pull/839",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.request"
+      ],
+      "gold_files": [
+        "httpx/_api.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 114,
+      "commit": "5829ecb648f4b53611ae7d6d9ae6df0babf2cfae",
+      "time": 1586544004,
+      "summary": "Design Multipart helper to stream by default",
+      "description": "This is a frequent problem with urllib3 in that the default behavior loads all of the file's data into memory at once before sending resulting in a huge files getting loaded into memory.\r\n\r\nIt's a hard problem to fix in urllib3 because of how the API was designed, but we can still fix our implementation not to do this.  I've got part of a patch for this currently.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/114",
+      "pull_request": "https://github.com/encode/httpx/pull/857",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.peek_filelike_length"
+      ],
+      "gold_files": [
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 768,
+      "commit": "d2816c9c48b6ea77c9644ea9229b3b212feed737",
+      "time": 1590060137,
+      "summary": "Transport API",
+      "description": "**What is the dispatcher API, and why is it useful?...**\r\n\r\nThe dispatcher is the part of the system that's responsible for actually sending the request and returning a response to the client. Having an API to override the dispatcher used by the client allows you to take complete control over that process, and switch out the default behaviour with something else.\r\n\r\nFor instance the \"plug in to a WSGI app\" and \"plug in to an ASGI app\" cases that we support are implemented as dispatcher classes, that send the request to a Python web application, rather than sending a network request.\r\n\r\n**Currently the dispatchers are considered private API, but really we'd like a public API here at some point. This issue is for discussing what we think that API should be.**\r\n\r\nRight now the API is...\r\n\r\n```python\r\n def send(request: Request, timeout: Timeout = None) -> Response:\r\n    ...\r\n\r\ndef close():\r\n    ...\r\n```\r\n\r\nWith`async` equivelents for the async case.\r\n\r\nThat's actually pretty okay, but if we're looking at a public API, we ought to figure out if it's actually what we want to expose. There's a case to be made for making the dispatcher API just take plain primitive datastructures, rather than dealing with `Request`/`Response` models. That'd make for a more portable interface, that could be used in other packages without importing `httpx`.\r\n\r\nThat might look *something* like this...\r\n\r\n```python\r\ndef send(self, method: bytes, url: Typle[bytes, bytes, int, bytes], headers: List[Tuple[bytes, bytes]], body: ClosableIterator[bytes] = None, timeout: Timeout = None):\r\n    ...\r\n    return (status_code: int, http_version: bytes, reason_phrase: bytes, headers: List[Tuple[bytes, bytes]], body: ClosableIterator[bytes])\r\n\r\ndef close():\r\n    ...\r\n```\r\n\r\nBoth the request and response bodies would be byte-iterable, closable interfaces (or byte async-iterable, closable interfaces). Everything else would be plain ol' Python datastructures.\r\n\r\nThoughts:\r\n\r\n* It's feasible that `url` *could* be defined as a tuple or url components instead, so that we can keep pass a *parsed* url objects from the client to a dispatcher interface?  **Update: I've tweaked the interface to describe it that way around, as \"scheme\", \"host\", \"port\", \"full_path\".\r\n* We *do* need to have the timeout be part of the dispatch interface, since we want to be able to support configured-per-request timeout values - I'd guess we'd need to define that as an optional four-tuple of connect/read/write/pool float timeout values.\r\n* We might want to think about defining expected exception types.\r\n* There's no support for HTTP trailing headers in this interface. Perhaps we don't care about that, or could the `ContentStream.close()` perhaps optionally return a list of headers, maybe?\r\n\r\nSomething that'd potentially be interesting about defining this interface in a really strict, primitive datastructures way, would be that we *could* pull out our dispatcher implementations into a really tightly scoped package `httpcore`, that'd just provide the plain network dispatchers, without any client smarts around them. (Interesting amongst other things because it'd provide a nice just-the-network-backend for other client libs to potentially use too / switch too.)\r\n\r\n**I think a useful first take onto all of this might? be an exploratory pull request that switches us over to using a plainer dispatch API, just to get a feel for how that'd look**. A very first initial take on that could still use the `URL`, `ContentStream`, and `Timeout` primitives.\r\n\r\n(This also potentially ties in with whatever the `hip` team's plans are. For instance, right now we're using our own dispatcher implementation - currently in the async case only, but planned for both cases - but we *would* have the option of using the `hip` backend, once it's available. It's not obvious to me if we'd want to do that, or if we'd prefer to continue with our existing backend, which is looking pretty nice now, but it *could* be a point of collaboration, or something to discuss.)\r\n\r\n*Alternately, we might decide that this falls into architecture astronauting territory, and that the existing API is \"just fine thankyouverymuch\".*",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/768",
+      "pull_request": "https://github.com/encode/httpx/pull/963",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client.close",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.__init__",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.create_event",
+        "func:httpx/_transports/wsgi.py:httpx._transports.wsgi.WSGITransport.__init__",
+        "func:httpx/_transports/wsgi.py:httpx._transports.wsgi._skip_leading_empty_chunks"
+      ],
+      "gold_files": [
+        "httpx/_client.py",
+        "httpx/_transports/asgi.py",
+        "httpx/_transports/wsgi.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1067,
+      "commit": "27b0dbc22da1424a020c2bb769c81490f39ce283",
+      "time": 1595247057,
+      "summary": "Raise dedicated exception in `.raise_from_status()`",
+      "description": "Refs #949, spun up from #1064.\r\n\r\nCurrently `Response.raise_from_status()` raises a generic `HTTPError` exception.\r\n\r\nThe problematic side is that it is not possible to catch it separately without also catching all exceptions originating from HTTPX (since `HTTPError` is the base exception class).\r\n\r\nSo we should probably introduce a dedicated exception class, namely something like `HTTPStatusError`.\r\n\r\n_Note: there's an implementation of this in #869 but the PR also introduced some other changes (including renaming `HTTPError` to `RequestError` which is not really desirable as discussed in #1064)._",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1067",
+      "pull_request": "https://github.com/encode/httpx/pull/1072",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPStatusError.__init__",
+        "func:httpx/_models.py:httpx._models.Response.raise_for_status"
+      ],
+      "gold_files": [
+        "httpx/_exceptions.py",
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1033,
+      "commit": "20f4911e805d9cf28b915cc2c7fbae8f27dc2c49",
+      "time": 1595493935,
+      "summary": "aiter_lines() doesn't return full lines that span multiple chunks",
+      "description": "<https://gist.github.com/scr-oath/aa76d200222a0409d09a0d6feb1a13e2> shows an example setup using cherry.py as server that just outputs two lines - the json is big enough to be sent in two chunks; httpx aiter_lines() gets confused and sends data from the middle of the json line - seems to skip the starting part - which was most likely sent in a chunk without a newline\r\n\r\n### test-httpx.py\r\n```python\r\nimport asyncio\r\nimport json\r\n\r\nimport httpx\r\n\r\n\r\nclass TestHttpx:\r\n    def __init__(self):\r\n        pass\r\n\r\n    async def __call__(self):\r\n        http_client = httpx.AsyncClient()\r\n        async with http_client.stream(method=\"GET\", url='http://localhost:8080/lines') as response:\r\n            is_message = True\r\n            async for line in response.aiter_lines():\r\n                is_message = not is_message\r\n                if is_message:\r\n                    message = json.loads(line)\r\n                    print(message)\r\n\r\n\r\ndef main():\r\n    test_httpx = TestHttpx()\r\n    asyncio.run(test_httpx())\r\n\r\n\r\nif __name__ == '__main__':\r\n    main()\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1033",
+      "pull_request": "https://github.com/encode/httpx/pull/1075",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.decode"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1043,
+      "commit": "16893e414fe68bd41890dc52f449328679a65134",
+      "time": 1596187271,
+      "summary": "Considering non env-var 'no_proxy' support?",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your feature request. -->\r\n\r\n- [x] There are no similar issues or pull requests for this yet.\r\n- [ ] I discussed this idea on the [community chat](https://gitter.im/encode/community) and feedback is positive.\r\n\r\n### Is your feature related to a problem? Please describe.\r\n\r\nHey all,\r\n\r\nSo while looking into an issues with `no_proxy` in Requests (https://github.com/psf/requests/issues/5000) I tried one of the failing cases with HTTPX, and ended up realizing that we don't take into account `no_proxy` in the `proxies={...}` usage. We only account for the `no_proxy`/`NO_PROXY` environment variable.\r\n\r\nEg this will fail as the request will be routed through the proxy:\r\n\r\n```python\r\nimport httpx\r\n\r\nproxies = {'https': 'http://no.where.com', 'no_proxy': 'google.com'}\r\nclient = httpx.Client(proxies=proxies)\r\nclient.get('https://google.com')  # ConnectError\r\n```\r\n\r\nHowever, this use case is covered by Requests (although with rough edges - see https://github.com/psf/requests/issues/5000).\r\n\r\n```python\r\nimport os\r\nimport requests\r\n\r\nos.environ['HTTPS_PROXY']='https://b.r.o.k.e.n.com'\r\nproxies = {'no_proxy': 'google.com'}\r\nr = requests.get('https://google.com', proxies=proxies)\r\n```\r\n\r\n\r\n## Describe the solution you would like.\r\n\r\nThe Requests way of passing a `no_proxy` key in the dict is somewhat clunky tbh, and also not compatible with us allowing users to pass an `httpx.Proxy` config object, or an URL, instead of a dict.\r\n\r\nSo I'd be thinking about a dedicated `no_proxy` option on clients, which accepts a list of domains or IPs (similar to how the env variable accepts a comma-separated string):\r\n\r\n```python\r\nhttpx.Client(proxies=..., no_proxy=['<domain>', '<ip>', ...])\r\n```\r\n\r\nIn terms of implementation, we could easily store this as an extra attribute, and then pass it when checking for \"should we use proxies for this URL\", without interfering with the proxy map building logic:\r\n\r\nhttps://github.com/encode/httpx/blob/620b0670db07ae844aa6fae40d9209a856440c9d/httpx/_client.py#L555-L556\r\n\r\nThe priority order compared to env vars would be:\r\n\r\n1. `no_proxy=[...]`\r\n2. Environment variables (`no_proxy`/`NO_PROXY`)\r\n\r\nHappy to discuss use cases and API details further!\r\n\r\n## Describe alternatives you considered\r\n\r\n<!-- Please describe any alternative solutions or features you've considered to solve\r\nyour problem and why they wouldn't solve it. -->\r\n\r\n## Additional context\r\n\r\n<!-- Provide any additional context, screenshots, tracebacks, etc. about the feature here. -->\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1043",
+      "pull_request": "https://github.com/encode/httpx/pull/1099",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._transport_for_url",
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._transport_for_url",
+        "func:httpx/_client.py:httpx._client.Client.close"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 899,
+      "commit": "a9284214e2483b9cf118422d4a47bab51546b085",
+      "time": 1596305715,
+      "summary": "Should `Headers.keys` be a set-like keys view?",
+      "description": "### Checklist\r\n\r\n<!-- To help keep this issue tracker clean and focused, please make sure you tried *all* the following resources before submitting your question. -->\r\n\r\n- [X] I searched the [HTTPX documentation](https://www.python-httpx.org) but couldn't find what I'm looking for.\r\n- [X] I looked through similar issues on GitHub, but didn't find anything.\r\n- [ ] I looked up \"How to do ... in HTTPX\" on a search engine and didn't find any information.\r\n- [ ] I asked the [community chat](https://gitter.im/encode/community) for help but didn't get an answer.\r\n\r\n### Question\r\n\r\npresently [`Headers.keys`](https://github.com/encode/httpx/blob/master/httpx/_models.py#L458) returns a `typing.List[str]` rather than a (set-like) `typing.KeysView[str]`, which appears to violate the `Mapping` protocol: https://docs.python.org/3/library/collections.abc.html#collections.abc.KeysView\r\n\r\nthis breaks code that expects set-like operations with `Headers.keys`, e.g.\r\n```\r\n    dst: Dict[str, str] = ...\r\n    headers: httpx.Headers = ...\r\n    keys: Set[str] = {\"set-cookie\", \"set-cookie2\"}\r\n    dst.update({k: headers[k] for k in keys & headers.keys()})\r\n```\r\n\r\nis this an intentional design choice or simply an oversight?",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/899",
+      "pull_request": "https://github.com/encode/httpx/pull/1114",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.copy",
+        "func:httpx/_models.py:httpx._models.Headers.items",
+        "func:httpx/_models.py:httpx._models.Headers.keys",
+        "func:httpx/_models.py:httpx._models.Headers.multi_items",
+        "func:httpx/_models.py:httpx._models.Headers.values"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1093,
+      "commit": "26cd4f54e8850671b565995f15d5c37328407809",
+      "time": 1596308341,
+      "summary": "More concise Timeout parameters.",
+      "description": "Follow up to #1085\r\n\r\nSince we're on out final 1.0 polishing run-in I think we should place the `httpx.Timeout(5.0, connect_timeout=60.0)` style on a gentle deprecation with 0.14, in favour of the more concise style of `httpx.Timeout(5.0, connect=60.0)`.\r\n\r\nI'm milestoning this for 0.14 so that we can track the remaining items for it, and aim for a release sometime this week.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1093",
+      "pull_request": "https://github.com/encode/httpx/pull/1111",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.Timeout.__eq__",
+        "func:httpx/_config.py:httpx._config.Timeout.__init__",
+        "func:httpx/_config.py:httpx._config.Timeout.__repr__",
+        "func:httpx/_config.py:httpx._config.Timeout.as_dict"
+      ],
+      "gold_files": [
+        "httpx/_config.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1094,
+      "commit": "f67e925f72166ac89c4ff430540173b5910ec315",
+      "time": 1596311098,
+      "summary": "Renaming PoolLimits -> Limits.",
+      "description": "Another 1.0 final run-in bit of polishing here...\r\n\r\nI think we should probably renaming `pool_limits=...` to `limits=...` and `httpx.PoolLimits(...)` to `httpx.Limits(...)`.\r\nIf we *are* going to do this, then we should do so with a gentle deprecation, and we should target 0.14.\r\n\r\nThere's two motivations here...\r\n\r\n* Prefer a more concise style.\r\n* At some point we may have limits that are *not* strictly to do with the connection pool. (For example, it'd be helpful particularly with the AsyncClient to be able to enforce a client-wide max concurrent outgoing requests. Which we might just want to unilaterally apply across *all* mounted transports/proxies)\r\n\r\nI'm open to push back on this if anyone thinks this is a bit over-zealous, and I *am* mindful that it introduces a bit of thrash. On the flip side, if there's a time to do this, then pre-1.0 is the time.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1094",
+      "pull_request": "https://github.com/encode/httpx/pull/1113",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_transport",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_transport"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1062,
+      "commit": "682cad39ebd7468f65d9590ed68bd03f5a7f8ec8",
+      "time": 1596358845,
+      "summary": "Don't call `should_not_be_proxied` on each request",
+      "description": "Currently we're calling `should_not_be_proxied` on each request, which is problematic for two reasons...\r\n\r\n* It's ignoring the `trust_env`, and relying on an environment variable unilaterally.\r\n* It's preforming an extra chunk of work on each request that we'd rather not do.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1062",
+      "pull_request": "https://github.com/encode/httpx/pull/1103",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._transport_for_url",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client._transport_for_url",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.__init__",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.matches",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.priority",
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies"
+      ],
+      "gold_files": [
+        "httpx/_client.py",
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1082,
+      "commit": "d76b2c2fb7241e5a21f6df86d6142790d4548b8c",
+      "time": 1596361689,
+      "summary": "Should we support bare hostnames in `ALL_PROXY`,`HTTP_PROXY`, `HTTPS_PROXY`?",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n<!-- A clear and concise description of what the bug is. -->\r\nI am a new user for httpx, and I just install it, then try to run it in python REPL.\r\nI type `httpx.get('https://www.github.com')`  and then got the \"No scheme included in URL\".\r\nSo I try to debug it, and finally I found that because I set the `export ALL_PROXY=127.0.0.1:7890` in the shell, the proxy does not have a scheme. \r\nThis proxy set is correct for when I use curl\u3001brew and many other programe, So it should also work fun in httpx?\r\nfor any other reason httpx must have the scheme, I think it should prompt \"a proxy set error\" at least.\r\n\r\n\r\n### Debugging material\r\n\r\n```\r\n~/projects \u00bb python3                                                                                                       hejl@hejldeIMAC\r\nPython 3.8.4 (default, Jul 14 2020, 02:58:48) \r\n[Clang 11.0.3 (clang-1103.0.32.62)] on darwin\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\r\n>>> import httpx\r\n>>> httpx.get(\"https://www.github.com\")\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_api.py\", line 159, in get\r\n    return request(\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_api.py\", line 83, in request\r\n    with Client(\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_client.py\", line 467, in __init__\r\n    proxy_map = self.get_proxy_map(proxies, trust_env)\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_client.py\", line 87, in get_proxy_map\r\n    return {\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_client.py\", line 88, in <dictcomp>\r\n    key: Proxy(url=url)\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_config.py\", line 335, in __init__\r\n    url = URL(url)\r\n  File \"/usr/local/lib/python3.8/site-packages/httpx/_models.py\", line 90, in __init__\r\n    raise InvalidURL(\"No scheme included in URL.\")\r\nhttpx._exceptions.InvalidURL: No scheme included in URL.\r\n```\r\n\r\n### Environment\r\n\r\n- OS:  MacOS\r\n- Python version: 3.8.4\r\n- HTTPX version: 0.13.3\r\n- Async environment: no\r\n- HTTP proxy: yes  `127.0.0.1:7890`\r\n- Custom certificates: no\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1082",
+      "pull_request": "https://github.com/encode/httpx/pull/1120",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies"
+      ],
+      "gold_files": [
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1039,
+      "commit": "0e7730bcccf51a6ca5b66d2dc6cab40f2a1660a3",
+      "time": 1596368556,
+      "summary": "ASGI requests are routed through proxy",
+      "description": "### Checklist\r\n\r\n- [X] The bug is reproducible against the latest release and/or `master`.\r\n- [X] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nUsing the `AsyncClient` with an ASGI app seems to go through the proxy. Either this is is bug or I don't understand under which conditions this would make sense.\r\n\r\n### To reproduce\r\n\r\n```python\r\nimport asyncio\r\nimport os\r\nimport httpx\r\n\r\n\r\nasync def hello_world(scope, receive, send):\r\n    status = 200\r\n    output = b\"Hello, World!\"\r\n    headers = [(b\"content-type\", \"text/plain\"), (b\"content-length\", str(len(output)))]\r\n\r\n    await send({\"type\": \"http.response.start\", \"status\": status, \"headers\": headers})\r\n    await send({\"type\": \"http.response.body\", \"body\": output})\r\n\r\n\r\nasync def test_asgi_with_env():\r\n    os.environ[\"http_proxy\"] = \"http://localhost:1111\"\r\n\r\n    client = httpx.AsyncClient(app=hello_world)\r\n    response = await client.get(\"http://www.example.org/\")\r\n    assert response.status_code == 200\r\n    assert response.text == \"Hello, World!\"\r\n\r\n\r\nasyncio.run(test_asgi_with_env())\r\n```\r\n\r\n### Expected behavior\r\n\r\nTest should pass, no proxy interaction should be made.\r\n\r\nNote that passing `trust_env=False` to `AsyncClient` disables the proxy and the test passes. However, this interaction seems weird.\r\n\r\n### Actual behavior\r\n\r\n```text\r\nhttpcore._exceptions.ConnectError: Multiple exceptions: [Errno 61] Connect call failed ('::1', 1111, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 1111\r\n```\r\n\r\n### Environment\r\n\r\n- OS: macOS\r\n- Python version: 3.8.3\r\n- HTTPX version: 0.13.2 and on master (`cfd07cc290cc610fceb8d9f025c6bebc1d4b3275`)\r\n- Async environment: asyncio, but also tested with trio where the issue also occurs.\r\n- HTTP proxy: see description\r\n- Custom certificates: no\r\n\r\n### Additional context\r\nhttps://github.com/tiangolo/fastapi/pull/1619",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1039",
+      "pull_request": "https://github.com/encode/httpx/pull/1122",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client.__init__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1108,
+      "commit": "d7aa6e018913349166fba64cd5f3a9daba7364fb",
+      "time": 1596481578,
+      "summary": "Should HTTPError be a base class for RequestError and HTTPStatusError?",
+      "description": "I'm going through some of my projects preparing them for the 0.14 release and it occurred to me that the following line may be confusing and trip folks up.\r\n\r\nhttps://github.com/encode/httpx/blob/9409900898f40ed855e9c7a7664b7e068599a07d/httpx/_exceptions.py#L282\r\n\r\nThis will break something like the following since the HTTPStatusError is now no longer caught, it'd just raise straight up and crash the program.\r\n```python\r\ntry:\r\n    r = httpx.get('https://httpbin.org/status/400')\r\n    r.raise_for_status()\r\nexcept httpx.HTTPError as error:\r\n    print(error)\r\n```\r\n\r\nInstead, can we change the line to:\r\n```python\r\nHTTPError = (HTTPStatusError, RequestError)\r\n```\r\n\r\nThat way at least something close to (or maybe exactly like?) the original functionality is maintained, at least until it is formally deprecated?",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1108",
+      "pull_request": "https://github.com/encode/httpx/pull/1125",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPStatusError.__init__",
+        "func:httpx/_exceptions.py:httpx._exceptions.RequestError.__init__"
+      ],
+      "gold_files": [
+        "httpx/_exceptions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 896,
+      "commit": "78cf16ace92b42de5972a490787002631d558b32",
+      "time": 1596629145,
+      "summary": "Document HSTS is still honored if allow_redirects=False",
+      "description": "I tried to disable the redirection with latest httpx but it is always redirection the URL:\r\n\r\n```python\r\n>>> import httpx\r\n>>> r = httpx.head(\"http://www.python.org\",  allow_redirects=False)\r\n>>> r.url\r\nURL('https://www.python.org')\r\n```\r\n\r\nstatus code is also 200 and not 301 as expected.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/896",
+      "pull_request": "https://github.com/encode/httpx/pull/1110",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1102,
+      "commit": "78cf16ace92b42de5972a490787002631d558b32",
+      "time": 1596629145,
+      "summary": "Consider dropping HSTS preloading",
+      "description": "Prompted by https://github.com/encode/httpx/issues/1025#issuecomment-661269344\r\n\r\nIssues like #1025 should prompt us to reconsider whether using HSTS preloading from a server-side client (introduced via #151) is a sensible thing to do at all.\r\n\r\nKey points of reasoning here:\r\n\r\n- While it mimics the way browsers behave, and [hstspreload](https://github.com/sethmlarson/hstspreload) is a super valuable library, from a UX perspective it can lead to ambiguous behaviors (#896) and cases when you _really_ don't want HSTS preload to kick in (like in #1025).\r\n- Crucially, from #124 it seems that HSTS preloading was introduced as a way to tackle \"schema-less URLs\". As of today HTTPX _requires_ a schema on URLs, so if it was the initial motivation then it is now irrelevant. Besides, we can assume that developers are generally very aware of their choices to use `http://` vs `https://` on the server-side (as opposed to browser users just entering the domain name without a schema).\r\n\r\nSome options are:\r\n\r\n- Add a toggle so that HSTS preload becomes opt-in or opt-out.\r\n- Drop HSTS functionality entirely.\r\n\r\nGiven all the context points above, we might want to just go with option 2).",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1102",
+      "pull_request": "https://github.com/encode/httpx/pull/1110",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1105,
+      "commit": "7279ed46589db3028342d3f1542b11e99c23a6a5",
+      "time": 1596649310,
+      "summary": "On `proxies={\"http\": ...}` vs. `proxies={\"http://\": ...}`",
+      "description": "Currently we're in line with `requests` in supporting \"all\", \"http\", and \"https\" as valid proxy keys.\r\n\r\nInternally we handle those as URL patterns that we can match against, and eg. `\"http\"` is *actually* mapped to `\"http://\"`.\r\n\r\nI'm wondering if we might have better internal consistency by...\r\n\r\n* Raising a warning on base usage of \"all\", \"http\", \"https\", later escalating this to an error.\r\n* Instead requiring an explicit \"all://\", \"http://\", \"https://\", all of which properly parse directly as URLs.\r\n\r\nMy feeling is that doing so would create a nicer consistency, and also has a subtle indication to developers about what is actually going on here.\r\n\r\nFor example...\r\n\r\n`proxies={\"http://\": httpx.Proxies(...)}` neatly implies that `proxies={\"http://www.example.com\": httpx.Proxies(...)}` might also be a valid thing to do, which indeed it is.\r\n\r\nAllowing `proxies={\"http\": httpx.Proxies(...)}` makes it less obvious that the key is a general purpose URL pattern.\r\n\r\n~~Additionally this change means that other usages will end up with more expected behaviors, eg. `proxies={\"www.example.com\": ...}` will do what you'd expect, rather than mapping to `proxies={\"www.example.com://\": ...}` which is what we currently do.~~ - Not true, that'd parse as scheme='', host='', path='www.example.com'. Instead we'd probably want to be strict and ensure that only absolute URLs are allowed as pattern keys. (While still including a graceful deprecation for plain \"http\", \"https\", \"all\")\r\n\r\nThis becomes doubly relevant once we introduce a mount API, which will use the same URL pattern style for it's API, as current `proxies=...` argument.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1105",
+      "pull_request": "https://github.com/encode/httpx/pull/1127",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.URLPattern.__init__"
+      ],
+      "gold_files": [
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 846,
+      "commit": "a3392c6ea7e887b23c1a9250b58ff11c7ea652df",
+      "time": 1596650185,
+      "summary": "base_url strips relative path",
+      "description": "Hi,\r\nI've noticed that if I do something like:\r\n```\r\nhttp_client = https.AsyncClient(base_url=\"https://my-service/api/v1\")\r\n```\r\nfor further requests (e.g. `/messages`) `/api/v1` will be stripped.\r\nIs it expected behavior?\r\nTested on httpx 0.11.1\r\nThanks!",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/846",
+      "pull_request": "https://github.com/encode/httpx/pull/1130",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._enforce_trailing_slash",
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url",
+        "func:httpx/_client.py:httpx._client.BaseClient.base_url",
+        "func:httpx/_client.py:httpx._client.Client.__init__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1151,
+      "commit": "4cf74bc40508f1d22e1159bc93607e9c777e41b2",
+      "time": 1597067631,
+      "summary": "Response cookies are not ingested properly in 0.14.0",
+      "description": "Hi. After last updatet when loading cookies from a file, it gives an error\r\n\r\n**http/cookiejar.py\", line 1947, in _really_load\r\ndomain_specified = domain.startswith(\".\")\r\nAttributeError: 'NoneType' object has no attribute 'startswith'**\r\n\r\n```python\r\nimport os\r\nfrom http.cookiejar import LWPCookieJar\r\nimport httpx\r\n\r\nh = httpx.Client(cookies=LWPCookieJar('test'))\r\nif os.path.isfile('test'):\r\n    h.cookies.jar.load()\r\nh.get('https://www.google.ru')\r\nh.cookies.jar.save()\r\n```\r\n\r\n**Cookies file - httpx 0.13.3**\r\n#LWP-Cookies-2.0\r\nSet-Cookie3: 1P_JAR=\"2020-08-08-21\"; path=\"/\"; domain=\".google.ru\"; path_spec; domain_dot; secure; expires=\"2020-09-07 21:47:19Z\"; version=0\r\nSet-Cookie3: NID=\"204=CQ898UjmES*****************************ctxJAE99ngLlZcojaaWLrqex-td7X00PooPgmVnW61VrtwCHIPSb_CPR8Ic6dpD_gRY_pBteV_4YSGU7Vu58V7uHPwNcPxZ6PMCAHt-RZSPgnxcoM\"; path=\"/\"; domain=\".google.ru\"; path_spec; domain_dot; expires=\"2021-02-07 21:47:19Z\"; HttpOnly=None; version=0\r\n\r\n**Cookies file - httpx 0.14.0**\r\n#LWP-Cookies-2.0\r\nSet-Cookie3: 1P_JAR=\"2020-08-08-21\"; path=\"/\"; domain=\".google.ru\"; path_spec; domain_dot; expires=\"2020-09-07 21:50:09Z\"; HttpOnly=None; Secure, NID=\"204=NCk0**********************xnr8aaHwCrC-zMdQQ9bAS5QAp6rfv-yOiuwkYDhiN7kTyDASjlZVIJ0Zase-JQMH_YwCvaiS9I232kIRu36O684kwHD_nRXHeUVpTJTlS7mbniFmebf5nhE\"; version=0\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1151",
+      "pull_request": "https://github.com/encode/httpx/pull/1156",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Cookies._CookieCompatResponse.info"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1158,
+      "commit": "45de7145924e62aea7a2f6cbbc878ea6f8455ca7",
+      "time": 1597135496,
+      "summary": "Map `rfc3986.exceptions.InvalidAuthority` to `httpx.InvalidURL`",
+      "description": "We're wrapping our underlying `h11`/`h2` library exception classes, but we're currently missing an `rfc3986` case...\r\n\r\nWe should reintroduce the `InvalidURL` exception for URLs that really are improperly formed and *cannot* be parsed (not our previous case of \"Invalid because it's not http/https\").\r\n\r\nThe only case I can see that we need to map is `rfc3986.exceptions.InvalidAuthority`, although perhaps I'm missing some other cases that `rfc3986` can raise? We ought to wrap our single `rfc3986.iri_reference(...)` usage, and map the `rfc3986` exception to our own exception class.\r\n\r\n```python\r\n>>> httpx.URL('https://\ud83d\ude07/')\r\nTraceback (most recent call last):\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/rfc3986/iri.py\", line 125, in idna_encoder\r\n    std3_rules=True)\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/idna/core.py\", line 360, in encode\r\n    s = alabel(label)\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/idna/core.py\", line 281, in alabel\r\n    check_label(label)\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/idna/core.py\", line 261, in check_label\r\n    raise InvalidCodepoint('Codepoint {0} at position {1} of {2} not allowed'.format(_unot(cp_value), pos+1, repr(label)))\r\nidna.core.InvalidCodepoint: Codepoint U+1F607 at position 3 of '\u00f0\u00f0\ud83d\ude07' not allowed\r\n\r\nDuring handling of the above exception, another exception occurred:\r\n\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/httpx/_models.py\", line 69, in __init__\r\n    self._uri_reference = rfc3986.api.iri_reference(url).encode()\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/rfc3986/iri.py\", line 133, in encode\r\n    for part in self.host.split(\".\")])\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/rfc3986/iri.py\", line 133, in <listcomp>\r\n    for part in self.host.split(\".\")])\r\n  File \"/Users/tomchristie/Temp/venv/lib/python3.7/site-packages/rfc3986/iri.py\", line 127, in idna_encoder\r\n    raise exceptions.InvalidAuthority(self.authority)\r\nrfc3986.exceptions.InvalidAuthority: The authority (\u00f0\u00f0\ud83d\ude07) is not valid.\r\n```\r\n\r\nSo, let's change from...\r\n\r\n```python\r\nself._uri_reference = rfc3986.iri_reference(url).encode()\r\n```\r\n\r\nTo...\r\n\r\n```python\r\ntry:\r\n    self._uri_reference = rfc3986.iri_reference(url).encode()\r\nexcept rfc3986.exceptions.InvalidAuthority as exc:\r\n    raise httpx.InvalidURL(message=str(exc)) from None\r\n```\r\n\r\nWe *don't* want this to subclass `RequestException`, because it *isn't* necessarily. The user might be using a base `httpx.URL()`.\r\n\r\nWe then possibly also want to wrap the `url = URL(location)` usage in `_redirect_url` to wrap `httpx.InvalidURL` and instead raise `httpx.RemoteProtocolError(\"Invalid URL in location header: {message}\")`, since if a parse error occurs at that point, then it *is* a request error. (We *do* have an associated request at this point, and it is due to a remote server error, rather than invalid user input.)\r\n\r\nI'll label this as \"refactor\" since it's such a minor edge bit of API.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1158",
+      "pull_request": "https://github.com/encode/httpx/pull/1163",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._redirect_url",
+        "func:httpx/_exceptions.py:httpx._exceptions.InvalidURL.__init__"
+      ],
+      "gold_files": [
+        "httpx/_client.py",
+        "httpx/_exceptions.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1146,
+      "commit": "a226c60861f651b9874e31e66b3bb7f0db46c96d",
+      "time": 1597556026,
+      "summary": "`allow_redirects` with `httpx.head(...)`",
+      "description": "We've currently got a different `allow_redirects` default on HEAD requests to all other request methods.\r\n\r\nhttps://github.com/encode/httpx/blob/a25d924bb910e85ca597c7b4ed819c6e9e17aecd/httpx/_api.py#L217\r\n\r\nThis is in line with behaviour in `requests`, but I'm not convinced it's something we ought to do. It'd seem to me that we'd do better just to stay consistent rather than have this odd exclusion. I get why it *could* be a reasonable choice, but I think it'd *probably* be better to just stay consistent, and allow the user to switch `allow_redirects=False` if that's their intent.\r\n\r\nFlagging this to be addressed pre-1.0.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1146",
+      "pull_request": "https://github.com/encode/httpx/pull/1183",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.head",
+        "func:httpx/_client.py:httpx._client.AsyncClient.head",
+        "func:httpx/_client.py:httpx._client.Client.head"
+      ],
+      "gold_files": [
+        "httpx/_api.py",
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1066,
+      "commit": "cb620e67c76202e6f64d22e45fedc0eb7c41e69e",
+      "time": 1597668712,
+      "summary": "Public API tightening",
+      "description": "Following on from #1065\r\n\r\nThere's a few attributes that are set in `BaseClient.__init__` that look like contenders here for moving into the private API space. Here's what's remaining there...\r\n\r\n- [x] `self.base_url` - Potentially modify this to a property setter / getter style, but not 100% obvious?\r\n- [ ] `self.auth` - Potentially modify this to a property setter / getter style, but not 100% obvious? - _See #1185_\r\n- [x] `self.timeout` - Looks like it should *definitely* move to a property getter / setter style, as per params/headers/cookies.\r\n- [x] `self.max_redirects` - I think this one is okay as a public attribute, since it's just a plain int.\r\n- [x] `self.trust_env` - Setting this after `__init__` isn't really valid (eg. the transport is already initialized) so we could move it to a read-only property? _See #1112_\r\n- [x] `self.netrc` - Ought to be private. _See #1071_",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1066",
+      "pull_request": "https://github.com/encode/httpx/pull/1185",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_auth",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_request_auth",
+        "func:httpx/_client.py:httpx._client.BaseClient.auth",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1188,
+      "commit": "03cd88c336a3f464d117cea1e2aa09488478edc6",
+      "time": 1597835404,
+      "summary": "httpcore.ReadTimeout not mapped to httpx.ReadTimeout",
+      "description": "I'm running the following to perform requests and catch `httpx.RequestError` exceptions:\r\n```\r\nasync def async_get_url(client, url, retry=True):\r\n    async with semaphore.get():\r\n        try:\r\n            response = await client.get(url)\r\n            response.raise_for_status()\r\n            result = handle_reponse(reponse)\r\n        except httpx.RequestError as exc:\r\n            if retry:\r\n                print(f\"Retrying {url} ...\")\r\n                result = await async_get_url(\r\n                    client, url, retry=False\r\n                )\r\n            else:\r\n                result = ...\r\n        except httpx.HTTPStatusError as exc:\r\n            result = ...\r\n        return result\r\n```\r\n\r\nAt some point it failed with a `httpcore._exceptions.ReadTimeout` exception:\r\n```\r\nTraceback (most recent call last):\r\n  File \"/home/user/main.py\", line 351, in <module>\r\n    asyncio.run(run())\r\n  File \"/usr/lib64/python3.8/asyncio/runners.py\", line 43, in run\r\n    return loop.run_until_complete(main)\r\n  File \"/usr/lib64/python3.8/asyncio/base_events.py\", line 616, in run_until_complete\r\n    return future.result()\r\n  File \"/home/user/main.py\", line 317, in run\r\n    await f\r\n  File \"/usr/lib64/python3.8/asyncio/tasks.py\", line 608, in _wait_for_one\r\n    return f.result()  # May raise f.exception().\r\n  File \"/home/user/main.py\", line 173, in get_updates\r\n    item_api_response = await f\r\n  File \"/usr/lib64/python3.8/asyncio/tasks.py\", line 608, in _wait_for_one\r\n    return f.result()  # May raise f.exception().\r\n  File \"/home/user/main.py\", line 53, in async_get_url\r\n    response = await client.get(url)\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_client.py\", line 1292, in get\r\n    return await self.request(\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_client.py\", line 1143, in request\r\n    response = await self.send(\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_client.py\", line 1167, in send\r\n    await response.aread()\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_models.py\", line 958, in aread\r\n    self._content = b\"\".join([part async for part in self.aiter_bytes()])\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_models.py\", line 958, in <listcomp>\r\n    self._content = b\"\".join([part async for part in self.aiter_bytes()])\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_models.py\", line 969, in aiter_bytes\r\n    async for chunk in self.aiter_raw():\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpx/_models.py\", line 1002, in aiter_raw\r\n    async for part in self._raw_stream:\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_async/connection_pool.py\", line 50, in __aiter__\r\n    async for chunk in self.stream:\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_bytestreams.py\", line 72, in __aiter__\r\n    async for chunk in self._aiterator:\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_async/http11.py\", line 143, in _receive_response_data\r\n    event = await self._receive_event(timeout)\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_async/http11.py\", line 160, in _receive_event\r\n    data = await self.socket.read(self.READ_NUM_BYTES, timeout)\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_backends/asyncio.py\", line 139, in read\r\n    return data\r\n  File \"/usr/lib64/python3.8/contextlib.py\", line 131, in __exit__\r\n    self.gen.throw(type, value, traceback)\r\n  File \"/home/user/.pyenv/versions/venv/lib64/python3.8/site-packages/httpcore/_exceptions.py\", line 12, in map_exceptions\r\n    raise to_exc(exc) from None\r\nhttpcore._exceptions.ReadTimeout\r\n```\r\nAccording to: https://github.com/encode/httpx/blob/8c7729e42c9ebf860e75820d5325741b85d64970/httpx/_exceptions.py#L360-L363 \r\nThe `httpcore.ReadTimeout` exception should have been mapped to `httpx.ReadTimeout` and therefore catched appropriately with `except httpx.RequestError as exc`, but that doesn't happen.\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.8.5\r\n- HTTPX version: 0.14.0\r\n- HTTPCore version: 0.10.0\r\n- Async environment: asyncio\r\n- HTTP proxy: no\r\n- Custom certificates: no",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1188",
+      "pull_request": "https://github.com/encode/httpx/pull/1190",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.aiter_raw",
+        "func:httpx/_models.py:httpx._models.Response.iter_raw"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1154,
+      "commit": "924fa8c9dc19f3a601db54a384158fef56f07c96",
+      "time": 1597915708,
+      "summary": "Add API docs for streaming",
+      "description": "- [x] There are no similar issues or pull requests for this yet.\r\n- [x] I discussed this idea in #1152 and feedback is positive.\r\n\r\nThere is no documentation in either the top level `stream` or `Client.stream`, and they are not mentioned in generated documentation. At least a short description of functionality and parameters (pointing to `httpx.request` if applicable) should be added.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1154",
+      "pull_request": "https://github.com/encode/httpx/pull/1200",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.stream"
+      ],
+      "gold_files": [
+        "httpx/_api.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1203,
+      "commit": "19515e8a8b7df6e5064047f02df307798c184ef5",
+      "time": 1598007795,
+      "summary": "Auto headers inserted into `headers._list` while not into `headers._dict`",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n`Request.prepare()` insert auto headers into `headers.raw` (ie `headers._list`), but not into the `headers._dict`.\r\nhttps://github.com/encode/httpx/blob/924fa8c9dc19f3a601db54a384158fef56f07c96/httpx/_models.py#L650-L651\r\n\r\n### To reproduce\r\n```python\r\n>>> import httpx\r\n>>> client = httpx.Client()\r\n>>> request = client.build_request(\"GET\", \"https://google.com\")\r\n>>> requests.headers\r\nHeaders({'host': 'google.com', 'user-agent': 'python-httpx/0.14.1', 'accept': '*/*', 'accept-encoding': 'gzip, deflate, br', 'connection': 'keep-alive'})\r\n>>> \"host\" in request.headers\r\nFalse\r\n>>> request.headers.pop(\"host\")\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\n  File \"D:\\programs\\anaconda3\\lib\\_collections_abc.py\", line 801, in pop\r\n    del self[key]\r\n  File \"E:\\projects\\pycharm\\httpx\\httpx\\_models.py\", line 536, in __delitem__\r\n    del self._dict[del_key]\r\nKeyError: b'host'\r\n```\r\n\r\n### Environment\r\n\r\n- OS: Windows/macOS\r\n- Python version: 3.7.6\r\n- HTTPX version: 0.14.1\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1203",
+      "pull_request": "https://github.com/encode/httpx/pull/1205",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.raw"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1144,
+      "commit": "15c1e42c20d37697b78f456ac434905a89ac161a",
+      "time": 1598009457,
+      "summary": "Packaging dependancy tweaks",
+      "description": "* Include `rfc3986` as `rfc3986[idna2008]`, and *don't* include the `idna` dependancy ourselves.\r\n* Add an `extra_requires = {\"brotli\": \"brotlipy==0.7.*\"'}`\r\n* Update our dependancy info in the docs/index.md and README.md\r\n\r\n---\r\n\r\nOur 1.0 release deps ought to look like this...\r\n\r\n* `httpcore` - The underlying transport implementation for `httpx`.\r\n  * `h11` - HTTP/1.1 support.\r\n  * `h2` - HTTP/2 support. *(Optional, `pip install httpx[http2]`)*\r\n* `rfc3986` - URL parsing & normalization.\r\n    * `idna` - Internationalized domain name support.\r\n* `certifi` - SSL certificates.\r\n* `sniffio` - Async library autodetection.\r\n* `brotlipy` - Decoding for \"brotli\" compressed responses. *(Optional, `pip install httpx[brotli]`)*\r\n\r\n**Note that I've dropped the following...**\r\n\r\n* `chardet` - Fallback auto-detection for response encoding.  **- See #1018**\r\n* `urllib3` - Support for the `httpx.URLLib3Transport` class. *(Optional)* **- See https://github.com/encode/httpx/issues/1143**\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1144",
+      "pull_request": "https://github.com/encode/httpx/pull/1206",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.BrotliDecoder.__init__"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1145,
+      "commit": "534400ee42ad9b974a34d3b6b135fd7913561df8",
+      "time": 1598439905,
+      "summary": "Context Managed Transports",
+      "description": "We need to ensure that the Client `__enter__`/`__exit__` and `__aenter__`/`__aexit__` methods also call into the transport dunder methods, for all installed transports/proxies.\r\n\r\nA good proof of having resolved the issue here would be streaming responses in the `ASGITransport`, which require nursery functionality in order to work properly. See notes here... https://github.com/encode/httpx/pull/998#issuecomment-653519294",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1145",
+      "pull_request": "https://github.com/encode/httpx/pull/1218",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aenter__",
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aexit__",
+        "func:httpx/_client.py:httpx._client.Client.__enter__",
+        "func:httpx/_client.py:httpx._client.Client.__exit__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1234,
+      "commit": "33d339a2622cbb6c8670ba07389a842c8c85c616",
+      "time": 1598965690,
+      "summary": "Auth fails for responses that include multiple WWW-Authenticate headers.",
+      "description": "### Checklist\r\n\r\nhttpx==0.11.1\r\n\r\n### Describe the bug\r\nI use httpx request camera mjpeg,The camera response two WWW-Authenticate headers,I used the right username and password,but It response 401. When I user chrome, everything is ok, I doubt the httpx.DigestAuth may have bug when handle digest.\r\nWireShark Data as follows:\r\n\r\n**request with httpx**\r\n```\r\nGET /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 HTTP/1.1\r\nhost: 192.168.12.88\r\nuser-agent: python-httpx/0.11.1\r\naccept: */*\r\naccept-encoding: gzip, deflate, br\r\nconnection: keep-alive\r\n\r\nHTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Type: text/html; charset=ISO-8859-1\r\nWWW-Authenticate: Digest realm=\"server\", nonce=\"4f3b1a0c93d39d1cab4d5d2a8928f85a3cc41bd5e8180e5c37587a9a8aea5097\"\r\nWWW-Authenticate: Basic realm=\"server\"\r\nContent-Length: 211\r\n\r\n<HTML><HEAD><TITLE>401 Unauthorized</TITLE></HEAD>\r\n<BODY><H1>401 Unauthorized</H1>\r\nYour client does not have permission to get URL /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 from this server.\r\n</BODY></HTML>\r\n\r\nGET /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 HTTP/1.1\r\nhost: 192.168.12.88\r\nuser-agent: python-httpx/0.11.1\r\naccept: */*\r\naccept-encoding: gzip, deflate, br\r\nconnection: keep-alive\r\nauthorization: Digest username=\"admin\", realm=\"server\", nonce=\"4f3b1a0c93d39d1cab4d5d2a8928f85a3cc41bd5e8180e5c37587a9a8aea5097\", uri=\"/cgi-bin/guest/Video.cgi?media=MJPEG&channel=0\", response=\"43265b82a45736ef943ae501f0234807\", algorithm=MD5\r\n\r\nHTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Type: text/html; charset=ISO-8859-1\r\nWWW-Authenticate: Digest realm=\"server\", nonce=\"4f3b1a0ca12e0b92dc8ccca22e84edf7ce355d7825ac0e21eedf8f97d82ec588\"\r\nWWW-Authenticate: Basic realm=\"server\"\r\nContent-Length: 211\r\n\r\n<HTML><HEAD><TITLE>401 Unauthorized</TITLE></HEAD>\r\n<BODY><H1>401 Unauthorized</H1>\r\nYour client does not have permission to get URL /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 from this server.\r\n</BODY></HTML>\r\n```\r\n\r\n**request with chrome**\r\n```\r\nGET /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 HTTP/1.1\r\nHost: 192.168.12.88\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\nCookie: pbAudioFalg=ON; RESOLUTION=720P; LifeTime=0; captcha=4PTT5z50/JVrA\r\n\r\nHTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Type: text/html; charset=ISO-8859-1\r\nWWW-Authenticate: Digest realm=\"server\", nonce=\"4f3b1c6b2dccae706af263fdc5001a702ae3512d3cc4e42ebf823c60431f64b6\"\r\nWWW-Authenticate: Basic realm=\"server\"\r\nContent-Length: 211\r\n\r\n<HTML><HEAD><TITLE>401 Unauthorized</TITLE></HEAD>\r\n<BODY><H1>401 Unauthorized</H1>\r\nYour client does not have permission to get URL /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 from this server.\r\n</BODY></HTML>\r\n\r\nGET /cgi-bin/guest/Video.cgi?media=MJPEG&channel=0 HTTP/1.1\r\nHost: 192.168.12.88\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nAuthorization: Digest username=\"admin\", realm=\"server\", nonce=\"4f3b1c6b2dccae706af263fdc5001a702ae3512d3cc4e42ebf823c60431f64b6\", uri=\"/cgi-bin/guest/Video.cgi?media=MJPEG&channel=0\", response=\"7411b325f99b1ef61db78f6a1ba3ff9d\"\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\nCookie: pbAudioFalg=ON; RESOLUTION=720P; LifeTime=0; captcha=4PTT5z50/JVrA\r\n\r\nHTTP/1.1 200 OK\r\nExpires: 0\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-Type: multipart/x-mixed-replace;boundary=\"boundary\"\r\n\r\n--boundary\r\nContent-Type: image/jpeg\r\nContent-Length: 59048\r\n\r\nxxxxx\r\n```\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1234",
+      "pull_request": "https://github.com/encode/httpx/pull/1240",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.DigestAuth._parse_challenge",
+        "func:httpx/_auth.py:httpx._auth.DigestAuth.auth_flow"
+      ],
+      "gold_files": [
+        "httpx/_auth.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1226,
+      "commit": "19b863af408123783d5f9916e71688b32ba558c8",
+      "time": 1599078768,
+      "summary": "Refine headers behaviour for `Request()` and `client.build_request()`",
+      "description": "Currently `Request()` auto-generates a bunch of headers on `__init__`. Having thought about it for a bit I can see some refinements we could make here to:\n\n* Give users a bit more control over the default headers, such as allowing them to remove the `User-Agent` header.\n* Make `Request()` more generally useful, so that it only auto sets mandatory headers.\n\nRather than set the following headings on `Request`, we should instead include them on `client.headers`...\n\n* `User-Agent: python-httpx/1.2.3`\n* `Accept: */*`\n* `Accept-Encoding: gzip, deflate`\n* `Connection: keep-alive`\n\nWhen passing `Client(headers={...})` or setting `client.headers = {}` we should give precedence to explicitly set headers, but should *include* these defaults if they're not otherwise set.\n\n```python\n# Create a client, with a custom Accept header.\n# Other automatic headers are still included.\nclient = httpx.Client(headers={'Accept': 'application/json, */*;q=0.8'}\n```\n\nOr...\n\n```python\nclient = httpx.Client()\n\n# Set a custom Accept header.\n# Other automatic headers are still included.\nclient.headers = {'Accept': 'application/json, */*;q=0.8'}\n```\n\nIf a user wants to *actually* remove one of these, they *can* do so by explicitly deleting it, eg...\n\n```python\n# Create a client, without a User-Agent header.\nclient = httpx.Client()\ndel client.headers['User-Agent']\n```\n\nThe recommended way of creating a request instance will continue to be `client.build_request(...)`, but we'll want to highlight that more clearly, as instantiating a plain `Request()` instance will then give you a more basic set of behaviour by only auto-setting mandatory headers, and leaving everything else up to the user...\n\n* Set a `Host` header, if the request URL is an absolute URL.\n* Requests that mandate a body will always include either a `Content-Length` or `Transfer-Encoding` header.\n\nBoth of those cases will defer to any explicitly included header if one exists, and only auto set if those mandatory headers are omitted.\n\nAlso `.prepare_headers()` should become a private method.\n\nThis all ends up being beneficial, because users still get all the regular convenience of `client.build_request()`, but there's also a plainer style for creating `Request()` instances with complete control over the headers which doesn't make any assumptions about auto-including a set of default headers.\n\n(Somewhat refs #1091)",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1226",
+      "pull_request": "https://github.com/encode/httpx/pull/1248",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_headers",
+        "func:httpx/_client.py:httpx._client.BaseClient.headers"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1176,
+      "commit": "016e4ee210114bb97e631c0abcdbc462d2751ad5",
+      "time": 1599658640,
+      "summary": "Supporting async auth flows.",
+      "description": "Hello,\r\n\r\nI try to make asynchronous calls to the Microsoft Graph API using `httpx.AsyncClient`. For authentication I use the `azure-identity` package that provides several client classes to easily get an access token:\r\n\r\n```python\r\nfrom azure.identity.aio import EnvironmentCredential\r\n\r\nasync with EnvironmentCredential() as credential:\r\n    token = await credential.get_token(*scopes)\r\n```\r\n\r\nI'd like then to subclass `httpx.Auth` and implement the `auth_flow` method\r\n\r\n```python\r\nclass AzureAuth(Auth):\r\n\r\n    async def auth_flow(self, request):\r\n        token = await self._credential.get_token(*self._scopes) # Get the access token or retrieve it from cache\r\n        request.headers[\"Authorization\"] = \"Bearer \" + token.token\r\n        yield request\r\n```\r\n\r\nso that I can do things like\r\n\r\n```python\r\nasync with AsyncClient(base_url=\"https://graph.microsoft.com\", auth=AzureAuth(...)) as client:\r\n    response = await client.get(\"/groups\")\r\n```\r\n\r\nThe problem is that `httpx.Auth.auth_flow` is **synchronous**. How can I make it asynchronous ?\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1176",
+      "pull_request": "https://github.com/encode/httpx/pull/1217",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.Auth.async_auth_flow",
+        "func:httpx/_auth.py:httpx._auth.Auth.sync_auth_flow",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ],
+      "gold_files": [
+        "httpx/_auth.py",
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1018,
+      "commit": "d0fe1139458f5636bcdc1dafd8b5bda5e845731a",
+      "time": 1600165219,
+      "summary": "Replace chardet with plain UTF-8 detection",
+      "description": "I'd suggest replacing `chardet` with dead-simple decoding logic:\r\n\r\n```python\r\nencoding = \"UTF-8\"\r\ntry:\r\n    text = databytes.decode(encoding)\r\nexcept UnicodeDecodeError:\r\n    encoding = \"ISO-8859-1\"\r\n    text = databytes.decode(encoding)\r\n```\r\n\r\nIt is *fairly* safe to assume that any valid UTF-8 sequence is in fact UTF-8, and should be decoded as such.\r\n\r\nOtherwise ISO-8859-1 (as specified in HTTP RFC) should be used instead of trying to detect languages, which is always quite unreliable. Further, ISO-8859-1 maps **all** possible byte values directly to Unicode code points 0-255, so the final decoding step in the above code will never raise UnicodeDecodeError.\r\n\r\nSince the chardet module has been around a long time and is known as the standard go-to solution for charset detection, many modules depend on it, and this is a frequent source of dependency conflicts such as the one reported here: https://github.com/huge-success/sanic/issues/1858\r\n\r\nA more serious problem is that chardet is notoriously unreliable. Especially its tendency to misdetect anything as Turkish is well known:\r\n\r\n```python\r\n>>> chardet.decode(\"Testi\u00e4\".encode(\"UTF-8\"))   # \"Testing\" in Finnish\r\n{'encoding': 'ISO-8859-9',\r\n 'confidence': 0.5521177026603239,\r\n 'language': 'Turkish'}\r\n\r\n>>> \"Testi\u00e4\".encode(\"UTF-8\").decode(\"ISO-8859-9\")  # Yields gibberish, not Turkish\r\n'Testi\u00c3\u00a4'\r\n```\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1018",
+      "pull_request": "https://github.com/encode/httpx/pull/1269",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.flush",
+        "func:httpx/_models.py:httpx._models.Response.aiter_text",
+        "func:httpx/_models.py:httpx._models.Response.charset_encoding",
+        "func:httpx/_models.py:httpx._models.Response.encoding",
+        "func:httpx/_models.py:httpx._models.Response.iter_text",
+        "func:httpx/_models.py:httpx._models.Response.text"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py",
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 790,
+      "commit": "54f7708e2b8bc9bbd5f4ea9f1e4386b8acbf3811",
+      "time": 1600167939,
+      "summary": "Support for Event Hooks",
+      "description": "I'm currently using [https://github.com/encode/requests-async](https://github.com/encode/requests-async) for one of my projects and now I wanted to switch to HTTPX, but I can't find out if it supports event hooks like this [https://requests.readthedocs.io/en/master/user/advanced/#event-hooks](https://requests.readthedocs.io/en/master/user/advanced/#event-hooks).\r\n\r\nOr is there another easy way to add hooks onto an `AsyncClient` object to be called every request?",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/790",
+      "pull_request": "https://github.com/encode/httpx/pull/1246",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient.event_hooks",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1310,
+      "commit": "befa57c6f9f9fd0489a5ed738c1280f23a4c6bb7",
+      "time": 1600856772,
+      "summary": "Wrong elapsed timedelta",
+      "description": "### Checklist\r\n\r\n- [ X] The bug is reproducible against the latest release and/or `master`.\r\n- [ X] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nThe `elapsed` argument obtained following a stream request seems completely incoherent.\r\n\r\n### To reproduce\r\n\r\nCode example with httpx 0.15.1:\r\n\r\n```\r\nimport httpx\r\n\r\nclient = httpx.Client()\r\n\r\nwith client.stream(\"GET\", \"https://httpbin.org/basic-auth/user/pass\", auth=(\"user\", \"pass\")) as r:\r\n   print(r)\r\n\r\nprint(r.elapsed)\r\n```\r\n\r\n### Expected behavior\r\n\r\nResult got with httpx 0.14.3: `0:00:02.275297`\r\n\r\n### Actual behavior\r\n\r\nResult got with httpx 0.15.1: `1 day, 17:07:15.687523`\r\n\r\n### Debugging material\r\n\r\n![image](https://user-images.githubusercontent.com/12841394/93995268-15707c00-fd91-11ea-913e-a6741a251d1d.png)\r\n\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.7.5\r\n- HTTPX version: 0.15.1\r\n- Async environment: None\r\n- HTTP proxy: No\r\n- Custom certificates: No\r\n\r\nThanks,\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1310",
+      "pull_request": "https://github.com/encode/httpx/pull/1313",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request",
+        "func:httpx/_client.py:httpx._client.Client._send_single_request"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1315,
+      "commit": "78afd08e0fc198d05f95728011d1bc7c0c213b30",
+      "time": 1600933346,
+      "summary": "Async client does not close underlying stream thus leaving connection active which leads to hitting pool limit",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\n``AsyncClient`` doesn't close ``httpcore``'s stream after performing request, the bug shows itself in locking on connection pool's semaphore.\r\n\r\n### To reproduce\r\n\r\n```\r\n$ python3.8 -m asyncio\r\n>>> import asyncio\r\n>>> import httpx\r\n>>> c = httpx.AsyncClient()\r\n>>> await c.get('http://httpbin.org/')\r\n<Response [200 OK]>\r\n>>> c._transport._connections\r\n{(b'http', b'httpbin.org', 80): {<AsyncHTTPConnection http_version=HTTP/1.1 state=2>}}\r\n>>> await c.get('http://httpbin.org/')\r\n<Response [200 OK]>\r\n>>> c._transport._connections\r\n{(b'http', b'httpbin.org', 80): {<AsyncHTTPConnection http_version=HTTP/1.1 state=2>, <AsyncHTTPConnection http_version=HTTP/1.1 state=2>}}\r\n```\r\n\r\n### Expected behavior\r\n\r\nThere should be one connection in pool in ``IDLE`` state.\r\n\r\n### Actual behavior\r\n\r\nThere are 2 connection in ``ACTIVE`` state in pool after performing and finishing request.\r\n\r\n### Debugging material\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.8.5\r\n- HTTPX version: 0.15.0\r\n- Async environment: asyncio/trio\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n\r\n### Additional context\r\n\r\nBug is most obvious in long-running process making regular request to one endpoint.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1315",
+      "pull_request": "https://github.com/encode/httpx/pull/1316",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1323,
+      "commit": "666cbbdfe8259e7b6363a2eec5df8ab60e7b6003",
+      "time": 1601029757,
+      "summary": "ResponseNotRead raises since v.0.15.0",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n\r\n### Describe the bug\r\nResponse behaviour has been changed since 0.15.0, so that calling json() on response instance raises ResponseNotRead exception.\r\n\r\n### To reproduce\r\nimport httpx\r\nr = httpx.Response(200, content='content')\r\nresult = r.json()\r\n\r\n### Expected behavior\r\nresult = 'content'\r\n\r\n### Actual behavior\r\nhttpx.ResponseNotRead: Attempted to access response content, without having called `read()` after a streaming response.\r\n\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version:  3.8.2\r\n- HTTPX version: 0.15.3\r\n- Async environment: asyncio\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1323",
+      "pull_request": "https://github.com/encode/httpx/pull/1324",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.__init__"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1325,
+      "commit": "815ef94ed93a6fd1099074511724ff7b891752b3",
+      "time": 1601033314,
+      "summary": "Support header comparisons with dict / list.",
+      "description": "We should support direct header comparisons with dicts, or with lists of two-tuples.\r\nThis would be nice because it would help folks clean up test cases, eg...\r\n\r\n```python\r\nresponse = httpx.get(...)\r\nassert response.status_code == 200\r\nassert response.text == \"Hello, world!\"\r\nassert response.headers == {\"Content-Length\": \"13\"}\r\n```\r\n\r\nThe fix will be something like changing `Headers.__eq__` from this...\r\n\r\n```python\r\ndef __eq__(self, other: typing.Any) -> bool:\r\n    if not isinstance(other, Headers):\r\n        return False\r\n    return sorted(self._list) == sorted(other._list)\r\n```\r\n\r\nTo this...\r\n\r\n```python\r\ndef __eq__(self, other: typing.Any) -> bool:\r\n    try:\r\n        other_headers = Headers(other)\r\n    except ValueError:\r\n        return False\r\n    return sorted(self._list) == sorted(other_headers._list)\r\n```\r\n\r\nA pull request resolving this should:\r\n\r\n* Make the fix in `Headers.__eq__`.\r\n* Update all our tests to use the simpler comparison style wherever possible.\r\n\r\nThis would be a nice contributor friendly issue, so if anyone's keen then feel free to jump in.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1325",
+      "pull_request": "https://github.com/encode/httpx/pull/1326",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.__eq__"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1395,
+      "commit": "d0835da230892bfa7ef42a5aed9dba8122a4359e",
+      "time": 1606318357,
+      "summary": "Customize Keep-Alive timeout",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your feature request. -->\r\n\r\n- [x] There are no similar issues or pull requests for this yet.\r\n- [ ] I discussed this idea on the [community chat](https://gitter.im/encode/community) and feedback is positive.\r\n\r\n### Is your feature related to a problem? Please describe.\r\n\r\nThe change https://github.com/encode/httpx/pull/627 added a 5 second timeout for Keep-Alive connections. Once that timeout is reached and no new requests are made in that timeframe then the connection in the pool is dropped.\r\n\r\nI'm working with an endpoint that has a longer timeout before the server sends the RST/ACK on an idle connection (~2 minutes). While there should usually be a steady stream of requests being made there can be a time where nothing was sent in that 5 second window. Once the connection is dropped from the pool then the client needs to create a new connection and do any authentication that is required. This authentication process could be quite expensive as depending on the auth protocol used, multiple round trips may be required.\r\n\r\n## Describe the solution you would like.\r\n\r\nPotentially a way to define the timoeut in `httpx.Timeout(keep_alive=x)` or maybe under `httpx.Limits(keep_alive=x)`.\r\n\r\n## Describe alternatives you considered\r\n\r\nI'm no expert on the HTTP spec but I would have assumed we could just rely on the server to send the RST, ACK as a way to determine if the socket has been closed and to only remove it from the pool then.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1395",
+      "pull_request": "https://github.com/encode/httpx/pull/1398",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_transport",
+        "func:httpx/_config.py:httpx._config.Limits.__eq__",
+        "func:httpx/_config.py:httpx._config.Limits.__init__",
+        "func:httpx/_config.py:httpx._config.Limits.__repr__"
+      ],
+      "gold_files": [
+        "httpx/_client.py",
+        "httpx/_config.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1377,
+      "commit": "28cbe77676e17045c762167bd7a5aa4d2f916dc4",
+      "time": 1607029602,
+      "summary": "Nicer repr for `httpx.Cookie`, displaying stored cookies.",
+      "description": "When i'm trying to save cookies with these code:\r\nwith open('Cookies/cookies.txt', 'w') as f:\r\n        json.dump(dict(client.cookies), f)\r\n\r\ni got error:\r\nraise CookieConflict(message)\r\nhttpx.CookieConflict: Multiple cookies exist with name=client_type\r\n\r\ni'm also curios, how to print all session cookies like in requests module (using print(session.cookies)\r\nwhen im using print(client.cookies) with httpx module, the result was <httpx.Cookies object at 0x03B50E20>\r\n\r\ncan you help me?\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1377",
+      "pull_request": "https://github.com/encode/httpx/pull/1411",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Cookies.__repr__"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1303,
+      "commit": "9c7c2ace99ce6732377e18d35bcdca1a8f1d37e4",
+      "time": 1609931066,
+      "summary": "Add `httpx.MockTransport()`",
+      "description": "Based on https://github.com/encode/httpx/blob/8ceb34f48672f89de2458df371e2624659e2c24f/tests/utils.py#L27-L75\r\n\r\nUsage:\r\n\r\n```python\r\ndef handler(request: httpx.Request) -> httpx.Response:\r\n    return httpx.Response(200, json={\"hello\": \"world\"})\r\n\r\n\r\nclient = httpx.Client(transport=httpx.MockTransport(handler))\r\n```\r\n\r\nSince #1297 and #1293 we're almost at the point where we can have a really nice simple `httpx.MockTransport(handler=...)` implementation, which I think would be worthwhile, given how useful we find it in our own tests, and how it'd help round out the usefulness of the Transport API to our users (and provide a point of demonstration around being able to use `Request`/`Response` models in that context.)\r\n\r\n~~The one outstanding bit of work that we still need really is the `.request`+`.arequest` refactoring mentioned in https://github.com/encode/httpx/issues/1274~~\r\n\r\nAlso worth mentioning that the following all fit together as as a nice related set of enhancements...\r\n\r\n* Mount API - #977\r\n* `httpx.HTTPTransport()` - #1302\r\n* `httpx.MockTransport()` - This PR.\r\n\r\nSo it's *possible* that we ought to aim to release them together, just to bring some extra coherence to eg. \"Here's the mount API we've just added, and here's the sort of stuff you can do with it\"",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1303",
+      "pull_request": "https://github.com/encode/httpx/pull/1401",
+      "gold_functions": [
+        "func:httpx/_transports/mock.py:httpx._transports.mock.MockTransport.__init__"
+      ],
+      "gold_files": [
+        "httpx/_transports/mock.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1430,
+      "commit": "bd4caa873c8b342231b4c71346363b8895a7a7b2",
+      "time": 1613561230,
+      "summary": "`trust_env` has diverging defaults between `Client`  and `create_ssl_context`",
+      "description": "Right now there's a slight discrepancy for the default value of `trust_env` for `httpx.Client()` / `httpx.AsyncClient()` and `httpx.create_ssl_context()`.\r\n\r\n* Clients use `trust_env=True` as a default.\r\n* `create_ssl_context` uses `trust_env=None` as a default.\r\n\r\nIn practice, it means that `Client()` has SSLKEYLOGFILE support enabled by default, while `Client(verify=create_ssl_context())` has it disabled \u2014 which is non-intuitive.\r\n\r\nNote that `create_ssl_context()` was introduced via #996, but the defaults pre-date that PR since it was already defined on the internal `SSLConfig` class. Instead, the introduction of `trust_env=None` there actually dates back from #301 (`SSLKEYLOGFILE` support). There was actually a conversation there about this, but it remained unresolved: https://github.com/encode/httpx/pull/301#discussion_r319746133\r\n\r\n> What would we say about setting the default to True though [\u2026]?\r\n\r\nAll references to `trust_env` use `True` as the default. This inconsistency also makes #1302 a bit less intuitive, because:\r\n\r\n```python\r\nimport httpx\r\n\r\ntransport = httpx.HTTPTransport()\r\n\r\n# This is NOT equivalent:\r\ntransport = httpx.HTTPTransport(ssl_context=httpx.create_ssl_context())\r\n# Users might do this^, and expect eg SSLKEYLOGFILE to be enabled, but it won't...\r\n\r\n# They'd need to pass an explicit `trust_env=True`...\r\ntransport = httpx.HTTPTransport(ssl_context=httpx.create_ssl_context(trust_env=True))\r\n```\r\n\r\nTo be clear, this only affects `SSLKEYLOGFILE` support. NETRC support and env-based proxies are not affected since those are managed at the client-level, which already sets `trust_env=True`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1430",
+      "pull_request": "https://github.com/encode/httpx/pull/1447",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.create_ssl_context"
+      ],
+      "gold_files": [
+        "httpx/_config.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1463,
+      "commit": "0f280af8b170ed5cc48c12a894f71a8b5762f748",
+      "time": 1613561563,
+      "summary": "`response.aclose()` raises httpcore errors, not HTTPError",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nIf a server resets the connection, then `response.aiter_bytes()` correctly raises an `httpx.HTTPError`.\r\n\r\n-BUT- the error handling doesn't end there. If `response.aiter_raw()` doesn't succeed, it doesn't call `response.aclose()`. (I imagine it's the caller's responsibility?) So the caller will call `response.aclose()` ... and that will raise an `httpcore` exception. It can be caught ... but that's a big hassle and it's a hole in the abstraction layer.\r\n\r\n```\r\nresponse = await httpx_client.send(request, stream=True, timeout=timeout)  # raise HTTPErrors\r\ntry:\r\n    async for blob in response.aiter_raw():\r\n        pass\r\nfinally:\r\n    await response.aclose()  # raise httpcore errors\r\n```\r\n\r\n```\r\nasync with httpx_client.stream(\"GET\", url) as response:\r\n    async for blob in response.aiter_raw():\r\n        pass\r\n        # but if aiter_raw() raises an exception, the aclose() will raise an httpcore error\r\n```\r\n\r\n### To reproduce\r\n\r\nI'm having trouble with the server init, but this works enough of the time....:\r\n\r\n```\r\nimport _socket\r\nimport asyncio\r\nimport io\r\nimport struct\r\n\r\nimport httpx\r\nimport pytest\r\n\r\n\r\n@pytest.mark.asyncio\r\nasync def test_download_stream_connection_reset():\r\n    async def respond_then_die(reader, writer):\r\n        # Read request -- as we should\r\n        await reader.readuntil(b\"\\r\\n\\r\\n\")\r\n        # Send HTTP header and start sending data -- so the client is streaming\r\n        writer.write(\r\n            b\"HTTP/1.1 200 OK\\r\\nContent-Length:1000\\r\\nContent-Type:text/plain\\r\\n\\r\\nstart\"\r\n        )\r\n        await writer.drain()\r\n        # Now force a TCP RST packet, which will cause response.aclose() to fail\r\n        # http://deepix.github.io/2016/10/21/tcprst.html\r\n        fd = writer._transport._sock.fileno()\r\n        linger = struct.pack(\"=II\", 1, 0)\r\n        _socket.socket(fileno=fd).setsockopt(\r\n            _socket.SOL_SOCKET, _socket.SO_LINGER, bytearray(linger)\r\n        )\r\n        writer.close()\r\n\r\n    server = await asyncio.start_server(respond_then_die, \"127.0.0.1\")\r\n    async with server:\r\n        host, port = server.sockets[0].getsockname()\r\n        async with httpx.AsyncClient() as client:\r\n            async with client.stream(\"GET\", f\"http://{host}:{port}\") as response:\r\n                async for blob in response.aiter_raw():\r\n                    pass\r\n```\r\n\r\n### Expected behavior\r\n\r\n`httpx.ReadError: [Errno 104] Connection reset by peer`\r\n\r\n### Actual behavior\r\n\r\n`httpcore.CloseError: [Errno 104] Connection reset by peer`\r\n\r\n### Debugging material\r\n\r\n```\r\n.tox/py38/lib/python3.8/site-packages/httpx/_client.py:1846: in __aexit__\r\n    await self.response.aclose()\r\n.tox/py38/lib/python3.8/site-packages/httpx/_models.py:1299: in aclose\r\n    await self._on_close(self)\r\n.tox/py38/lib/python3.8/site-packages/httpx/_client.py:1513: in on_close\r\n    await stream.aclose()\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_async/connection_pool.py:69: in aclose\r\n    await self.stream.aclose()\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_bytestreams.py:78: in aclose\r\n    await self._aclose_func()\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_async/http11.py:192: in _response_closed\r\n    await self.aclose()\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_async/http11.py:202: in aclose\r\n    await self.socket.aclose()\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_backends/asyncio.py:198: in aclose\r\n    await self.stream_writer.wait_closed()  # type: ignore\r\n/usr/lib64/python3.8/contextlib.py:131: in __exit__\r\n    self.gen.throw(type, value, traceback)\r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\r\n\r\nmap = {<class 'OSError'>: <class 'httpcore.CloseError'>}\r\n\r\n    @contextlib.contextmanager\r\n    def map_exceptions(map: Dict[Type[Exception], Type[Exception]]) -> Iterator[None]:\r\n        try:\r\n            yield\r\n        except Exception as exc:  # noqa: PIE786\r\n            for from_exc, to_exc in map.items():\r\n                if isinstance(exc, from_exc):\r\n>                   raise to_exc(exc) from None\r\nE                   httpcore.CloseError: [Errno 104] Connection reset by peer\r\n\r\n.tox/py38/lib/python3.8/site-packages/httpcore/_exceptions.py:12: CloseError\r\n------------------------------------------------- Captured log call --------------------------------------------------\r\nERROR    asyncio:base_events.py:1707 Exception in callback _SelectorSocketTransport._call_connection_lost(None)\r\nhandle: <Handle _SelectorSocketTransport._call_connection_lost(None)>\r\nTraceback (most recent call last):\r\n  File \"/usr/lib64/python3.8/asyncio/events.py\", line 81, in _run\r\n    self._context.run(self._callback, *self._args)\r\n  File \"/usr/lib64/python3.8/asyncio/selector_events.py\", line 970, in _call_connection_lost\r\n    super()._call_connection_lost(exc)\r\n  File \"/usr/lib64/python3.8/asyncio/selector_events.py\", line 730, in _call_connection_lost\r\n    self._sock.close()\r\n  File \"/usr/lib64/python3.8/socket.py\", line 500, in close\r\n    self._real_close()\r\n  File \"/usr/lib64/python3.8/socket.py\", line 494, in _real_close\r\n    _ss.close(self)\r\nOSError: [Errno 9] Bad file descriptor\r\n```\r\n\r\n(That `map_exceptions()` is the one within `httpcore`, not the one that I would expect to adorn aclose() in `httpx`.)\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: Python 3.8.7\r\n- HTTPX version: 0.16.1\r\n- Async environment: asyncio\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n\r\n### Additional context\r\n\r\nI'm trying to perform HTTP fetches for non-tech-savvy users. I need to handle every exception to present a friendly message.\r\n\r\nYou might want to split this into _two_ errors, actually?:\r\n\r\n1. `response.aclose()` exceptions aren't wrapped\r\n2. `StreamContextManager.__aclose__()` raises whatever exception `response.aclose()` raised (should it instead raise the _original_ exception -- the one from `aiter_raw()`?)",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1463",
+      "pull_request": "https://github.com/encode/httpx/pull/1465",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1498,
+      "commit": "6cb1672459b0c1386cb36b89a92b87419fdc478c",
+      "time": 1616583093,
+      "summary": "Bug with merging base_url with relative path if colon present in path",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [X] The bug is reproducible against the latest release and/or `master`.\r\n- [X] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nAfter upgrading to `httpx 0.17.0` from `httpx 0.16.1`, the `base_url` merge with relative paths containing a colon was broken.\r\n\r\n### To reproduce\r\n\r\n```py\r\nimport httpx\r\n\r\nclient = httpx.Client(base_url=\"https://example.org/some/path\")\r\nclient.build_request(\"POST\", \"/sub:path\")  # colon in path\r\n\r\n# <Request('POST', 'sub:path')> instead of <Request('POST', 'https://example.org/some/path/sub%3Apath')>\r\n```\r\n\r\nalso, calling the `get` method leads to the following exception:\r\n\r\n```py\r\nIn [6]: client.get(\"/sub:path\")\r\n---------------------------------------------------------------------------\r\nUnsupportedProtocol                       Traceback (most recent call last)\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_exceptions.py in map_exceptions(mapping, **kwargs)\r\n    325     try:\r\n--> 326         yield\r\n    327     except Exception as exc:\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in _send_single_request(self, request, timeout)\r\n    855         with map_exceptions(HTTPCORE_EXC_MAP, request=request):\r\n--> 856             (status_code, headers, stream, ext) = transport.request(\r\n    857                 request.method.encode(),\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_transports/default.py in request(self, method, url, headers, stream, ext)\r\n    101     ) -> typing.Tuple[int, Headers, httpcore.SyncByteStream, dict]:\r\n--> 102         return self._pool.request(method, url, headers=headers, stream=stream, ext=ext)\r\n    103\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpcore/_sync/connection_pool.py in request(self, method, url, headers, stream, ext)\r\n    190             scheme = url[0].decode(\"latin-1\")\r\n--> 191             raise UnsupportedProtocol(f\"Unsupported URL protocol {scheme!r}\")\r\n    192         if not url[1]:\r\n\r\nUnsupportedProtocol: Unsupported URL protocol 'sub'\r\n\r\nThe above exception was the direct cause of the following exception:\r\n\r\nUnsupportedProtocol                       Traceback (most recent call last)\r\n<ipython-input-6-0ea8464e1217> in <module>\r\n----> 1 client.get(\"/sub:path\")\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in get(self, url, params, headers, cookies, auth, allow_redirects, timeout)\r\n    900         **Parameters**: See `httpx.request`.\r\n    901         \"\"\"\r\n--> 902         return self.request(\r\n    903             \"GET\",\r\n    904             url,\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in request(self, method, url, content, data, files, json, params, headers, cookies, auth, allow_redirects, timeout)\r\n    726             cookies=cookies,\r\n    727         )\r\n--> 728         return self.send(\r\n    729             request, auth=auth, allow_redirects=allow_redirects, timeout=timeout\r\n    730         )\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in send(self, request, stream, auth, allow_redirects, timeout)\r\n    760         auth = self._build_request_auth(request, auth)\r\n    761\r\n--> 762         response = self._send_handling_auth(\r\n    763             request,\r\n    764             auth=auth,\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in _send_handling_auth(self, request, auth, timeout, allow_redirects, history)\r\n    798\r\n    799         while True:\r\n--> 800             response = self._send_handling_redirects(\r\n    801                 request,\r\n    802                 timeout=timeout,\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in _send_handling_redirects(self, request, timeout, allow_redirects, history)\r\n    830                 )\r\n    831\r\n--> 832             response = self._send_single_request(request, timeout)\r\n    833             response.history = list(history)\r\n    834\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_client.py in _send_single_request(self, request, timeout)\r\n    854\r\n    855         with map_exceptions(HTTPCORE_EXC_MAP, request=request):\r\n--> 856             (status_code, headers, stream, ext) = transport.request(\r\n    857                 request.method.encode(),\r\n    858                 request.url.raw,\r\n\r\n/usr/lib/python3.9/contextlib.py in __exit__(self, type, value, traceback)\r\n    133                 value = type()\r\n    134             try:\r\n--> 135                 self.gen.throw(type, value, traceback)\r\n    136             except StopIteration as exc:\r\n    137                 # Suppress StopIteration *unless* it's the same exception that\r\n\r\n~/.local/share/virtualenvs/bug-IVcS609A/lib/python3.9/site-packages/httpx/_exceptions.py in map_exceptions(mapping, **kwargs)\r\n    341\r\n    342         message = str(exc)\r\n--> 343         raise mapped_exc(message, **kwargs) from exc  # type: ignore\r\n    344\r\n    345\r\n\r\nUnsupportedProtocol: Unsupported URL protocol 'sub'\r\n```\r\n\r\n### Expected behavior\r\n\r\n`client.build_request(\"POST\", \"/sub:path\")` returns `<Request('POST', 'https://example.org/some/path/sub%3Apath')>` \r\n\r\n`client.get(\"/sub:path\")` not raises UnsupportedProtocol exception\r\n\r\n### Actual behavior\r\n\r\n`client.build_request(\"POST\", \"/sub:path\")` returns `<Request('POST', 'sub:path')>` \r\n\r\n`client.get(\"/sub:path\")` raises UnsupportedProtocol exception\r\n\r\n\r\n### Environment\r\n\r\n- OS: Linux\r\n- Python version: 3.9\r\n- HTTPX version: 0.17.0\r\n- Async environment: asyncio\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1498",
+      "pull_request": "https://github.com/encode/httpx/pull/1532",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1482,
+      "commit": "c75ddc26c7e32e7c5fe99263899a187ff537aecc",
+      "time": 1616686502,
+      "summary": "Too much data for declared Content-Length when passing string with non-ascii characters via files parameter",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x ] The bug is reproducible against the latest release and/or `master`.\r\n- [ x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\n`h11._util.LocalProtocolError: Too much data for declared Content-Length` is raised when passing string with non-ascii characters via files parameter.\r\n\r\n### To reproduce\r\n\r\n```\r\nimport httpx\r\n\r\nresponse = httpx.post(\r\n    \"https://httpbin.org/post\",\r\n    files={\r\n        'upload-file': ('example.txt', '\\u00E9', 'text/plain; charset=utf-8')\r\n    }\r\n)\r\nresponse.raise_for_status()\r\nprint(response.read())\r\n```\r\n-->\r\n\r\n### Expected behavior\r\n\r\nAn exception not be raised and the content length properly computed\r\n\r\n### Actual behavior\r\n\r\nAn exception is raised.\r\n\r\n### Debugging material\r\n\r\n```\r\nTraceback (most recent call last):\r\n  File \"/***redacted***/httpx_bug.py\", line 5, in <module>\r\n    response = httpx.post(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_api.py\", line 296, in post\r\n    return request(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_api.py\", line 93, in request\r\n    return client.request(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 733, in request\r\n    return self.send(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 767, in send\r\n    response = self._send_handling_auth(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 805, in _send_handling_auth\r\n    response = self._send_handling_redirects(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 837, in _send_handling_redirects\r\n    response = self._send_single_request(request, timeout)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 861, in _send_single_request\r\n    (status_code, headers, stream, ext) = transport.request(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpcore/_sync/connection_pool.py\", line 218, in request\r\n    response = connection.request(\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpcore/_sync/connection.py\", line 106, in request\r\n    return self.connection.request(method, url, headers, stream, ext)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 66, in request\r\n    self._send_request_body(stream, timeout)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 112, in _send_request_body\r\n    self._send_event(event, timeout)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 123, in _send_event\r\n    bytes_to_send = self.h11_state.send(event)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/h11/_connection.py\", line 468, in send\r\n    data_list = self.send_with_data_passthrough(event)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/h11/_connection.py\", line 501, in send_with_data_passthrough\r\n    writer(event, data_list.append)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/h11/_writers.py\", line 58, in __call__\r\n    self.send_data(event.data, write)\r\n  File \"/***redacted***/.venv/lib/python3.9/site-packages/h11/_writers.py\", line 78, in send_data\r\n    raise LocalProtocolError(\"Too much data for declared Content-Length\")\r\nh11._util.LocalProtocolError: Too much data for declared Content-Length\r\n```\r\n-->\r\n\r\n### Environment\r\n\r\n- OS: macOS\r\n- Python version: `Python 3.9.1`\r\n- HTTPX version: `0.16.1`\r\n- Async environment: n/a\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n\r\n### Additional context\r\nn/a\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1482",
+      "pull_request": "https://github.com/encode/httpx/pull/1537",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.DataField.render_data",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length"
+      ],
+      "gold_files": [
+        "httpx/_multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1500,
+      "commit": "c26425aa58574f31491f46b7c757f9f374fabf46",
+      "time": 1616763244,
+      "summary": "Form-encoded data with `None` as the value gets passed as string \"None\"",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your bug report. -->\r\n\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n\r\n### Describe the bug\r\n\r\n<!-- A clear and concise description of what the bug is. -->\r\n\r\nWhen posting form data using `requests` and the form value is `None`, nothing is passed. With `httpx`, the `None` is converted to the string `\"None\"`.\r\n\r\n### To reproduce\r\n\r\n```python\r\nimport requests\r\nimport httpx\r\n\r\nurl = 'https://httpbin.org/post'\r\ndata = dict(foo=None)\r\n\r\nresp_requests = requests.post(url, data=data)\r\npprint(resp_requests.json())\r\n# In the response:  'form': {},\r\n\r\nresp_httpx = httpx.post(url, data=data)\r\npprint(resp_httpx.json())\r\n# In the response:  'form': {'foo': 'None'},\r\n```\r\n\r\n\r\n\r\n<!-- Provide a *minimal* example with steps to reproduce the bug locally.\r\n\r\nNOTE: try to keep any external dependencies *at an absolute minimum* (servers, proxies, certificates...).\r\nIn other words, remove anything that doesn't make the bug go away.\r\n\r\nIf you need a local server to replicate against, you can build one using eg. Starlette [0] and Uvicorn [1], or any tool you feel comfortable with. Check out other issues for examples and remember to share setup instructions here. :-)\r\n\r\n[0]: https://www.starlette.io\r\n[1]: https://www.uvicorn.org\r\n-->\r\n\r\n### Expected behavior\r\n\r\n1. Expected behavior to match `requests`, since \"broadly\" the behavior is expected to match\r\n2. Did not expect that `\"None\"` would be passed, rather e.g. an empty string might make sense?\r\n\r\n<!-- A clear and concise description of what you expected to happen. -->\r\n\r\n### Actual behavior\r\n\r\nThe passed form-encoded data contains the string \"None\"\r\n\r\n### Debugging material\r\n\r\nNone, but see code example\r\n\r\n### Environment\r\n\r\nUbuntu 20.04 docker image\r\n\r\n### Additional context\r\n\r\nWriting a PoC to replace `requests` with `httpx` right here.\r\nhttps://github.com/SAP/cloud-pysec/blob/6e3f92fefb2e0dc4f3c99aa7ed5dc2d70e6734ba/sap/xssec/security_context.py#L511\r\nThe method `request_token_for_client` passes `None` as a default for \"all scopes\".",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1500",
+      "pull_request": "https://github.com/encode/httpx/pull/1539",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_urlencoded_data",
+        "func:httpx/_multipart.py:httpx._multipart.DataField.__init__",
+        "func:httpx/_utils.py:httpx._utils.primitive_value_to_str"
+      ],
+      "gold_files": [
+        "httpx/_content.py",
+        "httpx/_multipart.py",
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1404,
+      "commit": "6a99f6f2b3a638719f70200de9983f80d618ee1c",
+      "time": 1618827512,
+      "summary": "Cookies are not sent after redirect (even on same origin)",
+      "description": "### Checklist\r\n\r\n- [x] The bug is reproducible against the latest release and/or `master`.\r\n- [x] There are no similar issues or pull requests to fix it yet.\r\n\r\n### Describe the bug\r\n\r\nWhen a GET request with cookies specified is issued, and the server returns a redirect, the subsequent request is not supplied with the cookies.\r\n\r\n### To reproduce\r\n\r\nTo observe the behavior, it's possible to use https://webhook.site/ to dump the request and https://bit.ly to provide a redirect. As the https://webhook.site/ URL is per session, you'll have to create both URLs yourself, but it only takes a minute. **This is also reproducible on same-origin redirects, not only different-origin as demonstrated here.** You can use a local server to check.\r\n\r\n```python\r\nDIRECT_URL=\"\" # your webhook.site URL\r\nREDIR_URL=\"\" # your bit.ly URL\r\n\r\nimport httpx\r\nimport asyncio\r\n\r\nasync def main():\r\n    async with httpx.AsyncClient() as client:\r\n        await client.get(DIRECT_URL, cookies={ 'cookie': 'direct' })\r\n        await client.get(REDIR_URL, cookies={ 'cookie': 'redir' })\r\n\r\nasyncio.get_event_loop().run_until_complete(main())\r\n```\r\n\r\n### Expected behavior\r\n\r\nOne request should arrive with `cookie=direct` and the other with `cookie=redir`.\r\n\r\nThe correct behavior can be observed by using `requests`:\r\n\r\n```python\r\nDIRECT_URL=\"\" # your webhook.site URL\r\nREDIR_URL=\"\" # your bit.ly URL\r\n\r\nimport requests\r\n\r\nrequests.get(DIRECT_URL, cookies={ 'cookie': 'direct' })\r\nrequests.get(REDIR_URL, cookies={ 'cookie': 'redir' })\r\n```\r\n\r\n### Actual behavior\r\n\r\nOne request arrives with `cookie=direct` and the other with no such cookie.\r\n\r\n### Environment\r\n\r\n- OS: Windows 10 (2004 update)\r\n- Python version: 3.9.0\r\n- HTTPX version: 0.16.1 (reproducible on both the lastest release and `master` branch)\r\n- Async environment: reproducible on both `asyncio` / `trio`\r\n- HTTP proxy: no\r\n- Custom certificates: no\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1404",
+      "pull_request": "https://github.com/encode/httpx/pull/1574",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.request",
+        "func:httpx/_api.py:httpx._api.stream",
+        "func:httpx/_client.py:httpx._client.Client.request"
+      ],
+      "gold_files": [
+        "httpx/_api.py",
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1490,
+      "commit": "2129a9789ad6a9ffb8655644fbe43a5b3e908db9",
+      "time": 1619775642,
+      "summary": "detect length of file-like object?",
+      "description": "### Checklist\r\n\r\n<!-- Please make sure you check all these items before submitting your feature request. -->\r\n\r\n- [x] There are no similar issues or pull requests for this yet.\r\n- [x] I discussed this idea on the [community chat](https://gitter.im/encode/community) and feedback is positive.\r\n\r\n### Is your feature related to a problem? Please describe.\r\n\r\nI'm using `httpx` to upload files to a WebDAV server, which uses `PUT`. The problem here is that not a lot of server has chunked uploading support for PUT. \r\n\r\nWhen uploading a file-like object, `request` tries to detect file size to send it in `Content-Length` header using [`super_len()`](https://github.com/psf/requests/blob/8c211a96cdbe9fe320d63d9e1ae15c5c07e179f8/requests/utils.py#L108). But `httpx` uses `Transfer-Encoding: chunked`. So, the files end up empty or the server throws a `411 Length Required` response.\r\n\r\nThe difference in behaviour with respect to `requests` can be demonstrated as follows:\r\n\r\n```python\r\n>>> import requests, httpx\r\n>>> from io import BytesIO\r\n\r\n>>> requests.put(\"https://httpbin.org/anything\", data=BytesIO(b\"foobar\")).request.headers\r\n {'User-Agent': 'python-requests/2.25.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '6'}\r\n\r\n>>> httpx.put(\"https://httpbin.org/anything\", data=BytesIO(b\"foobar\")).request.headers\r\nHeaders({'host': 'httpbin.org', 'accept': '*/*', 'accept-encoding': 'gzip, deflate', 'connection': 'keep-alive', 'user-agent': 'python-httpx/0.16.1', 'transfer-encoding': 'chunked'})\r\n```\r\n\r\n## Describe the solution you would like.\r\nIt'd be great to have the same behaviour as `requests` here, i.e. trying to detect the size and then falling back to chunked encoding. \r\n\r\n## Describe alternatives you considered\r\n\r\nAs a workaround, I can use [`peek_filelike_length`](https://github.com/encode/httpx/blob/0f280af8b170ed5cc48c12a894f71a8b5762f748/httpx/_utils.py#L347) and a custom header `Content-Length` which is respected, that works well for me.\r\n\r\n## Additional context\r\n\r\nWe had a long discussion in https://github.com/iterative/dvc/issues/4796 regarding it. `nextcloud-snap` that I use locally for testing, does not have support this either due to a bug in Apache (or, some modules in it): https://github.com/nextcloud/nextcloud-snap/issues/365. \r\n\r\nAnd, Sabredav (`owncloud`/`nextcloud` uses them internally) [wiki](https://sabre.io/dav/clients/finder/) has a good insight on this (though the article is >6 years old):\r\n\r\n> Finder uses Transfer-Encoding: Chunked in PUT request bodies. This is a little used HTTP feature, and therefore not implemented in a bunch of web servers. The only server I've seen so far that handles this reasonably well is Apache + mod_php. Nginx and Lighttpd respond with 411 Length Required, which is completely ignored by Finder. This was seen on nginx 0.7.63. It was recently reported that a development release (1.3.8) no longer had this issue.\r\n>\r\n>When using this with Apache + FastCGI PHP completely drops the request body, so it will seem as if the PUT request was successful, but the file will end up empty.\r\n\r\nNote that the recent servers do support chunked encoding, but we still find a lot of old servers or are using certain modules that are buggy wrt chunked encoding.\r\n\r\n---\r\n\r\nI understand that it's the server that is not http/1.1 compliant. And, if `httpx` does not want to support, I'm okay with the workaround as well.  But I'd happy to make a PR if we decide to do so. Thanks. \ud83d\ude42 \r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1490",
+      "pull_request": "https://github.com/encode/httpx/pull/1619",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_content",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length",
+        "func:httpx/_utils.py:httpx._utils.peek_filelike_length"
+      ],
+      "gold_files": [
+        "httpx/_content.py",
+        "httpx/_multipart.py",
+        "httpx/_utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1670,
+      "commit": "b43af721cd7804214396b5511e4f68d144a9b6a6",
+      "time": 1623854052,
+      "summary": "uses deprecated ssl.PROTOCOL_TLS",
+      "description": "```\r\n_______________________________________________________________________ test_default_default_headers _______________________________________________________________________\r\n\r\n    @pytest.mark.asyncio\r\n    async def test_default_default_headers():\r\n        config = Config(app=app, loop=\"asyncio\", limit_max_requests=1)\r\n        async with run_server(config):\r\n>           async with httpx.AsyncClient() as client:\r\n\r\ntests/test_default_headers.py:18: \r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \r\nvenv/lib/python3.10/site-packages/httpx/_client.py:1242: in __init__\r\n    self._transport = self._init_transport(\r\nvenv/lib/python3.10/site-packages/httpx/_client.py:1285: in _init_transport\r\n    ssl_context = create_ssl_context(verify=verify, cert=cert, trust_env=trust_env)\r\nvenv/lib/python3.10/site-packages/httpx/_config.py:49: in create_ssl_context\r\n    return SSLConfig(\r\nvenv/lib/python3.10/site-packages/httpx/_config.py:73: in __init__\r\n    self.ssl_context = self.load_ssl_context()\r\nvenv/lib/python3.10/site-packages/httpx/_config.py:85: in load_ssl_context\r\n    return self.load_ssl_context_verify()\r\nvenv/lib/python3.10/site-packages/httpx/_config.py:122: in load_ssl_context_verify\r\n    context = self._create_default_ssl_context()\r\nvenv/lib/python3.10/site-packages/httpx/_config.py:156: in _create_default_ssl_context\r\n    context = SSL.SSLContext(ssl.PROTOCOL_TLS)\r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \r\n\r\ncls = <class 'ssl.SSLContext'>, protocol = ssl.PROTOCOL_TLS, args = (), kwargs = {}\r\n\r\n    def __new__(cls, protocol=None, *args, **kwargs):\r\n        if protocol is None:\r\n            warnings.warn(\r\n                \"ssl module: \"\r\n                \"SSLContext() without protocol argument is deprecated.\",\r\n                category=DeprecationWarning,\r\n                stacklevel=2\r\n            )\r\n            protocol = PROTOCOL_TLS\r\n>       self = _SSLContext.__new__(cls, protocol)\r\nE       DeprecationWarning: ssl module: PROTOCOL_TLS is deprecated\r\n\r\n/usr/lib/python3.10/ssl.py:501: DeprecationWarning\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1670",
+      "pull_request": "https://github.com/encode/httpx/pull/1687",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1686,
+      "commit": "b43af721cd7804214396b5511e4f68d144a9b6a6",
+      "time": 1623854052,
+      "summary": "Switch CI to treat warnings as errors",
+      "description": "Prompted by #1670\r\n\r\nSince merging #1682 we're now including test runs for Python 3.10 beta.\r\nIssue #1670 notes that we've got a deprecation warning being raised on 3.10.\r\nThe sensible approach in terms of *process* here is to make sure that our CI is *erroring* on deprecation warnings, so that we're *seeing* these cases up front, and able able to validate that we've resolved them, and know if we ever unintentionally introduce a regression.\r\n\r\nSo first step here prior to considering #1670 should be to upgrade our warnings to errors.\r\n\r\nThat'll also highlight that we've got an existing case on 3.8 and 3.9 of a test cases that's causing a warning that ought to be resolve. (See https://github.com/encode/httpx/pull/1682/checks?check_run_id=2828639691)",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1686",
+      "pull_request": "https://github.com/encode/httpx/pull/1687",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1706,
+      "commit": "20e66d204864b320ba6816b501c6dca17e101836",
+      "time": 1628850462,
+      "summary": "Enforce that upload files must be binary, not text.",
+      "description": "### Based on this discussion... https://github.com/encode/httpx/discussions/1704\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **plotski** June 21, 2021</sup>\r\nI just spent several hours debugging `LocalProtocolError(\"Too much data for declared Content-Length\")`. I've figured out what's going on, but I don't know what the best fix would be or if this is entirely my own fault.\r\n\r\nI was passing a `StringIO` object to a POST request, e.g.:\r\n\r\n```python\r\n>>> files = {'upload-file': ('foo', StringIO('c\u00f6nt\u00e9nt of f\u00f6\u00f6'))}\r\n>>> r = httpx.post(\"https://httpbin.org/post\", files=files)\r\n```\r\n\r\nThe `StringIO` object ends up in `FileField.get_length()`, which calls `peek_filelike_length()`, which correctly reports the the length of the string. However, we must know the length of the string as `bytes` because that's what we need for the POST request.\r\n\r\nThe fix is very simple: Use `BytesIO` instead of `StringIO`. But the error message was extremely unhelpful.\r\n\r\nMaybe `FileField` shouldn't accept a `StringIO` object? Or maybe it should convert to `bytes` first? Or maybe this is really obvious for anyone with more experience and there's no need to fix it?</div>\r\n\r\nI'm fairly sure that the most sensible thing to do here is to raise an error on:\r\n\r\n* Files opened in text mode.\r\n* `StringIO` instances, used instead of `BytesIO` instances.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1706",
+      "pull_request": "https://github.com/encode/httpx/pull/1736",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.__init__"
+      ],
+      "gold_files": [
+        "httpx/_multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1615,
+      "commit": "927c88d34f73d98af5827aaa571e74d6159e5735",
+      "time": 1628864235,
+      "summary": "Stricter enforcement around client scoping.",
+      "description": "Raised via: https://github.com/encode/httpx/issues/1478#issuecomment-828955977\r\n\r\nThere are really two sensible ways to use a client instance wrt. scoping the lifetime...\r\n\r\nImplicitly opened clients...\r\n\r\n```python\r\nclient = httpx.Client()\r\n...\r\nclient.close()  # Optional in the sync case. Issues a warning if omitted in the async case.\r\n```\r\n\r\nExplicitly opened clients...\r\n\r\n```python\r\nwith httpx.Client() as client:\r\n    ...\r\n```\r\n\r\nHowever we currently don't guard against unexpected usages, which would likely indicate a user error, and could lead to unexpected behaviours.\r\n\r\n* Using a client within a `with` scope multiple times in parallel.\r\n* Using a client making plain implicitly opening requests, and *then* opening it within a `with` scope.\r\n* Using a client within a `with` scope, but calling an explicit `close()`.\r\n* Using a client within a `with` scope multiple times sequentially. We could *potentially* allow this? Possibly a footgun? Not sure?\r\n\r\nWe could guard against these cases and more strictly enforce correct client scoping.\r\n\r\nFor instance, the user-code error that caused https://github.com/encode/httpx/issues/1478#issuecomment-828955977 would be resolved if we added some `RuntimeError` cases around weird client state transitions on `__enter__`/`__exit__`/`__aenter__`/`__aexit__`.\r\n\r\nSo:\r\n\r\n* On `__enter__`/`__aenter__` raise a `RuntimeError` if the client was not in an `UNOPENED` state.\r\n* On `__exit__`/`__aexit__` raise a `RuntimeError` if the client was not in a `CLOSED` state.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1615",
+      "pull_request": "https://github.com/encode/httpx/pull/1800",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aenter__",
+        "func:httpx/_client.py:httpx._client.Client.__enter__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 1928,
+      "commit": "4882e980494aa72032bef773eb15462af25dcd9a",
+      "time": 1637063266,
+      "summary": "`Response.url` is somewhere listed as optional and elsewhere not",
+      "description": "### Discussed in https://github.com/encode/httpx/discussions/1908\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **septatrix** October 22, 2021</sup>\r\nIn the method signature it is declared as optional however in the docs it is stated as being non-optional.\r\nThe latter seems to make more sense as the value is directly linked to the url of the request which should not be none.\r\nThis currently leeds to some false positives with mypy in our codebase.\r\n\r\nhttps://github.com/encode/httpx/blob/62b1666dc6c6b012b258574c4239b8ff8f481619/httpx/_models.py#L1304-L1309\r\n\r\nhttps://github.com/encode/httpx/blob/62b1666dc6c6b012b258574c4239b8ff8f481619/docs/api.md#L59</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1928",
+      "pull_request": "https://github.com/encode/httpx/pull/1940",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.url"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 1992,
+      "commit": "406700317bfd83a65d78094e4ce8e9261c284399",
+      "time": 1641398507,
+      "summary": "When using proxy the request downgrades to HTTP/1",
+      "description": "Using the following code\r\n\r\n```\r\nclient = httpx.Client(http2=True, proxies=proxies)\r\n response = client.get('https://www.truepeoplesearch.com/results?name=John', headers=headers)\r\nresponse.http_version\r\n```\r\n\r\nIt appears that it returns HTTP/1\r\n\r\nbut if I were to make the same request without proxy, it shows HTTP/2\r\n\r\n\r\nVersion of HTTPX being used.\r\n```\r\nName: httpx\r\nVersion: 0.21.1\r\nSummary: The next generation HTTP client.\r\nHome-page: https://github.com/encode/httpx\r\nAuthor: Tom Christie\r\nAuthor-email: tom@tomchristie.com\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1992",
+      "pull_request": "https://github.com/encode/httpx/pull/2009",
+      "gold_functions": [
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ],
+      "gold_files": [
+        "httpx/_transports/default.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 1739,
+      "commit": "420911bc693ec3a7f2fbd81c18cffb8fdb12e4c8",
+      "time": 1644225566,
+      "summary": "Ensure that `iter_bytes` does not ever yield any zero-length chunks.",
+      "description": "Prompted by https://github.com/encode/httpx/discussions/1733\r\n\r\nIt appears that `iter_bytes` can currently sometimes return a zero-length chunk. This isn't strictly a broken behaviour, since we don't make any assertions about if that might occur or not, and it's still *correct*, but it'd be preferable from a UX perspective if it *didn't* even do this.\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **michalc** July  4, 2021</sup>\r\nThe last chunk in the below is of length zero:\r\n\r\n```python\r\nwith httpx.stream('GET', 'https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4-essentials_build.zip') as r:\r\n    for chunk in r.iter_bytes():\r\n        print(len(chunk))\r\n```\r\nis this expected?\r\n\r\nIt also looks like `iter_raw` _doesn't_ have a zero length chunk at the end:\r\n```python\r\nwith httpx.stream('GET', 'https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4-essentials_build.zip') as r:\r\n    for chunk in r.iter_raw():\r\n        print(len(chunk))\r\n```\r\nsince in this case there is no content-encoding, I guess I expect that `iter_bytes == iter_raw`\r\n\r\n----\r\n\r\nHaving a bit of a nose around the code, suspecting it's from https://github.com/encode/httpx/blob/47d712c01cdde6574b2a94e43a94e5ae6e4f2faf/httpx/_models.py#L1483 where `decoder.flush()` returns an empty `bytes` instance, this is passed to `chunker.decode`, and since `chunk_size` is `None`, a list containing this empty `bytes` instance is returned https://github.com/encode/httpx/blob/47d712c01cdde6574b2a94e43a94e5ae6e4f2faf/httpx/_decoders.py#L172\r\n\r\nand then each element of this list is yielded to the calling code\r\n\r\n----\r\n\r\nThis is related to https://github.com/uktrade/stream-unzip/issues/13, where the code in stream-unzip does not expect any zero length chunks. Potentially stream-unzip should be robust against this case... but wasn't sure if this was desirable in httpx, so mentioning it here in case it is an issue to be addressed.</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1739",
+      "pull_request": "https://github.com/encode/httpx/pull/2068",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.ByteChunker.decode",
+        "func:httpx/_models.py:httpx._models.Response.aiter_bytes",
+        "func:httpx/_models.py:httpx._models.Response.iter_bytes"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py",
+        "httpx/_models.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 1850,
+      "commit": "4401d55ecf0d95be237098b6c73c45420d54d499",
+      "time": 1644405501,
+      "summary": "Allow Authorization header to be preserved on `http->https` redirect cases.",
+      "description": "We might want to consider allowing the `Authorization` header to be preserved in cases of `http`->`https` redirects.\r\n\r\nSee discussion https://github.com/encode/httpx/discussions/1846\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1850",
+      "pull_request": "https://github.com/encode/httpx/pull/2074",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._redirect_headers"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2049,
+      "commit": "4c307488cd1e1d934aedd60bfcace18a18baeaab",
+      "time": 1644421239,
+      "summary": "Displaying binary responses in the command line client.",
+      "description": "Using the command line client to access a binary URL...\r\n\r\n```shell\r\n$ httpx https://cataas.com/cat\r\nHTTP/1.1 200 OK\r\nServer: nginx/1.12.2\r\nDate: Thu, 27 Jan 2022 10:41:25 GMT\r\nContent-Type: image/jpeg\r\nContent-Length: 35300\r\nConnection: keep-alive\r\nAccess-Control-Allow-Origin: *\r\n'\ufffdC\ufffd.\ufffdh\ufffd&\ufffd.\\)\ufffd\ufffd;\u0557s\ufffd-l\ufffdm/gN\ufffd<Ws\ufffd\ufffdF...\r\n```\r\n\r\nThis behaviour isn't really ideal. The HTTP response is giving us enough information in the `Content-Type` to indicate that the response is binary, not text, so we could be doing better than this.\r\n\r\nI'd much prefer for us to have better handling for this kind of case.\r\n\r\nFor example...\r\n\r\n```shell\r\n$ httpx https://cataas.com/cat\r\nHTTP/1.1 200 OK\r\nServer: nginx/1.12.2\r\nDate: Thu, 27 Jan 2022 10:41:25 GMT\r\nContent-Type: image/jpeg\r\nContent-Length: 35300\r\nConnection: keep-alive\r\nAccess-Control-Allow-Origin: *\r\n\r\n<35300 bytes of binary data>\r\n```\r\n\r\nOr...\r\n\r\n```shell\r\n$ httpx https://cataas.com/cat\r\nHTTP/1.1 200 OK\r\nServer: nginx/1.12.2\r\nDate: Thu, 27 Jan 2022 10:41:25 GMT\r\nContent-Type: image/jpeg\r\nContent-Length: 35300\r\nConnection: keep-alive\r\nAccess-Control-Allow-Origin: *\r\n\r\n<35300 bytes of binary data>\r\n00000000:  ff d8 ff e0 00 10 4a 46  49 46 00 01-01 01 00 48  ......JF IF.....H\r\n00000010:  00 48 00 00 ff db 00 43  00 08 06 06 07 06 05 08  .H.....C ........\r\n00000020:  07 07 07 09 09 08 0a 0c  14 0d 0c 0b 0b 0c 19 12  ........ ........\r\n00000030:  13 0f 14 1d 1a 1f 1e 1d  1a 1c 1c 20 24 2e 27 20  ........ ....$.'.\r\n00000040:  22 2c 23 1c 1c 28 37 29  2c 30 31 34 34 34 1f 27  \",#..(7) ,01444.'\r\n00000050:  39 3d 38 32 3c 2e 33 34  32 ff db 00 43 01 09 09  9=82<.34 2...C...\r\n00000060:  09 0c 0b 0c 18 0d 0d 18  32 21 1c 21 32 32 32 32  ........ 2!.!2222\r\n00000070:  32 32 32 32 32 32 32 32  32 32 32 32 32 32 32 32  22222222 22222222\r\n00000080:  32 32 32 32 32 32 32 32  32 32 32 32 32 32 32 32  22222222 22222222\r\n00000090:  32 32 32 32 32 32 32 32  32 32 32 32 32 32 ff c0  22222222 222222..\r\n```\r\n\r\nI've not thought through what flags we'd want for controlling this display, but it seems like an obvious improvement for us to make, and I'm sure we could do a very nice job of how it's displayed with `rich`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2049",
+      "pull_request": "https://github.com/encode/httpx/pull/2076",
+      "gold_functions": [
+        "func:httpx/_main.py:httpx._main.print_response"
+      ],
+      "gold_files": [
+        "httpx/_main.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2124,
+      "commit": "c82885ac04f7c3439dfdd4d26614913bf09389c9",
+      "time": 1647276699,
+      "summary": "httpx cli --proxy and --proxies option problem",
+      "description": "The `httpx --help` shows `--proxy` option, but actually it accepts `--proxies` option.\r\n\r\n- `--proxy`\r\n  https://github.com/encode/httpx/blob/master/httpx/_main.py#L72\r\n\r\n- `--proxies`\r\n  https://github.com/encode/httpx/blob/master/httpx/_main.py#L379\r\n\r\nWhich is correct? Is there an undocumented change from`--proxy` to `--proxies`?\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2124",
+      "pull_request": "https://github.com/encode/httpx/pull/2125",
+      "gold_functions": [
+        "func:httpx/_main.py:httpx._main.print_help"
+      ],
+      "gold_files": [
+        "httpx/_main.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2139,
+      "commit": "3350d7e6831e2d942f68653b2f58cfa5ecb0bacd",
+      "time": 1648730500,
+      "summary": "Response not closed when timeout/cancel reading response stream, which cause RuntimeError: The connection pool was closed while 1 HTTP requests/responses were still in-flight. ",
+      "description": "Response not closed when timeout/cancel reading response stream, which cause `RuntimeError: The connection pool was closed while 1 HTTP requests/responses were still in-flight.`\r\n\r\n#### Reproduce:\r\n\r\n```python\r\nimport asyncio\r\nimport httpx\r\n\r\nasync def main():\r\n    url = \"https://httpbin.org/drip?delay=0&duration=5\"\r\n    # Or use local httpbin server:\r\n    #     docker run -ti -p 8088:80 kennethreitz/httpbin:latest\r\n    url = \"http://127.0.0.1:8088/drip?delay=0&duration=5\"\r\n    async with httpx.AsyncClient(timeout=10, trust_env=False) as client:\r\n        try:\r\n            coro = client.get(url)\r\n            response = await asyncio.wait_for(coro, 3)\r\n        except Exception as ex:\r\n            print(type(ex), repr(ex))\r\n        else:\r\n            print(response)\r\n\r\nif __name__ == \"__main__\":\r\n    asyncio.run(main())\r\n```\r\n\r\n#### Output:\r\n\r\n```python\r\n<class 'asyncio.exceptions.TimeoutError'> TimeoutError()\r\nTraceback (most recent call last):\r\n  File \"/Users/kk/dev/zhuwen/httpx/http_error2.py\", line 22, in <module>\r\n    asyncio.run(main())\r\n  File \"/Users/kk/.pyenv/versions/3.9.7/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/runners.py\", line 44, in run\r\n    return loop.run_until_complete(main)\r\n  File \"/Users/kk/.pyenv/versions/3.9.7/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py\", line 642, in run_until_complete\r\n    return future.result()\r\n  File \"/Users/kk/dev/zhuwen/httpx/http_error2.py\", line 18, in main\r\n    print(response)\r\n  File \"/Users/kk/dev/zhuwen/httpx/httpx/_client.py\", line 1978, in __aexit__\r\n    await self._transport.__aexit__(exc_type, exc_value, traceback)\r\n  File \"/Users/kk/dev/zhuwen/httpx/httpx/_transports/default.py\", line 332, in __aexit__\r\n    await self._pool.__aexit__(exc_type, exc_value, traceback)\r\n  File \"/Users/kk/.pyenv/versions/3.9.7/envs/httpx/lib/python3.9/site-packages/httpcore/_async/connection_pool.py\", line 326, in __aexit__\r\n    await self.aclose()\r\n  File \"/Users/kk/.pyenv/versions/3.9.7/envs/httpx/lib/python3.9/site-packages/httpcore/_async/connection_pool.py\", line 312, in aclose\r\n    raise RuntimeError(\r\nRuntimeError: The connection pool was closed while 1 HTTP requests/responses were still in-flight.\r\n```\r\n\r\n#### Root cause:\r\n\r\nIt's because use `except Exception` in _client.py which will not catch asyncio CancelledError, so except branch will not executed. https://github.com/encode/httpx/blob/master/httpx/_client.py#L1604\r\n\r\n```python\r\n        try:\r\n            if not stream:\r\n                await response.aread()  # will raise CancelledError\r\n\r\n            return response\r\n\r\n        except Exception as exc:  # pragma: no cover\r\n            await response.aclose()  # will not executed\r\n            raise exc\r\n```\r\n\r\nChange all `except Exception` in _client.py to `except BaseException` can resolve the issue.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2139",
+      "pull_request": "https://github.com/encode/httpx/pull/2156",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_redirects",
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_redirects",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2157,
+      "commit": "550fff933f103e16aaddc9ff315f69aba974db40",
+      "time": 1648807832,
+      "summary": "[Typing] - `HTTPError` doesn't have a `request` attribute",
+      "description": "### Discussed in https://github.com/encode/httpx/discussions/2151\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **michaeloliverx** March 29, 2022</sup>\r\nThe `HTTPError` class serves as a base class for `RequestError` and `HTTPStatusError`. The docstring shows the following usage:\r\n```python\r\ntry:\r\n    response = httpx.get(\"https://www.example.com\")\r\n    response.raise_for_status()\r\nexcept httpx.HTTPError as exc:\r\n    print(f\"HTTP Exception for {exc.request.url} - {exc}\")\r\n```\r\n\r\n\r\nMypy doesn't like this:\r\n```\r\nerror: \"HTTPError\" has no attribute \"request\"  [attr-defined]\r\n```\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2157",
+      "pull_request": "https://github.com/encode/httpx/pull/2158",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPError.__init__",
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPError.request"
+      ],
+      "gold_files": [
+        "httpx/_exceptions.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2246,
+      "commit": "5b06aea1d64f0815af6fe71da3ac725bed3ec09f",
+      "time": 1653569611,
+      "summary": "Should AsyncClient accept a callable for default_encoding?",
+      "description": "https://github.com/encode/httpx/blob/89cdd903b2f339c6ae319773c31b8c9352bd9cd8/httpx/_client.py#L1366\r\n\r\nAccording to the online docs, the AsyncClient should also accept a callable in the form of `(bytes) -> str` for the `default_encoding` keyword parameter. The signature, linked above, only accepts a `str`.\r\n\r\nShould the AsyncClient accept a callable like `httpx.Client` does? If so, I'm happy to make the change and submit a PR.\r\n\r\nThanks!",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2246",
+      "pull_request": "https://github.com/encode/httpx/pull/2247",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2314,
+      "commit": "ccd98b1a6de221fa4b497de7f7bdf89b1347024d",
+      "time": 1661859979,
+      "summary": "Relax `HeaderTypes` type alias definition",
+      "description": "https://github.com/encode/httpx/blob/3aa441015820a41861bff9b0e78d787b1a4f2f68/httpx/_types.py#L46-L47\r\n\r\nCould `Dict` be replaced with `Mapping` in this type definition?\r\n\r\nThis change would placate the type-checker when I do something like the following:\r\n\r\n```python3\r\nfrom collections.abc import Mapping\r\nfrom typing import Final\r\n\r\n_DEFAULT_HEADERS: Final[Mapping[str, str]] = {\r\n    # ...\r\n}\r\n```\r\n\r\nwhen my intent is that the module-level dictionary is intended to be immutable but I don't want to go so far as to write a custom frozen dictionary or wrap it in `types.MappingProxyType`.\r\n\r\nIf this is acceptable, I'm happy to open a PR for the change. I was about to open a patch but your pull request template text made me think twice because this is more than just fixing a typo despite the tiny change.\r\n\r\nThanks!",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2314",
+      "pull_request": "https://github.com/encode/httpx/pull/2317",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.__init__"
+      ],
+      "gold_files": [
+        "httpx/_models.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2322,
+      "commit": "965b8adec3633e1bd249d17fb7a7eed414c74748",
+      "time": 1661864611,
+      "summary": "Multipart doesn't support tuple data value",
+      "description": "This works:\r\n\r\n```python\r\nclient.post(\r\n    url,\r\n    data={\"foo\": (\"1\", \"2\")},  # tuple\r\n)\r\n```\r\n\r\nThis works:\r\n\r\n```python\r\nclient.post(\r\n    url,\r\n    data={\"foo\": [\"1\", \"2\"]},  # list\r\n    files={\"test\": b\"test\"},\r\n)\r\n```\r\n\r\nThis fails:\r\n\r\n```python\r\nclient.post(\r\n    url,\r\n    data={\"foo\": (\"1\", \"2\")},  # tuple\r\n    files={\"test\": b\"test\"},\r\n)\r\n```\r\n\r\n<details>\r\n<summary>Traceback</summary>\r\n\r\n```\r\n  File \"httpx/_client.py\", line 356, in build_request\r\n    return Request(\r\n  File \"httpx/_models.py\", line 336, in __init__\r\n    headers, stream = encode_request(content, data, files, json)\r\n  File \"httpx/_content.py\", line 210, in encode_request\r\n    return encode_multipart_data(data or {}, files, boundary)\r\n  File \"httpx/_content.py\", line 155, in encode_multipart_data\r\n    multipart = MultipartStream(data=data, files=files, boundary=boundary)\r\n  File \"httpx/_multipart.py\", line 188, in __init__\r\n    self.fields = list(self._iter_fields(data, files))\r\n  File \"httpx/_multipart.py\", line 198, in _iter_fields\r\n    yield DataField(name=name, value=value)\r\n  File \"httpx/_multipart.py\", line 36, in __init__\r\n    raise TypeError(\r\nTypeError: Invalid type for value. Expected primitive type, got <class 'tuple'>: ('1', '2')\r\n```\r\n\r\n</details>\r\n\r\nI guess this line:\r\n\r\nhttps://github.com/encode/httpx/blob/93de1980fa77f15c6b23cbaf2422c0a812caf243/httpx/_multipart.py#L194\r\n\r\nshould be implemented in the same way as this line:\r\n\r\nhttps://github.com/encode/httpx/blob/93de1980fa77f15c6b23cbaf2422c0a812caf243/httpx/_content.py#L141",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2322",
+      "pull_request": "https://github.com/encode/httpx/pull/2355",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream._iter_fields"
+      ],
+      "gold_files": [
+        "httpx/_multipart.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2331,
+      "commit": "d5900cd40ec85e47800e21e77bc684b9f65325ed",
+      "time": 1662125085,
+      "summary": "httpx is deleting url query parameters that do not explicitly specify a value",
+      "description": "The following program\r\n```python\r\nimport asyncio\r\nimport httpx\r\n\r\nasync def main():\r\n    async with httpx.AsyncClient() as client:\r\n        r = await client.get(\"https://httpbin.org/get?foobar\", params={'hello': \"world\"})\r\n        print(r.url)\r\n\r\nasyncio.run(main())\r\n```\r\nshould print `https://httpbin.org/get?hello=world&foobar`\r\n\r\nHowever, the actual output is `https://httpbin.org/get?hello=world`\r\n\r\nIt appears that httpx is deleting url query parameters that do not explicitly specify a value.\r\n\r\nThanks for having a look",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2331",
+      "pull_request": "https://github.com/encode/httpx/pull/2354",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.QueryParams.__init__"
+      ],
+      "gold_files": [
+        "httpx/_urls.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2069,
+      "commit": "0ebe9259aca97baf4cadf112b0aa47152bec426c",
+      "time": 1665075231,
+      "summary": "The code in the document does not work",
+      "description": "Hi. The code in the [document](https://www.python-httpx.org/advanced/#:~:text=files%20%3D%20%7B%27upload%2Dfile%27%3A%20(None%2C%20%27text%20content%27%2C%20%27text/plain%27)%7D) does not work\r\n\r\n```\r\nimport httpx\r\nfiles = {'upload-file': (None, 'text content', 'text/plain')}\r\nr = httpx.post(\"https://httpbin.org/post\", files=files)\r\nprint(r.text)\r\n```\r\nThe error is \r\n```\r\nTypeError: Expected bytes or bytes-like object got: <class 'str'>\r\n```\r\nI found [this problem](https://github.com/encode/httpx/issues/481) has been raised but not solved\r\n\r\nIf the string is modified with b, it works fine\r\n```\r\nimport httpx\r\nfiles = {'upload-file': (None, b'text content', 'text/plain')}\r\nr = httpx.post(\"https://httpbin.org/post\", files=files)\r\nprint(r.text)\r\n```\r\nCompared to requests\r\n```\r\nimport requests\r\nimport httpx\r\n\r\nfiles = {'upload-file': (None, 'text content', 'text/plain')}\r\nhttpx.post(\"https://httpbin.org/post\", files=files)  # error\r\nrequests.post(\"https://httpbin.org/post\", files=files)  # works\r\n\r\nfiles = {'upload-file': (None, b'text content', 'text/plain')}\r\nhttpx.post(\"https://httpbin.org/post\", files=files)  # works\r\nrequests.post(\"https://httpbin.org/post\", files=files)  # works\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2069",
+      "pull_request": "https://github.com/encode/httpx/pull/2400",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.__init__"
+      ],
+      "gold_files": [
+        "httpx/_multipart.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2462,
+      "commit": "40a0da093b423ca37feee2b85df7c3f0ce3cc96c",
+      "time": 1669998005,
+      "summary": "Breaking drop of URL.raw in patch release 0.23.1",
+      "description": "The patch release `0.23.1` included a breaking change in #2241 \r\n\r\nThe justification seems to be that \"we don't use it\", but `url.raw` is a public property used by other libraries including `ddtrace` 0.x versions: https://github.com/DataDog/dd-trace-py/blob/v0.61.3/ddtrace/contrib/httpx/patch.py#L41 \r\n\r\nCan this breaking change be reverted and maybe soft-deprecated? @tomchristie @michaeloliverx ",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2462",
+      "pull_request": "https://github.com/encode/httpx/pull/2481",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.URL.raw"
+      ],
+      "gold_files": [
+        "httpx/_urls.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2491,
+      "commit": "a8dd079be7028b2bf4cdbbbc3a6793a5f78ecc85",
+      "time": 1670785928,
+      "summary": "AsyncClient.request runtime error: \"Attempted to send an sync request with an AsyncClient instance\"",
+      "description": "Ran into this issue as well. It was surprising to end up with a `RuntimeError: Attempted to send an sync request with an AsyncClient instance` error, when my actual issue had nothing to do with sync/async (in my case submitting the wrong type by accident through `data` kwarg). It feels like it might be a bug / that the type being submitted could be checked before trying to send the request?\r\n\r\n### Discussed in https://github.com/encode/httpx/discussions/2339\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **mdlincoln** August 16, 2022</sup>\r\nI need to interact with an API that accepts `DELETE` requests requiring JSON content in the body. Since `AsyncClient`'s shortcut `delete()` method does not allow this, I followed the docs to instead use the `request()` method, but I received an unexpected error. Minimal example:\r\n\r\n``` py\r\nimport asyncio\r\nfrom httpx import AsyncClient\r\n\r\nasync_client = AsyncClient(\r\n    base_url=\"http://localhost\",\r\n)\r\n\r\nasync def test_request_method():\r\n    async with async_client as ac:\r\n        response = await ac.request(method=\"DELETE\", url=\"/\", content={\"foo\": \"bar\"})\r\n\r\nasyncio.run(test_request_method())\r\n```\r\n\r\nthis raises a `RuntimeError: Attempted to send an sync request with an AsyncClient instance.` (full traceback in the `<details>` below.)\r\n\r\nAm I missing the right way for calling the `request()` method with an `AsyncClient`?\r\n\r\n<details>\r\n<pre>\r\nTraceback (most recent call last):\r\n  File \"*******/minimal.py\", line 14, in <module>\r\n    asyncio.run(test_request_method())\r\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.13_3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/runners.py\", line 44, in run\r\n    return loop.run_until_complete(main)\r\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.13_3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py\", line 647, in run_until_complete\r\n    return future.result()\r\n  File \"*********minimal.py\", line 11, in test_request_method\r\n    response = await ac.request(method=\"DELETE\", url=\"/\", content={\"foo\": \"bar\"})\r\n  File \"*********/lib/python3.9/site-packages/httpx/_client.py\", line 1527, in request\r\n    return await self.send(request, auth=auth, follow_redirects=follow_redirects)\r\n  File \"*********/lib/python3.9/site-packages/httpx/_client.py\", line 1614, in send\r\n    response = await self._send_handling_auth(\r\n  File \"*********/lib/python3.9/site-packages/httpx/_client.py\", line 1642, in _send_handling_auth\r\n    response = await self._send_handling_redirects(\r\n  File \"*********/lib/python3.9/site-packages/httpx/_client.py\", line 1679, in _send_handling_redirects\r\n    response = await self._send_single_request(request)\r\n  File \"*********/lib/python3.9/site-packages/httpx/_client.py\", line 1711, in _send_single_request\r\n    raise RuntimeError(\r\nRuntimeError: Attempted to send an sync request with an AsyncClient instance.\r\n</pre>\r\n</details>\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2491",
+      "pull_request": "https://github.com/encode/httpx/pull/2495",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_content"
+      ],
+      "gold_files": [
+        "httpx/_content.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2249,
+      "commit": "b97c0594a59a9a5e62e9930fe9a783be79d8cc6e",
+      "time": 1670861696,
+      "summary": "Add support for streaming multipart/form-data",
+      "description": "(After initial discussion in https://github.com/encode/httpx/discussions/2227.)\r\n\r\nAs far as I can see, there's no way to stream `multipart/form-data` uploads when the `Content-Length` is unknown, since HTTPX tries to get body size some way or another (last resort is to read it all in memory and count). Please, let me know if I overlooked something!\r\n\r\nUse case would be to stream something whose size is unknown beforehand, like fetching and in parallel uploading a CSV export from a Postgres database, say.\r\n\r\nHTTP/1.1 has chunked encoding for that. As you know, that streams the _message_ itself, not the resource. This encoding is supported for \"direct file uploads\" in HTTPX, but not for `multipart/form-data`. This is strange, since chunked encoding is independent of `Content-Type`. Indeed, if both chunking and compression are in place, you first compress, and then you chunk the compressed bytes.\r\n\r\nIn HTTP/2 chunked encoding does not exist, byte size is per DATA frame. As you know, a message is allowed to have several. So, in this case the API would support uploading with multiple DATA frames, coming from a generator or iterator, for example.\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2249",
+      "pull_request": "https://github.com/encode/httpx/pull/2382",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.render_data",
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream.get_content_length",
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream.get_headers"
+      ],
+      "gold_files": [
+        "httpx/_multipart.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 746,
+      "commit": "4cbf13ece2e584b45b935df0a0c670e1863c4569",
+      "time": 1672433808,
+      "summary": "Support passing bytes keys/values in `params=...`",
+      "description": "``` python\r\n>>> httpx.get('https://example.org', params={b'testparam': b'testvalue'}).url\r\nURL('https://example.org?b%27testparam%27=b%27testvalue%27')\r\n```\r\n\r\nI don't think this is intentional, as there is an isinstance check for bytes in the ``flatten_queryparams`` function, I'd expect anyone involved to have raised an exception instead of letting it go through like that, and that would be an undocumented divergence from requests compatibility.\r\n\r\nI have tested with ``httpx==0.7.8`` as well as ``httpx==0.11.0``.",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/746",
+      "pull_request": "https://github.com/encode/httpx/pull/2523",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.primitive_value_to_str"
+      ],
+      "gold_files": [
+        "httpx/_utils.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2536,
+      "commit": "a6af45edac51dce888e1e1f0ebf344f126a1c66c",
+      "time": 1673349369,
+      "summary": "Use percent encoding for spaces in query parameters",
+      "description": "httpx currently encodes spaces in the query parameter using the + sign:\r\n\r\n```py\r\n>>> httpx.URL(\"https://www.example.com\", params={\"a\": \"b c\"})\r\nURL('https://www.example.com?a=b+c')\r\n```\r\n\r\nThis causes problems for me described in the linked discussion. Tom's comment:\r\n\r\n> However using https://www.example.com/?a=b c in the address bar in various browsers...\r\n>\r\n> Chrome, Safari, and Firefox all switch this out to https://www.example.com/?a=b%20c.\r\n> (Firefox displays \"https://www.example.com/?a=b c\" but I can see from the \"page info\" the actual URL it requested.)\r\n> \r\n> So... we could probably switch to %20, and it might be a marginally better choice. (?)\r\n\r\n---\r\n\r\n- [x] Initially raised as discussion #2460 \r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2536",
+      "pull_request": "https://github.com/encode/httpx/pull/2543",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.QueryParams.__str__"
+      ],
+      "gold_files": [
+        "httpx/_urls.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2532,
+      "commit": "59914c7690573d5f9b17bce4172405294cb08278",
+      "time": 1673522866,
+      "summary": "NetRCInfo.netrc_info() doesn't work when run in a systemd service with DynamicUser=true",
+      "description": "### Discussed in https://github.com/encode/httpx/discussions/2526\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **djmattyg007** January  1, 2023</sup>\r\nThe function in question, `netrc_info()`, iterates over three paths. Two of these paths refer to the home directory of the current process' user, by prefixing the paths with `~/`. These paths are run through `pathlib.Path.expanduser()`, which raises an exception if the home directory can't be determined.\r\n\r\nWhen the code is running in a systemd service with `DynamicUser=true`, there is no home directory. This means `expanduser()` will always raise an exception.\r\n\r\nFortunately, there's a potential override: set the `NETRC` environment variable to something. As long as it points to a file that exists, and doesn't need to know the current user's home directory, this is an acceptable workaround.\r\n\r\nUnfortunately, there's an `is_file()` check performed on the `Path` object before attempting to use it. This means I can't just set `NETRC=/dev/null` as a simple way of working around this problem, even though `netrc.netrc()` will happily accept `/dev/null`.\r\n\r\nWhy does any of this matter? Because I'm not using `httpx` directly. I'm using the library `python-telegram-bot`, and have no control over how it uses `httpx` internally.\r\n\r\nTo summarise, there are two problems:\r\n\r\n- The call to `pathlib.Path.expanduser()` can raise an exception that isn't currently being caught\r\n- Setting `NETRC=/dev/null` doesn't work as expected, despite it being a perfectly suitable file to use in this context\r\n\r\nI'm happy to raise an issue for this, and also to implement a PR to resolve this.</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2532",
+      "pull_request": "https://github.com/encode/httpx/pull/2535",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.__init__",
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth._build_auth_header",
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.auth_flow",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_request_auth"
+      ],
+      "gold_files": [
+        "httpx/_auth.py",
+        "httpx/_client.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2422,
+      "commit": "85c5898d8e48011ab7b660fe8aac58910e45c84b",
+      "time": 1678976955,
+      "summary": "LineDecoder is accidentally quadratic: iter_lines() seems to hang forever",
+      "description": "When calling `Response.iter_lines()`, things can seem to hang forever.\r\n\r\nThe problem is that `LineDecoder` is quadratic in it's string copying behaviour. If a 31MB chunk with 18,768 lines is passed in to `LineDecoder()` then it takes 1m45s to process it vs 0.1s for a simple `text.splitlines()`. This is readily reproduced by simply using `LineDecoder()` to decode a file, like `/usr/share/dict/words` (do not attempt, you may be waiting until the heat death of the universe).\r\n\r\nIt may be a bug somewhere else that `iter_text()` is returning chunks that are too big.\r\n\r\nBut either way, you probably want to reconsider the wisdom of slicing the string to chop the beginning off it vs. just keeping an index.\r\n\r\nYou can slice the string before returning from the decoder so it's only done once per chunk.\r\n\r\nAnyhoo, thanks for the great work!",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2422",
+      "pull_request": "https://github.com/encode/httpx/pull/2423",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.flush"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2042,
+      "commit": "f1157dbc4102ac8e227a0a0bb12a877f592eff58",
+      "time": 1679311811,
+      "summary": "Review logging.",
+      "description": "Prompted by https://github.com/encode/httpx/discussions/2036\r\n\r\nSince the significant `httpcore` redesign we've not got our trace logging anymore. I don't think we had a super consistent approach to what did or didn't go in there, so I'd like to review our `trace`, `debug`, and `info` level logging.\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **jashandeep-sohi** January 18, 2022</sup>\r\nPer the docs, https://www.python-httpx.org/environment_variables/, I should be able to set set `HTTPX_LOG_LEVEL=trace` and it should log detailed information about HTTP requests.\r\n\r\nHowever this does not work (at least for the latest version `0.21.3`). After a little digging, it looks like the only place the `trace` extension is actually hooked into is the CLI client: https://github.com/encode/httpx/blob/83c81aa9b8ef0f7825df413a673e6d9300065f3a/httpx/_main.py#L479\r\n\r\nIs this a bug or are the docs wrong?</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2042",
+      "pull_request": "https://github.com/encode/httpx/pull/2547",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.Client._send_single_request"
+      ],
+      "gold_files": [
+        "httpx/_client.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2666,
+      "commit": "c1cc6b2462e95b84315c67bd5aefb33df73d06c4",
+      "time": 1681808581,
+      "summary": "httpx 0.24 documentation issue for netrc support",
+      "description": "Thanks to @alexprengere for raising this issue... \r\n\r\n### Discussed in https://github.com/encode/httpx/discussions/2665\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **alexprengere** April 18, 2023</sup>\r\nFrom the docs: https://www.python-httpx.org/advanced/#netrc-support\r\n```\r\n>>> auth = httpx.NetRCAuth()\r\n>>> client = httpx.Client(auth=auth)\r\n```\r\nUsing that snippet will yield the error:\r\n```\r\n>>> httpx.NetRCAuth()\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\nTypeError: NetRCAuth.__init__() missing 1 required positional argument: 'file'\r\n```\r\nUsing `NetRCAuth(file=None)` fixes the issue, and produces the expected behavior, but perhaps it should be made the default value (I can open a PR).</div>\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2666",
+      "pull_request": "https://github.com/encode/httpx/pull/2667",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.__init__"
+      ],
+      "gold_files": [
+        "httpx/_auth.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2660,
+      "commit": "15d09a3bbc20372cd87e48f17f7c9381c8220a0f",
+      "time": 1681906477,
+      "summary": "The `get_environment_proxies` function in _utils.py does not support IPv4, IPv6 correctly",
+      "description": "Hi, I encountered error when my environment `no_proxy` includes IPv6 address like `::1`. It is wrongly transformed into `all://*::1` and causes urlparse error since the _urlparse.py parses the `:1` as port.\r\n\r\n![image](https://user-images.githubusercontent.com/26450272/232004919-042f07ff-dd55-4c3c-9e49-91d69c5cf3d6.png)\r\n\r\nThe `get_environment_proxies` function in **_utils.py** is responsible for parsing and mounting proxy info from system environment.\r\n\r\nhttps://github.com/encode/httpx/blob/4b5a92e88e03443c2619f0905d756b159f9f0222/httpx/_utils.py#L229-L264\r\n\r\nFor env `no_proxy`, according to [CURLOPT_NOPROXY explained](https://curl.se/libcurl/c/CURLOPT_NOPROXY.html), it should support domains, IPv4, IPv6 and the `localhost`. However, current `get_environment_proxies` function implementation only supports domains correctly as it always adds wildcard `*` in front of the `hostname`. \r\n\r\nTo fix this issue, I looked into this repo and suggest handling the `no_proxy` hostnames as domains, IPv4, IPv6 and the `localhost` seperately. I have updated the `get_environment_proxies` function in **_utils.py** and tested it.\r\n\r\nRefer to the PR: #2659 \r\n\r\nReplies and discussions are welcomed!\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2660",
+      "pull_request": "https://github.com/encode/httpx/pull/2659",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies",
+        "func:httpx/_utils.py:httpx._utils.is_ipv4_hostname",
+        "func:httpx/_utils.py:httpx._utils.is_ipv6_hostname"
+      ],
+      "gold_files": [
+        "httpx/_utils.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2670,
+      "commit": "9ae170a936df39f42a6ddf8eb2c27026e20bea7e",
+      "time": 1681906902,
+      "summary": "Percent sign not encoded when present in query params value",
+      "description": "Since httpx 0.24 the behavior regarding query params changed, and possibly contains a bug.\r\n\r\nUse case: passing a pre-signed storage url to some webservice which then downloads the file.\r\n\r\nThe presigned url will contain some percent-escaped sequences.\r\n\r\nWith the new httpx 0.24, when something like `client.get('http://webservice', params={\"u\": \"http://example.com?q=foo%2Fa\"}) ` is called, the query params are handed to httpx._urls.urlencode:\r\n\r\n```\r\nfrom httpx._urls import urlencode\r\nurlencode((('u', \"http://example.com?q=foo%2Fa\"),))\r\n# -> 'u=http%3A//example.com%3Fq%3Dfoo%2Fa'\r\n```\r\n\r\nThe resulting query string still has %2F in it, which should have been percent encoded as %252F\r\n\r\nHere is the same thing using python urllib.parse (which was used pre-0.24)\r\n```\r\nfrom urllib.parse import urlencode\r\nurlencode((('u', \"http://example.com?q=foo%2Fa\"),))\r\n# -> 'u=http%3A%2F%2Fexample.com%3Fq%3Dfoo%252Fa'\r\n```\r\n\r\nHere the resulting query string is correctly encoded.\r\n\r\nAnother way to look at it is as follows:\r\n\r\n```\r\nfrom urllib.parse importparse_qs\r\nfrom httpx._urls import urlencode\r\nparse_qs( urlencode((('u', \"http://example.com?q=foo%2Fa%20b%2Ac\"),)))\r\n# -> {'u': ['http://example.com?q=foo/a b*c']}\r\n# Incorrect url decoded from the query string\r\n\r\nfrom urllib.parse import urlencode\r\nparse_qs( urlencode((('u', \"http://example.com?q=foo%2Fa%20b%2Ac\"),)))\r\n# -> {'u': ['http://example.com?q=foo%2Fa%20b%2Ac']}\r\n# Correct original url decoded from the query string\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2670",
+      "pull_request": "https://github.com/encode/httpx/pull/2671",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.quote"
+      ],
+      "gold_files": [
+        "httpx/_urlparse.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2694,
+      "commit": "ee432c0d3098375df258b6d5844e7569080b2369",
+      "time": 1683638412,
+      "summary": "Square brackets no longer work",
+      "description": "A GET request such as `/?arr[]=1&arr[]=2` is perfectly legal and it means that you are trying to send an array of values to the endpoint.\r\n\r\nUnluckily after 0.23.3 it stopped working because requests are sent as `/?arr%5B%5D=1&arr%5B%5D=2`\r\n\r\n\r\n\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2694",
+      "pull_request": "https://github.com/encode/httpx/pull/2701",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ],
+      "gold_files": [
+        "httpx/_urlparse.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2715,
+      "commit": "733595037ac26d272f74ee6d702150b017913d11",
+      "time": 1684917759,
+      "summary": "Add `socket_options` to `httpx.HTTPTransport`.",
+      "description": "Since [version 0.17.2](https://github.com/encode/httpcore/pull/697#issuecomment-1559059612) the `httpcore` package has support for a `socket_options` parameter.\r\nWe should add a corresponding parameter to `httpx.HTTPTransport`, which can be passed through to the connection pool.\r\n\r\nThis will resolve the use-case raised in discussion https://github.com/encode/httpx/discussions/2635...\r\n\r\n```python\r\n>>> import httpx\r\n>>> socket_options = [(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, b\"ETH999\")]\r\n>>> transport = httpx.HTTPTransport(socket_options=socket_options)\r\n>>> client = httpx.Client(transport=transport)\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2715",
+      "pull_request": "https://github.com/encode/httpx/pull/2716",
+      "gold_functions": [
+        "func:httpx/_transports/default.py:httpx._transports.default.AsyncHTTPTransport.__init__",
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ],
+      "gold_files": [
+        "httpx/_transports/default.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2721,
+      "commit": "920333ea98118e9cf617f246905d7b202510941c",
+      "time": 1686301616,
+      "summary": "Use percent-encoding for `/` in query params, for better robustness.",
+      "description": "### Discussed in https://github.com/encode/httpx/discussions/2661\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **marban** April 15, 2023</sup>\r\nHaven't gotten into the details but by upgrading to 0.24 and using a regular dict as GET params that contains e.g. an url like {\"q\": \"http://example.com\"} will somehow break the request to, in this case, Twitter's API. If if urllib.parse.quote_plus the \"http://example.com\", everything works fine (The slash is the culprit). \r\nIf I urlencode the whole dict manually before passing it to httpx and call the r.url after the request the / is again not encoded, although it previously was.\r\nhttps://api.twitter.com/1.1/search/tweets.json?q=url%3Ahttp%3A//google.com\r\n\r\n\r\nI assume it has to do with\r\n- Query parameter encoding switches from using + for spaces and %2F for forward slash, to instead using %20 for spaces and treating forward slash as a safe, unescaped character. This differs from requests, but is in line with browser behavior in Chrome, Safari, and Firefox. Both options are RFC valid. (#2543)\r\n\r\n</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2721",
+      "pull_request": "https://github.com/encode/httpx/pull/2723",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ],
+      "gold_files": [
+        "httpx/_urlparse.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 1434,
+      "commit": "a54ecccd5b7e61b29ec13df45ecc0b82a2c168bb",
+      "time": 1694426161,
+      "summary": "HTTPS proxies support",
+      "description": "Refs #1424, #1428 \r\n\r\n## Terminology\r\n\r\n* HTTP proxy: a proxy server which supports connecting to it via HTTP. HTTP requests are forwarded, HTTPS requests are tunneled (via HTTP `CONNECT`). \u2014 HTTPX has good support for those, no questions asked. \u2705 \r\n* HTTPS proxy: a proxy server that supports connecting to it via HTTPS. Only HTTPS requests are supported, and _must_ (?) be tunneled (TLS-in-TLS). \u2014 This is what seems to be missing still. :x:\r\n\r\n## Problem statement\r\n\r\nWe've seen reports of issues recently such as #1424 and #1428 that reveal that our proxies implementation does not properly support HTTPS proxies yet.\r\n\r\nMy understanding right now is that supporting this requires implementing a technique known as \"TLS-in-TLS\" (or perhaps \"nested TLS\"). Here's how that works:\r\n\r\n1. HTTPX issues a `CONNECT` request to the proxy, at `https://proxy.org`. This may use a dedicated `proxy_ssl_context` with proxy-specific certs, that I'll mark as TLS(p) (\"p\" as \"proxy\").\r\n2. The proxy establishes a TCP tunnel to the `target`. The HTTPX-proxy \"half\" of the TCP connection is over TLS(p), and the other one is not TLS-enabled yet.\r\n3. HTTPX must perform a TLS handshake with the target server, so that proxy-server \"half\" of the TCP connection becomes encrypted over TLS(t) (\"t\" as \"target\"). I'm not 100% certain I understand how that works. Right now I assume TLS handshake packets would be sent TLS(p)-encrypted to the proxy, which \"\"\"decrypts\"\"\" them and sends them to the server for us. The server responds with its SERVER HELLO. The proxy \"\"\"encrypts\"\" them back over TLS(p) and HTTPX sees them. The second pass of the handshake follows the same pattern. (I've put quotation marks because this is actually done without the proxy being able to actually intercept those packets \u2014 anyone could confirm?)\r\n\r\n\u2705 Right now we can do steps 1/ and 2/, with the nuance that we have a single `ssl_context` option that's used for both proxy CONNECT and the handshake (we'd want to have `proxy_ssl_context` and `ssl_context`).\r\n\r\n:x: What is definitely missing is step 3/.\r\n\r\nRight now we attempt to do `start_tls()`, as if we were tunneling over a standard HTTP connection with the proxy \u2014 and generally that fais in a variety of ways depending on sync / async, async library, custom certs, HTTP/1.1 vs HTTP/2, proxy server implementation, etc.\r\n\r\n## To reproduce\r\n\r\nRight now the following would fail:\r\n\r\n```python\r\nproxies = {\"https\": \"https://proxy.org:443\"}\r\nwith httpx.Client(proxies=proxies) as client:\r\n    response = client.get(\"https://example.org\")\r\n```\r\n\r\n**TODO**: full `pproxy` setup (or perhaps `proxy.py`, which seems to support HTTPS proxying fully), full sample tracebacks.\r\n\r\n## Additional context\r\n\r\nMarked this as \"requests-compat\" because this is now supported in `urllib3` as of 1.26. It landed via this pull request: https://github.com/urllib3/urllib3/pull/1923. AFAICT they had to implement TLS-in-TLS themselves, overriding the standard `http.client` connection implementation because that one doesn't support TLS-in-TLS.\r\n\r\nMarked this as \"httpcore\" because our proxy implementation lives there: https://github.com/encode/httpcore",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/1434",
+      "pull_request": "https://github.com/encode/httpx/pull/2845",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.Proxy.__init__",
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ],
+      "gold_files": [
+        "httpx/_config.py",
+        "httpx/_transports/default.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2810,
+      "commit": "90538a3b4610ba49ce16c997bcfdb9101f9503be",
+      "time": 1702309520,
+      "summary": "ASGI `raw_path` scope key should not include the query string portion.",
+      "description": "I ran into a bug where I had written code that assumed `raw_path` as provided by Uvicorn would include the query string, where it turns out not to.\r\n\r\nMy tests didn't catch this because they were exercising the code using HTTPX ASGI emulation, and it turns out HTTPX thinks that `raw_path` DOES include the query string.\r\n\r\nIn Uvicorn: https://github.com/encode/uvicorn/blob/93bb8d3879808ae376b57e3721cc227fce2c27c1/uvicorn/protocols/http/h11_impl.py#L207\r\n```python\r\n                raw_path, _, query_string = event.target.partition(b\"?\")\r\n```\r\nBut in HTTPX: https://github.com/encode/httpx/blob/9415af643f23600403740baad0a466edc5cdbec1/httpx/_urls.py#L277-L292\r\n\r\nI'm pretty confident HTTPX is incorrect about this. The ASGI spec (coincidentally the one bit of it I contributed directly to) says: https://asgi.readthedocs.io/en/latest/specs/www.html#http-connection-scope\r\n\r\n> `raw_path` (*byte string*) -- The original HTTP path component unmodified from the bytes that were received by the web server.\r\n\r\nOn reading it now I realize this is a little ambiguous.\r\n\r\nDaphne (the closest we have to a reference implementation of ASGI) backs up the idea that `raw_path` and `path` should be almost identical except for their encoding:  https://github.com/django/daphne/blob/e49c39a4e5fac8ec170dd653641a9e90844fd3f1/daphne/ws_protocol.py#L77C1-L78\r\n\r\n```python\r\n                    \"path\": unquote(self.path.decode(\"ascii\")),\r\n                    \"raw_path\": self.path,\r\n```",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2810",
+      "pull_request": "https://github.com/encode/httpx/pull/2999",
+      "gold_functions": [
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request"
+      ],
+      "gold_files": [
+        "httpx/_transports/asgi.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 2883,
+      "commit": "a11fc3849b94157274c98d99501acad05cbfb221",
+      "time": 1702640116,
+      "summary": "ULR parser percent encoding corrupting query params",
+      "description": "It appears that the url parser is corrupting query params by incorrectly percent encoding them.\r\n\r\nI noticed there's [this comment](https://github.com/encode/httpx/blob/0.25.0/httpx/_urlparse.py#L263-L264) which indicates this percent encoding does not accurately follow the spec.\r\n\r\nFor example if I have a URL with the following query parameter `type=application/pdf` it gets incorrectly encoded to `type=application%2Fpdf` which causes the server to throw an error.\r\n\r\nThis behavior does not match requests which doesn't corrupt the query params.\r\n\r\nPossibly related: #2721 #2723 #2856 #2863 #2864 ",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/2883",
+      "pull_request": "https://github.com/encode/httpx/pull/2990",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.percent_encoded",
+        "func:httpx/_urlparse.py:httpx._urlparse.quote",
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ],
+      "gold_files": [
+        "httpx/_urlparse.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3111,
+      "commit": "4de13707ee0fbc6e3ea5b30c90cf64aae0af7fb2",
+      "time": 1708695405,
+      "summary": "0.27.0: replacing `app=app` with `transport=ASGITransport(app)` doesn't type check",
+      "description": "```diff\r\n @pytest_asyncio.fixture\r\n async def deprecated_client(deprecated_db_manager: MainDbManager) -> AsyncGenerator[AsyncClient, None]:\r\n     async with _make_mocked_test_app(db_manager=deprecated_db_manager, authorization=False) as app:\r\n-        async with AsyncClient(app=app, base_url=URL, headers=USER_AGENT) as ac:\r\n+        async with AsyncClient(transport=ASGITransport(app), base_url=URL, headers=USER_AGENT) as ac:\r\n             yield ac\r\n```\r\n\r\n```\r\n% poetry run mypy .                                              \r\ntests/conftest.py:64: error: Argument 1 to \"ASGITransport\" has incompatible type \"FastAPI\"; expected \"Callable[[dict[str, Any], Callable[[], Awaitable[dict[str, Any]]], Callable[[dict[str, Any]], Coroutine[None, None, None]]], Coroutine[None, None, None]]\"  [arg-type]\r\ntests/conftest.py:64: note: \"FastAPI.__call__\" has type \"Callable[[Arg(MutableMapping[str, Any], 'scope'), Arg(Callable[[], Awaitable[MutableMapping[str, Any]]], 'receive'), Arg(Callable[[MutableMapping[str, Any]], Awaitable[None]], 'send')], Coroutine[Any, Any, None]]\"\r\nFound 1 error in 1 file (checked 472 source files)\r\n \r\n It looks like FastAPI and httpx disagree on the shape of an ASGI application. How am I meant to resolve this?\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/3111",
+      "pull_request": "https://github.com/encode/httpx/pull/3109",
+      "gold_functions": [
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request.send"
+      ],
+      "gold_files": [
+        "httpx/_transports/asgi.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3140,
+      "commit": "a7092af2fda78d92daaad7627e4cf0cf5e94b019",
+      "time": 1714694948,
+      "summary": "Httpx is not encoding \"%\" symbol while sending requests",
+      "description": "### Discussed in https://github.com/encode/httpx/discussions/3094\r\n\r\n<div type='discussions-op-text'>\r\n\r\n<sup>Originally posted by **heysarthak** February 14, 2024</sup>\r\nHi team, \r\n\r\nI am ussing httpx plugin, while sending httpx query \"ngi%abc.com\" .\r\nideally \"%\" symbol should be encoded as \"%25\" but it is still sending as the same \"%\".\r\n\r\ncan we please have a fix for this.</div>",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/3140",
+      "pull_request": "https://github.com/encode/httpx/pull/3187",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.PERCENT",
+        "func:httpx/_urlparse.py:httpx._urlparse.percent_encoded"
+      ],
+      "gold_files": [
+        "httpx/_urlparse.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3411,
+      "commit": "47f4a96ffaaaa07dca1614409549b5d7a6e7af49",
+      "time": 1732275771,
+      "summary": "Zstandard data is incomplete on HEAD requests",
+      "description": "Tried to do a HEAD request with a server answering with `zstd` encoding by default but since the content is empty `ZStandardDecoder` is raising `DecodingError(\"Zstandard data is incomplete\")` when calling `flush()`.\r\n\r\nTried to fix the problem by adding a check if `ret` is empty:\r\n```python\r\n\r\n    def flush(self) -> bytes:\r\n        ret = self.decompressor.flush()  # note: this is a no-op\r\n        # If content is empty, no need to wait for EOF\r\n        if not self.decompressor.eof and len(ret) > 0:\r\n            raise DecodingError(\"Zstandard data is incomplete\")  # pragma: no cover\r\n        return bytes(ret)\r\n```\r\n\r\nIt is working for me but I don't know if there is other implications with this modification.\r\n\r\nURLs to test: https://password-hashing.net/ or https://3proxy.org/\r\n\r\n---\r\n\r\n- [X] Initially raised as discussion https://github.com/encode/httpx/discussions/3408",
+      "text_source": "github_issue",
+      "url": "https://github.com/encode/httpx/issues/3411",
+      "pull_request": "https://github.com/encode/httpx/pull/3412",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.flush"
+      ],
+      "gold_files": [
+        "httpx/_decoders.py"
+      ],
+      "split": "test"
+    }
+  ]
+}

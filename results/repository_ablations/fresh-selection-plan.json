@@ -1,0 +1,13 @@
+{
+  "purpose": "Fresh chronological transfer evaluation frozen before scoring",
+  "selection_order": ["pallets/click", "pallets/werkzeug"],
+  "rationale": "Established Python projects with real linked issue history, manageable source size and no previous scoring in this project. Local user repositories are inventoried for future integration checks; Go/TypeScript require a different historical function mapper than this Python-only mining pipeline.",
+  "scopes": {"pallets/click": ["src/click"], "pallets/werkzeug": ["src/werkzeug"]},
+  "maximum_eligible_pr_commits": 120,
+  "minimum_training_reports": 10,
+  "minimum_evaluation_reports": 5,
+  "split": "Chronological by fix commit; last 40 percent held out; reject duplicate tickets, commits or normalized exact queries across split",
+  "selection": "Keep both results regardless of score or insufficient sample. No substitutes selected based on outcomes.",
+  "scoring": "Not performed during dataset discovery",
+  "limitations": ["Current snapshot retrospective mapping includes later source changes", "Current issue bodies may have edits after fix", "Closing issue references can include features", "Only fixes mapping to 1-8 current functions qualify"]
+}

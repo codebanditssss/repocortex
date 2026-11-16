@@ -1,0 +1,2255 @@
+{
+  "status": "completed",
+  "split_audit": {
+    "train": 44,
+    "holdout": 37,
+    "overlap": {
+      "tickets": [],
+      "commits": [],
+      "exact_queries": []
+    },
+    "chronological": true,
+    "latest_training_fix_unix": 1779209191,
+    "earliest_holdout_fix_unix": 1779376834,
+    "query_hash": "sha256 of lowercase whitespace-normalized title and body",
+    "feedback": "only training rows passed to learning operators; held-out labels used for scoring only"
+  },
+  "functions": 542,
+  "arms": {
+    "text_only": {
+      "n": 37,
+      "function_acc@5": 0.43243243243243246,
+      "function_acc@10": 0.4864864864864865,
+      "file_acc@1": 0.5135135135135135,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5418811668811667,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.432432,
+          "lo": 0.27027,
+          "hi": 0.594595
+        },
+        "function_acc@10": {
+          "mean": 0.486486,
+          "lo": 0.324324,
+          "hi": 0.648649
+        },
+        "file_acc@1": {
+          "mean": 0.513514,
+          "lo": 0.351351,
+          "hi": 0.675676
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.541881,
+          "lo": 0.401216,
+          "hi": 0.681902
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3458
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3487
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3043
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3502
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2986
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3059
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 375
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 587
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 1049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 1552
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2983
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2542
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3242
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.125,
+          "ticket": 3449
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1272
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 1884
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3125
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3572
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2877
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2819
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2672
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3501
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3700
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3571
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3731
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3732
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3740
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3416
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3417
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2869
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2582
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3802
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3822
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2110
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 231
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3362
+        }
+      ]
+    },
+    "frozen_graph": {
+      "n": 37,
+      "function_acc@5": 0.43243243243243246,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5405405405405406,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5579043329043328,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.432432,
+          "lo": 0.27027,
+          "hi": 0.594595
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.540541,
+          "lo": 0.378378,
+          "hi": 0.702703
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.557904,
+          "lo": 0.41201,
+          "hi": 0.697442
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 3458
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3487
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3043
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3502
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2986
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3059
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 375
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.125,
+          "ticket": 587
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 1049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1552
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2983
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2542
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3242
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3449
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1272
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 1884
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3125
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3572
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2877
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2819
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2672
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3501
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3700
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3571
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3731
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3732
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3740
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3416
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3417
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2869
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2582
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3802
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 3822
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2110
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 231
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3362
+        }
+      ]
+    },
+    "flat_fix_memory": {
+      "n": 37,
+      "function_acc@5": 0.43243243243243246,
+      "function_acc@10": 0.4864864864864865,
+      "file_acc@1": 0.5135135135135135,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5382775632775632,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.432432,
+          "lo": 0.27027,
+          "hi": 0.594595
+        },
+        "function_acc@10": {
+          "mean": 0.486486,
+          "lo": 0.324324,
+          "hi": 0.648649
+        },
+        "file_acc@1": {
+          "mean": 0.513514,
+          "lo": 0.351351,
+          "hi": 0.675676
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.538278,
+          "lo": 0.396787,
+          "hi": 0.676985
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3458
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3487
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3043
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3502
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2986
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3059
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 375
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 587
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 1552
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2983
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2542
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3242
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.125,
+          "ticket": 3449
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1272
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 1884
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3125
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3572
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2877
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2819
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2672
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3501
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3700
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3571
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3731
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3732
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3740
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3416
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3417
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2869
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2582
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3802
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3822
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2110
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 231
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3362
+        }
+      ]
+    },
+    "learned_graph": {
+      "n": 37,
+      "function_acc@5": 0.4594594594594595,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5135135135135135,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5433075933075933,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.459459,
+          "lo": 0.297297,
+          "hi": 0.621622
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.513514,
+          "lo": 0.351351,
+          "hi": 0.675676
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.543308,
+          "lo": 0.400728,
+          "hi": 0.68491
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 3458
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3487
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3043
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3502
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2986
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3059
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 375
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 587
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1552
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2983
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2542
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3242
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3449
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1272
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 1884
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3125
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3572
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2877
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2819
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2672
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3501
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3700
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3571
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3731
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3732
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3740
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3416
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3417
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2869
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2582
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3802
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 3822
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2110
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 231
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3362
+        }
+      ]
+    },
+    "learned_traversal_off": {
+      "n": 37,
+      "function_acc@5": 0.43243243243243246,
+      "function_acc@10": 0.4864864864864865,
+      "file_acc@1": 0.5135135135135135,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5379021879021879,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.432432,
+          "lo": 0.27027,
+          "hi": 0.594595
+        },
+        "function_acc@10": {
+          "mean": 0.486486,
+          "lo": 0.324324,
+          "hi": 0.648649
+        },
+        "file_acc@1": {
+          "mean": 0.513514,
+          "lo": 0.351351,
+          "hi": 0.675676
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.537902,
+          "lo": 0.396543,
+          "hi": 0.676617
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3458
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3487
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3043
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3502
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2986
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3059
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 375
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 587
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 1552
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2983
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2542
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 3242
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3449
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1272
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 1884
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3125
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3572
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2877
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2819
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2672
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3501
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3700
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 3571
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3731
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3732
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3740
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3416
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3417
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2869
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2582
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3802
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 3822
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2110
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 231
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3362
+        }
+      ]
+    }
+  },
+  "distinct_commits": {
+    "train": 36,
+    "test": 24
+  },
+  "operators": {
+    "gap_ingestion": 67,
+    "path_compression": 218,
+    "entity_merge_split": 36,
+    "edge_reweight": 299
+  },
+  "params": {
+    "bm25_mix": 0.1,
+    "memory_lam": 0.08,
+    "memory_thresh": 0.55,
+    "memory_k": 5,
+    "shortcut_lam": 0.04,
+    "graph_mix": 0.05,
+    "shortcut_min_support": 3,
+    "shortcut_min_precision": 0.4,
+    "memory_agg": "sum",
+    "memory_frontier": 0,
+    "recency_half_life": 0.0,
+    "file_prior_lam": 0.0,
+    "module_prior_lam": 0.0,
+    "prior_seeds": 12,
+    "generalize_concepts": false,
+    "credit_decay": 0.08,
+    "decay": 0.08
+  },
+  "curve": [
+    {
+      "n": 37,
+      "function_acc@5": 0.43243243243243246,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5405405405405406,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5579043329043328,
+      "step": 0,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.432432,
+          "lo": 0.27027,
+          "hi": 0.594595
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.540541,
+          "lo": 0.378378,
+          "hi": 0.702703
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.557904,
+          "lo": 0.41201,
+          "hi": 0.697442
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_module": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5579043329043328
+        },
+        "seen_file": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_file": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5579043329043328
+        }
+      }
+    },
+    {
+      "n": 37,
+      "function_acc@5": 0.4594594594594595,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5675675675675675,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5771664521664522,
+      "step": 11,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.459459,
+          "lo": 0.297297,
+          "hi": 0.621622
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.577166,
+          "lo": 0.436376,
+          "hi": 0.724839
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5771664521664522
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 24,
+          "function_acc@10": 0.5833333333333334,
+          "mrr": 0.6303736772486772
+        },
+        "unseen_file": {
+          "n": 13,
+          "function_acc@10": 0.5384615384615384,
+          "mrr": 0.47893772893772896
+        }
+      }
+    },
+    {
+      "n": 37,
+      "function_acc@5": 0.4594594594594595,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5405405405405406,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5631703131703131,
+      "step": 22,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.459459,
+          "lo": 0.297297,
+          "hi": 0.621622
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.540541,
+          "lo": 0.378378,
+          "hi": 0.702703
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.56317,
+          "lo": 0.422246,
+          "hi": 0.707148
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5631703131703131
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 29,
+          "function_acc@10": 0.5862068965517241,
+          "mrr": 0.5900383141762452
+        },
+        "unseen_file": {
+          "n": 8,
+          "function_acc@10": 0.5,
+          "mrr": 0.4657738095238095
+        }
+      }
+    },
+    {
+      "n": 37,
+      "function_acc@5": 0.4594594594594595,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5405405405405406,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5587730587730587,
+      "step": 33,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.459459,
+          "lo": 0.297297,
+          "hi": 0.621622
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.540541,
+          "lo": 0.378378,
+          "hi": 0.702703
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.558773,
+          "lo": 0.416958,
+          "hi": 0.699488
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5587730587730587
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 31,
+          "function_acc@10": 0.5483870967741935,
+          "mrr": 0.5547875064004095
+        },
+        "unseen_file": {
+          "n": 6,
+          "function_acc@10": 0.6666666666666666,
+          "mrr": 0.5793650793650793
+        }
+      }
+    },
+    {
+      "n": 37,
+      "function_acc@5": 0.4594594594594595,
+      "function_acc@10": 0.5675675675675675,
+      "file_acc@1": 0.5135135135135135,
+      "file_acc@5": 0.8918918918918919,
+      "mrr": 0.5433075933075933,
+      "step": 44,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.459459,
+          "lo": 0.297297,
+          "hi": 0.621622
+        },
+        "function_acc@10": {
+          "mean": 0.567568,
+          "lo": 0.405405,
+          "hi": 0.72973
+        },
+        "file_acc@1": {
+          "mean": 0.513514,
+          "lo": 0.351351,
+          "hi": 0.675676
+        },
+        "file_acc@5": {
+          "mean": 0.891892,
+          "lo": 0.783784,
+          "hi": 0.972973
+        },
+        "mrr": {
+          "mean": 0.543308,
+          "lo": 0.400728,
+          "hi": 0.68491
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 37,
+          "function_acc@10": 0.5675675675675675,
+          "mrr": 0.5433075933075933
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 33,
+          "function_acc@10": 0.5151515151515151,
+          "mrr": 0.5081529581529581
+        },
+        "unseen_file": {
+          "n": 4,
+          "function_acc@10": 1.0,
+          "mrr": 0.8333333333333333
+        }
+      }
+    }
+  ],
+  "gaps_learned_minus": {
+    "text_only": {
+      "n": 37,
+      "function_acc@5": {
+        "mean": 0.027027,
+        "lo": 0.0,
+        "hi": 0.081081
+      },
+      "function_acc@10": {
+        "mean": 0.081081,
+        "lo": 0.0,
+        "hi": 0.162838
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": -0.081081,
+        "hi": 0.081081
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": 0.001426,
+        "lo": -0.045222,
+        "hi": 0.050528
+      }
+    },
+    "frozen_graph": {
+      "n": 37,
+      "function_acc@5": {
+        "mean": 0.027027,
+        "lo": 0.0,
+        "hi": 0.081081
+      },
+      "function_acc@10": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@1": {
+        "mean": -0.027027,
+        "lo": -0.081081,
+        "hi": 0.0
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": -0.014597,
+        "lo": -0.044528,
+        "hi": 0.005084
+      }
+    },
+    "flat_fix_memory": {
+      "n": 37,
+      "function_acc@5": {
+        "mean": 0.027027,
+        "lo": 0.0,
+        "hi": 0.081081
+      },
+      "function_acc@10": {
+        "mean": 0.081081,
+        "lo": 0.0,
+        "hi": 0.162838
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": -0.081081,
+        "hi": 0.081081
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": 0.00503,
+        "lo": -0.041367,
+        "hi": 0.053731
+      }
+    },
+    "learned_traversal_off": {
+      "n": 37,
+      "function_acc@5": {
+        "mean": 0.027027,
+        "lo": 0.0,
+        "hi": 0.081081
+      },
+      "function_acc@10": {
+        "mean": 0.081081,
+        "lo": 0.0,
+        "hi": 0.162838
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": -0.081081,
+        "hi": 0.081081
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": 0.005405,
+        "lo": -0.040992,
+        "hi": 0.054097
+      }
+    }
+  },
+  "methodology": {
+    "execution": "offline in-memory graph, no HydraDB queries; not live deployment evidence",
+    "parameters": "unchanged defaults; no calibration or selection on this dataset",
+    "flat_fix_memory": "same prior report embeddings and fix labels, no traversal or graph operators; unit FIXED_IN weights",
+    "learned_traversal_off": "identical learned memory including learned FIXED_IN weights; structural and shortcut score terms disabled only for evaluation",
+    "limitations": [
+      "Retrospective final source snapshot may contain later fixes.",
+      "Current issue bodies may contain later edits.",
+      "Mapped changed functions proxy fault location.",
+      "Cross-split query and commit overlap checked; semantic duplicates not detected.",
+      "Accuracy is strict: all changed functions must be in the first ten results.",
+      "MRR is truncated to ten candidates (MRR@10).",
+      "Issue-level bootstrap intervals are exploratory: reports can share a fix commit."
+    ]
+  },
+  "repository": "pallets/click",
+  "snapshot": "e38188e9e205005d5af5f9e59df51904c984586a",
+  "dataset_sha256": "f3b59d77e6c1553e1ff57fb63a62cde92e49e9720232fd5927c649996b645b2b",
+  "evaluator_sha256": "eb69ffbe11f009d4b5886d131c7e8bd0139dae728b75ea271be6a392c941a3d5",
+  "source_manifest": [
+    {
+      "path": "src/click/__init__.py",
+      "sha256": "5abfc54d37d47cc788b7e7a05e9514787f8c5a0b7db429d0f24d748ac89964ca"
+    },
+    {
+      "path": "src/click/_compat.py",
+      "sha256": "8db1da2965cf3e5dc66c6c53833cbc613ea1cd2440b9d0eb6aa8360eb46d4913"
+    },
+    {
+      "path": "src/click/_termui_impl.py",
+      "sha256": "51b485ef15b4858817817296ea16a85a8fead9ab097fe4fda7778897b8cc82f9"
+    },
+    {
+      "path": "src/click/_textwrap.py",
+      "sha256": "c526ca64bbe24d08f054b164fb2b37f6f65c62ca4e05848d51bc68d8e00e86d9"
+    },
+    {
+      "path": "src/click/_utils.py",
+      "sha256": "c7a62c70514253d091cbca49917fe16281556db1aa83bb389532180c47dc1233"
+    },
+    {
+      "path": "src/click/_winconsole.py",
+      "sha256": "a6f0d49ef0be806a9730bd64a2e5b373a95d49de91fd7728595ff31d773f2db7"
+    },
+    {
+      "path": "src/click/core.py",
+      "sha256": "fc4cf5cfbbe1e375fb439c9f00698ab9f866d167cffcc430837e3807ffc436c6"
+    },
+    {
+      "path": "src/click/decorators.py",
+      "sha256": "f4d01d31413df715c3573d4879ab82fd280ef048fc4ffdacf093c6c506ee6965"
+    },
+    {
+      "path": "src/click/exceptions.py",
+      "sha256": "1ef498df81b86ae8ff6d8451f3e4fc094f09c2aff5f8e72c454e1ecdfa337849"
+    },
+    {
+      "path": "src/click/formatting.py",
+      "sha256": "421994c476e0108d521f7c20da7a407a28425dd81afbfe8298bf59d3faf6580f"
+    },
+    {
+      "path": "src/click/globals.py",
+      "sha256": "80cf8d87a0383341c1fd2824685e4ce2770618c0c773f7e51d7bbdfe88781845"
+    },
+    {
+      "path": "src/click/parser.py",
+      "sha256": "a09f9f53fde6bf1ba022e36d1da0804d9e7a9601261d18208c9892a84818ae30"
+    },
+    {
+      "path": "src/click/shell_completion.py",
+      "sha256": "c5fcba42d9c50bf90367b21a7a80c32fb43f6dda55d0847c7e357b4c95f4e71a"
+    },
+    {
+      "path": "src/click/termui.py",
+      "sha256": "16f6546b36d647d191788fc912e32d93e8b64289517f004e6d9604f4896ad1ca"
+    },
+    {
+      "path": "src/click/testing.py",
+      "sha256": "e95823823bf2aa65739c2b064778c2893608eaec46080fcd7b7787adf9489b37"
+    },
+    {
+      "path": "src/click/types.py",
+      "sha256": "896fe567765a5e978ee0930513049c8b6d008b67a87ac0e53f656f8b560ed434"
+    },
+    {
+      "path": "src/click/utils.py",
+      "sha256": "71d655f535bfa0e9226bed2425b63345077f1e26a9c44350a3f631bba9dcb74c"
+    }
+  ],
+  "code_manifest": {
+    "repocortex/__init__.py": "c0e6a6e9bce713e19ef28524d8d0fff93d9aebcfcabf4917cc53e589bfbe4332",
+    "repocortex/config.py": "a78a3e2b2fadec720ce4920f94d8c92162aaee89aa82941a2dbf39c374aff29b",
+    "repocortex/eval/__init__.py": "74ea3612525e44c6bb122ad136cc9f08abd27d734482f493f00bd5ede81bfa80",
+    "repocortex/eval/harness.py": "3f64791deb9d7434e1e52723c561acff4186ae00c4f085101e700d8e57af6d93",
+    "repocortex/eval/metrics.py": "d22d1106aaa1b9e3c8af0c62883db7eec94159ce063bd028aaca419563bf8eb8",
+    "repocortex/eval/plot.py": "5cea3171cd057451b1c94740f2959ffe3347089d561e6a2b61ed1d3dc7fe941b",
+    "repocortex/graph/__init__.py": "7e33b37dd7b4fa2563f4b7ad878d38160579d15176427cd91c4014d35140c21f",
+    "repocortex/graph/builder.py": "27f047a4eedbbd0832f252d4a0df9ad29ca3a6fcaf674e680ddcda00bda4f1c9",
+    "repocortex/graph/export.py": "ffa6015ad43314d8f561c0cbaeeb6e24a15b97b3491e4c70987f7f6617e88586",
+    "repocortex/graph/ingest.py": "cd2c86f53edb682466ce0082076a3c3adfd0c653d12ec50eca371ea5784a1936",
+    "repocortex/graph/model.py": "cede7b24f2b7e0fb1ce75eb0060664dc401d109c85bc4e79cb1c28b7f780e16a",
+    "repocortex/graph/multilang.py": "2fe33a824261a5cbaffc9374e884462e22e8be1e75ad55b9cf50727346e317e0",
+    "repocortex/hydradb/__init__.py": "89901140c444c597c6031f136cecf8a1a816f921ed4dc2fca3d92e278fbdeab1",
+    "repocortex/hydradb/base.py": "839c838b0d6ecb4a56764af95fbec3fbc8383992fc6402c98bea77e10104e12f",
+    "repocortex/hydradb/bolt.py": "8d8adc14224ef7c9d778d6c5b4cec7862c8149c3fd26d5095b30a7863b6052ea",
+    "repocortex/hydradb/hosted.py": "2fc68157e1aeae1805a7e73ff562af8416138cce36735396126808aeb57b7d28",
+    "repocortex/learn/__init__.py": "70ceed67b6a2b6f5eb75b15e7ebfaeaa2ee34cc4d2c38be0807482f33ec18446",
+    "repocortex/learn/base.py": "f8fcb0b3ab476bbcdec0d4962a480d4298d28e3001d7a47e1259551f1c9d504d",
+    "repocortex/learn/calibrate.py": "4e0adc683be908dbba8c24259935ff8b8cffb1bc8a9184608e2239fa841196c5",
+    "repocortex/learn/compress.py": "030ea76b07049780fd8d4e89fcf7a430e5c4a9954bed74c19e44f61442f59374",
+    "repocortex/learn/credit.py": "80594a55c44f11eec119f0a26c5e718cee7096c9a1ffcc3fe32450f46454c7f8",
+    "repocortex/learn/gap.py": "8f69604a76492a2839d094ba188a8b1c50fe9c5066d06ddc0bd566a171726396",
+    "repocortex/learn/merge.py": "3baea19555e004f23e8c0e1ebc0a15cff4fa18628973779ee7b3f57b30aeb006",
+    "repocortex/learn/replay.py": "38fc4dcaa539412168ef1664e2127ea3e65acd9fef63cc8aebf55f855491b8ff",
+    "repocortex/learn/reweight.py": "1508464906ad5e10d72b7490daa8a4c8da99c3453bcf5b65054d6eb9aef12924",
+    "repocortex/mine/__init__.py": "f64b8bf7042251d901c576965d4102fa5c792e3621454de99db12eec26076a94",
+    "repocortex/mine/commits.py": "2ae50658fc63e69f52bb4bde58c4f69fe7975ee18e7898448bcffaa40842d944",
+    "repocortex/mine/dataset.py": "b288c052aeab50380b8646d8bfd8c1fa880401f1d101c20b54dab08b3703ec7b",
+    "repocortex/mine/trac.py": "4e99a13d7a15a8ea9ab7a78fd5f8bd57bda9d8e469d378fe6cd3647a2c8ce6c4",
+    "repocortex/retrieve/__init__.py": "5b7d4eaa6fb9852f706ce41d37d5ed9c52158d92bca7168d6ae619d30149c998",
+    "repocortex/retrieve/bm25.py": "eb55d36d0591774ce286391d88262c919bc311de31db9b73dc89b0397fe01faf",
+    "repocortex/retrieve/dense.py": "ee8b2a9d93c8677cb7ca7e68b7c06ca6affe71e8cc6ca47296c9e8483f1c771d",
+    "repocortex/retrieve/frozen.py": "9feacd6f332cfbd25ff3ff0f08564a47de816e8efda0003a45de7a246052fdfc",
+    "repocortex/retrieve/hybrid.py": "a626385113d70fc240164f48db394de6a18630aaf3f9be636ad7c59d950c29f0",
+    "repocortex/retrieve/ppr.py": "fedae4cd93b4045a53bbaf1dcc4b431d04461a76b6a89bd7d6b093c0ed2b57a8",
+    "repocortex/retrieve/textutil.py": "6b0e806a792e765e5c8511c195a5bebba2c2c14262ae6e0865e82112e8665961",
+    "repocortex/serve/__init__.py": "37b1cdef5c129f6d5de400d98726d0df12244abd6aa9c2550825c2cff7e743d4",
+    "repocortex/serve/feedback.py": "aaccbeed6278dde037c760d0565aba61391bf8f5806e0af572a4e1d7abbcb5b4",
+    "repocortex/serve/learn.py": "0c9084202c6db7b552593c2fff4a20e32ef0b212a8943484953a09f013badcb1",
+    "repocortex/serve/load.py": "ef63d9a0b8eae58577263f64a355230e050a2e994824775e0ecea4be8fbcdf30",
+    "scripts/eval_repository_ablation.py": "eb69ffbe11f009d4b5886d131c7e8bd0139dae728b75ea271be6a392c941a3d5",
+    "scripts/eval_transfer.py": "f48c3a692ed3ea00e3310d5480a5ef159d0b77c1215c8d57a352d4e991ad1e9f",
+    "scripts/eval_lexical.py": "0e11908317bed490737ac7a4f3257f9ff926ef5db3a2438317754f81c660224d"
+  },
+  "source_manifest_sha256": "5510fa5bf0aa68f57e2056246334af1e4828d3c6b7ba1ec3ed788b9a42e46811"
+}

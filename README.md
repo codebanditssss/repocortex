@@ -78,7 +78,7 @@ A saved experiment compared the same 30 held-out bugs with the same model and co
 | Search tools + `locate_bug` | 53,888 | 13/30 |
 | Instructed to call `locate_bug` first | 46,361 | 13/30 |
 
-For a completed-fix study, the [outcome evaluation protocol](docs/agent-outcomes.md) separates regression-test evidence, elapsed time, cached tokens, errors and missing runs. No completed-fix benchmark result is claimed yet.
+For a completed-fix study, the [outcome evaluation protocol](docs/agent-outcomes.md) separates regression-test evidence, elapsed time, cached tokens, errors and missing runs. A subsequent two-task historical repair pilot produced **0/2 repairs in both arms**, with no patches and one provider error. It establishes no repair or speed advantage. [Pilot outcomes and limitations](results/repair_pilot.md)
 
 The tool-available arm used **16% fewer input tokens**; the locate-first arm used **27% fewer**. A one-issue accuracy difference is too small to establish a gain. This is one model, one run per condition, and 30 tasks; input tokens include cached reads. [protocol, raw runs and caveats](results/agent_eval/README.md)
 
@@ -94,9 +94,20 @@ In a separate production check, **8/8 preselected HTTP searches** matched offlin
 
 ### Independent repository checks
 
-**HTTPX:** unchanged ranking defaults, 51 training reports and 33 chronologically held-out reports. Strict function accuracy@10 was **39.4% without graph, 42.4% frozen, and 45.5% learned**. Learning adds one successful report (14/33 → 15/33); the paired 95% interval is **0 to +9.1 points**, so a reliable transfer gain is not established. No ticket, commit or exact normalized report overlaps were found across the split. This is an offline retrospective evaluation at a fixed source snapshot, not a live HydraDB accuracy test. [Full protocol and results](results/transfer_httpx.md)
+Four retrospective evaluations use real linked issue reports, chronological splits and unchanged ranking settings. Click and Werkzeug were selected and their datasets frozen before scoring. Strict function accuracy@10 requires every changed function to appear in the first ten results.
 
-The same pipeline was also run on actual linked Flask issue reports, with unchanged ranking parameters: 13 training reports and seven held out. **Frozen and learned both found all changed functions in the top 10 for 4/7 reports.** The no-graph blend had slightly higher MRR. This small retrospective pilot shows the pipeline runs on another repository; it does **not** demonstrate transferable learning gains. [Protocol, exclusions and reproduction](results/transfer_flask.md)
+| Repository | Training / held out | Text-only blend | Frozen graph | Learned graph |
+|---|---:|---:|---:|---:|
+| HTTPX | 51 / 33 | 13/33 (39.4%) | 14/33 (42.4%) | 15/33 (45.5%) |
+| Flask | 13 / 7 | 4/7 (57.1%) | 4/7 (57.1%) | 4/7 (57.1%) |
+| Click | 44 / 37 | 18/37 (48.6%) | 21/37 (56.8%) | 21/37 (56.8%) |
+| Werkzeug | 26 / 16 | 9/16 (56.3%) | 8/16 (50.0%) | 9/16 (56.3%) |
+
+**Graph structure and learning are different contributions.** Click's graph finds three more reports than the text-only blend, but learning adds none at top 10 and lowers MRR. Werkzeug's learning recovers one report lost by the frozen graph; it does not beat text-only search. HTTPX adds one report through learning, while Flask stays flat. The paired learning-gain intervals include zero; these samples do not establish reliable transfer gains.
+
+The expanded comparison also tests flat past-fix memory without traversal and disables traversal after learning. Click's flat-memory and traversal-off arms both score 18/37; Werkzeug's both score 9/16. This helps separate the contribution of traversal from simply retaining past fixes. [All five arms, intervals, frozen datasets and reproduction](results/repository_ablations.md)
+
+These are offline checks, not live HydraDB accuracy tests. No ticket, commit or exact normalized report overlaps occur across each split, but current source snapshots include later fixes, issue bodies may have later edits, and diff-touched functions are only a proxy for fault location. Earlier protocols remain available: [HTTPX](results/transfer_httpx.md) · [Flask](results/transfer_flask.md).
 
 ## One answer you can inspect
 

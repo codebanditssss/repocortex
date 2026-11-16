@@ -1,69 +1,79 @@
-# Go to market
+# Who RepoCortex serves
 
-## Who it is for
+RepoCortex helps coding agents find the functions responsible for a bug and
+retain what a confirmed fix teaches. The initial customer is a platform or
+engineering team running agents on a mature internal backend. The developer
+reviews the suggested functions and evidence; the engineering lead decides
+whether the saved investigation work justifies operating the service.
 
-Engineering teams that already run coding agents (Cursor, Claude Code, Codex, Devin, in-house agents) on a large codebase with years of history. The pain is sharpest where the repo is big, old, and has a long tail of bug tickets: platform teams, fintech and enterprise backends, open-source maintainers with busy trackers.
+## The job
 
-The buyer is the engineering lead or platform team that pays the agent bill. The user is the agent, and the developer who reviews what it changes.
+An agent starting a bug investigation needs a useful place to begin. RepoCortex
+returns ranked functions, source locations and supporting graph relationships.
+A confirmed fix can update the graph so later investigations use that history.
+The product claim is deliberately narrow: a better starting point for debugging.
+It does not autonomously verify or guarantee a repair.
 
-## The wedge
+The current workflow is local or self-hosted:
 
-One question every bug ticket starts with: where do I edit? Today an agent answers it by searching from zero. RepoCortex answers it from the repo's own fix history, shows why, and can learn from explicitly confirmed fixes. It is narrow enough to measure (did the right function show up first, how many tokens did the agent spend) and it sits in front of every bug-fix task.
+1. Index a supported source snapshot into an isolated runtime.
+2. Restore its graph into a dedicated HydraDB instance.
+3. Connect the MCP tools and investigate a report.
+4. Review a confirmed fix before recording feedback in a separate namespace.
+5. Compare later searches and verify the feedback survives a restart.
 
-What we can already show on Django:
+Python, Go, TypeScript and JavaScript source indexing is available. Historical
+issue-to-fix evaluation currently uses the Python mapper. Supporting a language
+at ingestion is not evidence that learning works well on its repositories.
+See [repository setup](index-repository.md) and [confirmed-fix feedback](confirmed-fix.md).
 
-- strict function Acc@10: 41.7% dense + BM25 without graph, 45.1% frozen graph, 48.3% after learning on 319 chronological fix-commit holdout rows; +3.4 percentage points from the structural graph, then +3.1 from learning
-- 16 to 27 percent fewer agent input tokens on 30 bugs
-- 120/120 valid live responses for distinct held-out reports at four concurrent clients; 3.51s p50 and 4.07s p95 including network and queueing, over 113 seconds. This short read-only test is not a capacity guarantee. [Evidence](../results/service_reliability_120.json)
+## Evidence a buyer can inspect
 
-This is a retrospective evaluation on a fixed Django snapshot that includes later fixes. Three test rows share tickets with training; excluding them leaves 316 rows and preserves the learning gain (45.6% to 48.7%). See the [evaluation audit](evaluation-audit.md).
+On the recorded Django evaluation, strict function accuracy@10 is 41.7% for
+dense + BM25, 45.1% for the frozen graph and 48.3% after learning, across 319
+fix-commit rows. The agent localization study reports 16–27% fewer input tokens
+on 30 bugs. These are localization measurements, not completed repair savings.
+The fixed source snapshot includes later fixes; three holdout rows share ticket
+IDs with training. Excluding those rows preserves the reported learning gain.
+See the [evaluation audit](evaluation-audit.md).
 
-## Distribution
+The live read-only service check returned 120/120 valid responses at four
+concurrent clients, with 3.51s p50 and 4.07s p95 including network and queueing.
+That short run is not a capacity guarantee. [Run evidence](../results/service_reliability_120.json).
 
-- **MCP first.** It is a local MCP server with three tools: locate_bug, learn_from_fix and graph_status. Listing in MCP directories and the Cursor and Claude Code MCP setup docs gets it in front of agent users with no integration work.
-- **GitHub app next.** Ingest on merge from a webhook, so `learn_from_fix` runs on every merged PR without anyone calling it.
-- **Open-source core.** The graph builder, rankers, and operators stay open so teams can verify the eval on their own repo before paying.
+Transfer is not established by the initial pilots: HTTPX improved by one report,
+Flask stayed flat, and training-only memory calibration worsened HTTPX evaluation
+results. The production settings were not changed to that candidate.
+[Calibration evidence](../results/learning_calibration.md).
 
-## Self-hosted by default
+## A concrete evaluation offer
 
-Private code is the first objection. RepoCortex runs on self-hosted HydraDB 0.4.0 in Docker, and the ranker makes no LLM calls, so ranking does not send code to an LLM provider. Initial setup downloads public embedding weights. Runtime corpus, embeddings and learned-state files must be managed alongside HydraDB. HydraDB Cloud is a config change for teams that want it managed.
+Start with one repository and a fixed set of historical bug reports. Agree on
+later evaluation cases before tuning. Compare the same agent and model with and
+without RepoCortex, using equal budgets and isolated checkouts. Record:
 
-## Pricing idea
+- repairs that pass independent regression and guard tests;
+- time, input/output tokens and tool calls for every attempted task;
+- setup and indexing cost, failed runs, and missing measurements;
+- whether the learned graph improves on frozen graph and plain fix memory.
 
-- Free: open source, one repo, self-hosted.
-- Team: per indexed repo per month, includes the GitHub app, ingest on merge, and a dashboard of accuracy and tokens saved.
-- Enterprise: multi-repo graphs, SSO, on-prem support, and an eval on the customer's own history before purchase.
+A team should adopt only if its own results justify the setup and operating
+cost. A per-repository support or managed-service subscription is a pricing
+hypothesis, not an existing paid plan. We have no independent customer validation
+or willingness-to-pay evidence yet. [Pilot instructions](maintainer-pilot.md).
 
-The initial pilot measures input tokens per investigation and whether all changed functions appear in the suggested context. It does not yet establish fewer dollars per resolved ticket, faster completed fixes, or higher agent accuracy. Pricing and demand remain hypotheses, not validated customer traction.
+## Deployment and distribution
 
-## A pilot a platform lead can evaluate
+The current integration is a local MCP server with `locate_bug`, `learn_from_fix`
+and `graph_status`. Ranking uses local embedding weights without calling an LLM
+provider. Initial setup downloads the public embedding model. Source excerpts,
+embeddings and learned state remain sensitive repository data and must be managed
+alongside the database.
 
-Use the [maintainer trial instructions and feedback sheet](maintainer-pilot.md) to collect actual observations. No customer adoption or willingness to pay is claimed.
+The public website shows the product and evaluation evidence; it does not onboard
+or learn arbitrary private repositories. Automated merge ingestion, managed
+hosting plans and enterprise identity features are not currently offered.
 
-Start with one mature Python backend and the developers who already investigate its bugs. The initial offer is a self-hosted evaluation of that repository's history using the open-source tools available today. The GitHub app, managed plans and enterprise features above are proposals, not services currently sold.
-
-1. Agree on the evaluation before running it: reserve later fixes as a holdout, group repeated tickets together, and compare dense + BM25, the frozen graph and learning on the same reports. Keep a separate development slice for configuration choices.
-2. Connect the local MCP server and inspect five representative reports. Check that candidate paths and lines refer to the indexed snapshot, that the service reports its live or replay mode, and that the returned graph queries explain the ranking workflow. See the [setup instructions](../README.md#use-it-from-your-agent).
-3. Run the same coding agent with and without `locate_bug` on the reserved tasks. Record input tokens, tool calls, wall time and correctness separately. Count failed searches and setup costs too; fewer tokens alone do not prove cheaper completed fixes.
-4. Try confirmed-fix feedback in a separate namespace. Restart the MCP process and check that the feedback is restored without changing the benchmark runtime. Use one writer for that namespace.
-5. Continue only if the team's predefined success criteria are met. If learning does not beat the frozen graph, retain that result and investigate before enabling it for everyday use.
-
-The Django curve's early dip, the flat Flask pilot and the one-report HTTPX gain make repository-specific evaluation essential. The roughly 500-fix crossover observed on Django is not a minimum-history guarantee for another codebase. Setup also requires local corpus and embedding artifacts; this is not a one-click import of arbitrary repositories.
-
-## Competition
-
-| | what it does | what RepoCortex adds |
-|---|---|---|
-| Vector code search (embeddings over chunks) | Finds text that looks like the report | Adds relations and fix history. The stronger dense + BM25 control scores 41.7%, frozen graph 45.1%, learned graph 48.3% on this replay |
-| Static code graphs and repo maps | What calls what, at one point in time | Learns from fix history; measured +3.1 points over the frozen graph on Django |
-| Agent-native search (grep and read loops) | Works, but starts from zero every task | A ranked, explained starting point. 27% fewer input tokens when called first |
-| Research localizers (LocAgent, SWE-bench tools) | Localize code for agent tasks | Self-hosted MCP workflow with explicit fix feedback; no head-to-head evaluation claimed |
-
-## Metrics to track
-
-- Top-1 and top-10 function hit rate on each customer's own held-out history
-- Agent input tokens and tool calls per bug, with and without RepoCortex
-- Share of agent sessions that call `locate_bug` first
-- Learning lift: hit rate now vs at install
-- p95 latency per call
-- Repos indexed and fixes learned per week
+Our distinction to demonstrate is function-level localization from real bug
+reports, inspectable graph evidence and persistent confirmed-fix feedback. There
+is no controlled head-to-head evaluation against other hackathon submissions.

@@ -40,7 +40,13 @@ export default function Overview() {
           </tbody></table>
         </section></details>
         <EvaluationNote />
-        <details className="dashboard-disclosure"><summary>Does learning work beyond Django?</summary><p>On HTTPX, with unchanged ranking settings, 51 earlier reports trained the graph and 33 were held out. The frozen graph found every changed function in its top ten for 14 reports; learning found 15. The no-graph blend found 13.</p><p>The gain is one report, and its paired 95% interval includes zero. The earlier seven-report Flask holdout showed no learning gain. These retrospective offline checks do not establish reliable generalization.</p><p><a href="https://github.com/codebanditssss/repocortex/blob/main/results/transfer_httpx.md" target="_blank" rel="noreferrer">Read the HTTPX protocol and results →</a></p></details>
+        <details className="dashboard-disclosure">
+          <summary>Does learning work beyond Django?</summary>
+          <p>With unchanged ranking settings, HTTPX improves from 14/33 successful held-out reports with the frozen graph to 15/33 after learning, following 51 training reports. Flask stays at 4/7 after 13 training reports.</p>
+          <p>Two further datasets were frozen before scoring. Click uses 44 training reports and 37 held out: text-only search finds 18/37, while frozen and learned graphs both find 21/37. Werkzeug uses 26 training reports and 16 held out: text-only finds 9/16, frozen finds 8/16, and learned finds 9/16.</p>
+          <p>Graph structure helps Click at top ten, but learning adds no further successes and lowers MRR. Werkzeug recovers one report through learning without beating text-only search. The learning-gain intervals include zero. These retrospective offline checks do not establish reliable generalization.</p>
+          <p><a href="https://github.com/codebanditssss/repocortex/blob/main/results/repository_ablations.md" target="_blank" rel="noreferrer">Read all four repository checks and memory controls →</a></p>
+        </details>
         <details className="baseline-summary">
           <summary>All baselines, including dense + BM25 without graph</summary>
           <table className="manual-table"><caption>At the end of the pass / held-out accuracy</caption><thead><tr><th scope="col">Method</th><th scope="col">File Acc@1</th><th scope="col">Function Acc@10</th></tr></thead><tbody>

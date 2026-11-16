@@ -1,0 +1,1083 @@
+{
+  "status": "completed",
+  "split_audit": {
+    "train": 13,
+    "holdout": 7,
+    "overlap": {
+      "tickets": [],
+      "commits": [],
+      "exact_queries": []
+    },
+    "chronological": true,
+    "latest_training_fix_unix": 1731435219,
+    "earliest_holdout_fix_unix": 1731474203,
+    "query_hash": "sha256 of lowercase whitespace-normalized title and body",
+    "feedback": "only training rows passed to learning operators; held-out labels used for scoring only"
+  },
+  "functions": 356,
+  "arms": {
+    "text_only": {
+      "n": 7,
+      "function_acc@5": 0.5714285714285714,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.5619047619047619,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.561905,
+          "lo": 0.27131,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "frozen_graph": {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "flat_fix_memory": {
+      "n": 7,
+      "function_acc@5": 0.5714285714285714,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.5619047619047619,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.561905,
+          "lo": 0.27131,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "learned_graph": {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    },
+    "learned_traversal_off": {
+      "n": 7,
+      "function_acc@5": 0.5714285714285714,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.5619047619047619,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.561905,
+          "lo": 0.27131,
+          "hi": 0.857143
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5636
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 5776
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 5895
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 5816
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 5916
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 1.0,
+          "ticket": 6093
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3193
+        }
+      ]
+    }
+  },
+  "distinct_commits": {
+    "train": 11,
+    "test": 7
+  },
+  "operators": {
+    "gap_ingestion": 5,
+    "path_compression": 1,
+    "entity_merge_split": 0,
+    "edge_reweight": 18
+  },
+  "params": {
+    "bm25_mix": 0.1,
+    "memory_lam": 0.08,
+    "memory_thresh": 0.55,
+    "memory_k": 5,
+    "shortcut_lam": 0.04,
+    "graph_mix": 0.05,
+    "shortcut_min_support": 3,
+    "shortcut_min_precision": 0.4,
+    "memory_agg": "sum",
+    "memory_frontier": 0,
+    "recency_half_life": 0.0,
+    "file_prior_lam": 0.0,
+    "module_prior_lam": 0.0,
+    "prior_seeds": 12,
+    "generalize_concepts": false,
+    "credit_decay": 0.08,
+    "decay": 0.08
+  },
+  "curve": [
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 0,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "seen_file": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_file": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 3,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 2,
+          "function_acc@10": 1.0,
+          "mrr": 0.625
+        },
+        "unseen_file": {
+          "n": 5,
+          "function_acc@10": 0.4,
+          "mrr": 0.52
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 6,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 10,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    },
+    {
+      "n": 7,
+      "function_acc@5": 0.42857142857142855,
+      "function_acc@10": 0.5714285714285714,
+      "file_acc@1": 0.42857142857142855,
+      "file_acc@5": 0.7142857142857143,
+      "mrr": 0.55,
+      "step": 13,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.428571,
+          "lo": 0.0,
+          "hi": 0.857143
+        },
+        "function_acc@10": {
+          "mean": 0.571429,
+          "lo": 0.142857,
+          "hi": 0.857143
+        },
+        "file_acc@1": {
+          "mean": 0.428571,
+          "lo": 0.142857,
+          "hi": 0.714286
+        },
+        "file_acc@5": {
+          "mean": 0.714286,
+          "lo": 0.428571,
+          "hi": 1.0
+        },
+        "mrr": {
+          "mean": 0.55,
+          "lo": 0.257143,
+          "hi": 0.857143
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 7,
+          "function_acc@10": 0.5714285714285714,
+          "mrr": 0.55
+        },
+        "unseen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "seen_file": {
+          "n": 6,
+          "function_acc@10": 0.5,
+          "mrr": 0.5583333333333333
+        },
+        "unseen_file": {
+          "n": 1,
+          "function_acc@10": 1.0,
+          "mrr": 0.5
+        }
+      }
+    }
+  ],
+  "gaps_learned_minus": {
+    "text_only": {
+      "n": 7,
+      "function_acc@5": {
+        "mean": -0.142857,
+        "lo": -0.428571,
+        "hi": 0.0
+      },
+      "function_acc@10": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": -0.011905,
+        "lo": -0.035714,
+        "hi": 0.0
+      }
+    },
+    "frozen_graph": {
+      "n": 7,
+      "function_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "function_acc@10": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      }
+    },
+    "flat_fix_memory": {
+      "n": 7,
+      "function_acc@5": {
+        "mean": -0.142857,
+        "lo": -0.428571,
+        "hi": 0.0
+      },
+      "function_acc@10": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": -0.011905,
+        "lo": -0.035714,
+        "hi": 0.0
+      }
+    },
+    "learned_traversal_off": {
+      "n": 7,
+      "function_acc@5": {
+        "mean": -0.142857,
+        "lo": -0.428571,
+        "hi": 0.0
+      },
+      "function_acc@10": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@1": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "file_acc@5": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0
+      },
+      "mrr": {
+        "mean": -0.011905,
+        "lo": -0.035714,
+        "hi": 0.0
+      }
+    }
+  },
+  "methodology": {
+    "execution": "offline in-memory graph, no HydraDB queries; not live deployment evidence",
+    "parameters": "unchanged defaults; no calibration or selection on this dataset",
+    "flat_fix_memory": "same prior report embeddings and fix labels, no traversal or graph operators; unit FIXED_IN weights",
+    "learned_traversal_off": "identical learned memory including learned FIXED_IN weights; structural and shortcut score terms disabled only for evaluation",
+    "limitations": [
+      "Retrospective final source snapshot may contain later fixes.",
+      "Current issue bodies may contain later edits.",
+      "Mapped changed functions proxy fault location.",
+      "Cross-split query and commit overlap checked; semantic duplicates not detected.",
+      "Accuracy is strict: all changed functions must be in the first ten results.",
+      "MRR is truncated to ten candidates (MRR@10).",
+      "Issue-level bootstrap intervals are exploratory: reports can share a fix commit."
+    ]
+  },
+  "repository": "pallets/flask",
+  "snapshot": "49943b5a94413a530761350f04e896f76e8d620e",
+  "dataset_sha256": "c2d4df0b1cbcfa5ea6e1b92f8e0be5f0cbd42c98f310e7fe3923da848bde0f2b",
+  "evaluator_sha256": "eb69ffbe11f009d4b5886d131c7e8bd0139dae728b75ea271be6a392c941a3d5",
+  "source_manifest": [
+    {
+      "path": "src/flask/__init__.py",
+      "sha256": "2daebda4dc29fed5cb36c912a6115a234e9a4b5f9c33fd795e4bfeffd0cc9386"
+    },
+    {
+      "path": "src/flask/__main__.py",
+      "sha256": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279"
+    },
+    {
+      "path": "src/flask/app.py",
+      "sha256": "7aa83b45da812d20cdde46e8a84ec7919c6fa222197965f924496d4594f76150"
+    },
+    {
+      "path": "src/flask/blueprints.py",
+      "sha256": "a79404da5635f0622d6ddaff44a46967c0e8d7b8343ef4062206644940e15f69"
+    },
+    {
+      "path": "src/flask/cli.py",
+      "sha256": "1f476f816464b4250caaf6cc6fdf3f5fc956456a7da61cb7d0a1e03e3e7e5f3b"
+    },
+    {
+      "path": "src/flask/config.py",
+      "sha256": "3e2a85d033da9ba1d6d051f8087d61a574c17b7d0d4b38cf10ec2bcf56fa92dd"
+    },
+    {
+      "path": "src/flask/ctx.py",
+      "sha256": "e21952d044159438765eb27848b0fe4c75f83faee8645181a09a1eccb1d5cab7"
+    },
+    {
+      "path": "src/flask/debughelpers.py",
+      "sha256": "75c8258dc3487e1d0857dc5d3c7ca471fac1a254282570fa57e56d71aada037e"
+    },
+    {
+      "path": "src/flask/globals.py",
+      "sha256": "1abe9a4e0a96c8bb28c232e2b08993fffdfb9bb694be2230755e54a46a40ca4d"
+    },
+    {
+      "path": "src/flask/helpers.py",
+      "sha256": "4e2b647be02a93f655ddd058105c5ed8e9ffe3daef398ef3dd21e3a3817623fb"
+    },
+    {
+      "path": "src/flask/json/__init__.py",
+      "sha256": "b402bd0b89b87250f932bf4b8e2bec7af7130a8ebdc3ff5a0bba3865e9984173"
+    },
+    {
+      "path": "src/flask/json/provider.py",
+      "sha256": "cefdd0dfdde6bb6f73e7b853aa789de432e2af52a8c920c1c2af17228235b72c"
+    },
+    {
+      "path": "src/flask/json/tag.py",
+      "sha256": "0e168dc2e20e85db7647be28382f58e19f19a6bc4562245be5d50fe5bcb220dc"
+    },
+    {
+      "path": "src/flask/logging.py",
+      "sha256": "f2c33758c4ee6e2d5c05bd9cfe53e45a937427c74c02aae029160b2e2d5d0952"
+    },
+    {
+      "path": "src/flask/sansio/app.py",
+      "sha256": "cf5df9f2972be7cad9878df7ea321804617d769f47823984abbe0a9b1cbc460b"
+    },
+    {
+      "path": "src/flask/sansio/blueprints.py",
+      "sha256": "da960c5792daf2f1cef8c14113d9c95c8ce389a9689abb395fe867f4054d0ba1"
+    },
+    {
+      "path": "src/flask/sansio/scaffold.py",
+      "sha256": "d6578d2b5f06d227482e4110f8b750d04c8d94c9525c8857f9183f727ee2858b"
+    },
+    {
+      "path": "src/flask/sessions.py",
+      "sha256": "26fa7cc311b841f8409ad93933d3a3a52b068150c6f15fc3cd0c107e7a9aaf9d"
+    },
+    {
+      "path": "src/flask/signals.py",
+      "sha256": "57b94c530c3b0aa809d93854067d4f89ab59b506a73b2b7b399a6ed86648fb7e"
+    },
+    {
+      "path": "src/flask/templating.py",
+      "sha256": "3ed7a044a96c911267e855b7359d9f159f06321f75fbe678a6656923d5e0989e"
+    },
+    {
+      "path": "src/flask/testing.py",
+      "sha256": "629d481658aaec7076a55913eda38c270ec45d430b34b2f9d38b2eec2b0ad3da"
+    },
+    {
+      "path": "src/flask/typing.py",
+      "sha256": "ac3b0f12bf2a89e10c6b8f04d142b6103f9f1495030b8ff2c559d9952e060a00"
+    },
+    {
+      "path": "src/flask/views.py",
+      "sha256": "d0d5ceecd117533169c924cdbb01ea5bb0ee74b7b1c4b22855f73f0e4dea0ee7"
+    },
+    {
+      "path": "src/flask/wrappers.py",
+      "sha256": "e281b742d8067c961dd03dbbbd6dff335641b7e3406ea7f9ac4985df8926b421"
+    }
+  ],
+  "code_manifest": {
+    "repocortex/__init__.py": "c0e6a6e9bce713e19ef28524d8d0fff93d9aebcfcabf4917cc53e589bfbe4332",
+    "repocortex/config.py": "a78a3e2b2fadec720ce4920f94d8c92162aaee89aa82941a2dbf39c374aff29b",
+    "repocortex/eval/__init__.py": "74ea3612525e44c6bb122ad136cc9f08abd27d734482f493f00bd5ede81bfa80",
+    "repocortex/eval/harness.py": "3f64791deb9d7434e1e52723c561acff4186ae00c4f085101e700d8e57af6d93",
+    "repocortex/eval/metrics.py": "d22d1106aaa1b9e3c8af0c62883db7eec94159ce063bd028aaca419563bf8eb8",
+    "repocortex/eval/plot.py": "5cea3171cd057451b1c94740f2959ffe3347089d561e6a2b61ed1d3dc7fe941b",
+    "repocortex/graph/__init__.py": "7e33b37dd7b4fa2563f4b7ad878d38160579d15176427cd91c4014d35140c21f",
+    "repocortex/graph/builder.py": "27f047a4eedbbd0832f252d4a0df9ad29ca3a6fcaf674e680ddcda00bda4f1c9",
+    "repocortex/graph/export.py": "ffa6015ad43314d8f561c0cbaeeb6e24a15b97b3491e4c70987f7f6617e88586",
+    "repocortex/graph/ingest.py": "cd2c86f53edb682466ce0082076a3c3adfd0c653d12ec50eca371ea5784a1936",
+    "repocortex/graph/model.py": "cede7b24f2b7e0fb1ce75eb0060664dc401d109c85bc4e79cb1c28b7f780e16a",
+    "repocortex/graph/multilang.py": "2fe33a824261a5cbaffc9374e884462e22e8be1e75ad55b9cf50727346e317e0",
+    "repocortex/hydradb/__init__.py": "89901140c444c597c6031f136cecf8a1a816f921ed4dc2fca3d92e278fbdeab1",
+    "repocortex/hydradb/base.py": "839c838b0d6ecb4a56764af95fbec3fbc8383992fc6402c98bea77e10104e12f",
+    "repocortex/hydradb/bolt.py": "8d8adc14224ef7c9d778d6c5b4cec7862c8149c3fd26d5095b30a7863b6052ea",
+    "repocortex/hydradb/hosted.py": "2fc68157e1aeae1805a7e73ff562af8416138cce36735396126808aeb57b7d28",
+    "repocortex/learn/__init__.py": "70ceed67b6a2b6f5eb75b15e7ebfaeaa2ee34cc4d2c38be0807482f33ec18446",
+    "repocortex/learn/base.py": "f8fcb0b3ab476bbcdec0d4962a480d4298d28e3001d7a47e1259551f1c9d504d",
+    "repocortex/learn/calibrate.py": "4e0adc683be908dbba8c24259935ff8b8cffb1bc8a9184608e2239fa841196c5",
+    "repocortex/learn/compress.py": "030ea76b07049780fd8d4e89fcf7a430e5c4a9954bed74c19e44f61442f59374",
+    "repocortex/learn/credit.py": "80594a55c44f11eec119f0a26c5e718cee7096c9a1ffcc3fe32450f46454c7f8",
+    "repocortex/learn/gap.py": "8f69604a76492a2839d094ba188a8b1c50fe9c5066d06ddc0bd566a171726396",
+    "repocortex/learn/merge.py": "3baea19555e004f23e8c0e1ebc0a15cff4fa18628973779ee7b3f57b30aeb006",
+    "repocortex/learn/replay.py": "38fc4dcaa539412168ef1664e2127ea3e65acd9fef63cc8aebf55f855491b8ff",
+    "repocortex/learn/reweight.py": "1508464906ad5e10d72b7490daa8a4c8da99c3453bcf5b65054d6eb9aef12924",
+    "repocortex/mine/__init__.py": "f64b8bf7042251d901c576965d4102fa5c792e3621454de99db12eec26076a94",
+    "repocortex/mine/commits.py": "2ae50658fc63e69f52bb4bde58c4f69fe7975ee18e7898448bcffaa40842d944",
+    "repocortex/mine/dataset.py": "b288c052aeab50380b8646d8bfd8c1fa880401f1d101c20b54dab08b3703ec7b",
+    "repocortex/mine/trac.py": "4e99a13d7a15a8ea9ab7a78fd5f8bd57bda9d8e469d378fe6cd3647a2c8ce6c4",
+    "repocortex/retrieve/__init__.py": "5b7d4eaa6fb9852f706ce41d37d5ed9c52158d92bca7168d6ae619d30149c998",
+    "repocortex/retrieve/bm25.py": "eb55d36d0591774ce286391d88262c919bc311de31db9b73dc89b0397fe01faf",
+    "repocortex/retrieve/dense.py": "ee8b2a9d93c8677cb7ca7e68b7c06ca6affe71e8cc6ca47296c9e8483f1c771d",
+    "repocortex/retrieve/frozen.py": "9feacd6f332cfbd25ff3ff0f08564a47de816e8efda0003a45de7a246052fdfc",
+    "repocortex/retrieve/hybrid.py": "a626385113d70fc240164f48db394de6a18630aaf3f9be636ad7c59d950c29f0",
+    "repocortex/retrieve/ppr.py": "fedae4cd93b4045a53bbaf1dcc4b431d04461a76b6a89bd7d6b093c0ed2b57a8",
+    "repocortex/retrieve/textutil.py": "6b0e806a792e765e5c8511c195a5bebba2c2c14262ae6e0865e82112e8665961",
+    "repocortex/serve/__init__.py": "37b1cdef5c129f6d5de400d98726d0df12244abd6aa9c2550825c2cff7e743d4",
+    "repocortex/serve/feedback.py": "aaccbeed6278dde037c760d0565aba61391bf8f5806e0af572a4e1d7abbcb5b4",
+    "repocortex/serve/learn.py": "0c9084202c6db7b552593c2fff4a20e32ef0b212a8943484953a09f013badcb1",
+    "repocortex/serve/load.py": "ef63d9a0b8eae58577263f64a355230e050a2e994824775e0ecea4be8fbcdf30",
+    "scripts/eval_repository_ablation.py": "eb69ffbe11f009d4b5886d131c7e8bd0139dae728b75ea271be6a392c941a3d5",
+    "scripts/eval_transfer.py": "f48c3a692ed3ea00e3310d5480a5ef159d0b77c1215c8d57a352d4e991ad1e9f",
+    "scripts/eval_lexical.py": "0e11908317bed490737ac7a4f3257f9ff926ef5db3a2438317754f81c660224d"
+  },
+  "source_manifest_sha256": "e4dc6252107c3916e30416b2968a95df4c509782c1b83b3cc62d239c48dde17c"
+}

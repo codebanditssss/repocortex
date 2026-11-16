@@ -24,6 +24,46 @@ def command(*args: str) -> str:
     return subprocess.run(args, check=True, capture_output=True, text=True).stdout
 
 
+def missing_pr_references(response: dict, requested: list[int]) -> set[int]:
+    """Accept only explicit missing PR aliases; all other GraphQL errors fail."""
+    missing = set()
+    repository = (response.get("data") or {}).get("repository")
+    if not isinstance(repository, dict):
+        raise RuntimeError("GitHub GraphQL did not return repository data")
+    for error in response.get("errors", []):
+        path = error.get("path", [])
+        alias = path[1] if len(path) == 2 and path[0] == "repository" else None
+        pr = next((number for number in requested if alias == f"p{number}"), None)
+        expected = f"Could not resolve to a PullRequest with the number of {pr}."
+        if (error.get("type") != "NOT_FOUND" or pr is None
+                or error.get("message") != expected or alias not in repository
+                or repository[alias] is not None):
+            raise RuntimeError("GitHub GraphQL returned an unexpected error")
+        missing.add(pr)
+    for pr in requested:
+        if pr not in missing and not isinstance(repository.get(f"p{pr}"), dict):
+            raise RuntimeError("GitHub GraphQL omitted a requested pull request")
+    return missing
+
+
+def query_pull_requests(query: str, requested: list[int]) -> dict:
+    try:
+        response = json.loads(command("gh", "api", "graphql", "-f", "query=" + query))
+    except subprocess.CalledProcessError as exc:
+        # gh exits nonzero even when a partial response contains valid PR data.
+        # Network, auth, rate-limit and unknown failures must remain failures.
+        try:
+            response = json.loads(exc.stdout or "")
+        except (ValueError, TypeError):
+            raise exc
+        if not isinstance(response, dict) or not response.get("errors"):
+            raise exc
+        missing_pr_references(response, requested)
+        return response
+    missing_pr_references(response, requested)
+    return response
+
+
 def mine(repo: Path, work: Path, limit: int, repository: str = "pallets/flask",
          scope: tuple[str, ...] = ("src/flask",)) -> tuple[dict, object]:
     owner, name = repository.split("/")
@@ -61,12 +101,14 @@ def mine(repo: Path, work: Path, limit: int, repository: str = "pallets/flask",
         if cached.get("prs") != identity or cached.get("repository", "pallets/flask") != repository:
             fields = " ".join(f'p{pr}:pullRequest(number:{pr}){{closingIssuesReferences(first:20){{nodes{{number title body createdAt url}}}}}}' for pr, *_ in batch)
             query = 'query{repository(owner:' + json.dumps(owner) + ',name:' + json.dumps(name) + '){' + fields + '}}'
-            response = json.loads(command("gh", "api", "graphql", "-f", "query=" + query))
-            if response.get("errors"):
-                raise RuntimeError("GitHub GraphQL returned errors")
+            response = query_pull_requests(query, identity)
             cached = {"repository": repository, "prs": identity, "response": response}
             path.write_text(json.dumps(cached))
+        missing_prs = missing_pr_references(cached["response"], identity)
         for pr, sha, timestamp, gold in batch:
+            if pr in missing_prs:
+                audit["missing_pull_request_references"] += 1
+                continue
             refs = cached["response"]["data"]["repository"][f"p{pr}"]["closingIssuesReferences"]["nodes"]
             if not refs:
                 audit["eligible_prs_without_closing_issue"] += 1

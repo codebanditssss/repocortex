@@ -1,0 +1,798 @@
+{
+  "selection_counts": {
+    "unique_pr_references_scanned": 248,
+    "unmapped_or_more_than_eight_functions": 128,
+    "eligible_prs_without_closing_issue": 78,
+    "linked_issue_references": 44,
+    "duplicate_issue_references": 2,
+    "eligible_pr_commits": 120,
+    "retained_unique_issues": 42
+  },
+  "repository": "pallets/werkzeug",
+  "snapshot": "0f43c6ebd426039e4b99ec22535c2c8a2ec2f69f",
+  "scope": [
+    "src/werkzeug"
+  ],
+  "issues": [
+    {
+      "ticket": 2658,
+      "commit": "07c27a803b0902ec114bf809bee26824ffd82ec5",
+      "time": 1682951042,
+      "summary": "request.files access became slower",
+      "description": "The access to `request.files['file']` became slower when I upgraded to Werkzeug 2.3. A 12.1 MB file used to take a couple of ms, but now it takes about 8 seconds.\r\n\r\n```python\r\nfrom werkzeug import Request, Response, run_simple\r\n\r\n@Request.application\r\ndef app(request):\r\n    if request.method == \"POST\":\r\n        return Response(request.files[\"file\"].filename)\r\n\r\n    return Response(\"\"\"<!doctype html>\r\n<meta charset=utf-8>\r\n<form method=post enctype=multipart/form-data>\r\n<input type=file name=file>\r\n<input type=submit>\r\n</form>\r\n\"\"\", mimetype=\"text/html\")\r\n\r\nrun_simple(\"127.0.0.1\", 5000, app)\r\n```\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.10\r\n- Werkzeug version: 2.3.0",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2658",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2678",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._parse_data"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2675,
+      "commit": "07c27a803b0902ec114bf809bee26824ffd82ec5",
+      "time": 1682951042,
+      "summary": "larger file content is prepended with CR LF",
+      "description": "Starting with werkzeug version 2.3.0, posting payload content that is larger than 65575 bytes will result in two extra bytes prepended to the file content. Version 2.2.3 and earlier doesn't have this issue (meaning, in earlier versions the server prints the exact same thing in both cases, as expected).\r\n\r\nIn the test below I send two files. They're both identical with the only difference being that `file_a.txt` is 65428 bytes, while `file_b.txt` is 65429 (extra bytes in the request body are added by headers, multipart format etc.).\r\n\r\nTest input files are attached.\r\n\r\nSpeculation: since it's close to 2**16 (65536), maybe it has something to do with that.\r\n\r\nClient:\r\n```\r\nimport requests\r\n\r\n# This will print b'xxxxxxxxxx' on the server.\r\nrequests.post('http://127.0.0.1:9999/', files={'hello': open('file_a.txt')})\r\n\r\n# This will print b'\\r\\nxxxxxxxxxx' on the server.\r\nrequests.post('http://127.0.0.1:9999/', files={'hello': open('file_b.txt')})\r\n```\r\n\r\nServer:\r\n```\r\nfrom flask import Flask, request\r\napp = Flask(__name__)\r\n\r\n\r\n@app.route('/', methods=['POST'])\r\ndef route():\r\n    print(request.headers['content-length'])\r\n    print(request.files['hello'].stream.read()[:10])\r\n    return ''\r\n\r\n\r\nif __name__ == '__main__':\r\n    app.run(host='127.0.0.1', port=9999)\r\n```\r\n[file_a.txt](https://github.com/pallets/werkzeug/files/11359752/file_a.txt)\r\n[file_b.txt](https://github.com/pallets/werkzeug/files/11359753/file_b.txt)\r\n\r\n\r\n<!--\r\nDescribe the expected behavior that should have happened but didn't.\r\n-->\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.11 (but also saw the same behavior on 3.8)\r\n- Werkzeug version: 2.3.2 (earliest one I could reproduce this in was 2.3.0)\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2675",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2678",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._parse_data"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2685,
+      "commit": "6e63efe9bad789c8bd0b561bbcfdb28b2fd03475",
+      "time": 1682968589,
+      "summary": "Authorization.from_header with \"Token\" scheme cannot handle base64 padding on tokens",
+      "description": "# Steps to reproduce\r\n\r\n```\r\nimport base64\r\nfrom werkzeug.datastructures.auth import Authorization\r\ntoken = base64.encodebytes(b\"This has base64 padding\").decode(\"utf-8\").strip()\r\na = Authorization.from_header(f\"Token {token}\")\r\na.token\r\n```\r\n\r\n# Expected result\r\n\r\n```\r\nVGhpcyBoYXMgYmFzZTY0IHBhZGRpbmc=\r\n```\r\n\r\n# Actual behavior\r\n\r\nA `NoneType` is returned.\r\n\r\nEnvironment:\r\n\r\n- Python version: `Python 3.11.2 (v3.11.2:878ead1ac1, Feb  7 2023, 10:02:41) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin`\r\n- Werkzeug version: 2.3.3 / `main`\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2685",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2686",
+      "gold_functions": [
+        "func:src/werkzeug/datastructures/auth.py:src.werkzeug.datastructures.auth.Authorization.from_header"
+      ],
+      "gold_files": [
+        "src/werkzeug/datastructures/auth.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2700,
+      "commit": "d70b37ddc7ef2197e94a00705c12d8746178f4e0",
+      "time": 1686076272,
+      "summary": "long host header with port fails idna encoding",
+      "description": "Request from a service with hostname longer than 64 characters fails with obscure HTTP:400 error.\r\n\r\nHi, \r\ni have a Flask App running on a Kubernetes cluster and the app is behind a Kubernetes service, which has quite long name (~60 chars); \r\nAfter i upgraded the Flask from `2.2.3` to `2.3.2`, i started to get HTTP400 errors when i send a request over the service, but it works when i shorten the name of the Kubernetes service or i use POD address directly as Kubernetes health probe does.\r\n\r\n```html\r\n<!doctype html>\r\n<html lang=en>\r\n<title>400 Bad Request</title>\r\n<h1>Bad Request</h1>\r\n<p>The browser (or proxy) sent a request that this server could not understand.</p>\r\n```\r\n\r\nI added minimum app and test-case into comments.\r\n\r\nI was able to see the actual error by setting \"TRAP_BAD_REQUEST_ERRORS\"  as described in the [comment](https://github.com/pallets/flask/blob/ea316d232a00d6c66a48a13bf36bcb9885326a55/flask/app.py#L1690).\r\n\r\nFull traceback:\r\n```bash\r\n[11/May/2023:15:16:15 +0000][100.96.7.10][ua: \"-\"][referer: \"-\"]GET sync HTTP/1.1,500,1 ms\r\nwerkzeug.exceptions.BadHost: 400 Bad Request: The browser (or proxy) sent a request that this server could not understand.\r\n    raise BadHost() from e\r\n  File \"/usr/local/lib/python3.11/site-packages/werkzeug/routing/map.py\", line 257, in bind\r\n           ^^^^^^^^^\r\n    return Map.bind(\r\n  File \"/usr/local/lib/python3.11/site-packages/werkzeug/routing/map.py\", line 368, in bind_to_environ\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    return self.url_map.bind_to_environ(\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 1883, in create_url_adapter\r\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    self.url_adapter = app.create_url_adapter(self.request)\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/ctx.py\", line 316, in __init__\r\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    raise request.routing_exception  # type: ignore\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 1440, in raise_routing_exception\r\n    self.raise_routing_exception(req)\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 1458, in dispatch_request\r\n         ^^^^^^^^^^^^^^^^^^^^^^^\r\n    rv = self.dispatch_request()\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 1484, in full_dispatch_request\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    rv = self.handle_user_exception(e)\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 1486, in full_dispatch_request\r\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    response = self.full_dispatch_request()\r\n  File \"/usr/local/lib/python3.11/site-packages/flask/app.py\", line 2190, in wsgi_app\r\nTraceback (most recent call last):\r\n\r\nThe above exception was the direct cause of the following exception:\r\n\r\nUnicodeError: encoding with 'idna' codec failed (UnicodeError: label too long)\r\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    server_name = server_name.encode(\"idna\").decode(\"ascii\")\r\n  File \"/usr/local/lib/python3.11/site-packages/werkzeug/routing/map.py\", line 255, in bind\r\nTraceback (most recent call last):\r\n\r\nThe above exception was the direct cause of the following exception:\r\n\r\nUnicodeError: label too long\r\n    raise UnicodeError(\"label too long\")\r\n  File \"/usr/local/lib/python3.11/encodings/idna.py\", line 165, in encode\r\nTraceback (most recent call last):\r\n```\r\n\r\nI googled a bit and seems it's [known issue](https://github.com/python/cpython/issues/77139) and it has actually been reported already in 2018. Small snippet that could replicate issue:\r\n\r\n```bash\r\n# length of name of new kubernetes service with port is longer than 64 characters\r\n>>> len(\"data-sync-service-dcfe8582-45d8-41e5-bc45-3d7a94cfa9cd-df265:2008\")\r\n65\r\n\r\n>>> \"data-sync-service-dcfe8582-45d8-41e5-bc45-3d7a94cfa9cd-df265:2008\".encode(\"idna\").decode(\"ascii\")                                                     Traceback (most recent call last):\r\n  File \"/usr/sap/H00/HDB00/exe/Python3/lib/python3.8/encodings/idna.py\", line 167, in encode\r\n    raise UnicodeError(\"label too long\")\r\n\r\nUnicodeError: label too long\r\n```\r\n\r\n* I would expect to see a error message in logs or get [HTTP 414](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/414) response. It would make it easier to find the root cause.\r\n\r\n* It would be great if  newer version of Flask could handle longer `server_names`, because it's still working in `2.2.3`.\r\n\r\nEnvironment:\r\n\r\n- Python version: Python 3.11.3\r\n- Flask version: flask==2.3.2\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2700",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2721",
+      "gold_functions": [
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.Map.bind"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/map.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2708,
+      "commit": "1892c108073275e736a82f74c870ce7aa87a9f80",
+      "time": 1686077301,
+      "summary": "calls to `iri_to_uri` fails when the argument is a bytestring",
+      "description": "Calls to `iri_to_uri` fails when the argument is a bytestring. Here's an example:\r\n\r\n```console\r\n>>> from werkzeug import urls\r\n>>> urls.iri_to_uri(b'/foo')\r\n<stdin>:1: DeprecationWarning: Passing bytes is deprecated and will not be supported in Werkzeug 3.0.\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\n  File \"/Users/midchildan/Documents/playground/werkzeug/lib/python3.10/site-packages/werkzeug/urls.py\", line 983, in iri_to_uri\r\n    iri = iri.decode(charset)\r\nTypeError: decode() argument 'encoding' must be str, not None\r\n```\r\n\r\nThis is what should've happened instead:\r\n\r\n```console\r\n>>> from werkzeug import urls\r\n>>> urls.iri_to_uri(b'/foo')\r\n>>> '/foo'\r\n```\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.10.11\r\n- Werkzeug version: 2.3.4\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2708",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2709",
+      "gold_functions": [
+        "func:src/werkzeug/urls.py:src.werkzeug.urls.iri_to_uri"
+      ],
+      "gold_files": [
+        "src/werkzeug/urls.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2769,
+      "commit": "47c6bd568efd0870d413c27be316c2b4eee74486",
+      "time": 1692044177,
+      "summary": "use scrypt by default",
+      "description": "#2654 added scrypt support, but couldn't make it the default because [PyPy didn't support it at the time](https://foss.heptapod.net/pypy/pypy/-/issues/3921). Now PyPy has fixed that and [made a release](https://doc.pypy.org/en/latest/release-v7.3.12.html), I'm comfortable with making scrypt the default.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2769",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2771",
+      "gold_functions": [
+        "func:src/werkzeug/security.py:src.werkzeug.security.generate_password_hash"
+      ],
+      "gold_files": [
+        "src/werkzeug/security.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2770,
+      "commit": "01fa8ee1bb24d1a30c2acb172d355fcd9933f9d4",
+      "time": 1692631798,
+      "summary": "deprecate `__version__`",
+      "description": "The `__version__` attribute is an old pattern from early in Python packaging. Setuptools eventually made it easier to use the pattern by allowing reading the value from the attribute at build time, and some other build backends have done the same.\r\n\r\nHowever, there's no reason to expose this directly in code anymore. It's usually easier to use feature detection (`hasattr`, `try/except`) instead. `importlib.metadata.version(\"werkzeug\")` can be used to get the version at runtime in a standard way, if it's really needed.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2770",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2772",
+      "gold_functions": [
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.BaseWSGIServer.__init__",
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.WSGIRequestHandler.server_version"
+      ],
+      "gold_files": [
+        "src/werkzeug/serving.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2891,
+      "commit": "249527ff981e7aa22cd714825c5637cc92df7761",
+      "time": 1714921446,
+      "summary": "TLS validation in local dev does not work",
+      "description": "TLS validation on localhost does not work with the auto generated certificate.\r\n\r\nTo replicate:\r\n- Follow install & setup, pass --cert-file\r\n```shell\r\npython3 manage.py runserver_plus --cert-file dev-cert.crt\r\nDjango version 5.0.4, using settings 'ourapp.devsettings'\r\nDevelopment server is running at https://ourapp.localhost:8000/\r\nUsing the Werkzeug debugger (https://werkzeug.palletsprojects.com/)\r\nQuit the server with CONTROL-C.\r\n```\r\n\r\ndev-cert.crt is generated, but does not work, a sample ERROR using wget:\r\n\r\n```shell\r\nwget -vvv --ca-certificate=$PWD/dev-cert.crt https://ourapp.localhost:8000\r\n--2024-05-02 07:49:10--  https://ourapp.localhost:8000/\r\nResolving ourapp.localhost (ourapp.localhost)... 127.0.0.1\r\nConnecting to ourapp.localhost (ourapp.localhost)|127.0.0.1|:8000... connected.\r\nERROR: no certificate subject alternative name matches\r\n\trequested host name \u2018ourapp.localhost\u2019.\r\nTo connect to ourapp.localhost insecurely, use `--no-check-certificate'.\r\n```\r\n\r\nCertificate looks valid, however I think wget, curl, python requests does not like the cn name?\r\n\r\n```shell\r\nopenssl x509 -in dev-cert.crt --text --noout\r\nCertificate:\r\n    Data:\r\n        Version: 3 (0x2)\r\n        Serial Number:\r\n            25:44:40:09:99:71:4e:8c:b3:78:9e:ba:1b:de:d2:d0:f3:4f:d4:3e\r\n        Signature Algorithm: sha256WithRSAEncryption\r\n        Issuer: O=Dummy Certificate, CN=*.localhost/CN=localhost\r\n        Validity\r\n            Not Before: May  2 07:02:26 2024 GMT\r\n            Not After : May  2 07:02:26 2025 GMT\r\n        Subject: O=Dummy Certificate, CN=*.localhost/CN=localhost\r\n        Subject Public Key Info:\r\n            Public Key Algorithm: rsaEncryption\r\n                Public-Key: (2048 bit)\r\n                Modulus:\r\n                    00:ad:fb:88:dd:bd:9f:d7:af:33:6f:92:5e:25:1e:\r\n                    2d:de:22:b2:ec:e6:67:91:24:23:6e:f2:7f:08:dc:\r\n                    6c:4d:be:b8:ca:a9:34:4c:08:71:c3:9f:dd:ac:67:\r\n                    35:a5:72:8f:9f:dc:b1:47:9c:e7:9f:6b:b3:9c:a4:\r\n                    f4:28:a8:5f:fd:9a:f1:a4:c0:59:88:bb:25:31:e5:\r\n                    7c:75:33:67:ee:01:cc:f6:e0:59:b7:f4:ff:99:44:\r\n                    a9:31:13:6a:eb:13:4e:e1:fa:ec:54:5c:0d:a6:a5:\r\n                    38:59:5c:ae:b7:0c:d9:ee:23:40:db:1e:5e:42:47:\r\n                    99:96:26:31:1a:62:23:44:41:31:1d:3a:9d:35:b0:\r\n                    8b:49:3d:76:cb:6d:41:da:e8:10:a8:6d:82:7c:fb:\r\n                    22:fd:8d:c8:9f:ed:90:1c:cd:3c:31:34:dc:d4:a1:\r\n                    56:c4:c2:1f:f0:ca:b5:5a:9d:dd:06:43:7a:49:ed:\r\n                    9a:74:e2:ea:31:e7:04:35:9b:f6:4a:75:8f:df:2c:\r\n                    55:14:3b:56:85:cf:0b:b1:ea:8f:52:99:8e:33:b1:\r\n                    cd:fc:9d:e0:38:24:e7:23:b5:da:cb:a8:14:ad:2d:\r\n                    d6:f7:2c:fa:bc:e0:c3:15:e2:8f:72:22:7f:db:ad:\r\n                    a7:14:1e:4b:09:fc:2d:71:6b:fa:15:0d:ec:da:5b:\r\n                    c0:6f\r\n                Exponent: 65537 (0x10001)\r\n        X509v3 extensions:\r\n            X509v3 Extended Key Usage:\r\n                TLS Web Server Authentication\r\n            X509v3 Subject Alternative Name:\r\n                DNS:*.localhost/CN=localhost\r\n    Signature Algorithm: sha256WithRSAEncryption\r\n    Signature Value:\r\n        99:51:30:ea:30:3f:57:01:28:80:78:44:fa:f6:8a:47:af:7b:\r\n        01:1f:ff:d2:eb:8f:d2:21:46:f2:b7:6c:29:a1:b0:7a:1f:80:\r\n        a7:1e:93:aa:af:6f:c2:fe:19:28:6a:93:6b:19:94:8c:2c:c3:\r\n        82:9a:d6:39:35:21:ea:02:1f:62:00:14:51:38:51:42:56:11:\r\n        af:1d:53:60:90:d7:e2:6c:28:8e:af:b8:b6:ef:73:95:5b:4d:\r\n        dd:3e:14:a0:95:20:52:3b:93:88:9f:c2:e3:c4:29:d6:7e:a8:\r\n        de:c0:db:e9:2f:cb:d7:e2:f7:06:e4:f2:ee:5f:4b:e3:43:2c:\r\n        fc:bd:be:df:f7:06:37:89:10:35:19:99:c0:b5:ff:0a:20:20:\r\n        e4:64:af:40:7d:f0:e6:e7:a1:e1:fc:ee:70:c0:71:be:ee:c9:\r\n        9a:a2:4c:7d:33:36:d1:a7:de:cc:d1:47:09:2e:d5:ae:1a:0f:\r\n        4a:68:9a:08:be:d1:6d:03:1b:b3:0c:b0:e8:5a:ac:fa:73:4a:\r\n        c5:4d:39:e0:b7:47:26:c6:66:d2:26:d0:88:6e:f4:9e:15:13:\r\n        d9:e0:a8:48:cc:f9:40:93:82:49:0f:4b:cd:16:95:ca:cd:78:\r\n        1a:7c:67:71:c5:8a:a9:03:10:ed:47:ac:89:63:41:af:5c:d7:\r\n        f0:ce:1f:3d\r\n```\r\n\r\nI've been using this library and running it insecure as a result for a while but today it really bugged me so thought i would dig deeper.\r\n\r\nIf i generate the certificate manually, it works and validates fine.  With minor modifications to serving.py to fix the SANS/CN fields, i can make it work ok:\r\n\r\n```shell\r\nCertificate:\r\n    Data:\r\n        Version: 3 (0x2)\r\n        Serial Number:\r\n            38:a7:d1:e8:46:1c:f2:94:04:eb:ac:86:19:6d:7f:87:22:4f:a1\r\n        Signature Algorithm: sha256WithRSAEncryption\r\n        Issuer: O=Dummy Certificate, CN=localhost\r\n        Validity\r\n            Not Before: May  2 07:13:25 2024 GMT\r\n            Not After : May  2 07:13:25 2025 GMT\r\n        Subject: O=Dummy Certificate, CN=localhost\r\n        Subject Public Key Info:\r\n            Public Key Algorithm: rsaEncryption\r\n                Public-Key: (2048 bit)\r\n                Modulus:\r\n                    00:c2:b7:20:f0:b2:5d:d5:e5:e6:b4:9b:a6:b7:e4:\r\n                    65:4d:d3:52:f5:9c:a5:3c:b5:12:7c:2b:cd:c3:f5:\r\n                    d2:43:72:b1:dd:39:74:8c:23:ff:b5:c9:4a:2a:18:\r\n                    96:33:b8:d4:2a:8f:bd:6c:b5:10:24:1a:3e:19:5a:\r\n                    7d:aa:b6:76:e2:37:dc:57:98:6e:dc:80:38:d7:c0:\r\n                    b4:3c:b6:98:68:31:54:e3:a4:d0:fe:d5:14:97:56:\r\n                    7f:5d:f0:5a:8e:ee:ae:cf:15:ef:4b:98:52:40:c4:\r\n                    45:a5:af:cb:39:6f:67:95:19:62:24:52:64:8a:d1:\r\n                    1d:77:86:40:fe:db:92:68:c7:7c:bc:56:1d:fe:e7:\r\n                    61:ba:11:d5:a7:e4:3b:d9:b7:d9:fb:42:22:ba:27:\r\n                    81:2a:7f:72:b7:81:f2:73:eb:1c:8f:90:ac:ba:80:\r\n                    ac:c2:4f:4a:aa:bc:2b:d8:05:cd:98:b3:0d:11:18:\r\n                    45:09:b1:bc:43:6e:53:c3:19:ff:6d:55:64:1d:ea:\r\n                    73:27:3f:c1:f6:87:b7:6b:13:12:77:6e:de:05:bf:\r\n                    bb:8c:42:6d:49:32:0f:a0:d5:06:20:14:ff:39:58:\r\n                    28:67:39:34:15:40:72:d3:f8:4b:a8:07:0c:82:14:\r\n                    21:f5:2a:c1:05:6e:4e:7f:3a:86:0c:c1:0b:97:6f:\r\n                    61:4b\r\n                Exponent: 65537 (0x10001)\r\n        X509v3 extensions:\r\n            X509v3 Extended Key Usage:\r\n                TLS Web Server Authentication\r\n            X509v3 Subject Alternative Name:\r\n                DNS:localhost, DNS:*.localhost\r\n    Signature Algorithm: sha256WithRSAEncryption\r\n    Signature Value:\r\n        72:bc:10:27:91:1b:11:6e:29:11:1d:91:66:93:7d:f4:d8:8d:\r\n        0e:57:14:c8:16:44:c9:bd:e6:1e:cb:12:53:ee:59:02:29:ea:\r\n        53:f8:09:cf:a0:fe:f3:1e:0c:0c:78:34:83:dd:4c:03:6f:e2:\r\n        f7:7d:56:44:82:1a:bb:50:c1:bb:3d:1c:58:ea:0d:a6:12:24:\r\n        34:4d:b5:3c:a5:10:d3:a6:a5:2d:f9:86:20:bb:e3:fd:62:14:\r\n        ec:b7:aa:45:36:3e:f1:f6:02:1f:4a:8b:97:69:98:5e:22:54:\r\n        14:5c:87:ee:f0:f7:e2:fc:72:9b:c0:bd:67:a6:fa:4a:69:3e:\r\n        6e:48:5e:fe:6d:7a:f6:9e:e6:0f:33:4c:44:39:24:9c:98:06:\r\n        da:a9:a1:12:4c:bc:f8:b1:cb:bf:0f:c2:c9:83:aa:e2:4d:c5:\r\n        1a:0d:7e:60:da:a6:49:83:b6:f6:a7:da:34:db:aa:0b:8d:19:\r\n        b6:c7:f9:67:73:cf:2f:af:e7:09:6c:63:5c:86:c7:4f:cb:a3:\r\n        f2:98:77:e0:3a:de:ef:b8:38:df:67:97:8e:fd:79:9b:8b:7b:\r\n        a7:05:2c:3f:f7:cf:9a:ff:31:a9:f0:6c:f7:7f:1e:a2:1f:58:\r\n        dd:e2:c8:99:b6:3e:c4:41:9d:0f:29:e6:8a:88:f1:6d:a6:b5:\r\n        36:e8:40:a2\r\n```\r\n\r\nEnvironment:\r\n\r\n- Python version:3.12.1\r\n- Poetry 1.8.2\r\n- Werkzeug version:3.0.1\r\n- Mac Sonoma 14.4.1\r\n\r\nIs this a bug?  I could submit a pull request with my local change to serving.py, which appears to resolve?",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2891",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2892",
+      "gold_functions": [
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.generate_adhoc_ssl_pair",
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.make_ssl_devcert"
+      ],
+      "gold_files": [
+        "src/werkzeug/serving.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2881,
+      "commit": "9e050f7750214d6779636813b8d661250804e811",
+      "time": 1720988384,
+      "summary": "Several issues with CacheControl types",
+      "description": "This issue is in three parts:\r\n\r\n### `no-transform` directive always returns None\r\n\r\nThis directive has no arguments (either in current RFC 9111 or older RFC 2616)\r\n\r\n```python\r\nfrom werkzeug.http import parse_cache_control_header\r\n\r\ncc = parse_cache_control_header(\"no-transform\")\r\nprint(f\"{cc.no_transform=}\")\r\n```\r\n\r\nOutput: \r\n```\r\ncc.no_transform=None\r\n```\r\n\r\nExpected: boolean based on presence\r\n\r\n### `min-fresh` directive returns `\"*\"` if missing required argument\r\n\r\n```python\r\nfrom werkzeug.http import parse_cache_control_header\r\n\r\ncc = parse_cache_control_header(\"min-fresh\")\r\nprint(f\"{cc.min_fresh=}\")\r\n```\r\n\r\nOutput:\r\n```\r\ncc.min_fresh='*'\r\n```\r\n\r\nExpected: `None` since the argument is required and `\"*\"` doesn't have a semantic meaning for this directive.\r\n\r\n### type stubs are incorrect\r\n\r\n- `no_cache` returns `str` not `bool`.\r\n- `bool` properties never return `None`\r\n- `max_stale` returns `\"*\"` in addition to `int`.\r\n- `RequestCacheControl` immutability is not reflected.\r\n\r\nEnvironment:\r\n\r\n- Python version: N/A\r\n- Werkzeug version: 3.0.2\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2881",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2882",
+      "gold_functions": [
+        "func:src/werkzeug/utils.py:src.werkzeug.utils.send_file"
+      ],
+      "gold_files": [
+        "src/werkzeug/utils.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2945,
+      "commit": "bcc9302b6199c087defa35e5fd0d98fb8e7690d8",
+      "time": 1729808354,
+      "summary": "watchdog: Prevent reload if a file gets closed without any changes",
+      "description": "**What's the issue?**\r\n\r\n[watchdog 5.0](https://github.com/gorakhargosh/watchdog/blob/master/changelog.rst#500) introduced a [new signal that is fired when a file gets closed without any changes written](https://github.com/gorakhargosh/watchdog/pull/1059).  \r\nThis leads to random reloads when something opens and closes a file. `opened` events are already ignored, so we should ignore the new `closed_no_write` events too.\r\n\r\n**How to reproduce?**\r\n\r\nUpdate to watchdog 5.0+ and wait for the reloads to come in.\r\n\r\n**What's the expected behavior?**\r\n\r\nWerkzeug should only reload if there are actual changes to the code base.\r\n\r\n**Environment**\r\n\r\n- Python version: 3.11.2\r\n- Werkzeug version: 3.0.4\r\n- watchdog version: 5.0.2\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2945",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2947",
+      "gold_functions": [
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.__init__"
+      ],
+      "gold_files": [
+        "src/werkzeug/_reloader.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2952,
+      "commit": "40319f91dbbae0a780526eab037a009b1a7e4d36",
+      "time": 1729808673,
+      "summary": "Logging breaks with clients having IPv6 addresses with a scope component",
+      "description": "In some conditions (at least seen with traefik and MacOS) the client address contains a scope, (see https://www.rfc-editor.org/rfc/rfc4007#section-11.2 )\r\nThis breaks logging as the address component will have a `%` symbol, which is misparsed by the logging code\r\n\r\nHere is an example traceback:\r\n```\r\n--- Logging error ---\r\nTraceback (most recent call last):\r\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 1100, in emit\r\n    msg = self.format(record)\r\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 943, in format\r\n    return fmt.format(record)\r\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 678, in format\r\n    record.message = record.getMessage()\r\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 368, in getMessage\r\n    msg = msg % self.args\r\nTypeError: must be real number, not str\r\nCall stack:\r\n  File \"/usr/lib/python3.10/threading.py\", line 973, in _bootstrap\r\n    self._bootstrap_inner()\r\n  File \"/usr/lib/python3.10/threading.py\", line 1016, in _bootstrap_inner\r\n    self.run()\r\n  File \"/usr/lib/python3.10/threading.py\", line 953, in run\r\n    self._target(*self._args, **self._kwargs)\r\n  File \"/usr/lib/python3.10/socketserver.py\", line 683, in process_request_thread\r\n    self.finish_request(request, client_address)\r\n  File \"/usr/lib/python3.10/socketserver.py\", line 360, in finish_request\r\n    self.RequestHandlerClass(request, client_address, self)\r\n  File \"/usr/lib/python3.10/socketserver.py\", line 747, in __init__\r\n    self.handle()\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 391, in handle\r\n    super().handle()\r\n  File \"/usr/lib/python3.10/http/server.py\", line 433, in handle\r\n    self.handle_one_request()\r\n  File \"/usr/lib/python3.10/http/server.py\", line 421, in handle_one_request\r\n    method()\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 363, in run_wsgi\r\n    execute(self.server.app)\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 327, in execute\r\n    write(data)\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 264, in write\r\n    self.send_response(code, msg)\r\n  File \"/usr/lib/python3.10/http/server.py\", line 498, in send_response\r\n    self.log_request(code)\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 460, in log_request\r\n    self.log(\"info\", '\"%s\" %s %s', msg, code, size)\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/serving.py\", line 469, in log\r\n    _log(\r\n  File \"/usr/local/lib/python3.10/dist-packages/werkzeug/_internal.py\", line 97, in _log\r\n    getattr(_logger, type)(message.rstrip(), *args, **kwargs)\r\nMessage: 'fe80::xxxx:xxxx:xxxx:xxxx%end0 - - [15/Jul/2024 14:41:06] \"%s\" %s %s'\r\n```\r\nNote the last line which shows the client address being the source of the problem.\r\n\r\nThe error is not fatal but makes logging very noisy as the traceback is printed instead of a log message.\r\n\r\nEnvironment:\r\n\r\n- Python version: 3.10\r\n- Werkzeug version: 3.0.3\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2952",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2953",
+      "gold_functions": [
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.WSGIRequestHandler.log"
+      ],
+      "gold_files": [
+        "src/werkzeug/serving.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2955,
+      "commit": "6732b579eeaaa2cfb562e57bed55994e4f93ccfb",
+      "time": 1729809228,
+      "summary": "Authorization parameter parsing fails on invalid value",
+      "description": "### Steps to reproduce\r\n```\r\n>>> from werkzeug.datastructures import Authorization\r\n>>> Authorization.from_header(\"Digest =foo\")\r\n---------------------------------------------------------------------------\r\nIndexError                                Traceback (most recent call last)\r\nCell In[2], line 1\r\n----> 1 Authorization.from_header(\"Digest =foo\")\r\n\r\nFile ~/Downloads/.venv/lib/python3.12/site-packages/werkzeug/datastructures/auth.py:114, in Authorization.from_header(cls, value)\r\n    110     return cls(scheme, {\"username\": username, \"password\": password})\r\n    112 if \"=\" in rest.rstrip(\"=\"):\r\n    113     # = that is not trailing, this is parameters.\r\n--> 114     return cls(scheme, parse_dict_header(rest), None)\r\n    116 # No = or only trailing =, this is a token.\r\n    117 return cls(scheme, None, rest)\r\n\r\nFile ~/Downloads/.venv/lib/python3.12/site-packages/werkzeug/http.py:371, in parse_dict_header(value)\r\n    368 value = value.strip()\r\n    369 encoding: str | None = None\r\n--> 371 if key[-1] == \"*\":\r\n    372     # key*=charset''value becomes key=value, where value is percent encoded\r\n    373     # adapted from parse_options_header, without the continuation handling\r\n    374     key = key[:-1]\r\n    375     match = _charset_value_re.match(value)\r\n\r\nIndexError: string index out of range\r\n```\r\n\r\n### Expected behavior\r\nGracefully handle invalid inputs by skipping them\r\n\r\n### Environment\r\n\r\n- Python version: `3.12.7`\r\n- Werkzeug version: `3.0.4`\r\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2955",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2956",
+      "gold_functions": [
+        "func:src/werkzeug/http.py:src.werkzeug.http.parse_dict_header"
+      ],
+      "gold_files": [
+        "src/werkzeug/http.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2968,
+      "commit": "1db190bac88bc173989e3703bbb4799ab56675cf",
+      "time": 1730246467,
+      "summary": "deprecate `OrderedMultiDict`",
+      "description": "`OrderedMultiDict` is not used by Werkzeug. It has a complex implementation, and is documented to be slow. `dict` maintains key insertion order in all supported versions of Python. `MultiDict` already maintains the insertion order of values within a key. `OrderedMultiDict` maintains the insertion order of each item, so `[(a, 1), (b, 2), (a, 3)]` comes out the same instead of `[(a, 1), (a, 3), (b, 2)]`. It's not clear there's a use case for this, searching sourcegraph shows some use of `OrderedMultiDict` but it's not clear if the use is actually required vs using `MultiDict`. Other libraries such as boltons also provide implementations. Mark this as deprecated and see if anything comes up.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2968",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2975",
+      "gold_functions": [
+        "func:src/werkzeug/datastructures/__init__.py:src.werkzeug.datastructures.__getattr__",
+        "func:src/werkzeug/datastructures/structures.py:src.werkzeug.datastructures.structures.__getattr__"
+      ],
+      "gold_files": [
+        "src/werkzeug/datastructures/__init__.py",
+        "src/werkzeug/datastructures/structures.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2976,
+      "commit": "862cb193c2b13db860d886725fa4235173d0dfcd",
+      "time": 1730249097,
+      "summary": "`get(type=)` should catch TypeError consistently",
+      "description": "#2842 changed `TypeConversionDict.get` to catch `TypeError` in addition to `ValueError`, but other datastructures with `get(type=)` were not changed. Make them all consistent.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2976",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2978",
+      "gold_functions": [
+        "func:src/werkzeug/datastructures/structures.py:src.werkzeug.datastructures.structures.CombinedMultiDict.get",
+        "func:src/werkzeug/datastructures/structures.py:src.werkzeug.datastructures.structures.MultiDict.getlist"
+      ],
+      "gold_files": [
+        "src/werkzeug/datastructures/structures.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 2977,
+      "commit": "1eb7ada4dcce1667e0964cb1bc122de3f1ae0279",
+      "time": 1730256012,
+      "summary": "dict datastructures could include `|` and `|=` behavior",
+      "description": "Python 3.9 added two operators to dict:\r\n\r\n* `a | b` does `{*a, *b}`\r\n* `a |= b` does `a.update(b)`\r\n\r\nImplement this for our various dict datastructures (assuming it makes sense in each case).",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/2977",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/2979",
+      "gold_functions": [
+        "func:src/werkzeug/datastructures/headers.py:src.werkzeug.datastructures.headers.EnvironHeaders.__or__",
+        "func:src/werkzeug/datastructures/headers.py:src.werkzeug.datastructures.headers.Headers.__ior__",
+        "func:src/werkzeug/datastructures/headers.py:src.werkzeug.datastructures.headers.Headers.__or__",
+        "func:src/werkzeug/datastructures/mixins.py:src.werkzeug.datastructures.mixins.ImmutableHeadersMixin.__ior__",
+        "func:src/werkzeug/datastructures/structures.py:src.werkzeug.datastructures.structures.MultiDict.__ior__",
+        "func:src/werkzeug/datastructures/structures.py:src.werkzeug.datastructures.structures.MultiDict.__or__"
+      ],
+      "gold_files": [
+        "src/werkzeug/datastructures/headers.py",
+        "src/werkzeug/datastructures/mixins.py",
+        "src/werkzeug/datastructures/structures.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3054,
+      "commit": "fb4f9f57c363c44c63f1f0f5624e1790acb6b351",
+      "time": 1764215537,
+      "summary": "watchdog reloader uses excessive CPU",
+      "description": "the watchdog reloader calls `run_step` every second by default\nhttps://github.com/pallets/werkzeug/blob/504a8c4fbda9b8b2fd09e817544ffd228f23458e/src/werkzeug/_reloader.py#L381\non our project with 13,000 files, this causes `os.path.isfile` to take 15% of a CPU core\n\nI ran `py-spy record --pid ... --output profile.speedscope.json --format speedscope` for about 8 seconds on an idle app. you can place [profile.speedscope.json](https://github.com/user-attachments/files/21151124/profile.speedscope.json) into https://www.speedscope.app/ and see 8 calls to `run()` which take about 150ms each:\n<img width=\"1675\" height=\"244\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/785eca6c-3839-4639-b649-d58a0057f09b\" />\n\nincreasing `ReloaderLoop.interval` helps a lot, but means reloads have to wait for the next iteration\n\n---\n\nEnvironment:\n\n- Python version: 3.12.7\n- Werkzeug version: 3.0.6",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3054",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3055",
+      "gold_functions": [
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.__init__",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.run",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.run_step",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.trigger_reload",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader._find_stat_paths"
+      ],
+      "gold_files": [
+        "src/werkzeug/_reloader.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3075,
+      "commit": "b48878cf16dfca3c89ac58aca47ab1ecfcb71354",
+      "time": 1767379877,
+      "summary": "DebugApplication(..., pin_security=False) no longer works",
+      "description": "Starting with werkzeug 3.1.4, passing `pin_security=False` to `DebugApplication()` raises an exception:\n\n```\nfrom django.core.wsgi import get_wsgi_application\n\nfrom werkzeug.debug import DebuggedApplication\n\napplication = DebuggedApplication(get_wsgi_application(), evalex=True, pin_security=False)\n```\n\n```\n  File \"/home/<redacted>/code/<redacted>/wsgi.py\", line 6, in <module>\n    application = DebuggedApplication(get_wsgi_application(), evalex=True, pin_security=False)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/<redacted>/.virtualenvs/<redacted>/lib/python3.12/site-packages/werkzeug/debug/__init__.py\", line 303, in _\n_init__\n    self.pin = None\n    ^^^^^^^^\n  File \"/home/<redacted>/.virtualenvs/<redacted>/lib/python3.12/site-packages/werkzeug/debug/__init__.py\", line 323, in p\nin\n    del self._pin\n        ^^^^^^^^^\nAttributeError: 'DebuggedApplication' object has no attribute '_pin'\n```\n\n<!--\nDescribe the expected behavior that should have happened but didn't.\n-->\n\nEnvironment:\n\n- Python version:  3.12\n- Werkzeug version:  3.1.4\n\nAppears to have been introduced by https://github.com/pallets/werkzeug/commit/0c49ff0649ded8b587dc7323a5e47dfffcabc3bc#diff-83867b1c4c9b75c728654ed284dc98f7c8d4e8bd682fc31b977d122dd045178a\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3075",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3078",
+      "gold_functions": [
+        "func:src/werkzeug/debug/__init__.py:src.werkzeug.debug.DebuggedApplication.pin"
+      ],
+      "gold_files": [
+        "src/werkzeug/debug/__init__.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3065,
+      "commit": "0f76c353b10afc2f8129aa3684ccc3262516a0c0",
+      "time": 1767380328,
+      "summary": "werkzeug misdecodes multipart line breaks if 64kb chunk ends in the middle of final CR+LF",
+      "description": "The following minimalist flask application and upload code causes a wrongly decoded multipart payload to be saved. The application file `upload.py`  and test case `testcase` are in the attached zip file [reproducer.zip](https://github.com/user-attachments/files/23521331/reproducer.zip).\n\n - run application: `mkdir upload ; python3 -m flask --app upload.py run -p 32269`\n - upload the test case (from a separate shell, of course): `netcat 127.0.0.1 32269 < testcase`\n\nBehold the fact that the testcase ends in:\n```\n000100f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................\n00010100: 0000 0000 0000 000d 0a2d 2d30 3633 6166  .........--063af\n00010110: 6334 6362 6534 3661 3734 3035 3930 3938  c4cbe46a74059098\n00010120: 3831 3433 3937 3165 3262 642d 2d0d 0a    8143971e2bd--..\n```\n\nwhereby the *payload* should end with a bunch of zeros.\n\nWhat happens is that the downloaded file has a stray `\\x0d` at the end, leading to a file of length 65432 bytes, while the correct length should be 65431 bytes:\n```\n0000ff80: 0000 0000 0000 0000 0000 0000 0000 0000  ................\n0000ff90: 0000 0000 0000 000d                      ........\n```\n\nMy understanding of the cause is that the code [here](https://github.com/pallets/werkzeug/blob/main/src/werkzeug/formparser.py#L368-L370) splits the input in chunks of size 65536. Its state machine is updated by what it sees. If the chunk is broken in the middle of the final line break (which is precisely what happens here), the [quite tolerant regexp here](https://github.com/pallets/werkzeug/blob/main/src/werkzeug/sansio/multipart.py#L63-L65) will recognize a single `\\n` as a legitimate line break marker, and thus let `\\r` be part of the payload.\n\n\nEnvironment:\n```\n>>> import werkzeug\n>>> import sys\n>>> import importlib\n>>> from importlib.metadata import version\n>>> sys.version\n'3.13.9 (main, Oct 15 2025, 14:56:22) [GCC 15.2.0]'\n>>> version('werkzeug')\n'3.1.3'\n```\n\nThis bug was observed in the field with the [cado-nfs software](https://gitlab.inria.fr/cado-nfs/cado-nfs/-/issues/30119) and nailed down by @akruppa.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3065",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3081",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._last_partial_boundary_index",
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._parse_data"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3077,
+      "commit": "0f76c353b10afc2f8129aa3684ccc3262516a0c0",
+      "time": 1767380328,
+      "summary": "multipart/form-data parsing appears to truncate a file part by 1 byte",
+      "description": "Guys, sorry, I'm emotional because I spent 7 hours fixing a bug, and it turned out that the latest werkzeug 3.1.4 update was to blame. Below is text from chatgpt explaining the problem:\n\n\n<!--\nThis issue tracker is a tool to address bugs in Werkzeug itself. Please use\nGitHub Discussions or the Pallets Discord for questions about your own code.\n\nReplace this comment with a clear outline of what the bug is.\n-->\n\nIn Werkzeug 3.1.4, multipart/form-data parsing appears to truncate a file part by 1 byte in a reproducible edge case. The same code and client request work correctly with Werkzeug 3.1.3.\n\nThis manifests during chunked uploads from the browser: a specific chunk at a specific byte offset is parsed as length (expected - 1), while the raw (non-multipart) upload of the exact same Blob is parsed correctly. This suggests a regression in multipart parsing in 3.1.4.\n\n<!--\nDescribe how to replicate the bug.\n\nInclude a minimal reproducible example that demonstrates the bug.\nInclude the full traceback if there was an exception.\n-->\n\nSteps to reproduce:\n\n1. Run the minimal Flask app below.\n2. Use the HTML test page below to select a large file and run the probe.\n3. Observe that with Werkzeug 3.1.4 the multipart endpoint reports one chunk as 1 byte shorter, while the raw endpoint reports the correct size.\n4. Downgrade to Werkzeug 3.1.3 and repeat: the multipart endpoint reports correct sizes for all tested chunks.\n\nMinimal reproducible example (server):\n\n```python\nfrom flask import Flask, request, jsonify\nfrom flask_login import LoginManager, login_required\n\napp = Flask(__name__)\napp.secret_key = \"test\"\n\nlogin_manager = LoginManager(app)\n\n@app.route(\"/upload_probe_raw\", methods=[\"POST\"])\ndef upload_probe_raw():\n    offset = request.headers.get(\"X-Offset\", type=int)\n    expected = request.headers.get(\"X-Expected\", type=int)\n    data = request.get_data(cache=False) or b\"\"\n    return jsonify({\n        \"offset\": offset,\n        \"expected\": expected,\n        \"content_length\": request.content_length,\n        \"data_len\": len(data),\n    })\n\n@app.route(\"/upload_probe_form\", methods=[\"POST\"])\ndef upload_probe_form():\n    offset = request.form.get(\"offset\", type=int)\n    expected = request.form.get(\"expected\", type=int)\n\n    f = request.files.get(\"file\")\n    if not f:\n        return jsonify({\"error\": \"no file\"}), 400\n\n    data = f.read() or b\"\"\n\n    return jsonify({\n        \"offset\": offset,\n        \"expected\": expected,\n        \"content_length\": request.content_length,\n        \"file_len\": len(data),\n    })\n\nif __name__ == \"__main__\":\n    app.run(port=5000, debug=True)\n```\n\nMinimal reproducible example (client):\n\n```html\n<input type=\"file\" id=\"fileInput\">\n<button id=\"probeBtn\">Probe upload</button>\n<pre id=\"out\"></pre>\n\n<script>\nconst chunkSize = 10 * 1024 * 1024;\nconst badIndex = 25;\n\nfunction log(s) {\n  document.getElementById(\"out\").textContent += s + \"\\n\";\n}\n\nasync function sendRaw(blob, offset, expected) {\n  const r = await fetch(\"/upload_probe_raw\", {\n    method: \"POST\",\n    headers: {\n      \"Content-Type\": \"application/octet-stream\",\n      \"X-Offset\": String(offset),\n      \"X-Expected\": String(expected)\n    },\n    body: blob\n  });\n  return await r.json();\n}\n\nasync function sendForm(blob, offset, expected) {\n  const fd = new FormData();\n  fd.append(\"offset\", String(offset));\n  fd.append(\"expected\", String(expected));\n  fd.append(\"file\", blob, \"chunk.bin\");\n\n  const r = await fetch(\"/upload_probe_form\", {\n    method: \"POST\",\n    body: fd\n  });\n  return await r.json();\n}\n\ndocument.getElementById(\"probeBtn\").onclick = async () => {\n  const out = document.getElementById(\"out\");\n  out.textContent = \"\";\n\n  const f = document.getElementById(\"fileInput\").files[0];\n  if (!f) {\n    log(\"No file selected\");\n    return;\n  }\n\n  const indices = [badIndex - 1, badIndex, badIndex + 1];\n\n  log(`File: ${f.name}`);\n  log(`File size: ${f.size}`);\n  log(`Chunk size: ${chunkSize}`);\n  log(\"\");\n\n  for (const idx of indices) {\n    const offset = idx * chunkSize;\n    const end = Math.min(offset + chunkSize, f.size);\n    const expected = end - offset;\n    const blob = f.slice(offset, end);\n\n    log(`Index ${idx} offset ${offset}`);\n    log(`slice.size ${blob.size} expected ${expected}`);\n\n    const rawRes = await sendRaw(blob, offset, expected);\n    log(`RAW -> data_len ${rawRes.data_len} content_length ${rawRes.content_length}`);\n\n    const formRes = await sendForm(blob, offset, expected);\n    log(`FORM -> file_len ${formRes.file_len} content_length ${formRes.content_length}`);\n\n    log(\"\");\n  }\n};\n</script>\n```\n\nObserved output with Werkzeug 3.1.4:\n\n```\nIndex 24 offset 251658240\nslice.size 10485760 expected 10485760\nRAW -> data_len 10485760 content_length 10485760\nFORM -> file_len 10485760 content_length 10486162\n\nIndex 25 offset 262144000\nslice.size 10485760 expected 10485760\nRAW -> data_len 10485760 content_length 10485760\nFORM -> file_len 10485759 content_length 10486162\n\nIndex 26 offset 272629760\nslice.size 10485760 expected 10485760\nRAW -> data_len 10485760 content_length 10485760\nFORM -> file_len 10485760 content_length 10486162\n```\n\nWith Werkzeug 3.1.3, `FORM -> file_len` matches the expected size for all tested chunks, including index 25.\n\nThere is no exception/traceback; this is a silent data truncation of 1 byte.\n\n<!--\nDescribe the expected behavior that should have happened but didn't.\n-->\n\nExpected behavior:\n\nMultipart/form-data parsing should yield the exact byte sequence sent by the client. The uploaded file part length should match the expected chunk length. Specifically, for offset 262144000 with a 10 MiB chunk size, the parsed file length should be 10485760, not 10485759.\n\nEnvironment:\n\n* Python version: 3.13.10\n* Werkzeug version: 3.1.4 (regression), 3.1.3 (works)",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3077",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3081",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._last_partial_boundary_index",
+        "func:src/werkzeug/sansio/multipart.py:src.werkzeug.sansio.multipart.MultipartDecoder._parse_data"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/multipart.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3005,
+      "commit": "2f86acb6de57c87f10ab69b5548e687ff6e71304",
+      "time": 1770143066,
+      "summary": "add `subdomain_matching` param to `Map`",
+      "description": "If `server_name` is passed to `Map.bind_from_environ`, and a `subdomain` is not passed in (as usually it's not possible to know it), it will try to detect the subdomain by removing `server_name` as a suffix from `host`. This restricts routing to only the configured `server_name`, even if we don't have any subdomain-based routing rules.\r\n\r\nMove Flask's `subdomain_matching` param into `Map` (where `host_matching` is already). `bind_to_environ` should not extract a subdomain unless it's enabled.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3005",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3006",
+      "gold_functions": [
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.Map.__init__",
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.Map.bind",
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.Map.bind_to_environ",
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.MapAdapter.__init__",
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.MapAdapter.build",
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.MapAdapter.match",
+        "func:src/werkzeug/routing/rules.py:src.werkzeug.routing.rules.Rule.compile"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/map.py",
+        "src/werkzeug/routing/rules.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3007,
+      "commit": "851971087451c34c61eeff36f227b69500d61de5",
+      "time": 1770154764,
+      "summary": "check `request.trusted_hosts` in `Map.bind_to_environ`",
+      "description": "`Map.bind_to_environ` can be passed an environ or a request object. But it always calls `get_host(environ)`. If it used `request.host` if a request was passed, this would check `request.trusted_hosts` during routing. See pallets/flask#5636",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3007",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3008",
+      "gold_functions": [
+        "func:src/werkzeug/routing/map.py:src.werkzeug.routing.map.Map.bind_to_environ"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/map.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3090,
+      "commit": "1618eccd4a3c0b831c9ad1ba5733a2acbf7c0384",
+      "time": 1770168564,
+      "summary": "Slow reloading in watchdog mode",
+      "description": "Werkzeug often reloads slowly when in `watchdog` mode for me. It can take 10 to 20 seconds before changes are noticed. This may be due to having a lot of `extra_files` being watched, I have ~110 extra files listed.\n\nWith `stat` reload mode the reload happens almost immediately.\n\nEnvironment:\n\n- Linux (`watchdog` uses `inotify`)\n- Python version: 3.12.6\n- Werkzeug version: 3.1.3\n\n\nI did some testing and it appears that the `WatchdogReloaderLoop.EventHandler` in `_reloader.py` is a bit slow due to unnecessary pattern matching. This \n```\n        class EventHandler(PatternMatchingEventHandler):\n            def on_any_event(self, event: FileModifiedEvent):  # type: ignore\n                if event.event_type not in {\n                   EVENT_TYPE_CLOSED,\n                   EVENT_TYPE_CREATED,\n                   EVENT_TYPE_DELETED,\n                   EVENT_TYPE_MODIFIED,\n                   EVENT_TYPE_MOVED,\n                }:\n                   # skip events that don't involve changes to the file\n                   return\n\n                trigger_reload(event.src_path)\n```\nbecomes much faster if irrelevant event types are discarded before pattern matching in `dispatch`:\n```\n        class EventHandler(PatternMatchingEventHandler):\n            def dispatch(self, event: FileSystemEvent) -> None:\n                if event.event_type not in {\n                   EVENT_TYPE_CLOSED,\n                   EVENT_TYPE_CREATED,\n                   EVENT_TYPE_DELETED,\n                   EVENT_TYPE_MODIFIED,\n                   EVENT_TYPE_MOVED,\n                }:\n                   # skip events that don't involve changes to the file\n                   return\n\n                super().dispatch(event)\n\n            def on_any_event(self, event: FileModifiedEvent):  # type: ignore\n                trigger_reload(event.src_path)\n```\nThis actually fixes the slowness issue for me and reloads are instant.\n\nI have a pretty complex terminal prompt (doing git and python virtualenv stuff) that causes ~300 events to be sent to the dispatch method. Previously, holding enter in my terminal for a second would cause 100% core usage for 10 seconds in the dev server. With the changed version, core usage stays below 50% even if I hold enter indefinitely.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3090",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3091",
+      "gold_functions": [
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.__init__"
+      ],
+      "gold_files": [
+        "src/werkzeug/_reloader.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3037,
+      "commit": "bf7529e62685e0b87350481703ddae5b6351072d",
+      "time": 1770403729,
+      "summary": "Adding the same route twice will silently fail, should raise an exception instead",
+      "description": "Flask does not warn about adding the same route twice. It will continue to use the view function from the first registration and just silently fail on a second registration.\n\nDesired behavior:\nSimilar to adding the same endpoint twice, some exception should be raised.\n\n```python\nimport flask\n\napp = flask.Flask(__name__)\n\n@app.route(\"/test\")\ndef myfunc1():\n    return \"myfunc1\"\n\n@app.route(\"/test\") # This should raise an exception\ndef myfunc2():\n    return \"myfunc2\"\n\napp.add_url_rule(\"/test\", \"my test endpoint\", lambda: \"myfunc3\") # This, too\n\ncli = app.test_client()\nresponse = cli.get(\"/test\")\ndata = response.get_data(True)\nprint(data) # Prints \"myfunc1\"\n```\n\nEnvironment:\n\n- Python version: 3.13.2\n- Flask version: 3.1.0",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3037",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3038",
+      "gold_functions": [
+        "func:src/werkzeug/routing/exceptions.py:src.werkzeug.routing.exceptions.DuplicateRuleError.__init__",
+        "func:src/werkzeug/routing/exceptions.py:src.werkzeug.routing.exceptions.DuplicateRuleError.__str__",
+        "func:src/werkzeug/routing/matcher.py:src.werkzeug.routing.matcher.StateMachineMatcher.add",
+        "func:src/werkzeug/routing/rules.py:src.werkzeug.routing.rules.Rule.__eq__"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/exceptions.py",
+        "src/werkzeug/routing/matcher.py",
+        "src/werkzeug/routing/rules.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3105,
+      "commit": "620ae56fd8876a9c52f0d84560dbf0495fd441d4",
+      "time": 1770938344,
+      "summary": "duplicate rule check needs to consider more",
+      "description": "The duplicate rule check added in #3038 isn't exact enough. It doesn't account for methods. It can't check equality `self.methods == other.methods`, it needs to check intersection `self.method & other.methods` since _any_ shared method would result in a duplicate. I don't think that's appropriate for `__eq__` though, as it's not exactly equality and `==` is used elsewhere. Also not sure if `strict_slashes` and `merge_slashes` is being accounted for. @pgjones \n\nWhile looking at `Rule.methods` I noticed that it can be `None` instead of a set of values. Why is this? Checks for that are throughout the code, and I also can't find logic saying the default is `GET` in that case. What's going on with that?",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3105",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3109",
+      "gold_functions": [
+        "func:src/werkzeug/routing/exceptions.py:src.werkzeug.routing.exceptions.DuplicateRuleError.__str__",
+        "func:src/werkzeug/routing/matcher.py:src.werkzeug.routing.matcher.StateMachineMatcher.add",
+        "func:src/werkzeug/routing/rules.py:src.werkzeug.routing.rules.Rule.__eq__",
+        "func:src/werkzeug/routing/rules.py:src.werkzeug.routing.rules.Rule.is_duplicate"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/exceptions.py",
+        "src/werkzeug/routing/matcher.py",
+        "src/werkzeug/routing/rules.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3108,
+      "commit": "ac9cc16ff16c6a1244be65b5be51f08dae145ce3",
+      "time": 1770956151,
+      "summary": "Response.make_conditional(..., accept_ranges=True) does not send Accept-Ranges header early enough",
+      "description": "#1711 refactored the `_process_range_request` method. Before, it used to set `Accept-Ranges` as the first thing it did. Now, it only sets `Accept-Ranges` when sending a response to a Range request, which defeats the point of that header (which is to advertise support for range requests, so it's not useful if the client is already doing a range request).\n\nbasic repro:\n```py\n# /// script\n# dependencies = [\n#     \"werkzeug==3.1.5\",\n# ]\n# ///\nfrom werkzeug.wrappers import Request, Response\nfrom werkzeug.serving import run_simple\nfrom werkzeug.wsgi import wrap_file\nimport io\n\ndef application(environ, start_response):\n    text = b\"Hello world!\"\n    wrap = wrap_file(environ, io.BytesIO(text))\n    response = Response(wrap, mimetype='text/plain')\n    response.set_etag('test')\n    response.make_conditional(environ, accept_ranges=True, complete_length=len(text))\n    return response(environ, start_response)\n\n\nrun_simple('127.0.0.1', 5000, application)\n```\n\nwhen making a request against this with `curl -i http://127.0.0.1:5000/`, there is no Accept-Ranges header. It only appears when doing a range request like `curl -i http://127.0.0.1:5000/ -H \"Range: bytes=0-7\"`. Note that when changing the version constraint to `werkzeug<1.0` (before #1711 was merged), we do see Accept-Ranges in the response to the basic request.\n\nThe fix would be to move the setting of Accept-Ranges back to the very beginning of `_process_range_request`.\n\nEnvironment:\n\n- Python version: 3.13.12\n- Werkzeug version: 3.1.5\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3108",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3110",
+      "gold_functions": [
+        "func:src/werkzeug/wrappers/response.py:src.werkzeug.wrappers.response.Response.make_conditional"
+      ],
+      "gold_files": [
+        "src/werkzeug/wrappers/response.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3138,
+      "commit": "1576ad3c7b8f9908815841c61676f79b5a6888ae",
+      "time": 1774384871,
+      "summary": "WSGIRequestHandler sends 100 Continue twice when client sends Expect: 100-continue",
+      "description": "`WSGIRequestHandler` sends `HTTP/1.1 100 Continue` twice when a client includes the `Expect: 100-continue` header. Python's `BaseHTTPRequestHandler.parse_request()` calls `handle_expect_100()` which sends the first response. Then `run_wsgi()` ([serving.py L313-314](https://github.com/pallets/werkzeug/blob/main/src/werkzeug/serving.py#L313-L314)) independently checks the same header and writes a second one. Neither layer clears the header after acting on it.\n\nHTTP clients that strictly parse interim responses \u2014 notably the AWS SDK's Netty-based async client \u2014 treat the second `100 Continue` as the start of the final response, causing all uploads to fail with status code 100.\n\n```python\nimport socket\nimport threading\nfrom werkzeug.serving import make_server\n\n\ndef app(environ, start_response):\n    # Read and discard request body\n    environ[\"wsgi.input\"].read()\n    start_response(\"200 OK\", [(\"Content-Type\", \"text/plain\")])\n    return [b\"ok\"]\n\n\nserver = make_server(\"127.0.0.1\", 9876, app, threaded=True)\nthread = threading.Thread(target=server.handle_request)\nthread.start()\n\nsock = socket.create_connection((\"127.0.0.1\", 9876))\nsock.sendall(\n    b\"PUT /test HTTP/1.1\\r\\n\"\n    b\"Host: 127.0.0.1:9876\\r\\n\"\n    b\"Content-Length: 5\\r\\n\"\n    b\"Expect: 100-continue\\r\\n\"\n    b\"\\r\\n\"\n)\n\n# Collect the full response before sending the body\nimport time\ntime.sleep(0.5)\nresponse = sock.recv(4096)\nprint(response.decode())\n\nsock.sendall(b\"hello\")\ntime.sleep(0.5)\nresponse = sock.recv(4096)\nprint(response.decode())\n\nsock.close()\nthread.join()\nserver.server_close()\n\n```\n\n**Expected:** One `HTTP/1.1 100 Continue` response, followed by the final `200 OK` after the body is sent.\n\n**Actual:** Two `HTTP/1.1 100 Continue` responses are sent before the final `200 OK`. Raw output:\n\n```\nHTTP/1.1 100 Continue\n\nHTTP/1.1 100 Continue\n\nHTTP/1.1 200 OK\n...\n```\n\nA minimal fix would be to override `handle_expect_100` to suppress the stdlib's response, since `run_wsgi()` already handles it:\n\n```python\ndef handle_expect_100(self) -> bool:\n    return True\n```\n\nEnvironment:\n\n- Python version: 3.12\n- Werkzeug version: 3.1.7 (main branch)\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3138",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3140",
+      "gold_functions": [
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.WSGIRequestHandler.run_wsgi"
+      ],
+      "gold_files": [
+        "src/werkzeug/serving.py"
+      ],
+      "split": "train"
+    },
+    {
+      "ticket": 3142,
+      "commit": "7926f0bc3a0da01827e59c81d6da55f8f75a2eed",
+      "time": 1775144197,
+      "summary": "`get_host` should allow empty host",
+      "description": "#3113 updated `get_host` to always validate the host characters. However, it also disallowed the empty string. This is a bit too strict, it should only _validate_ the string if it's not empty, or if `trusted_hosts` is passed. And if it's not valid characters, it should return the empty string rather than failing.\n\nThis will match Django's behavior. I thought I had matched it before, as I referred to it when trying to figure out the right behavior here. But I ended up being more strict than it is. It treats empty strings and invalid characters as the empty string, rather than immediately returning an error.\n\n`Host` is also nonexistant in HTTP/0.9 and optional in HTTP/1.0, so it might appear as the empty string in those cases and should be passed through.\n\nTo be clear: domain names still can't contain `_` or a bunch of other characters. If you have a domain like that, you need to report it to/fix whatever's generating such a name. It just shouldn't fail loudly immediately, although it might produce invalid results or fail in other ways later.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3142",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3148",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/utils.py:src.werkzeug.sansio.utils.get_host"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/utils.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3146,
+      "commit": "a7e3ab2b42ab509148d2864e64a8f8378a638e7e",
+      "time": 1776548990,
+      "summary": "FloatConverter breaks for values smaller than 0.0001",
+      "description": "`FloatConverter` uses scientific notation (`1e-05`) when building URLs with values smaller than 0.0001. This leads to URLs, that can not be resolved, as `FloatConverter` does not handle values containing letters (regex: `\\d+\\.\\d+`).\n\nThe following listing illustrates the issue:\n\n```python\nfrom werkzeug.routing import Map, Rule\nfrom werkzeug.routing.converters import FloatConverter\nimport typing as t\n\nmap = Map([\n    Rule('/<float:x>', endpoint='foo'),\n])\nmapAdapter = map.bind('bar')\n\nprint(url := mapAdapter.build('foo', values={'x': 1}), mapAdapter.test(url))\nprint(url := mapAdapter.build('foo', values={'x': 0.00001}), mapAdapter.test(url))\nprint(url := '/0.00001', mapAdapter.test(url))\n```\n\nThis leads to the following output:\n\n```\n/1.0 True\n/1e-05 False\n/0.00001 True\n```\n\nIn the second row, the generated URL can not be resolved. \n\nThere are multiple ways to fix this issue.  One could for example adjust the regex to handle these cases (`\\d+\\.\\d+(e[+-]/d+)?` instead of `\\d+\\.\\d+`). Another option would be to suppress scientific notation when building URLs:\n\n```python\nclass FixedFloatConverter(FloatConverter):\n    def to_url(self, value: t.Any) -> str:\n        return f'{self.num_convert(value):f}'\n    \nmap = Map([\n    Rule('/<ffloat:x>', endpoint='foo'),\n], converters={'ffloat': FixedFloatConverter})\nmapAdapter = map.bind('bar')\n\nprint(url := mapAdapter.build('foo', values={'x': 1}), mapAdapter.test(url))\nprint(url := mapAdapter.build('foo', values={'x': 0.00001}), mapAdapter.test(url))\nprint(url := '/0.00001', mapAdapter.test(url))\n```\n\nThis produces the desired result:\n\n```\n/1.000000 True\n/0.000010 True\n/0.00001 True\n```\n\nEnvironment:\n\n- Python version: not relevant\n- Werkzeug version: 3.1.7\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3146",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3147",
+      "gold_functions": [
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.FloatConverter.to_url"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/converters.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3193,
+      "commit": "b24c8ec7b05729276c75a05507eeaec4ed04dda8",
+      "time": 1785426591,
+      "summary": "Add Client.query() test shortcut for the QUERY HTTP method (RFC 10008)",
+      "description": "The HTTP `QUERY` method was standardized in\n[RFC 10008](https://www.rfc-editor.org/info/rfc10008/) (June 2026): a safe,\nidempotent request method that carries content in the request body.\n\nWerkzeug's test `Client` has shortcuts for\n`get`/`post`/`put`/`delete`/`patch`/`options`/`head`/`trace`, but not `query`.\nI'd like to add `Client.query()` to mirror the others.\n\n---\n\nIs this solvable without changes to Werkzeug? Yes \u2014 `client.open(\"/x\",\nmethod=\"QUERY\")` already works, and routing plus body parsing already handle\n`QUERY` (form parsing is mimetype-driven, not method-gated). This is purely the\nmissing test-client shortcut, added for consistency with the other methods.\n\nI have a branch ready with the change, a test, and a changelog entry, and am\nhappy to open a PR if this sounds good.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3193",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3219",
+      "gold_functions": [
+        "func:src/werkzeug/test.py:src.werkzeug.test.Client.query"
+      ],
+      "gold_files": [
+        "src/werkzeug/test.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3242,
+      "commit": "53633feffb843932cd7b9f77eb6e42dbc6cb1a58",
+      "time": 1787168982,
+      "summary": "`int` and `float` converter issues",
+      "description": "This is a more conservative version of #3237 that only fixes bugs/unintended behavior and otherwise doesn't break existing URLs. I'll target this at 3.2 since it does change what's accept a bit still.\n\n- Non-ASCII digits are accepted.\n- `int(fixed_digits=4, signed=True)` counts the negative sign as a digit.\n- `float` overflow values (too large to fit in float) become `inf`, which is a special, unexpected value that can cause problems when used later on.\n  - Underflow values become `0.0`, which is a \"normal\" value.\n  - Binary float cannot represent all values, but that's a very abstract concept for users to understand and ensure in URLs.\n- #3147 prevented scientific notation by limiting to 6 decimal places, which excludes many legitimate values.\n\nA 1-to-1 mapping of URLs to parsed values is not a goal. This will be documented for these converters. However, `.4` and `4.` will remain disallowed, I want to keep the more obvious `left.right` syntax only. And `4.` would cause issues with Markdown URL detection.\n\nThe private `NumberConverter` base seems to be more trouble than the small amount of duplication it removes, especially if we also tried to extend it to `decimal` later, so I'll remove it.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3242",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3243",
+      "gold_functions": [
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.FloatConverter.__init__",
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.FloatConverter.to_python",
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.FloatConverter.to_url",
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.IntegerConverter.__init__",
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.IntegerConverter.to_python",
+        "func:src/werkzeug/routing/converters.py:src.werkzeug.routing.converters.IntegerConverter.to_url"
+      ],
+      "gold_files": [
+        "src/werkzeug/routing/converters.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3247,
+      "commit": "bb2c10a1db220815ddea9fdec05dd561ae009731",
+      "time": 1788707986,
+      "summary": "remove `Response.autocorrect_location_header`",
+      "description": "This was disabled by default in 2.1 in 2022. There doesn't seem to be any reason to produce absolute redirect URLs now. The only issue reported, in 2023, was it had previously obscured an open redirect bug in another library, and that should have been addressed at the browser level as well.\n\nCode search shows exactly three uses of setting it to `True` https://sourcegraph.com/search?q=context:global+lang:Python+%22autocorrect_location_header+%3D+True%22+-file:site-packages/+-file:werkzeug/+-file:flask/+-repo:%5Egithub%5C.com/pallets/werkzeug%24+&patternType=keyword&sm=0 Two of them have no apparent use, the third is a temporary workaround related to the issue mentioned above. Searching for only `autocorrect_location_header` shows that every other use is setting it to `False`. If it's truly needed, `response.location = url_for(..., _external=True)` or `urljoin(request.host, response.location)` will do it explicitly.\n\nA side note, `Response.autocorrect_location_header` doesn't know about `trusted_hosts`, so it will use whatever `Host` is sent. This doesn't actually mean anything in practice, since it only affects the requests you make, and your browser or code would be sending a trusted `Host` header.\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3247",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3266",
+      "gold_functions": [
+        "func:src/werkzeug/wrappers/response.py:src.werkzeug.wrappers.response.Response.get_wsgi_headers"
+      ],
+      "gold_files": [
+        "src/werkzeug/wrappers/response.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3271,
+      "commit": "f97c305673ba121a1dae6764c37e8be48907a1d1",
+      "time": 1789315635,
+      "summary": "deprecate `UserAgent`",
+      "description": "User agent parsing was removed in 2.0 in 2021 in #2078. The intention was that `Request.user_agent_class` could be set to a subclass of `UserAgent` that parsed and populated the other properties. The full string could be accessed with `request.user_agent.string`.\n\nThis never seems to have been adopted. There are no meaningful results in https://sourcegraph.com/search?q=context:global+lang:Python+%22user_agent_class%22+-file:site-packages/+-file:werkzeug/+-file:flask/+-repo:%5Egithub%5C.com/pallets/werkzeug%24+&patternType=keyword&sm=0 (and half of those are unrelated to Werkzeug). Searching for \"werkzeug user agent\" or \"werkzeug user_agent_class\" on search engines or PyPI brings up nothing.\n\nThis isn't particularly good for type checking, as `Request` would need to be generic on `user_agent_class` in order for a subclass to expose more properties. It saves approximately one line over parsing the user agent string directly, and requires implementing an interface that might not fit what you need anyway.\n\nDeprecate this and make `Request.user_agent` a string. `UserAgent` can subclass `str` during the deprecation, and warn when accessing `user_agent.string`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3271",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3273",
+      "gold_functions": [
+        "func:src/werkzeug/sansio/request.py:src.werkzeug.sansio.request.Request.user_agent",
+        "func:src/werkzeug/user_agent.py:src.werkzeug.user_agent._UserAgent.__getattribute__",
+        "func:src/werkzeug/user_agent.py:src.werkzeug.user_agent._UserAgent.string",
+        "func:src/werkzeug/user_agent.py:src.werkzeug.user_agent._UserAgent.to_header",
+        "func:src/werkzeug/user_agent.py:src.werkzeug.user_agent.__getattr__"
+      ],
+      "gold_files": [
+        "src/werkzeug/sansio/request.py",
+        "src/werkzeug/user_agent.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3275,
+      "commit": "7641d4990f06d583425a4e6ba25e9d2f18934885",
+      "time": 1789405219,
+      "summary": "deprecate environ properties",
+      "description": "- `input_stream` is explicitly documented as unsafe compared to its wrapped counterpart in `stream`.\n- `remote_user` is only mentioned in passing as part of CGI that WSGI accepts for compatibility.\n- `is_multithread`, `is_multiprocess`, and `is_run_once` are about how the server is running workers. But I can't think of how that matters to the application, code must avoid globals and use external storage regardless of the worker type.\n- All of these can be accessed directly from `request.environ` if needed, they even still have their correct types.\n- I can't find any uses of `environ_property` (or `header_property`) in external code.\n- None of the many other WSGI and CGI keys are exposed.\n- ASGI has no concept of any of these.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3275",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3276",
+      "gold_functions": [
+        "func:src/werkzeug/test.py:src.werkzeug.test.Client.open",
+        "func:src/werkzeug/utils.py:src.werkzeug.utils.__getattr__",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.input_stream",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.is_multiprocess",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.is_multithread",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.is_run_once",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.remote_user"
+      ],
+      "gold_files": [
+        "src/werkzeug/test.py",
+        "src/werkzeug/utils.py",
+        "src/werkzeug/wrappers/request.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3290,
+      "commit": "25663ddc295879d362a206b4c33f16ea2e694392",
+      "time": 1790284058,
+      "summary": "`MIMEAccept.accept_html` is incorrect",
+      "description": "It currently checks `text/html or accept_xhtml`. But HTML is not valid XHTML (or XML in general), so responding true if `application/xml` is asked for is wrong. It should only check `text/html`.\n\n`accept_xhtml` should also be deprecated, XHTML is not something anyone's seeking out to use nowadays https://w3techs.com/technologies/details/ml-xhtml_any. I would be extremely surprised if any client was _requesting_ XHTML in `Accept`, or at least requesting it without also requesting HTML. Additionally, XHTML as used in practice is valid HTML, and it's unlikely an app would have a way to produce XHTML _or_ HTML based on the `Accept` header. And if they really need it, the app can still use `application/xhtml+xml in accept`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3290",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3293",
+      "gold_functions": [
+        "func:src/werkzeug/datastructures/accept.py:src.werkzeug.datastructures.accept.MIMEAccept.accept_html",
+        "func:src/werkzeug/datastructures/accept.py:src.werkzeug.datastructures.accept.MIMEAccept.accept_xhtml"
+      ],
+      "gold_files": [
+        "src/werkzeug/datastructures/accept.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3294,
+      "commit": "fa93b5cee027bc9baadba67f21360a8a39b2317b",
+      "time": 1790310611,
+      "summary": "`ProxyFix` shouldn't set `SERVER_NAME` or `SERVER_PORT`",
+      "description": "While looking at #3284, I noticed this. This is incorrect, `SERVER_NAME` and `SERVER_PORT` refer to the local WSGI server. They're used as a fallback if the `Host` header isn't set, but that definitely will be set due to the `X-Forwarded-Host` header.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3294",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3298",
+      "gold_functions": [
+        "func:src/werkzeug/middleware/proxy_fix.py:src.werkzeug.middleware.proxy_fix.ProxyFix.__call__"
+      ],
+      "gold_files": [
+        "src/werkzeug/middleware/proxy_fix.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3295,
+      "commit": "b5c57f308465deb39bcc801017c4edde1f81d6ea",
+      "time": 1790311029,
+      "summary": "`Request.application` doesn't type check when decorating a method",
+      "description": "`Request.application` supports decorating a function or a method. However, it's type annotation only accounts for a function. Needs to have overloads to support both.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3295",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3299",
+      "gold_functions": [
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.application",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.application.application"
+      ],
+      "gold_files": [
+        "src/werkzeug/wrappers/request.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3302,
+      "commit": "d4b67549221d050e3e7300dfaa002b8b59672a12",
+      "time": 1790367722,
+      "summary": "Deprecate `responder`",
+      "description": "It's a less powerful version of `Request.application`.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3302",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3304",
+      "gold_functions": [
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi.__getattr__",
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi._responder"
+      ],
+      "gold_files": [
+        "src/werkzeug/wsgi.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3297,
+      "commit": "f7e71c134f4ebe40e50b1f656b0113cdbdfb9357",
+      "time": 1790367941,
+      "summary": "Deprecate `Request` `populate_request` behavior",
+      "description": "The `Request` `populate_request` argument adds `environ[\"werkzeug.request\"] = self` on init. This isn't used anywhere.\n\n- It's documented as being potentially useful for debugging, with no explanation how. With #3281, the goal is to pass around the request instead of the environ, then this won't be needed at all.\n- It creates a reference loop, `environ` holds a reference to `request`, which holds a reference in `request.environ`. This is handled by the garbage collector, but it's not great.\n- It's not guaranteed that `environ is environ[\"werkzeug.request\"].environ`. For example, the test client copies the environ to isolate any changes the app makes, but doesn't update the cached request. Any middleware that didn't know about Werkzeug could result in the same thing.\n- Any middleware that modifies the environ can result in the request having stale data either through init or cached properties.\n\nI can't think of an easy way to deprecate the `werkzeug.request` key. Given that it's essentially undocumented and not used anywhere, I'm guessing that just removing it in 4.0 will be fine.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3297",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3300",
+      "gold_functions": [
+        "func:src/werkzeug/debug/__init__.py:src.werkzeug.debug.DebuggedApplication.__init__",
+        "func:src/werkzeug/wrappers/request.py:src.werkzeug.wrappers.request.Request.__init__"
+      ],
+      "gold_files": [
+        "src/werkzeug/debug/__init__.py",
+        "src/werkzeug/wrappers/request.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3301,
+      "commit": "3e430f68900f2ffd89906137526a722eb4f6ebbb",
+      "time": 1791591436,
+      "summary": "Deprecate `FileWrapper`",
+      "description": "It seems to be a less efficient way to iterate over a file rather than just iterating over it directly. It's only yielding 8 kB chunks at a time. The intention of `wsgi.file_wrapper` in WSGI is to expose more efficient file sending from the operating system. The key is optional, our `wrap_file` function is allowed to return the file unchanged if it's not set.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3301",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3322",
+      "gold_functions": [
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi._FileWrapper.__init__",
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi._FileWrapper.__iter__",
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi._FileWrapper.__next__",
+        "func:src/werkzeug/wsgi.py:src.werkzeug.wsgi._FileWrapper.close"
+      ],
+      "gold_files": [
+        "src/werkzeug/wsgi.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3318,
+      "commit": "456407ae4201661b14f726e1409db185418b6df7",
+      "time": 1791950098,
+      "summary": "`Response.location` and `content_location` should use `iri_to_uri`",
+      "description": "They currently store strings, then call `iri_to_uri` in `get_wsgi_headers`. And that's only done for WSGI, so sans-IO/ASGI doesn't get it. Instead, they should always be stored as URIs, and accessed as IRIs.\n\nNo other headers are \"fixed\" in `get_wsgi_headers`. `Response.headers` is considered \"raw\" values, where it's the responsibility of the code setting it to set a valid value. That's what the properties provide: set a Python value, get the right encoded header value.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3318",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3327",
+      "gold_functions": [
+        "func:src/werkzeug/utils.py:src.werkzeug.utils.redirect",
+        "func:src/werkzeug/wrappers/response.py:src.werkzeug.wrappers.response.Response.get_wsgi_headers"
+      ],
+      "gold_files": [
+        "src/werkzeug/utils.py",
+        "src/werkzeug/wrappers/response.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3328,
+      "commit": "23496a7290fc3ca468a1ec558adf518ef225fc86",
+      "time": 1791992389,
+      "summary": "dev server doesn't close response iterable when client resets connection",
+      "description": "If the client resets the connection while the dev server is sending a response, the response iterable's `close()` is never called. With `send_file` this leaves the file open, and you get `ResourceWarning: unclosed file` later. Under `pytest -W error` that fails an unrelated test. I see it in browser tests when a page closes while an asset is still downloading.\n\n```python\nimport socket\nimport struct\nimport threading\nimport time\n\nfrom werkzeug.serving import make_server\n\n\nclass Body:\n    def __iter__(self):\n        for _ in range(1000):\n            yield b\"x\" * 65536\n\n    def close(self):\n        print(\"closed\")\n\n\ndef app(environ, start_response):\n    start_response(\"200 OK\", [(\"Content-Type\", \"text/plain\")])\n    return Body()\n\n\nserver = make_server(\"127.0.0.1\", 0, app)\nthreading.Thread(target=server.serve_forever, daemon=True).start()\n\nsock = socket.create_connection((\"127.0.0.1\", server.port))\nsock.sendall(b\"GET / HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n\")\nsock.recv(4096)\n# close with RST instead of FIN\nsock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, struct.pack(\"ii\", 1, 0))\nsock.close()\ntime.sleep(1)\nserver.shutdown()\n```\n\nExpected: `closed` is printed.\n\nActual: nothing is printed (10 of 10 runs).\n\nCause: `write()` fails with the reset, then the `finally` block in `run_wsgi` drains the socket before closing the iterable. The socket is readable because of the reset, so `self.rfile.read(10_000_000)` raises `ConnectionResetError`, which skips `selector.close()` and `application_iter.close()`.\n\nhttps://github.com/pallets/werkzeug/blob/85dd69bda8f7591089ded638b67d57cf496676fb/src/werkzeug/serving.py#L343-L371\n\nCatching `OSError` around that read and breaking out of the loop fixes it. I have that change with a test, and can open a PR against `stable` if that works for you.\n\nEnvironment:\n\n- Python version: 3.12.10 (macOS arm64)\n- Werkzeug version: 3.1.9 (same code on `main`)\n",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3328",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3329",
+      "gold_functions": [
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.WSGIRequestHandler.run_wsgi",
+        "func:src/werkzeug/serving.py:src.werkzeug.serving.WSGIRequestHandler.run_wsgi.execute"
+      ],
+      "gold_files": [
+        "src/werkzeug/serving.py"
+      ],
+      "split": "test"
+    },
+    {
+      "ticket": 3342,
+      "commit": "284d15b0f1f9659da5882c1e62c40c9ce77cd5fd",
+      "time": 1794245042,
+      "summary": "Watchdog 7.x breaks reloader",
+      "description": "Watchdog version is not pinned to v6 so now that v7 has been released reloader gets broken.\n\nI think the issue comes from this breaking change:\n> [core] Changed pattern matching mechanism from using path.match() to path.full_match(). Users must update patterns to glob-like syntax: e.g., *.py to **/*.py.\n\nChangelog reference: https://github.com/gorakhargosh/watchdog/blob/master/changelog.rst#700\n\n\nReplicate:\n1. Install `werkzeug[watchdog]==3.1.9`\n2. Run `run_simple(\"127.0.0.1\", 5000, app, use_reloader=True, reloader_type=\"watchdog\")`\n3. Update a .py file\n4. With watchdog v6 this is where you see reloader note in the logs, but with v7 there is nothing\n\n\nExpected behavior:\nI expect reloader to work on `.py` file change but it doesn't work with watchdog 7.x.\n\n\nEnvironment:\n\n- Python version: 3.14\n- Werkzeug version: 3.1.9\n\n\n---\n\nThe quickest solution is to pin watchdog to `<7` to stop it from braking on new installations.\nThat is obviously not future proof so next step would be the code update to `patterns=[\"**/*.py\", \"**/*.pyc\", \"**/*.zip\"]` and pin watchdog to `>=7`.But I think that might be a braking change for werkzeug because of `extra_files` and `exclude_patterns` which I have no idea how they work.",
+      "text_source": "github_issue",
+      "url": "https://github.com/pallets/werkzeug/issues/3342",
+      "pull_request": "https://github.com/pallets/werkzeug/pull/3347",
+      "gold_functions": [
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.__init__",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader.WatchdogReloaderLoop.run_step",
+        "func:src/werkzeug/_reloader.py:src.werkzeug._reloader._find_watchdog_paths"
+      ],
+      "gold_files": [
+        "src/werkzeug/_reloader.py"
+      ],
+      "split": "test"
+    }
+  ]
+}
