@@ -75,11 +75,12 @@ export default function Home() {
       <footer id="install" className="install-section">
         <p className="sc section-index">03 / Setup</p>
         <div className="install-grid">
-          <div><h2>Bring it to<br /><i>your agent.</i></h2>
-            <p className="section-dek">Search the graph from your coding agent. Feed back a confirmed fix through local MCP.</p></div>
+          <div><h2>Pilot it on<br /><i>one repository.</i></h2>
+            <p className="section-dek">Compare the same agent and budget with and without RepoCortex on preselected bugs. Adopt it only if the measured result justifies the setup.</p></div>
           <div className="install-command">
             <p className="install-context">HydraDB stores the graph and confirmed-fix journal. Setup requires Python, the runtime files, and a running graph database.</p>
             <Link className="landing-primary" href="/app/connect">Connect your agent <span aria-hidden="true">→</span></Link>
+            <a className="text-link" href="https://github.com/codebanditssss/repocortex/blob/main/docs/maintainer-pilot.md" target="_blank" rel="noreferrer">Run a measured pilot <span aria-hidden="true">↗</span></a>
             <p className="news source-note">The hosted app is read-only. The setup guide includes checks for local search and feedback.</p>
           </div>
         </div>

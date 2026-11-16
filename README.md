@@ -12,13 +12,15 @@ A self-improving code graph on HydraDB · hackathon track 1
 
 </div>
 
-RepoCortex helps maintainers and coding agents investigate unfamiliar code. Given a bug report, it ranks the functions likely to need changing and returns the relationships behind each suggestion. Confirmed fixes become memory for later reports.
+RepoCortex is for platform and engineering teams running coding agents on mature codebases. Given a bug report, it gives the agent a grounded place to begin: ranked functions, exact source locations and the graph relationships behind each suggestion. Confirmed fixes become memory for later reports.
 
 We replayed **1,281 Django fixes** in chronological order and evaluated on **319 held-out fix commits**. Strict top-10 function accuracy increased from **45.1% with learning off to 48.3% after replay**. The paired improvement is **3.1 percentage points**, with a 95% bootstrap interval of **0.9–5.6 points**.
 
 A separately preregistered Starlette confirmation froze the dataset, evaluator, embedding artifact, causal arms and decision rule before scoring. Its online predict-then-learn stream directionally favored the learned graph over flat fix memory, but the untouched 24-fix endpoint tied at **54.2% strict accuracy** in every arm. The registered decision is **no demonstrated Starlette learning advantage**. [Protocol and result](results/starlette_prequential.md)
 
 Learning runs through historical replay or confirmed diffs submitted to `learn_from_fix`; merged pull requests are not ingested automatically.
+
+Teams can [pilot it on one repository](docs/maintainer-pilot.md) by preselecting historical bugs and comparing the same agent and budget with and without RepoCortex. Adopt it only if localization or repair outcomes justify the setup and operating cost.
 
 ## Start here
 

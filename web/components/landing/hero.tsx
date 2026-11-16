@@ -114,9 +114,9 @@ export function Hero({ ticket, evaluation }: {
         </div>
       </div>
       <div className="hero-copy">
-        <p className="hero-eyebrow news">Evidence from your code and its history.</p>
+        <p className="hero-eyebrow news">For platform teams running coding agents on mature codebases.</p>
         <h1 id="page-title">Find the functions.<br />Learn from <i>the fix.</i></h1>
-        <p className="hero-dek">Describe a bug. Find candidate functions through the code graph and past fixes. Feed back the confirmed fix so the next investigation can use it.</p>
+        <p className="hero-dek">Start an unfamiliar bug investigation with ranked functions and the graph evidence behind them. Feed back the confirmed fix so the next investigation can use it.</p>
         <div className="hero-actions"><a className="landing-primary" href="/app/locate">Try a live search <span aria-hidden="true">→</span></a><a className="text-link" href="#replay">See the learning curve <span aria-hidden="true">↓</span></a></div>
         <div className="hero-benchmark" aria-label="Strict function accuracy comparison">
           <p className="sc">Strict Function Acc@10</p>
