@@ -30,7 +30,7 @@ Historical descriptions came exclusively from strictly earlier ancestor commit m
 
 Earlier evidence remains unchanged: [original pilot](repair_pilot.md), [frozen-tool follow-up](repair_followup.md), and [two-task learned/frozen study](learning_repair_followup.md). Neither reconstruction nor this correlated sample supports a broad unseen-report claim.
 
-Evidence: `outputs/url-repair-study/evidence.zip`; exact protocol and all eight outcomes retained.
+Evidence: [download the complete archive](evidence/url-repair-study.zip), including the exact protocol and all eight scheduled outcomes. SHA-256: `e548e0f3fa4348eba64bf2ca5cbb3414055894ecd7902dbc6e0d60fac25b5b58`.
 
 Known-token usage estimates $1.028 at the saved uncached rates. This is not the provider invoice; caching can reduce cost. This includes the interrupted attempt’s known 139,101 input / 6,342 output token lower bound, reported separately; in-flight usage and final total remain unknown.
 
