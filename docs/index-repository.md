@@ -182,3 +182,17 @@ that the artifacts and configured database agree. For terminal feedback, pass
 namespace. Follow the [search, preview and apply workflow](feedback-cli.md); review
 the mapped functions before applying a confirmed fix. New runtimes start with no
 learned history.
+
+## Include implementation context
+
+Add `--source-context` to include the first 80 lines (at most 2,000 characters)
+of each indexed function in its search document. This lets local dense and
+lexical retrieval use behavior described in implementation comments, strings
+and identifiers, alongside the function name and signature. Source is read,
+never executed. The generated corpus contains these excerpts; keep it private
+when the source is private.
+
+This is optional and creates a different runtime fingerprint. Build into a new
+directory and use a new feedback namespace. Existing indexes and benchmark
+artifacts are unchanged. The added context is not learned fix history, and its
+retrieval quality must be measured rather than assumed.

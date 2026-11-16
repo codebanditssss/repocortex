@@ -238,6 +238,17 @@ def name_repository(graph, name: str) -> None:
     graph.edges = remapped
 
 
+def add_source_context(graph, files: list[tuple[str, str]]) -> None:
+    """Keep bounded implementation text with each function in opt-in indexes."""
+    lines = {path: text.splitlines() for path, text in files}
+    for node in graph.by_label("Function"):
+        source = lines.get(node.file, [])
+        if not 0 < node.start <= node.end <= len(source):
+            continue
+        excerpt = "\n".join(source[node.start - 1:min(node.end, node.start + 79)])[:2000]
+        node.doc = (node.doc + "\nImplementation:\n" + excerpt).strip()
+
+
 def read_git_head(repo: Path) -> str:
     """Read HEAD from the .git directory without running git (no hooks, no config)."""
     head = repo / ".git" / "HEAD"
@@ -358,6 +369,8 @@ def run(args: argparse.Namespace) -> dict:
             raise ValidationError("Go/TypeScript/JavaScript parsing requires pip install -e '.[multilang]'") from exc
         graph.nodes.update(other.nodes)
         graph.edges.update(other.edges)
+    if getattr(args, "source_context", False):
+        add_source_context(graph, files)
     name_repository(graph, repo.name)
     stats = graph_stats(graph)
     parsed_files = stats["labels"].get("File", 0)
@@ -389,6 +402,7 @@ def run(args: argparse.Namespace) -> dict:
         "git_head": read_git_head(repo),
         "scope": list(scope),
         "languages": languages,
+        "source_context": bool(getattr(args, "source_context", False)),
         "auto_scope": auto_scope,
         "files_indexed": len(files),
         "files_skipped": skipped,
@@ -466,6 +480,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--languages", nargs="+", choices=list(LANGUAGE_SUFFIXES), default=["python"],
                         help="languages to index; non-Python languages require the multilang extra")
+    parser.add_argument("--source-context", action="store_true",
+                        help="include up to 80 lines / 2000 characters of each function body in its search document")
     parser.add_argument("--max-files", type=int, default=20000, help="fail if more files than this (default 20000; 0 disables)")
     parser.add_argument("--dry-run", action="store_true", help="validate and parse, print the summary, write nothing")
     parser.add_argument(

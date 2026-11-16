@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -54,14 +56,17 @@ class Embedder:
 
 def build_dense_index(nodes: dict[str, dict], embedder: Embedder, cache: Path | None = None) -> DenseIndex:
     uids = sorted(uid for uid, node in nodes.items() if node.get("label") == "Function")
-    if cache and cache.is_file():
-        blob = np.load(cache, allow_pickle=False)
-        cached_uids = blob["uids"].tolist()
-        if cached_uids == uids and str(blob["model"]) == embedder.model_name:
-            return DenseIndex(uids, blob["matrix"])
     texts = [node_text(nodes[uid]) for uid in uids]
+    text_hash = hashlib.sha256(json.dumps(list(zip(uids, texts)), ensure_ascii=False,
+                                        separators=(",", ":")).encode()).hexdigest()
+    if cache and cache.is_file():
+        with np.load(cache, allow_pickle=False) as blob:
+            if (blob["uids"].tolist() == uids and str(blob["model"]) == embedder.model_name
+                    and "text_sha256" in blob and str(blob["text_sha256"]) == text_hash):
+                return DenseIndex(uids, blob["matrix"])
+
     matrix = embedder.encode(texts)
     if cache:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        np.savez(cache, uids=np.array(uids), matrix=matrix, model=np.array(embedder.model_name))
+        np.savez(cache, uids=np.array(uids), matrix=matrix, model=np.array(embedder.model_name), text_sha256=np.array(text_hash))
     return DenseIndex(uids, matrix)
