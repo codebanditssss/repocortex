@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import {
   Instrument_Serif,
-  Inter_Tight,
-  Newsreader,
-  Reenie_Beanie,
+  Inter,
 } from "next/font/google";
-import localFont from "next/font/local";
 import { PaperGrain } from "@/components/paper-grain";
 import "./globals.css";
 
@@ -17,35 +14,11 @@ const instrument = Instrument_Serif({
   display: "swap",
 });
 
-const inter = Inter_Tight({
+const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-});
-
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
-  display: "swap",
-  preload: false,
-});
-
-const reenie = Reenie_Beanie({
-  variable: "--font-reenie",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
-
-const departure = localFont({
-  src: "./fonts/DepartureMono-Regular.woff2",
-  variable: "--font-departure",
-  display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -87,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${instrument.variable} ${inter.variable} ${newsreader.variable} ${reenie.variable} ${departure.variable}`}
+      className={`${instrument.variable} ${inter.variable}`}
     >
       <body>
         <a className="skip-link" href="#main-content">
