@@ -1,0 +1,3031 @@
+{
+  "status": "completed",
+  "split_audit": {
+    "train": 51,
+    "holdout": 33,
+    "overlap": {
+      "tickets": [],
+      "commits": [],
+      "exact_queries": []
+    },
+    "chronological": true,
+    "latest_training_fix_unix": 1628864235,
+    "earliest_holdout_fix_unix": 1637063266,
+    "query_hash": "sha256 of lowercase whitespace-normalized title and body",
+    "feedback": "only training rows passed to learning operators; held-out labels used for scoring only",
+    "observed_memory_tickets": [
+      114,
+      768,
+      782,
+      790,
+      824,
+      831,
+      846,
+      896,
+      899,
+      1018,
+      1033,
+      1039,
+      1043,
+      1062,
+      1066,
+      1067,
+      1082,
+      1093,
+      1094,
+      1102,
+      1105,
+      1108,
+      1144,
+      1145,
+      1146,
+      1151,
+      1154,
+      1158,
+      1176,
+      1188,
+      1203,
+      1226,
+      1234,
+      1303,
+      1310,
+      1315,
+      1323,
+      1325,
+      1377,
+      1395,
+      1404,
+      1430,
+      1463,
+      1482,
+      1490,
+      1498,
+      1500,
+      1615,
+      1670,
+      1686,
+      1706
+    ],
+    "training_only_memory_verified": true
+  },
+  "train": 51,
+  "holdout": 33,
+  "functions": 434,
+  "nodes": 839,
+  "edges": 2705,
+  "baselines": {
+    "bm25": {
+      "n": 33,
+      "function_acc@5": 0.09090909090909091,
+      "function_acc@10": 0.18181818181818182,
+      "file_acc@1": 0.30303030303030304,
+      "file_acc@5": 0.6363636363636364,
+      "mrr": 0.19377104377104376,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.090909,
+          "lo": 0.0,
+          "hi": 0.212121
+        },
+        "function_acc@10": {
+          "mean": 0.181818,
+          "lo": 0.060606,
+          "hi": 0.333333
+        },
+        "file_acc@1": {
+          "mean": 0.30303,
+          "lo": 0.181061,
+          "hi": 0.454545
+        },
+        "file_acc@5": {
+          "mean": 0.636364,
+          "lo": 0.484848,
+          "hi": 0.787879
+        },
+        "mrr": {
+          "mean": 0.193771,
+          "lo": 0.077567,
+          "hi": 0.335248
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1928
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 1992
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1739
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1850
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2049
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2124
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2139
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2157
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 2246
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2314
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2322
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2069
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2462
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2491
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2249
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 746
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2536
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2532
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 2422
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2042
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2666
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2660
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2670
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2694
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2715
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2721
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 1434
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2810
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2883
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 3111
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3140
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 3411
+        }
+      ]
+    },
+    "dense": {
+      "n": 33,
+      "function_acc@5": 0.24242424242424243,
+      "function_acc@10": 0.36363636363636365,
+      "file_acc@1": 0.5757575757575758,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.37003367003367,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.242424,
+          "lo": 0.121212,
+          "hi": 0.393939
+        },
+        "function_acc@10": {
+          "mean": 0.363636,
+          "lo": 0.212121,
+          "hi": 0.515152
+        },
+        "file_acc@1": {
+          "mean": 0.575758,
+          "lo": 0.424242,
+          "hi": 0.757576
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.666667,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.370034,
+          "lo": 0.221877,
+          "hi": 0.518182
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1928
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 1992
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.16666666666666666,
+          "ticket": 1739
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 1850
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2124
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2139
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2157
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2246
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2314
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2322
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2069
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2462
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2491
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2249
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 746
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.1,
+          "ticket": 2536
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2532
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2422
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2042
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2666
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2660
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2670
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2694
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2715
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2721
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.1111111111111111,
+          "ticket": 1434
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2810
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2883
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3111
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3140
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3411
+        }
+      ]
+    },
+    "dense_bm25": {
+      "n": 33,
+      "function_acc@5": 0.2727272727272727,
+      "function_acc@10": 0.3939393939393939,
+      "file_acc@1": 0.5151515151515151,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.4147186147186147,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.272727,
+          "lo": 0.121212,
+          "hi": 0.424242
+        },
+        "function_acc@10": {
+          "mean": 0.393939,
+          "lo": 0.242424,
+          "hi": 0.545455
+        },
+        "file_acc@1": {
+          "mean": 0.515152,
+          "lo": 0.363636,
+          "hi": 0.69697
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.414719,
+          "lo": 0.262738,
+          "hi": 0.562013
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 1928
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 1992
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.2,
+          "ticket": 1739
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 1850
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2124
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2139
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2157
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2246
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2314
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2322
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2069
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2462
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2491
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2249
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 746
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2536
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2532
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2422
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2042
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2666
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2660
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2670
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2694
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2715
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2721
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.2,
+          "ticket": 1434
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2810
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2883
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3111
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3140
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3411
+        }
+      ]
+    },
+    "frozen": {
+      "n": 33,
+      "function_acc@5": 0.30303030303030304,
+      "function_acc@10": 0.42424242424242425,
+      "file_acc@1": 0.5151515151515151,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.41623376623376623,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.30303,
+          "lo": 0.151515,
+          "hi": 0.454545
+        },
+        "function_acc@10": {
+          "mean": 0.424242,
+          "lo": 0.242424,
+          "hi": 0.576515
+        },
+        "file_acc@1": {
+          "mean": 0.515152,
+          "lo": 0.363636,
+          "hi": 0.667424
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.416234,
+          "lo": 0.266477,
+          "hi": 0.561264
+        }
+      },
+      "per_issue": [
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 1928
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 1992
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 1739
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.25,
+          "ticket": 1850
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2049
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.14285714285714285,
+          "ticket": 2124
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2139
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2157
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2246
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.16666666666666666,
+          "ticket": 2314
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2322
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2331
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2069
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2462
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2491
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2249
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 746
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2536
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2532
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2422
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2042
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2666
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2660
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.5,
+          "ticket": 2670
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2694
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ticket": 2715
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 0.0,
+          "ticket": 2721
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.2,
+          "ticket": 1434
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 0.0,
+          "file_acc@5": 0.0,
+          "mrr": 0.0,
+          "ticket": 2810
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 0.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 2883
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3111
+        },
+        {
+          "function_acc@5": 0.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3140
+        },
+        {
+          "function_acc@5": 1.0,
+          "function_acc@10": 1.0,
+          "file_acc@1": 1.0,
+          "file_acc@5": 1.0,
+          "mrr": 1.0,
+          "ticket": 3411
+        }
+      ]
+    }
+  },
+  "learned": {
+    "n": 33,
+    "function_acc@5": 0.30303030303030304,
+    "function_acc@10": 0.45454545454545453,
+    "file_acc@1": 0.5151515151515151,
+    "file_acc@5": 0.8484848484848485,
+    "mrr": 0.41889129389129387,
+    "ci": {
+      "function_acc@5": {
+        "mean": 0.30303,
+        "lo": 0.151515,
+        "hi": 0.454545
+      },
+      "function_acc@10": {
+        "mean": 0.454545,
+        "lo": 0.30303,
+        "hi": 0.636364
+      },
+      "file_acc@1": {
+        "mean": 0.515152,
+        "lo": 0.333333,
+        "hi": 0.666667
+      },
+      "file_acc@5": {
+        "mean": 0.848485,
+        "lo": 0.727273,
+        "hi": 0.969697
+      },
+      "mrr": {
+        "mean": 0.418891,
+        "lo": 0.278005,
+        "hi": 0.560305
+      }
+    },
+    "per_issue": [
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.1111111111111111,
+        "ticket": 1928
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.0,
+        "ticket": 1992
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.5,
+        "ticket": 1739
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.14285714285714285,
+        "ticket": 1850
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.0,
+        "ticket": 2049
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.125,
+        "ticket": 2124
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2139
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.3333333333333333,
+        "ticket": 2157
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2246
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.16666666666666666,
+        "ticket": 2314
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2322
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2331
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2069
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2462
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.0,
+        "ticket": 2491
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2249
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.5,
+        "ticket": 746
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2536
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2532
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2422
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2042
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2666
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2660
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.5,
+        "ticket": 2670
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2694
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.3333333333333333,
+        "ticket": 2715
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 0.0,
+        "ticket": 2721
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.1111111111111111,
+        "ticket": 1434
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 0.0,
+        "file_acc@5": 0.0,
+        "mrr": 0.0,
+        "ticket": 2810
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 0.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 2883
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 3111
+      },
+      {
+        "function_acc@5": 0.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 3140
+      },
+      {
+        "function_acc@5": 1.0,
+        "function_acc@10": 1.0,
+        "file_acc@1": 1.0,
+        "file_acc@5": 1.0,
+        "mrr": 1.0,
+        "ticket": 3411
+      }
+    ]
+  },
+  "curve": [
+    {
+      "n": 33,
+      "function_acc@5": 0.30303030303030304,
+      "function_acc@10": 0.42424242424242425,
+      "file_acc@1": 0.5151515151515151,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.41623376623376623,
+      "step": 0,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.30303,
+          "lo": 0.151515,
+          "hi": 0.454545
+        },
+        "function_acc@10": {
+          "mean": 0.424242,
+          "lo": 0.242424,
+          "hi": 0.576515
+        },
+        "file_acc@1": {
+          "mean": 0.515152,
+          "lo": 0.363636,
+          "hi": 0.667424
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.416234,
+          "lo": 0.266477,
+          "hi": 0.561264
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_module": {
+          "n": 33,
+          "function_acc@10": 0.42424242424242425,
+          "mrr": 0.41623376623376623
+        },
+        "seen_file": {
+          "n": 0,
+          "function_acc@10": null,
+          "mrr": null
+        },
+        "unseen_file": {
+          "n": 33,
+          "function_acc@10": 0.42424242424242425,
+          "mrr": 0.41623376623376623
+        }
+      }
+    },
+    {
+      "n": 33,
+      "function_acc@5": 0.30303030303030304,
+      "function_acc@10": 0.42424242424242425,
+      "file_acc@1": 0.48484848484848486,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.40794853294853295,
+      "step": 13,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.30303,
+          "lo": 0.151515,
+          "hi": 0.454545
+        },
+        "function_acc@10": {
+          "mean": 0.424242,
+          "lo": 0.242424,
+          "hi": 0.576515
+        },
+        "file_acc@1": {
+          "mean": 0.484848,
+          "lo": 0.332576,
+          "hi": 0.666667
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.407949,
+          "lo": 0.264409,
+          "hi": 0.549836
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 18,
+          "function_acc@10": 0.4444444444444444,
+          "mrr": 0.378858024691358
+        },
+        "unseen_module": {
+          "n": 15,
+          "function_acc@10": 0.4,
+          "mrr": 0.44285714285714284
+        },
+        "seen_file": {
+          "n": 16,
+          "function_acc@10": 0.4375,
+          "mrr": 0.4053819444444444
+        },
+        "unseen_file": {
+          "n": 17,
+          "function_acc@10": 0.4117647058823529,
+          "mrr": 0.41036414565826324
+        }
+      }
+    },
+    {
+      "n": 33,
+      "function_acc@5": 0.2727272727272727,
+      "function_acc@10": 0.42424242424242425,
+      "file_acc@1": 0.48484848484848486,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.40416065416065416,
+      "step": 26,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.272727,
+          "lo": 0.121212,
+          "hi": 0.424242
+        },
+        "function_acc@10": {
+          "mean": 0.424242,
+          "lo": 0.242424,
+          "hi": 0.576515
+        },
+        "file_acc@1": {
+          "mean": 0.484848,
+          "lo": 0.333333,
+          "hi": 0.636364
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.404161,
+          "lo": 0.257374,
+          "hi": 0.549295
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 18,
+          "function_acc@10": 0.4444444444444444,
+          "mrr": 0.372905643738977
+        },
+        "unseen_module": {
+          "n": 15,
+          "function_acc@10": 0.4,
+          "mrr": 0.44166666666666665
+        },
+        "seen_file": {
+          "n": 16,
+          "function_acc@10": 0.4375,
+          "mrr": 0.3986855158730158
+        },
+        "unseen_file": {
+          "n": 17,
+          "function_acc@10": 0.4117647058823529,
+          "mrr": 0.40931372549019607
+        }
+      }
+    },
+    {
+      "n": 33,
+      "function_acc@5": 0.2727272727272727,
+      "function_acc@10": 0.42424242424242425,
+      "file_acc@1": 0.48484848484848486,
+      "file_acc@5": 0.8181818181818182,
+      "mrr": 0.40416065416065416,
+      "step": 38,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.272727,
+          "lo": 0.121212,
+          "hi": 0.424242
+        },
+        "function_acc@10": {
+          "mean": 0.424242,
+          "lo": 0.242424,
+          "hi": 0.576515
+        },
+        "file_acc@1": {
+          "mean": 0.484848,
+          "lo": 0.333333,
+          "hi": 0.636364
+        },
+        "file_acc@5": {
+          "mean": 0.818182,
+          "lo": 0.69697,
+          "hi": 0.939394
+        },
+        "mrr": {
+          "mean": 0.404161,
+          "lo": 0.257374,
+          "hi": 0.549295
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 19,
+          "function_acc@10": 0.47368421052631576,
+          "mrr": 0.4059106098579782
+        },
+        "unseen_module": {
+          "n": 14,
+          "function_acc@10": 0.35714285714285715,
+          "mrr": 0.4017857142857143
+        },
+        "seen_file": {
+          "n": 17,
+          "function_acc@10": 0.47058823529411764,
+          "mrr": 0.4340569561157796
+        },
+        "unseen_file": {
+          "n": 16,
+          "function_acc@10": 0.375,
+          "mrr": 0.37239583333333337
+        }
+      }
+    },
+    {
+      "n": 33,
+      "function_acc@5": 0.30303030303030304,
+      "function_acc@10": 0.45454545454545453,
+      "file_acc@1": 0.5151515151515151,
+      "file_acc@5": 0.8484848484848485,
+      "mrr": 0.41889129389129387,
+      "step": 51,
+      "ci": {
+        "function_acc@5": {
+          "mean": 0.30303,
+          "lo": 0.151515,
+          "hi": 0.454545
+        },
+        "function_acc@10": {
+          "mean": 0.454545,
+          "lo": 0.30303,
+          "hi": 0.636364
+        },
+        "file_acc@1": {
+          "mean": 0.515152,
+          "lo": 0.333333,
+          "hi": 0.666667
+        },
+        "file_acc@5": {
+          "mean": 0.848485,
+          "lo": 0.727273,
+          "hi": 0.969697
+        },
+        "mrr": {
+          "mean": 0.418891,
+          "lo": 0.278005,
+          "hi": 0.560305
+        }
+      },
+      "slices": {
+        "seen_module": {
+          "n": 23,
+          "function_acc@10": 0.4782608695652174,
+          "mrr": 0.4434092477570738
+        },
+        "unseen_module": {
+          "n": 10,
+          "function_acc@10": 0.4,
+          "mrr": 0.3625
+        },
+        "seen_file": {
+          "n": 21,
+          "function_acc@10": 0.47619047619047616,
+          "mrr": 0.4697656840513983
+        },
+        "unseen_file": {
+          "n": 12,
+          "function_acc@10": 0.4166666666666667,
+          "mrr": 0.3298611111111111
+        }
+      }
+    }
+  ],
+  "operators": {
+    "gap_ingestion": 112,
+    "path_compression": 40,
+    "entity_merge_split": 1,
+    "edge_reweight": 135
+  },
+  "params": {
+    "bm25_mix": 0.1,
+    "memory_lam": 0.08,
+    "memory_thresh": 0.55,
+    "memory_k": 5,
+    "shortcut_lam": 0.04,
+    "graph_mix": 0.05,
+    "shortcut_min_support": 3,
+    "shortcut_min_precision": 0.4,
+    "memory_agg": "sum",
+    "memory_frontier": 0,
+    "recency_half_life": 0.0,
+    "file_prior_lam": 0.0,
+    "module_prior_lam": 0.0,
+    "prior_seeds": 12,
+    "generalize_concepts": false,
+    "credit_decay": 0.08,
+    "decay": 0.08
+  },
+  "gap_learned_minus_frozen": {
+    "n": 33,
+    "function_acc@5": {
+      "mean": 0.0,
+      "lo": -0.090909,
+      "hi": 0.090909
+    },
+    "function_acc@10": {
+      "mean": 0.030303,
+      "lo": 0.0,
+      "hi": 0.090909
+    },
+    "file_acc@1": {
+      "mean": 0.0,
+      "lo": -0.090909,
+      "hi": 0.090909
+    },
+    "file_acc@5": {
+      "mean": 0.030303,
+      "lo": 0.0,
+      "hi": 0.090909
+    },
+    "mrr": {
+      "mean": 0.002658,
+      "lo": -0.054717,
+      "hi": 0.058703
+    }
+  },
+  "gap_learned_minus_dense_bm25": {
+    "n": 33,
+    "function_acc@5": {
+      "mean": 0.030303,
+      "lo": 0.0,
+      "hi": 0.090909
+    },
+    "function_acc@10": {
+      "mean": 0.060606,
+      "lo": -0.060606,
+      "hi": 0.181818
+    },
+    "file_acc@1": {
+      "mean": 0.0,
+      "lo": -0.090909,
+      "hi": 0.090909
+    },
+    "file_acc@5": {
+      "mean": 0.030303,
+      "lo": 0.0,
+      "hi": 0.090909
+    },
+    "mrr": {
+      "mean": 0.004173,
+      "lo": -0.056142,
+      "hi": 0.058388
+    }
+  },
+  "selection_plan": {
+    "maximum_eligible_pr_commits": 300,
+    "holdout_commit_fraction": 0.4,
+    "checkpoint_points": 5
+  },
+  "selection_counts": {
+    "unique_pr_references_scanned": 1267,
+    "unmapped_or_more_than_eight_functions": 1008,
+    "eligible_prs_without_closing_issue": 175,
+    "linked_issue_references": 86,
+    "duplicate_issue_references": 2,
+    "eligible_pr_commits": 259,
+    "retained_unique_issues": 84
+  },
+  "repository": "encode/httpx",
+  "snapshot": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+  "dataset_sha256": "600c9a779825fe29923f412a20c95f54874a41a4d7af0bc537d5496c7ffcbf3b",
+  "sample": [
+    {
+      "ticket": 824,
+      "url": "https://github.com/encode/httpx/issues/824",
+      "pull_request": "https://github.com/encode/httpx/pull/826",
+      "commit": "2714f32238077fa5975531c76b816ca07ba10861",
+      "time": 1582836088,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.Client.close"
+      ]
+    },
+    {
+      "ticket": 782,
+      "url": "https://github.com/encode/httpx/issues/782",
+      "pull_request": "https://github.com/encode/httpx/pull/791",
+      "commit": "53804173bb734ce94d13d1b34c0ebaab46abd8c3",
+      "time": 1582836138,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__"
+      ]
+    },
+    {
+      "ticket": 831,
+      "url": "https://github.com/encode/httpx/issues/831",
+      "pull_request": "https://github.com/encode/httpx/pull/839",
+      "commit": "112fb9c07dbe4b4cb9ffa60df8a23b2fb86ec169",
+      "time": 1583091256,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.request"
+      ]
+    },
+    {
+      "ticket": 114,
+      "url": "https://github.com/encode/httpx/issues/114",
+      "pull_request": "https://github.com/encode/httpx/pull/857",
+      "commit": "5829ecb648f4b53611ae7d6d9ae6df0babf2cfae",
+      "time": 1586544004,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.peek_filelike_length"
+      ]
+    },
+    {
+      "ticket": 768,
+      "url": "https://github.com/encode/httpx/issues/768",
+      "pull_request": "https://github.com/encode/httpx/pull/963",
+      "commit": "d2816c9c48b6ea77c9644ea9229b3b212feed737",
+      "time": 1590060137,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client.close",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.__init__",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.create_event",
+        "func:httpx/_transports/wsgi.py:httpx._transports.wsgi.WSGITransport.__init__",
+        "func:httpx/_transports/wsgi.py:httpx._transports.wsgi._skip_leading_empty_chunks"
+      ]
+    },
+    {
+      "ticket": 1067,
+      "url": "https://github.com/encode/httpx/issues/1067",
+      "pull_request": "https://github.com/encode/httpx/pull/1072",
+      "commit": "27b0dbc22da1424a020c2bb769c81490f39ce283",
+      "time": 1595247057,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPStatusError.__init__",
+        "func:httpx/_models.py:httpx._models.Response.raise_for_status"
+      ]
+    },
+    {
+      "ticket": 1033,
+      "url": "https://github.com/encode/httpx/issues/1033",
+      "pull_request": "https://github.com/encode/httpx/pull/1075",
+      "commit": "20f4911e805d9cf28b915cc2c7fbae8f27dc2c49",
+      "time": 1595493935,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.decode"
+      ]
+    },
+    {
+      "ticket": 1043,
+      "url": "https://github.com/encode/httpx/issues/1043",
+      "pull_request": "https://github.com/encode/httpx/pull/1099",
+      "commit": "16893e414fe68bd41890dc52f449328679a65134",
+      "time": 1596187271,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._transport_for_url",
+        "func:httpx/_client.py:httpx._client.AsyncClient.aclose",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._transport_for_url",
+        "func:httpx/_client.py:httpx._client.Client.close"
+      ]
+    },
+    {
+      "ticket": 899,
+      "url": "https://github.com/encode/httpx/issues/899",
+      "pull_request": "https://github.com/encode/httpx/pull/1114",
+      "commit": "a9284214e2483b9cf118422d4a47bab51546b085",
+      "time": 1596305715,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.copy",
+        "func:httpx/_models.py:httpx._models.Headers.items",
+        "func:httpx/_models.py:httpx._models.Headers.keys",
+        "func:httpx/_models.py:httpx._models.Headers.multi_items",
+        "func:httpx/_models.py:httpx._models.Headers.values"
+      ]
+    },
+    {
+      "ticket": 1093,
+      "url": "https://github.com/encode/httpx/issues/1093",
+      "pull_request": "https://github.com/encode/httpx/pull/1111",
+      "commit": "26cd4f54e8850671b565995f15d5c37328407809",
+      "time": 1596308341,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.Timeout.__eq__",
+        "func:httpx/_config.py:httpx._config.Timeout.__init__",
+        "func:httpx/_config.py:httpx._config.Timeout.__repr__",
+        "func:httpx/_config.py:httpx._config.Timeout.as_dict"
+      ]
+    },
+    {
+      "ticket": 1094,
+      "url": "https://github.com/encode/httpx/issues/1094",
+      "pull_request": "https://github.com/encode/httpx/pull/1113",
+      "commit": "f67e925f72166ac89c4ff430540173b5910ec315",
+      "time": 1596311098,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_transport",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_transport"
+      ]
+    },
+    {
+      "ticket": 1062,
+      "url": "https://github.com/encode/httpx/issues/1062",
+      "pull_request": "https://github.com/encode/httpx/pull/1103",
+      "commit": "682cad39ebd7468f65d9590ed68bd03f5a7f8ec8",
+      "time": 1596358845,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._transport_for_url",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client._transport_for_url",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.__init__",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.matches",
+        "func:httpx/_utils.py:httpx._utils.URLPattern.priority",
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies"
+      ]
+    },
+    {
+      "ticket": 1082,
+      "url": "https://github.com/encode/httpx/issues/1082",
+      "pull_request": "https://github.com/encode/httpx/pull/1120",
+      "commit": "d76b2c2fb7241e5a21f6df86d6142790d4548b8c",
+      "time": 1596361689,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies"
+      ]
+    },
+    {
+      "ticket": 1039,
+      "url": "https://github.com/encode/httpx/issues/1039",
+      "pull_request": "https://github.com/encode/httpx/pull/1122",
+      "commit": "0e7730bcccf51a6ca5b66d2dc6cab40f2a1660a3",
+      "time": 1596368556,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._get_proxy_map",
+        "func:httpx/_client.py:httpx._client.Client.__init__"
+      ]
+    },
+    {
+      "ticket": 1108,
+      "url": "https://github.com/encode/httpx/issues/1108",
+      "pull_request": "https://github.com/encode/httpx/pull/1125",
+      "commit": "d7aa6e018913349166fba64cd5f3a9daba7364fb",
+      "time": 1596481578,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPStatusError.__init__",
+        "func:httpx/_exceptions.py:httpx._exceptions.RequestError.__init__"
+      ]
+    },
+    {
+      "ticket": 896,
+      "url": "https://github.com/encode/httpx/issues/896",
+      "pull_request": "https://github.com/encode/httpx/pull/1110",
+      "commit": "78cf16ace92b42de5972a490787002631d558b32",
+      "time": 1596629145,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ]
+    },
+    {
+      "ticket": 1102,
+      "url": "https://github.com/encode/httpx/issues/1102",
+      "pull_request": "https://github.com/encode/httpx/pull/1110",
+      "commit": "78cf16ace92b42de5972a490787002631d558b32",
+      "time": 1596629145,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ]
+    },
+    {
+      "ticket": 1105,
+      "url": "https://github.com/encode/httpx/issues/1105",
+      "pull_request": "https://github.com/encode/httpx/pull/1127",
+      "commit": "7279ed46589db3028342d3f1542b11e99c23a6a5",
+      "time": 1596649310,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.URLPattern.__init__"
+      ]
+    },
+    {
+      "ticket": 846,
+      "url": "https://github.com/encode/httpx/issues/846",
+      "pull_request": "https://github.com/encode/httpx/pull/1130",
+      "commit": "a3392c6ea7e887b23c1a9250b58ff11c7ea652df",
+      "time": 1596650185,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._enforce_trailing_slash",
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url",
+        "func:httpx/_client.py:httpx._client.BaseClient.base_url",
+        "func:httpx/_client.py:httpx._client.Client.__init__"
+      ]
+    },
+    {
+      "ticket": 1151,
+      "url": "https://github.com/encode/httpx/issues/1151",
+      "pull_request": "https://github.com/encode/httpx/pull/1156",
+      "commit": "4cf74bc40508f1d22e1159bc93607e9c777e41b2",
+      "time": 1597067631,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Cookies._CookieCompatResponse.info"
+      ]
+    },
+    {
+      "ticket": 1158,
+      "url": "https://github.com/encode/httpx/issues/1158",
+      "pull_request": "https://github.com/encode/httpx/pull/1163",
+      "commit": "45de7145924e62aea7a2f6cbbc878ea6f8455ca7",
+      "time": 1597135496,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._redirect_url",
+        "func:httpx/_exceptions.py:httpx._exceptions.InvalidURL.__init__"
+      ]
+    },
+    {
+      "ticket": 1146,
+      "url": "https://github.com/encode/httpx/issues/1146",
+      "pull_request": "https://github.com/encode/httpx/pull/1183",
+      "commit": "a226c60861f651b9874e31e66b3bb7f0db46c96d",
+      "time": 1597556026,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.head",
+        "func:httpx/_client.py:httpx._client.AsyncClient.head",
+        "func:httpx/_client.py:httpx._client.Client.head"
+      ]
+    },
+    {
+      "ticket": 1066,
+      "url": "https://github.com/encode/httpx/issues/1066",
+      "pull_request": "https://github.com/encode/httpx/pull/1185",
+      "commit": "cb620e67c76202e6f64d22e45fedc0eb7c41e69e",
+      "time": 1597668712,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_auth",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_request_auth",
+        "func:httpx/_client.py:httpx._client.BaseClient.auth",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ]
+    },
+    {
+      "ticket": 1188,
+      "url": "https://github.com/encode/httpx/issues/1188",
+      "pull_request": "https://github.com/encode/httpx/pull/1190",
+      "commit": "03cd88c336a3f464d117cea1e2aa09488478edc6",
+      "time": 1597835404,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.aiter_raw",
+        "func:httpx/_models.py:httpx._models.Response.iter_raw"
+      ]
+    },
+    {
+      "ticket": 1154,
+      "url": "https://github.com/encode/httpx/issues/1154",
+      "pull_request": "https://github.com/encode/httpx/pull/1200",
+      "commit": "924fa8c9dc19f3a601db54a384158fef56f07c96",
+      "time": 1597915708,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.stream"
+      ]
+    },
+    {
+      "ticket": 1203,
+      "url": "https://github.com/encode/httpx/issues/1203",
+      "pull_request": "https://github.com/encode/httpx/pull/1205",
+      "commit": "19515e8a8b7df6e5064047f02df307798c184ef5",
+      "time": 1598007795,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.raw"
+      ]
+    },
+    {
+      "ticket": 1144,
+      "url": "https://github.com/encode/httpx/issues/1144",
+      "pull_request": "https://github.com/encode/httpx/pull/1206",
+      "commit": "15c1e42c20d37697b78f456ac434905a89ac161a",
+      "time": 1598009457,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.BrotliDecoder.__init__"
+      ]
+    },
+    {
+      "ticket": 1145,
+      "url": "https://github.com/encode/httpx/issues/1145",
+      "pull_request": "https://github.com/encode/httpx/pull/1218",
+      "commit": "534400ee42ad9b974a34d3b6b135fd7913561df8",
+      "time": 1598439905,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aenter__",
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aexit__",
+        "func:httpx/_client.py:httpx._client.Client.__enter__",
+        "func:httpx/_client.py:httpx._client.Client.__exit__"
+      ]
+    },
+    {
+      "ticket": 1234,
+      "url": "https://github.com/encode/httpx/issues/1234",
+      "pull_request": "https://github.com/encode/httpx/pull/1240",
+      "commit": "33d339a2622cbb6c8670ba07389a842c8c85c616",
+      "time": 1598965690,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.DigestAuth._parse_challenge",
+        "func:httpx/_auth.py:httpx._auth.DigestAuth.auth_flow"
+      ]
+    },
+    {
+      "ticket": 1226,
+      "url": "https://github.com/encode/httpx/issues/1226",
+      "pull_request": "https://github.com/encode/httpx/pull/1248",
+      "commit": "19b863af408123783d5f9916e71688b32ba558c8",
+      "time": 1599078768,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_headers",
+        "func:httpx/_client.py:httpx._client.BaseClient.headers"
+      ]
+    },
+    {
+      "ticket": 1176,
+      "url": "https://github.com/encode/httpx/issues/1176",
+      "pull_request": "https://github.com/encode/httpx/pull/1217",
+      "commit": "016e4ee210114bb97e631c0abcdbc462d2751ad5",
+      "time": 1599658640,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.Auth.async_auth_flow",
+        "func:httpx/_auth.py:httpx._auth.Auth.sync_auth_flow",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ]
+    },
+    {
+      "ticket": 1018,
+      "url": "https://github.com/encode/httpx/issues/1018",
+      "pull_request": "https://github.com/encode/httpx/pull/1269",
+      "commit": "d0fe1139458f5636bcdc1dafd8b5bda5e845731a",
+      "time": 1600165219,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.TextDecoder.flush",
+        "func:httpx/_models.py:httpx._models.Response.aiter_text",
+        "func:httpx/_models.py:httpx._models.Response.charset_encoding",
+        "func:httpx/_models.py:httpx._models.Response.encoding",
+        "func:httpx/_models.py:httpx._models.Response.iter_text",
+        "func:httpx/_models.py:httpx._models.Response.text"
+      ]
+    },
+    {
+      "ticket": 790,
+      "url": "https://github.com/encode/httpx/issues/790",
+      "pull_request": "https://github.com/encode/httpx/pull/1246",
+      "commit": "54f7708e2b8bc9bbd5f4ea9f1e4386b8acbf3811",
+      "time": 1600167939,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient.event_hooks",
+        "func:httpx/_client.py:httpx._client.Client.__init__",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ]
+    },
+    {
+      "ticket": 1310,
+      "url": "https://github.com/encode/httpx/issues/1310",
+      "pull_request": "https://github.com/encode/httpx/pull/1313",
+      "commit": "befa57c6f9f9fd0489a5ed738c1280f23a4c6bb7",
+      "time": 1600856772,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request",
+        "func:httpx/_client.py:httpx._client.Client._send_single_request"
+      ]
+    },
+    {
+      "ticket": 1315,
+      "url": "https://github.com/encode/httpx/issues/1315",
+      "pull_request": "https://github.com/encode/httpx/pull/1316",
+      "commit": "78afd08e0fc198d05f95728011d1bc7c0c213b30",
+      "time": 1600933346,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request"
+      ]
+    },
+    {
+      "ticket": 1323,
+      "url": "https://github.com/encode/httpx/issues/1323",
+      "pull_request": "https://github.com/encode/httpx/pull/1324",
+      "commit": "666cbbdfe8259e7b6363a2eec5df8ab60e7b6003",
+      "time": 1601029757,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.__init__"
+      ]
+    },
+    {
+      "ticket": 1325,
+      "url": "https://github.com/encode/httpx/issues/1325",
+      "pull_request": "https://github.com/encode/httpx/pull/1326",
+      "commit": "815ef94ed93a6fd1099074511724ff7b891752b3",
+      "time": 1601033314,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.__eq__"
+      ]
+    },
+    {
+      "ticket": 1395,
+      "url": "https://github.com/encode/httpx/issues/1395",
+      "pull_request": "https://github.com/encode/httpx/pull/1398",
+      "commit": "d0835da230892bfa7ef42a5aed9dba8122a4359e",
+      "time": 1606318357,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.AsyncClient._init_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_proxy_transport",
+        "func:httpx/_client.py:httpx._client.Client._init_transport",
+        "func:httpx/_config.py:httpx._config.Limits.__eq__",
+        "func:httpx/_config.py:httpx._config.Limits.__init__",
+        "func:httpx/_config.py:httpx._config.Limits.__repr__"
+      ]
+    },
+    {
+      "ticket": 1377,
+      "url": "https://github.com/encode/httpx/issues/1377",
+      "pull_request": "https://github.com/encode/httpx/pull/1411",
+      "commit": "28cbe77676e17045c762167bd7a5aa4d2f916dc4",
+      "time": 1607029602,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Cookies.__repr__"
+      ]
+    },
+    {
+      "ticket": 1303,
+      "url": "https://github.com/encode/httpx/issues/1303",
+      "pull_request": "https://github.com/encode/httpx/pull/1401",
+      "commit": "9c7c2ace99ce6732377e18d35bcdca1a8f1d37e4",
+      "time": 1609931066,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_transports/mock.py:httpx._transports.mock.MockTransport.__init__"
+      ]
+    },
+    {
+      "ticket": 1430,
+      "url": "https://github.com/encode/httpx/issues/1430",
+      "pull_request": "https://github.com/encode/httpx/pull/1447",
+      "commit": "bd4caa873c8b342231b4c71346363b8895a7a7b2",
+      "time": 1613561230,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.create_ssl_context"
+      ]
+    },
+    {
+      "ticket": 1463,
+      "url": "https://github.com/encode/httpx/issues/1463",
+      "pull_request": "https://github.com/encode/httpx/pull/1465",
+      "commit": "0f280af8b170ed5cc48c12a894f71a8b5762f748",
+      "time": 1613561563,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_single_request"
+      ]
+    },
+    {
+      "ticket": 1498,
+      "url": "https://github.com/encode/httpx/issues/1498",
+      "pull_request": "https://github.com/encode/httpx/pull/1532",
+      "commit": "6cb1672459b0c1386cb36b89a92b87419fdc478c",
+      "time": 1616583093,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._merge_url"
+      ]
+    },
+    {
+      "ticket": 1482,
+      "url": "https://github.com/encode/httpx/issues/1482",
+      "pull_request": "https://github.com/encode/httpx/pull/1537",
+      "commit": "c75ddc26c7e32e7c5fe99263899a187ff537aecc",
+      "time": 1616686502,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.DataField.render_data",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length"
+      ]
+    },
+    {
+      "ticket": 1500,
+      "url": "https://github.com/encode/httpx/issues/1500",
+      "pull_request": "https://github.com/encode/httpx/pull/1539",
+      "commit": "c26425aa58574f31491f46b7c757f9f374fabf46",
+      "time": 1616763244,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_urlencoded_data",
+        "func:httpx/_multipart.py:httpx._multipart.DataField.__init__",
+        "func:httpx/_utils.py:httpx._utils.primitive_value_to_str"
+      ]
+    },
+    {
+      "ticket": 1404,
+      "url": "https://github.com/encode/httpx/issues/1404",
+      "pull_request": "https://github.com/encode/httpx/pull/1574",
+      "commit": "6a99f6f2b3a638719f70200de9983f80d618ee1c",
+      "time": 1618827512,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_api.py:httpx._api.request",
+        "func:httpx/_api.py:httpx._api.stream",
+        "func:httpx/_client.py:httpx._client.Client.request"
+      ]
+    },
+    {
+      "ticket": 1490,
+      "url": "https://github.com/encode/httpx/issues/1490",
+      "pull_request": "https://github.com/encode/httpx/pull/1619",
+      "commit": "2129a9789ad6a9ffb8655644fbe43a5b3e908db9",
+      "time": 1619775642,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_content",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length",
+        "func:httpx/_utils.py:httpx._utils.peek_filelike_length"
+      ]
+    },
+    {
+      "ticket": 1670,
+      "url": "https://github.com/encode/httpx/issues/1670",
+      "pull_request": "https://github.com/encode/httpx/pull/1687",
+      "commit": "b43af721cd7804214396b5511e4f68d144a9b6a6",
+      "time": 1623854052,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ]
+    },
+    {
+      "ticket": 1686,
+      "url": "https://github.com/encode/httpx/issues/1686",
+      "pull_request": "https://github.com/encode/httpx/pull/1687",
+      "commit": "b43af721cd7804214396b5511e4f68d144a9b6a6",
+      "time": 1623854052,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth"
+      ]
+    },
+    {
+      "ticket": 1706,
+      "url": "https://github.com/encode/httpx/issues/1706",
+      "pull_request": "https://github.com/encode/httpx/pull/1736",
+      "commit": "20e66d204864b320ba6816b501c6dca17e101836",
+      "time": 1628850462,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.__init__"
+      ]
+    },
+    {
+      "ticket": 1615,
+      "url": "https://github.com/encode/httpx/issues/1615",
+      "pull_request": "https://github.com/encode/httpx/pull/1800",
+      "commit": "927c88d34f73d98af5827aaa571e74d6159e5735",
+      "time": 1628864235,
+      "split": "train",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__aenter__",
+        "func:httpx/_client.py:httpx._client.Client.__enter__"
+      ]
+    },
+    {
+      "ticket": 1928,
+      "url": "https://github.com/encode/httpx/issues/1928",
+      "pull_request": "https://github.com/encode/httpx/pull/1940",
+      "commit": "4882e980494aa72032bef773eb15462af25dcd9a",
+      "time": 1637063266,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Response.url"
+      ]
+    },
+    {
+      "ticket": 1992,
+      "url": "https://github.com/encode/httpx/issues/1992",
+      "pull_request": "https://github.com/encode/httpx/pull/2009",
+      "commit": "406700317bfd83a65d78094e4ce8e9261c284399",
+      "time": 1641398507,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ]
+    },
+    {
+      "ticket": 1739,
+      "url": "https://github.com/encode/httpx/issues/1739",
+      "pull_request": "https://github.com/encode/httpx/pull/2068",
+      "commit": "420911bc693ec3a7f2fbd81c18cffb8fdb12e4c8",
+      "time": 1644225566,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.ByteChunker.decode",
+        "func:httpx/_models.py:httpx._models.Response.aiter_bytes",
+        "func:httpx/_models.py:httpx._models.Response.iter_bytes"
+      ]
+    },
+    {
+      "ticket": 1850,
+      "url": "https://github.com/encode/httpx/issues/1850",
+      "pull_request": "https://github.com/encode/httpx/pull/2074",
+      "commit": "4401d55ecf0d95be237098b6c73c45420d54d499",
+      "time": 1644405501,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.BaseClient._redirect_headers"
+      ]
+    },
+    {
+      "ticket": 2049,
+      "url": "https://github.com/encode/httpx/issues/2049",
+      "pull_request": "https://github.com/encode/httpx/pull/2076",
+      "commit": "4c307488cd1e1d934aedd60bfcace18a18baeaab",
+      "time": 1644421239,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_main.py:httpx._main.print_response"
+      ]
+    },
+    {
+      "ticket": 2124,
+      "url": "https://github.com/encode/httpx/issues/2124",
+      "pull_request": "https://github.com/encode/httpx/pull/2125",
+      "commit": "c82885ac04f7c3439dfdd4d26614913bf09389c9",
+      "time": 1647276699,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_main.py:httpx._main.print_help"
+      ]
+    },
+    {
+      "ticket": 2139,
+      "url": "https://github.com/encode/httpx/issues/2139",
+      "pull_request": "https://github.com/encode/httpx/pull/2156",
+      "commit": "3350d7e6831e2d942f68653b2f58cfa5ecb0bacd",
+      "time": 1648730500,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.AsyncClient._send_handling_redirects",
+        "func:httpx/_client.py:httpx._client.AsyncClient.send",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_auth",
+        "func:httpx/_client.py:httpx._client.Client._send_handling_redirects",
+        "func:httpx/_client.py:httpx._client.Client.send"
+      ]
+    },
+    {
+      "ticket": 2157,
+      "url": "https://github.com/encode/httpx/issues/2157",
+      "pull_request": "https://github.com/encode/httpx/pull/2158",
+      "commit": "550fff933f103e16aaddc9ff315f69aba974db40",
+      "time": 1648807832,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPError.__init__",
+        "func:httpx/_exceptions.py:httpx._exceptions.HTTPError.request"
+      ]
+    },
+    {
+      "ticket": 2246,
+      "url": "https://github.com/encode/httpx/issues/2246",
+      "pull_request": "https://github.com/encode/httpx/pull/2247",
+      "commit": "5b06aea1d64f0815af6fe71da3ac725bed3ec09f",
+      "time": 1653569611,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.AsyncClient.__init__"
+      ]
+    },
+    {
+      "ticket": 2314,
+      "url": "https://github.com/encode/httpx/issues/2314",
+      "pull_request": "https://github.com/encode/httpx/pull/2317",
+      "commit": "ccd98b1a6de221fa4b497de7f7bdf89b1347024d",
+      "time": 1661859979,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_models.py:httpx._models.Headers.__init__"
+      ]
+    },
+    {
+      "ticket": 2322,
+      "url": "https://github.com/encode/httpx/issues/2322",
+      "pull_request": "https://github.com/encode/httpx/pull/2355",
+      "commit": "965b8adec3633e1bd249d17fb7a7eed414c74748",
+      "time": 1661864611,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream._iter_fields"
+      ]
+    },
+    {
+      "ticket": 2331,
+      "url": "https://github.com/encode/httpx/issues/2331",
+      "pull_request": "https://github.com/encode/httpx/pull/2354",
+      "commit": "d5900cd40ec85e47800e21e77bc684b9f65325ed",
+      "time": 1662125085,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.QueryParams.__init__"
+      ]
+    },
+    {
+      "ticket": 2069,
+      "url": "https://github.com/encode/httpx/issues/2069",
+      "pull_request": "https://github.com/encode/httpx/pull/2400",
+      "commit": "0ebe9259aca97baf4cadf112b0aa47152bec426c",
+      "time": 1665075231,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.__init__"
+      ]
+    },
+    {
+      "ticket": 2462,
+      "url": "https://github.com/encode/httpx/issues/2462",
+      "pull_request": "https://github.com/encode/httpx/pull/2481",
+      "commit": "40a0da093b423ca37feee2b85df7c3f0ce3cc96c",
+      "time": 1669998005,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.URL.raw"
+      ]
+    },
+    {
+      "ticket": 2491,
+      "url": "https://github.com/encode/httpx/issues/2491",
+      "pull_request": "https://github.com/encode/httpx/pull/2495",
+      "commit": "a8dd079be7028b2bf4cdbbbc3a6793a5f78ecc85",
+      "time": 1670785928,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_content.py:httpx._content.encode_content"
+      ]
+    },
+    {
+      "ticket": 2249,
+      "url": "https://github.com/encode/httpx/issues/2249",
+      "pull_request": "https://github.com/encode/httpx/pull/2382",
+      "commit": "b97c0594a59a9a5e62e9930fe9a783be79d8cc6e",
+      "time": 1670861696,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_multipart.py:httpx._multipart.FileField.get_length",
+        "func:httpx/_multipart.py:httpx._multipart.FileField.render_data",
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream.get_content_length",
+        "func:httpx/_multipart.py:httpx._multipart.MultipartStream.get_headers"
+      ]
+    },
+    {
+      "ticket": 746,
+      "url": "https://github.com/encode/httpx/issues/746",
+      "pull_request": "https://github.com/encode/httpx/pull/2523",
+      "commit": "4cbf13ece2e584b45b935df0a0c670e1863c4569",
+      "time": 1672433808,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.primitive_value_to_str"
+      ]
+    },
+    {
+      "ticket": 2536,
+      "url": "https://github.com/encode/httpx/issues/2536",
+      "pull_request": "https://github.com/encode/httpx/pull/2543",
+      "commit": "a6af45edac51dce888e1e1f0ebf344f126a1c66c",
+      "time": 1673349369,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urls.py:httpx._urls.QueryParams.__str__"
+      ]
+    },
+    {
+      "ticket": 2532,
+      "url": "https://github.com/encode/httpx/issues/2532",
+      "pull_request": "https://github.com/encode/httpx/pull/2535",
+      "commit": "59914c7690573d5f9b17bce4172405294cb08278",
+      "time": 1673522866,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.__init__",
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth._build_auth_header",
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.auth_flow",
+        "func:httpx/_client.py:httpx._client.BaseClient.__init__",
+        "func:httpx/_client.py:httpx._client.BaseClient._build_request_auth"
+      ]
+    },
+    {
+      "ticket": 2422,
+      "url": "https://github.com/encode/httpx/issues/2422",
+      "pull_request": "https://github.com/encode/httpx/pull/2423",
+      "commit": "85c5898d8e48011ab7b660fe8aac58910e45c84b",
+      "time": 1678976955,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.LineDecoder.flush"
+      ]
+    },
+    {
+      "ticket": 2042,
+      "url": "https://github.com/encode/httpx/issues/2042",
+      "pull_request": "https://github.com/encode/httpx/pull/2547",
+      "commit": "f1157dbc4102ac8e227a0a0bb12a877f592eff58",
+      "time": 1679311811,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_client.py:httpx._client.Client._send_single_request"
+      ]
+    },
+    {
+      "ticket": 2666,
+      "url": "https://github.com/encode/httpx/issues/2666",
+      "pull_request": "https://github.com/encode/httpx/pull/2667",
+      "commit": "c1cc6b2462e95b84315c67bd5aefb33df73d06c4",
+      "time": 1681808581,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_auth.py:httpx._auth.NetRCAuth.__init__"
+      ]
+    },
+    {
+      "ticket": 2660,
+      "url": "https://github.com/encode/httpx/issues/2660",
+      "pull_request": "https://github.com/encode/httpx/pull/2659",
+      "commit": "15d09a3bbc20372cd87e48f17f7c9381c8220a0f",
+      "time": 1681906477,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_utils.py:httpx._utils.get_environment_proxies",
+        "func:httpx/_utils.py:httpx._utils.is_ipv4_hostname",
+        "func:httpx/_utils.py:httpx._utils.is_ipv6_hostname"
+      ]
+    },
+    {
+      "ticket": 2670,
+      "url": "https://github.com/encode/httpx/issues/2670",
+      "pull_request": "https://github.com/encode/httpx/pull/2671",
+      "commit": "9ae170a936df39f42a6ddf8eb2c27026e20bea7e",
+      "time": 1681906902,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.quote"
+      ]
+    },
+    {
+      "ticket": 2694,
+      "url": "https://github.com/encode/httpx/issues/2694",
+      "pull_request": "https://github.com/encode/httpx/pull/2701",
+      "commit": "ee432c0d3098375df258b6d5844e7569080b2369",
+      "time": 1683638412,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ]
+    },
+    {
+      "ticket": 2715,
+      "url": "https://github.com/encode/httpx/issues/2715",
+      "pull_request": "https://github.com/encode/httpx/pull/2716",
+      "commit": "733595037ac26d272f74ee6d702150b017913d11",
+      "time": 1684917759,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_transports/default.py:httpx._transports.default.AsyncHTTPTransport.__init__",
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ]
+    },
+    {
+      "ticket": 2721,
+      "url": "https://github.com/encode/httpx/issues/2721",
+      "pull_request": "https://github.com/encode/httpx/pull/2723",
+      "commit": "920333ea98118e9cf617f246905d7b202510941c",
+      "time": 1686301616,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ]
+    },
+    {
+      "ticket": 1434,
+      "url": "https://github.com/encode/httpx/issues/1434",
+      "pull_request": "https://github.com/encode/httpx/pull/2845",
+      "commit": "a54ecccd5b7e61b29ec13df45ecc0b82a2c168bb",
+      "time": 1694426161,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_config.py:httpx._config.Proxy.__init__",
+        "func:httpx/_transports/default.py:httpx._transports.default.HTTPTransport.__init__"
+      ]
+    },
+    {
+      "ticket": 2810,
+      "url": "https://github.com/encode/httpx/issues/2810",
+      "pull_request": "https://github.com/encode/httpx/pull/2999",
+      "commit": "90538a3b4610ba49ce16c997bcfdb9101f9503be",
+      "time": 1702309520,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request"
+      ]
+    },
+    {
+      "ticket": 2883,
+      "url": "https://github.com/encode/httpx/issues/2883",
+      "pull_request": "https://github.com/encode/httpx/pull/2990",
+      "commit": "a11fc3849b94157274c98d99501acad05cbfb221",
+      "time": 1702640116,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.percent_encoded",
+        "func:httpx/_urlparse.py:httpx._urlparse.quote",
+        "func:httpx/_urlparse.py:httpx._urlparse.urlparse"
+      ]
+    },
+    {
+      "ticket": 3111,
+      "url": "https://github.com/encode/httpx/issues/3111",
+      "pull_request": "https://github.com/encode/httpx/pull/3109",
+      "commit": "4de13707ee0fbc6e3ea5b30c90cf64aae0af7fb2",
+      "time": 1708695405,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request",
+        "func:httpx/_transports/asgi.py:httpx._transports.asgi.ASGITransport.handle_async_request.send"
+      ]
+    },
+    {
+      "ticket": 3140,
+      "url": "https://github.com/encode/httpx/issues/3140",
+      "pull_request": "https://github.com/encode/httpx/pull/3187",
+      "commit": "a7092af2fda78d92daaad7627e4cf0cf5e94b019",
+      "time": 1714694948,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_urlparse.py:httpx._urlparse.PERCENT",
+        "func:httpx/_urlparse.py:httpx._urlparse.percent_encoded"
+      ]
+    },
+    {
+      "ticket": 3411,
+      "url": "https://github.com/encode/httpx/issues/3411",
+      "pull_request": "https://github.com/encode/httpx/pull/3412",
+      "commit": "47f4a96ffaaaa07dca1614409549b5d7a6e7af49",
+      "time": 1732275771,
+      "split": "test",
+      "gold_functions": [
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.__init__",
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.decode",
+        "func:httpx/_decoders.py:httpx._decoders.ZStandardDecoder.flush"
+      ]
+    }
+  ],
+  "methodology": {
+    "backend": "offline in-memory structural graph; no HydraDB call",
+    "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)",
+    "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker",
+    "graph": "current source snapshot, scopes httpx; no co-change or held-out outcome edges",
+    "parameters": "existing Django defaults transferred unchanged, no target-repository tuning",
+    "limitations": [
+      "Exploratory sample, not a statistically established generalization result.",
+      "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.",
+      "GitHub closing references may include feature requests, not exclusively bugs.",
+      "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.",
+      "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.",
+      "Does not establish hosted live graph learning or cross-repository generalization."
+    ]
+  }
+}

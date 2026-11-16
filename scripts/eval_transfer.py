@@ -1,4 +1,4 @@
-"""Independent Flask pilot, using linked GitHub issues rather than commit text.
+"""Independent repository replay, using linked GitHub issues rather than commit text.
 
 Requires a local clone and authenticated gh. Never writes the primary dataset or
 connects to HydraDB. Run: python -m scripts.eval_transfer --repo work/transfer/flask
@@ -24,8 +24,9 @@ def command(*args: str) -> str:
     return subprocess.run(args, check=True, capture_output=True, text=True).stdout
 
 
-def mine(repo: Path, work: Path, limit: int) -> tuple[dict, object]:
-    scope = ("src/flask",)
+def mine(repo: Path, work: Path, limit: int, repository: str = "pallets/flask",
+         scope: tuple[str, ...] = ("src/flask",)) -> tuple[dict, object]:
+    owner, name = repository.split("/")
     graph = build_graph(iter_sources(repo, scope))
     uids = {uid for uid, node in graph.nodes.items() if node.label == "Function"}
     log = command("git", "-C", str(repo), "log", "--format=%H%x1f%ct%x1f%s")
@@ -35,7 +36,7 @@ def mine(repo: Path, work: Path, limit: int) -> tuple[dict, object]:
     audit = Counter()
     for line in log.splitlines():
         sha, timestamp, subject = line.split("\x1f", 2)
-        match = re.search(r"\(#(\d+)\)$", subject)
+        match = re.search(r"\(#(\d+)\)$", subject) or re.match(r"Merge pull request #(\d+)\b", subject)
         if not match or int(match[1]) in seen_prs:
             continue
         audit["unique_pr_references_scanned"] += 1
@@ -57,13 +58,13 @@ def mine(repo: Path, work: Path, limit: int) -> tuple[dict, object]:
         # Cache identity includes PR numbers to avoid accidental reuse after new HEAD.
         identity = [row[0] for row in batch]
         cached = json.loads(path.read_text()) if path.exists() else {}
-        if cached.get("prs") != identity:
+        if cached.get("prs") != identity or cached.get("repository", "pallets/flask") != repository:
             fields = " ".join(f'p{pr}:pullRequest(number:{pr}){{closingIssuesReferences(first:20){{nodes{{number title body createdAt url}}}}}}' for pr, *_ in batch)
-            query = 'query{repository(owner:"pallets",name:"flask"){' + fields + '}}'
+            query = 'query{repository(owner:' + json.dumps(owner) + ',name:' + json.dumps(name) + '){' + fields + '}}'
             response = json.loads(command("gh", "api", "graphql", "-f", "query=" + query))
             if response.get("errors"):
                 raise RuntimeError("GitHub GraphQL returned errors")
-            cached = {"prs": identity, "response": response}
+            cached = {"repository": repository, "prs": identity, "response": response}
             path.write_text(json.dumps(cached))
         for pr, sha, timestamp, gold in batch:
             refs = cached["response"]["data"]["repository"][f"p{pr}"]["closingIssuesReferences"]["nodes"]
@@ -71,6 +72,9 @@ def mine(repo: Path, work: Path, limit: int) -> tuple[dict, object]:
                 audit["eligible_prs_without_closing_issue"] += 1
             for issue in refs:
                 audit["linked_issue_references"] += 1
+                if not issue["url"].startswith(f"https://github.com/{repository}/issues/"):
+                    audit["cross_repository_references"] += 1
+                    continue
                 ticket = issue["number"]
                 if ticket in seen_issues:
                     audit["duplicate_issue_references"] += 1
@@ -85,14 +89,37 @@ def mine(repo: Path, work: Path, limit: int) -> tuple[dict, object]:
                 issues.append({"ticket": ticket, "commit": sha, "time": timestamp,
                     "summary": issue["title"], "description": issue["body"],
                     "text_source": "github_issue", "url": issue["url"],
-                    "pull_request": f"https://github.com/pallets/flask/pull/{pr}",
+                    "pull_request": f"https://github.com/{repository}/pull/{pr}",
                     "gold_functions": gold, "gold_files": sorted({uid.split(":", 2)[1] for uid in gold})})
         print(f"queried {start + len(batch)} PRs; {len(issues)} unique issue reports", flush=True)
     assign_splits(issues, 0.40)
     audit["eligible_pr_commits"] = len(candidates)
     audit["retained_unique_issues"] = len(issues)
-    dataset = {"selection_counts": dict(audit), "repository": "pallets/flask", "snapshot": snapshot_sha(repo), "scope": list(scope), "issues": issues}
+    dataset = {"selection_counts": dict(audit), "repository": repository, "snapshot": snapshot_sha(repo), "scope": list(scope), "issues": issues}
     return dataset, graph
+
+
+def split_audit(dataset: dict) -> dict:
+    """Reject label/query overlap before scoring a chronological transfer split."""
+    train = [row for row in dataset["issues"] if row["split"] == "train"]
+    test = [row for row in dataset["issues"] if row["split"] == "test"]
+    def text_hash(row):
+        text = " ".join((row["summary"] + " " + row["description"]).lower().split())
+        return hashlib.sha256(text.encode()).hexdigest()
+    overlaps = {}
+    for name, key in (("tickets", lambda r: r["ticket"]),
+                      ("commits", lambda r: r["commit"]), ("exact_queries", text_hash)):
+        overlaps[name] = sorted({key(row) for row in train} & {key(row) for row in test})
+    latest = max((row["time"] for row in train), default=None)
+    earliest = min((row["time"] for row in test), default=None)
+    chronological = latest is None or earliest is None or latest <= earliest
+    if not chronological or any(overlaps.values()):
+        raise ValueError("transfer split has chronology or train/holdout overlap")
+    return {"train": len(train), "holdout": len(test), "overlap": overlaps,
+            "chronological": chronological, "latest_training_fix_unix": latest,
+            "earliest_holdout_fix_unix": earliest,
+            "query_hash": "sha256 of lowercase whitespace-normalized title and body",
+            "feedback": "only training rows passed to learning operators; held-out labels used for scoring only"}
 
 
 def evaluate(dataset: dict, graph, work: Path) -> dict:
@@ -104,6 +131,7 @@ def evaluate(dataset: dict, graph, work: Path) -> dict:
     from repocortex.retrieve.hybrid import HybridRanker
     from scripts.eval_lexical import paired_gap
 
+    audit = split_audit(dataset)
     train = [row for row in dataset["issues"] if row["split"] == "train"]
     test = [row for row in dataset["issues"] if row["split"] == "test"]
     if len(train) < 10 or len(test) < 5:
@@ -126,7 +154,13 @@ def evaluate(dataset: dict, graph, work: Path) -> dict:
     learned = ranker()
     played = replay(learned, train, test, mode="full", points=5, record_prequential=True)
     final = eval_ranker(learned, test)
-    return {"status": "completed", "train": len(train), "holdout": len(test),
+    observed = {int(row["ticket"]) for row in learned.memory}
+    expected = {int(row["ticket"]) for row in train}
+    if observed != expected:
+        raise RuntimeError("learned memory does not exactly match the training tickets")
+    audit["observed_memory_tickets"] = sorted(observed)
+    audit["training_only_memory_verified"] = True
+    return {"status": "completed", "split_audit": audit, "train": len(train), "holdout": len(test),
         "functions": len(dense.uids), "nodes": len(nodes), "edges": len(edges),
         "baselines": baselines, "learned": final, "curve": played["curve"],
         "operators": played["operators"], "params": played["params"],
@@ -141,7 +175,11 @@ def main() -> None:
     parser.add_argument("--work", type=Path, default=Path("work/transfer"))
     parser.add_argument("--output", type=Path, default=Path("results/transfer_flask.json"))
     parser.add_argument("--limit", type=int, default=120, help="maximum eligible PR commits, fixed before scoring")
+    parser.add_argument("--repository", default="pallets/flask", help="GitHub owner/name")
+    parser.add_argument("--scope", nargs="+", default=["src/flask"], help="source directories in the checkout")
     args = parser.parse_args()
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", args.repository):
+        parser.error("--repository must be owner/name")
     args.work.mkdir(parents=True, exist_ok=True)
     if args.dataset:
         dataset = json.loads(args.dataset.read_text())
@@ -149,14 +187,15 @@ def main() -> None:
             raise SystemExit("checkout does not match frozen dataset snapshot")
         graph = build_graph(iter_sources(args.repo, tuple(dataset["scope"])))
     else:
-        dataset, graph = mine(args.repo, args.work, args.limit)
+        dataset, graph = mine(args.repo, args.work, args.limit, args.repository, tuple(args.scope))
     encoded = json.dumps(dataset, indent=2)
     (args.work / "dataset.json").write_text(encoded)
     results = evaluate(dataset, graph, args.work)
-    results.update({"selection_counts": dataset["selection_counts"], "repository": dataset["repository"], "snapshot": dataset["snapshot"],
+    results.update({"selection_plan": {"maximum_eligible_pr_commits": args.limit, "holdout_commit_fraction": 0.4, "checkpoint_points": 5},
+        "selection_counts": dataset["selection_counts"], "repository": dataset["repository"], "snapshot": dataset["snapshot"],
         "dataset_sha256": hashlib.sha256(encoded.encode()).hexdigest(),
         "sample": [{k: row[k] for k in ("ticket", "url", "pull_request", "commit", "time", "split", "gold_functions")} for row in dataset["issues"]],
-        "methodology": {"backend": "offline in-memory structural graph; no HydraDB call", "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)", "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker", "graph": "current source snapshot, src/flask only; no co-change or held-out outcome edges", "parameters": "existing Django defaults transferred unchanged, no Flask tuning", "limitations": ["Small exploratory sample, not independent benchmark replication.", "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.", "GitHub closing references may include feature requests, not exclusively bugs.", "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.", "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.", "Does not establish hosted live graph learning or cross-repository generalization."]}})
+        "methodology": {"backend": "offline in-memory structural graph; no HydraDB call", "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)", "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker", "graph": "current source snapshot, scopes " + ", ".join(dataset["scope"]) + "; no co-change or held-out outcome edges", "parameters": "existing Django defaults transferred unchanged, no target-repository tuning", "limitations": ["Exploratory sample, not a statistically established generalization result.", "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.", "GitHub closing references may include feature requests, not exclusively bugs.", "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.", "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.", "Does not establish hosted live graph learning or cross-repository generalization."]}})
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, indent=2))
     args.output.with_name(args.output.stem + "_dataset.json").write_text(encoded)
