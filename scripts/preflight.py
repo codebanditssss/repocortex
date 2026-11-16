@@ -36,9 +36,19 @@ def check_runtime(root: Path) -> int:
         width = matrix.shape[1]
     with np.load(root / "data/learned_state.npz", allow_pickle=False) as state:
         vectors, tickets, golds = state["vectors"], state["tickets"], state["golds"]
-        if (vectors.shape != (len(tickets), width) or len(golds) != len(tickets)
+        if (tickets.ndim != 1 or golds.ndim != 1
+                or vectors.shape != (len(tickets), width) or len(golds) != len(tickets)
                 or not np.isfinite(vectors).all()):
             raise ValueError("fix memory dimensions do not match embeddings")
+        # The serving loader converts each ticket to an integer when rebuilding
+        # memory. Check this before a user downloads/loads the embedding model.
+        for ticket in tickets.tolist():
+            try:
+                converted = int(ticket)
+            except (TypeError, ValueError, OverflowError) as error:
+                raise ValueError("fix memory contains an invalid ticket ID") from error
+            if isinstance(ticket, (float, bool)) and ticket != converted:
+                raise ValueError("fix memory contains a nonintegral ticket ID")
         known = set(uids)
         for encoded in golds.tolist():
             row = json.loads(encoded)

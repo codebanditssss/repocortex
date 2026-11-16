@@ -32,6 +32,31 @@ class PreflightTests(unittest.TestCase):
     def test_matching_snapshot(self):
         self.assertEqual(check_runtime(self.root), 1)
 
+    def test_invalid_memory_ticket_rejected_before_serving(self):
+        for ticket in ("not-a-ticket", float("nan"), float("inf"), 1.5):
+            with self.subTest(ticket=ticket):
+                np.savez(self.data / "learned_state.npz", tickets=[ticket],
+                         golds=['["func:a"]'], vectors=np.ones((1, 384)))
+                with self.assertRaises(ValueError):
+                    check_runtime(self.root)
+
+    def test_memory_metadata_requires_one_dimensional_arrays(self):
+        for tickets, golds in (([[1]], ['["func:a"]']),
+                               ([1], [['["func:a"]']]),
+                               (np.array(1), ['["func:a"]'])):
+            with self.subTest(tickets=tickets, golds=golds):
+                np.savez(self.data / "learned_state.npz", tickets=tickets,
+                         golds=golds, vectors=np.ones((1, 384)))
+                with self.assertRaises(ValueError):
+                    check_runtime(self.root)
+
+    def test_empty_untrained_memory_and_integer_strings_are_supported(self):
+        for tickets, golds, vectors in (([], [], np.empty((0, 384))),
+                                        (["1"], ['["func:a"]'], np.ones((1, 384)))):
+            np.savez(self.data / "learned_state.npz", tickets=tickets,
+                     golds=golds, vectors=vectors)
+            self.assertEqual(check_runtime(self.root), 1)
+
     def test_mixed_snapshot_rejected(self):
         self.memory(["func:other"])
         with self.assertRaises(ValueError):
