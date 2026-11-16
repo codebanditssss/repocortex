@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { copyText } from "@/lib/clipboard";
 
 const command = ".venv/bin/python scripts/mcp_server.py --http --port 8766";
 
@@ -12,19 +13,18 @@ export function CopyCommand() {
   useEffect(() => () => { if (timeout.current) clearTimeout(timeout.current); }, []);
 
   async function copy() {
-    try {
-      await navigator.clipboard.writeText(command);
+    if (timeout.current) clearTimeout(timeout.current);
+    if (await copyText(command)) {
       setStatus("Copied");
-    } catch {
+      timeout.current = setTimeout(() => setStatus(""), 3500);
+    } else {
       const range = document.createRange();
       if (commandRef.current) range.selectNodeContents(commandRef.current);
       const selection = window.getSelection();
       selection?.removeAllRanges();
       selection?.addRange(range);
-      setStatus("Select and copy the command");
+      setStatus("Automatic copy is blocked. Text selected: press Ctrl+C or ⌘C, or use your device’s Copy menu.");
     }
-    if (timeout.current) clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => setStatus(""), 3500);
   }
 
   return (
