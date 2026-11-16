@@ -29,6 +29,16 @@ export default function Overview() {
           <div><dt>Right file, first result</dt><dd>{formatPercent(end["file_acc@1"])}<small>from {formatPercent(start["file_acc@1"])} at step 0</small></dd></div>
           <div><dt>Right function, top 10</dt><dd>{formatPercent(end["function_acc@10"])}<small>from {formatPercent(start["function_acc@10"])} at step 0</small></dd></div>
         </dl>
+        <section className="feedback-proof" aria-labelledby="feedback-proof-title">
+          <div className="section-rule"><h2 id="feedback-proof-title">One fix, <i>remembered.</i></h2><span className="cap">HydraDB feedback journal</span></div>
+          <p>A reviewed fix for Django #37442 changed the confirmed function&apos;s rank, then a fresh process reconstructed the same learned result from HydraDB.</p>
+          <dl className="journal-metrics feedback-proof-steps">
+            <div><dt>Before feedback</dt><dd>02<small>Deserializer.__init__</small></dd></div>
+            <div><dt>After feedback</dt><dd>01<small>one journal event written</small></dd></div>
+            <div><dt>After restart</dt><dd>01<small>one event replayed</small></dd></div>
+          </dl>
+          <p className="figure-note">This verifies a durable update on the same report, not accuracy on unseen bugs. The base runtime hashes and graph counts stayed unchanged. <a href="https://github.com/codebanditssss/repocortex/blob/main/results/real_feedback_persistence.json" target="_blank" rel="noreferrer">Inspect the raw receipt →</a></p>
+        </section>
         <details className="dashboard-disclosure operator-ledger"><summary>What changed in the graph</summary>
         <section aria-labelledby="operators-title">
           <div className="section-rule"><h2 id="operators-title">Amendments to the graph</h2><span className="cap">Totals across the training pass</span></div>
