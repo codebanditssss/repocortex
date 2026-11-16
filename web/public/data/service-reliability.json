@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-16T00:48:41.641163+00:00",
+  "endpoint": "https://repocortex.vercel.app/api/locate",
+  "requests": 120,
+  "concurrency": 4,
+  "valid_live_responses": 120,
+  "limitations": "Short bounded read-only service exercise, not capacity, long-term uptime, cold-start, accuracy, learning-write load or restart recovery evidence. Unique reports may share server-side graph caches; cache state is uncontrolled. No failures or production restarts were injected.",
+  "p50_seconds": 3.5105,
+  "p95_seconds": 4.067,
+  "duration_seconds": 112.9913
+}
