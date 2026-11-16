@@ -46,6 +46,26 @@ def _text(node, source):
     return source[node.start_byte:node.end_byte].decode("utf-8", "replace") if node else ""
 
 
+def _go_doc(node, source: bytes) -> str:
+    """Read the adjacent leading comment group, excluding trailing comments.
+
+    Go's parser emits each // line as a separate sibling. A blank line or
+    intervening declaration ends the group; a comment after code is not a doc.
+    """
+    comments = []
+    following = node
+    comment = node.prev_named_sibling
+    while comment is not None and comment.type == "comment":
+        gap = source[comment.end_byte:following.start_byte]
+        line_start = source.rfind(b"\n", 0, comment.start_byte) + 1
+        before_comment = source[line_start:comment.start_byte]
+        if gap.strip() or gap.count(b"\n") != 1 or before_comment.strip():
+            break
+        comments.append(_text(comment, source))
+        following, comment = comment, comment.prev_named_sibling
+    return "\n".join(reversed(comments))[:2000]
+
+
 def _is_test(path, name):
     file = Path(path)
     return (file.name.endswith("_test.go") or any(part in {"test", "tests", "__tests__"} for part in file.parts)
@@ -118,7 +138,8 @@ def build_multilang_graph(files: list[tuple[str, str]]) -> Graph:
                 body = fn.child_by_field_name("body")
                 signature_end = body.start_byte if body else fn.end_byte
                 comment = node.prev_named_sibling
-                doc = _text(comment, source)[:240] if comment and comment.type == "comment" else ""
+                doc = (_go_doc(node, source) if suffix == ".go" else
+                       _text(comment, source)[:240] if comment and comment.type == "comment" else "")
                 graph.add_node(Node(uid=uid, label=label, name=name, file=path, qualname=qual,
                                     signature=source[fn.start_byte:signature_end].decode("utf-8", "replace")[:200],
                                     doc=doc, start=fn.start_point.row + 1, end=fn.end_point.row + 1,
