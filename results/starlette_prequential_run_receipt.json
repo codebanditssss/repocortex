@@ -1,0 +1,1 @@
+{"registration_sha256": "802467aaebdffd83b142b083af9e7d51e604b80124700ccfc85e5c2701573b85", "repository": "Kludex/starlette", "rule": "an interrupted run is retained and may not be retried under this run id", "run_id": "starlette-confirmation-802467aa", "started_at": "2026-11-16T05:20:58.759973+00:00"}
