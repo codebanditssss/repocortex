@@ -26,6 +26,8 @@ Then it learns. Historical replay or the `learn_from_fix` tool compares its gues
 
 Agents use it through an MCP server with three tools, `locate_bug`, `learn_from_fix`, and `graph_status`, from Cursor, Claude Code, or any MCP client. Automatic ingestion from merged pull requests is not implemented.
 
+The public Locate workflow turns a live result into an agent-ready repair brief: the report, five ranked functions, exact frozen-snapshot source links, graph evidence paths, and representative HydraDB Cypher receipts. It is a handoff artifact for investigation, not an automated repair claim.
+
 ## How we use HydraDB
 
 - Self-hosted open-source HydraDB 0.4.0 in Docker is the system of record for the graph: 46,443 nodes and 138,150 edges initially; the saved learned export has 48,663 nodes and 141,435 edges.

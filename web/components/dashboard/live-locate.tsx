@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { isBackendStatus, isLocateResult, receiptRelation, shortLiveName, type BackendStatus, type LocateResult, type QueryReceipt } from "@/lib/live";
+import { copyText } from "@/lib/clipboard";
+import { estimatedTokens, isBackendStatus, isLocateResult, receiptRelation, repairBrief, shortLiveName, sourceUrl, type BackendStatus, type LocateResult, type QueryReceipt } from "@/lib/live";
+import stats from "@/public/data/graph_stats.json";
 
 const examples = [
   { label: "Query compilation", report: "QuerySet union loses ordering when combined with values_list. The SQL compiler raises an error when ordering by a column missing from the selected fields." },
@@ -17,6 +19,7 @@ export function LiveLocate() {
   const [pending, setPending] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
   const request = useRef<AbortController | null>(null);
   const composer = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -50,6 +53,7 @@ export function LiveLocate() {
     setReport(value);
     setResult(null);
     setError("");
+    setCopyStatus("");
   }
 
   async function locate(event: React.FormEvent<HTMLFormElement>) {
@@ -101,9 +105,16 @@ export function LiveLocate() {
       {error && <div className="live-error" role="alert"><strong>Search paused</strong><p>{error}</p>{status?.connected && <a className="underlined-control" href="#saved-evidence">Browse saved evidence →</a>}</div>}
       {pending && <div className="live-progress"><span className="sc" role="status">Searching · {elapsed}s elapsed</span><p>Ranking functions and reading graph relationships.</p><button type="button" className="underlined-control" onClick={() => request.current?.abort()}>Cancel search</button></div>}
       {!result && !pending && !error && <div className="live-empty"><h3>Candidate functions appear here.</h3><p>Enter a bug report or choose an example.</p></div>}
-      {result && <><div className="live-result-heading"><h3>Functions to investigate</h3><span className="sc" role="status">{result.hits.length} candidates</span></div>
+      {result && <><div className="live-result-heading"><h3>Functions to investigate</h3><div className="live-result-tools"><span className="sc" role="status">{result.hits.length} candidates</span><button type="button" className="underlined-control" onClick={async () => {
+        const brief = repairBrief(report, result, stats.snapshot);
+        setCopyStatus(await copyText(brief) ? `Repair brief copied · about ${estimatedTokens(brief)} tokens` : "Automatic copy is blocked. Select a result and copy its evidence manually.");
+      }}>{copyStatus.startsWith("Repair brief copied") ? "Copied repair brief" : "Copy repair brief"}</button></div></div>
+        <p className="live-copy-status" role="status">{copyStatus}</p>
         <div className="live-provenance"><span>{result.source === "live" ? "Live structural graph" : "Cached structural graph"}</span><span>Saved fix history</span></div><p className="figure-note">Open a function to inspect its evidence. Scores rank candidates; they are not probabilities.</p>
-        <ol className="ranked-hits live-ranked-hits">{result.hits.map((hit) => <li key={`${hit.rank}-${hit.uid}`}><details><summary><span className="hit-rank">{String(hit.rank).padStart(2, "0")}</span><span className="hit-function"><strong title={hit.qualname || hit.uid}>{shortLiveName(hit)}</strong><small>{hit.file}:{hit.line}</small></span><span className="live-score"><span className="num">{hit.score.toFixed(3)}</span><small>score</small></span><span className="live-expand" aria-hidden="true">+</span></summary><div className="live-hit-path"><span className="sc">Why this function surfaced</span><ul>{hit.path ? hit.path.split(" | ").map((path, index) => <li key={index}>{path}</li>) : <li>No graph path returned for this candidate.</li>}</ul><details className="live-function-id"><summary>Full function identifier</summary><code>{hit.uid}</code></details></div></details></li>)}</ol>
+        <ol className="ranked-hits live-ranked-hits">{result.hits.map((hit) => {
+          const source = sourceUrl(hit, stats.snapshot);
+          return <li key={`${hit.rank}-${hit.uid}`}><details><summary><span className="hit-rank">{String(hit.rank).padStart(2, "0")}</span><span className="hit-function"><strong title={hit.qualname || hit.uid}>{shortLiveName(hit)}</strong><small>{hit.file}:{hit.line}</small></span><span className="live-score"><span className="num">{hit.score.toFixed(3)}</span><small>score</small></span><span className="live-expand" aria-hidden="true">+</span></summary><div className="live-hit-path"><span className="sc">Why this function surfaced</span><ul>{hit.path ? hit.path.split(" | ").map((path, index) => <li key={index}>{path}</li>) : <li>No graph path returned for this candidate.</li>}</ul><div className="live-hit-actions">{source && <a className="underlined-control" href={source} target="_blank" rel="noreferrer">Open source at indexed snapshot ↗</a>}<details className="live-function-id"><summary>Full function identifier</summary><code>{hit.uid}</code></details></div></div></details></li>;
+        })}</ol>
         {!result.hits.length && <p>No functions matched this report. Add an error message or relevant API name and try again.</p>}
         <details className="live-query-receipts">
           <summary><span>Database query receipts</span><span className="num">{result.queries.length} queries</span></summary>

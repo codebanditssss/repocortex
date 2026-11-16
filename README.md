@@ -34,7 +34,7 @@ Learning runs through historical replay or confirmed diffs submitted to `learn_f
 | Index a Python, Go, TypeScript or JavaScript repository | [Isolated repository indexer](docs/index-repository.md) |
 | Assess the customer and business case | [go-to-market](docs/GTM.md) |
 
-**Current demo:** paste a bug report into Locate to get fresh ranked functions. The hosted service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
+**Current demo:** paste a bug report into Locate to get fresh ranked functions. Open each candidate at the exact indexed source line, or copy an agent-ready repair brief with the top functions, evidence paths and representative Cypher receipts. The hosted service reads bounded structural edges from HydraDB during scoring and shows the executed queries; learned fix memory is loaded from the recovered runtime. Saved evaluation records remain available separately. The graph drawings are illustrative layouts.
 
 ## Measured results
 
