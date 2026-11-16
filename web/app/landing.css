@@ -73,6 +73,18 @@
 .hero-bottom .news { font-size: 14px; font-style: normal; }
 .hero-bottom > a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; flex: none; }
 .hero-bottom > a span { margin-left: 15px; }
+.evidence-scope { display: grid; grid-template-columns: minmax(210px, 1fr) minmax(0, 3fr); gap: 36px; padding-block: 30px 34px; border-top: 1px solid var(--rule-strong); }
+.evidence-scope header { padding-right: 22px; }
+.evidence-scope .section-index { margin-bottom: 10px !important; }
+.evidence-scope h2 { max-width: 280px; font-size: 24px; }
+.evidence-scope-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 1px solid var(--rule); }
+.evidence-scope-grid > a { display: flex; flex-direction: column; min-width: 0; min-height: 190px; padding: 4px 24px 0; border-right: 1px solid var(--rule); color: inherit; text-decoration: none; }
+.evidence-scope-grid > a:hover .evidence-scope-conclusion { text-decoration: underline; }
+.evidence-scope-measure { min-height: 46px; margin-top: 12px; color: var(--ink2); font-size: 14px; line-height: 1.45; }
+.evidence-scope-grid strong { margin-top: 18px; font-size: clamp(24px, 2.3vw, 34px); font-weight: 400; letter-spacing: -.045em; }
+.evidence-scope-delta { margin-top: 5px; color: var(--ink2); font-size: 14px; }
+.evidence-scope-conclusion { margin-top: auto; padding-top: 18px; font-size: 14px; line-height: 1.35; }
+.evidence-scope-conclusion > span { margin-left: 7px; }
 .landing-section { position: relative; padding-block: 72px; border-top: 1px solid var(--rule-strong); scroll-margin-top: 24px; }
 /* Keep distant figures out of initial layout; retain their measured size once seen. */
 @supports (content-visibility: auto) {
@@ -285,6 +297,8 @@
   .terminal-stats dd { font-size: 19px; }
   .command-line code { font-size: 17px; }
   .curve-tables { grid-template-columns: 1fr; }
+  .evidence-scope { grid-template-columns: 1fr; gap: 22px; }
+  .evidence-scope h2 { max-width: none; }
 }
 @media (max-width: 767px) {
   .landing-head { min-height: 70px; gap: 12px; }
@@ -292,6 +306,12 @@
   .landing-head nav { gap: 18px; font-size: 14px; }
   .landing-head nav a span { display: none; }
   .hero { display: flex; flex-direction: column; min-height: 0; padding-top: 22px; }
+  .evidence-scope { padding-block: 28px 34px; }
+  .evidence-scope-grid { grid-template-columns: 1fr; border-top: 1px solid var(--rule); border-left: 0; }
+  .evidence-scope-grid > a { min-height: 0; padding: 20px 0; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .evidence-scope-measure { min-height: 0; }
+  .evidence-scope-grid strong { margin-top: 14px; }
+  .evidence-scope-conclusion { margin-top: 16px; padding-top: 0; }
   .hero-running { order: 0; position: static; align-items: flex-start; gap: 18px; }
   .hero-running > .sc { font-size: 14px; padding-top: 5px; }
   .hero-counter { flex-wrap: wrap; justify-content: flex-end; gap: 5px 8px; max-width: 135px; text-align: right; }

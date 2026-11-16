@@ -3,6 +3,7 @@ import { Hero } from "@/components/landing/hero";
 import { Replay } from "@/components/landing/replay";
 import { ProvenanceReceipt } from "@/components/landing/provenance-receipt";
 import { selectHeroIssue } from "@/lib/landing";
+import { scopeEvidence } from "@/lib/scope-evidence";
 import type { CurveData, ProvenanceData } from "@/lib/data";
 import evaluationJson from "@/public/data/curve.json";
 import provenanceJson from "@/public/data/provenance.json";
@@ -29,6 +30,23 @@ export default function Home() {
 
       <main id="main-content" tabIndex={-1}>
         <Hero ticket={ticket} evaluation={evaluation} />
+        <section className="evidence-scope" aria-labelledby="evidence-scope-title">
+          <header>
+            <p className="sc section-index">Scope of evidence</p>
+            <h2 id="evidence-scope-title">What the results establish.</h2>
+          </header>
+          <div className="evidence-scope-grid">
+            {scopeEvidence.map((item) => (
+              <a key={item.study} href={item.href} target="_blank" rel="noreferrer" aria-label={`${item.study}: read the evidence`}>
+                <span className="sc">{item.study}</span>
+                <span className="evidence-scope-measure">{item.measure}</span>
+                <strong className="num">{item.result}</strong>
+                <span className="evidence-scope-delta">{item.delta}</span>
+                <span className="evidence-scope-conclusion">{item.conclusion} <span aria-hidden="true">↗</span></span>
+              </a>
+            ))}
+          </div>
+        </section>
         <Replay evaluation={evaluation} />
 
         <section id="provenance" className="landing-section evidence-section" aria-labelledby="evidence-title">

@@ -2,9 +2,23 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { chartFrame, chartModel, chartSeries, fixedInRoutes, hitSymbol, provenanceLines, selectHeroIssue, snapshotAtStep } from "../lib/landing.ts";
+import { scopeEvidence } from "../lib/scope-evidence.ts";
 
 const readData = async (name) => JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), "utf8"));
 const [data, provenance] = await Promise.all([readData("curve"), readData("provenance")]);
+
+test("scope of evidence keeps positive and null results together with their sources", () => {
+  assert.deepEqual(scopeEvidence.map(({ study, result, delta, conclusion }) => ({ study, result, delta, conclusion })), [
+    { study: "Django retrospective", result: "45.1% → 48.3%", delta: "+3.1pp", conclusion: "Demonstrated on this split" },
+    { study: "Starlette prospective", result: "54.2% vs 54.2%", delta: "0.0pp · 24 ties", conclusion: "No demonstrated advantage" },
+    { study: "Repair outcomes", result: "1/2 vs 1/2", delta: "Same repair count", conclusion: "No demonstrated advantage" },
+  ]);
+  assert.deepEqual(scopeEvidence.map(({ href }) => href), [
+    "https://github.com/codebanditssss/repocortex/blob/main/results/baselines.json",
+    "https://github.com/codebanditssss/repocortex/blob/main/results/starlette_prequential.md",
+    "https://github.com/codebanditssss/repocortex/blob/main/results/learning_repair_followup.md",
+  ]);
+});
 
 test("landing plots real checkpoints on one honest scale, with room for every baseline", () => {
   for (const metric of ["file_acc@1", "function_acc@10"]) {
