@@ -27,6 +27,16 @@ export function FieldShell({
     }
   }, [pathname]);
 
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (more.current?.open && event.target instanceof Node && !more.current.contains(event.target)) {
+        more.current.open = false;
+      }
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, []);
+
   return (
     <div className={`field-shell${dashboard ? " dashboard-shell" : ""}`}>
       <header className={`head${dashboard ? "" : " home-head"}`}>

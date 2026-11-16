@@ -46,6 +46,12 @@ export function LiveLocate() {
     return () => clearInterval(interval);
   }, [pending]);
 
+  function editReport(value: string) {
+    setReport(value);
+    setResult(null);
+    setError("");
+  }
+
   async function locate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending || !report.trim()) return;
@@ -84,13 +90,13 @@ export function LiveLocate() {
     <div className="section-rule"><h2 id="live-locate-title">Find the <i>functions.</i></h2><span className={`cap live-status${status?.connected ? " is-connected" : ""}`} role="status">{status === null ? "Checking service…" : status.connected ? "HydraDB connected" : status.mode === "replay" ? "Cached graph mode" : "Status unavailable"}</span></div>
     {status !== null && !status.connected && <div className="live-availability" role="note"><p>{status.mode === "replay" ? "Search uses a cached graph; live query receipts are unavailable." : "Cannot verify the live service. Retry or browse saved results."}</p><div><button type="button" className="underlined-control" disabled={pending} onClick={() => { setStatus(null); setStatusRevision((value) => value + 1); }}>Retry connection</button><a className="underlined-control" href="#saved-evidence">Browse saved evidence →</a></div></div>}
     <div className="live-locate-grid"><form onSubmit={locate}>
-      <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="live-report">What is going wrong in Django?</label><span><kbd>K</kbd> to edit</span></div><textarea ref={composer} id="live-report" value={report} disabled={pending} onChange={(event) => setReport(event.target.value)} onKeyDown={(event) => {
+      <div className="ticket-sheet"><div className="ticket-sheet-head"><label htmlFor="live-report">What is going wrong in Django?</label><span><kbd>K</kbd> to edit</span></div><textarea ref={composer} id="live-report" value={report} disabled={pending} onChange={(event) => editReport(event.target.value)} onKeyDown={(event) => {
         if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); }
       }} rows={5} maxLength={12000} required placeholder="Describe the error, expected behavior, and the code involved…" aria-describedby="live-search-help" /></div>
       <div className="locate-options"><span>repo <u>django</u></span><button className="btn" type="submit" disabled={pending || !report.trim()}>{pending ? "Tracing the graph…" : "Find functions →"}</button></div>
       <p className="live-keyboard-hint">Ctrl / ⌘ + Enter to search</p>
       <p id="live-search-help" className="figure-note">Search the indexed Django snapshot. Results label live graph reads and saved fix history.</p>
-      <div className="live-examples"><span className="sc">Try a report</span><div>{examples.map((example) => <button className="underlined-control" type="button" disabled={pending} key={example.label} onClick={() => { setReport(example.report); composer.current?.focus(); }}>{example.label} →</button>)}</div></div>
+      <div className="live-examples"><span className="sc">Try a report</span><div>{examples.map((example) => <button className="underlined-control" type="button" disabled={pending} key={example.label} onClick={() => { editReport(example.report); composer.current?.focus(); }}>{example.label} →</button>)}</div></div>
     </form><div className="live-search-results" aria-busy={pending}>
       {error && <div className="live-error" role="alert"><strong>Search paused</strong><p>{error}</p>{status?.connected && <a className="underlined-control" href="#saved-evidence">Browse saved evidence →</a>}</div>}
       {pending && <div className="live-progress"><span className="sc" role="status">Searching · {elapsed}s elapsed</span><p>Ranking functions and reading graph relationships.</p><button type="button" className="underlined-control" onClick={() => request.current?.abort()}>Cancel search</button></div>}
@@ -101,7 +107,7 @@ export function LiveLocate() {
         {!result.hits.length && <p>No functions matched this report. Add an error message or relevant API name and try again.</p>}
         <details className="live-query-receipts">
           <summary><span>Database query receipts</span><span className="num">{result.queries.length} queries</span></summary>
-          <p className="figure-note">Live queries, grouped by relationship. Row totals may include duplicates. FIXED_IN and SHORTCUT evidence comes from saved fix history.</p>
+          <p className="figure-note">{result.source === "live" ? "Queries executed for this search, grouped by relationship. Row totals may include duplicates." : "This search used a cached graph and has no live database query receipts."} FIXED_IN and SHORTCUT evidence comes from saved fix history.</p>
           {bounded > 0 && <p className="live-bounded">{bounded} {bounded === 1 ? "query reached its row limit" : "queries reached their row limits"}. Additional matching edges may exist beyond this search.</p>}
           {[...receiptGroups].map(([relation, entries]) => {
             const rows = entries.reduce((total, { query }) => total + query.rows, 0);

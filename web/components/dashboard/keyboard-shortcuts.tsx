@@ -35,8 +35,6 @@ export function KeyboardShortcuts() {
       if (index !== -1) { event.preventDefault(); router.push(chapters[index].href); }
       else if (event.key.toLowerCase() === "k" && pathname !== "/app/locate") {
         event.preventDefault(); router.push("/app/locate?focus=1");
-      } else if (event.code === "Space" && pathname !== "/app/replay" && !(event.target as HTMLElement)?.closest("a,button,summary")) {
-        event.preventDefault(); router.push("/app/replay");
       }
     };
     window.addEventListener("keydown", handle);
@@ -53,7 +51,7 @@ export function KeyboardShortcuts() {
     }}>
       <div className="section-rule"><h2 id="shortcuts-title">Keyboard <i>shortcuts</i></h2><button type="button" className="text-control" onClick={() => dialog.current?.close()}>Close <kbd>Esc</kbd></button></div>
       <p id="shortcuts-description" className="figure-note">Press ? to toggle. Shortcuts stay out of text fields.</p>
-      <dl>{chapters.map((chapter, index) => <div key={chapter.slug}><dt>{chapter.label}</dt><dd><kbd>{keys[index]}</kbd></dd></div>)}<div><dt>Focus Locate composer</dt><dd><kbd>K</kbd></dd></div><div><dt>Play / pause Replay, or open it</dt><dd><kbd>Space</kbd></dd></div><div><dt>Previous / next replay step</dt><dd><kbd>[</kbd> <kbd>]</kbd></dd></div><div><dt>Close shortcuts</dt><dd><kbd>Esc</kbd></dd></div></dl>
+      <dl>{chapters.map((chapter, index) => <div key={chapter.slug}><dt>{chapter.label}</dt><dd><kbd>{keys[index]}</kbd></dd></div>)}<div><dt>Focus Locate composer</dt><dd><kbd>K</kbd></dd></div><div><dt>Play / pause on Replay</dt><dd><kbd>Space</kbd></dd></div><div><dt>Previous / next replay step</dt><dd><kbd>[</kbd> <kbd>]</kbd></dd></div><div><dt>Close shortcuts</dt><dd><kbd>Esc</kbd></dd></div></dl>
     </dialog>
   </>;
 }
