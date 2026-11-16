@@ -208,7 +208,8 @@ def make_send(endpoint, key, opener=urllib.request.urlopen):
     """Build a chat-completions JSON transport; key stays in request headers."""
     def send(body, timeout):
         req = urllib.request.Request(endpoint, data=json.dumps(body).encode(), headers={
-            'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+            'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json',
+            'User-Agent': 'RepoCortexRepairPilot/4.0'})
         with opener(req, timeout=timeout) as response:
             return json.load(response)
     return send

@@ -26,9 +26,9 @@ def call(cid, name, args, **extra):
 
 class FakeOpener:
     """Mock urlopen transport: replays queued responses/exceptions, records requests."""
-    def __init__(self, items): self.items, self.requests = list(items), []
+    def __init__(self, items): self.items, self.requests, self.headers = list(items), [], []
     def __call__(self, req, timeout=None):
-        self.requests.append(json.loads(req.data)); item = self.items.pop(0)
+        self.headers.append(dict(req.header_items())); self.requests.append(json.loads(req.data)); item = self.items.pop(0)
         if isinstance(item, Exception): raise item
         return io.BytesIO(json.dumps(item).encode())
 
@@ -81,6 +81,7 @@ class RequestLoopIntegration(unittest.TestCase):
                  'tool_calls': [call('c1', 'search_code', '{"text":"x"}', extra_content=ext)]}
         out, opener = run([resp(first), resp({'role': 'assistant', 'content': None, 'tool_calls': [call('c2', 'finish', '{"summary":"s"}')]})])
         self.assertEqual(out['status'], 'completed')
+        self.assertEqual(opener.headers[0]['User-agent'], 'RepoCortexRepairPilot/4.0')
         replay = opener.requests[1]['messages']
         self.assertEqual(replay[1]['tool_calls'][0]['extra_content'], ext)
         self.assertEqual(replay[1]['reasoning_details'], [{'x': 1}])
