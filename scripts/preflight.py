@@ -47,6 +47,27 @@ def check_runtime(root: Path) -> int:
     return len(uids)
 
 
+def check_mcp(timeout: float = 10) -> bool:
+    """Import the server's MCP entry point without starting it or loading settings."""
+    try:
+        result = subprocess.run(
+            [sys.executable, "-c", "from mcp.server.mcpserver import MCPServer"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            timeout=timeout, check=False,
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+
+
+def runtime_remedy(runtime: Path) -> str:
+    if runtime != ROOT.resolve():
+        return ("For a custom index, rebuild the same repository into a NEW output directory "
+                "with --embed --runtime; see docs/index-repository.md. "
+                "Do not mix in Django runtime files. For a recovered runtime, restore its matching snapshot.")
+    return "See docs/recovery.md. The graph export alone cannot replace these files."
+
+
 def check_database(root: Path, functions: int, timeout: float = 15, repositories: set[str] | None = None) -> bool:
     # A separate process bounds driver connection/retry time and suppresses
     # driver diagnostics, which may contain private connection details.
@@ -91,16 +112,22 @@ def main() -> int:
     if missing:
         print("FAIL: missing Python packages: " + ", ".join(missing))
         print("Run: python -m pip install -e . (inside your virtual environment)")
+    mcp_ok = "mcp" not in missing and check_mcp()
+    if "mcp" not in missing and not mcp_ok:
+        print("FAIL: MCP server dependencies cannot import in this Python environment (10-second deadline).")
+        print("From this checkout, use the same virtual-environment Python to run: python -m pip install -e .")
+        print("Then run python -m pip check and retry. No server or database connection was started.")
     absent = [name for name in RUNTIME_FILES if not (runtime / "data" / name).is_file()]
     if absent:
         print("FAIL: missing runtime files: " + ", ".join("data/" + name for name in absent))
-        print("See docs/recovery.md. The graph export alone cannot replace these files.")
-    if missing or absent:
+        print(runtime_remedy(runtime))
+    if missing or absent or not mcp_ok:
         return 1
     try:
         count = check_runtime(runtime)
     except Exception:
-        print("FAIL: runtime artifacts are unreadable or inconsistent. Restore one matching snapshot; see docs/recovery.md.")
+        print("FAIL: runtime artifacts are unreadable or inconsistent.")
+        print(runtime_remedy(runtime))
         return 1
     print(f"PASS: runtime artifacts are consistent ({count} indexed functions).")
     if args.database:

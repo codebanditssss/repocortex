@@ -1,4 +1,6 @@
 """Setup failures should be actionable before loading an embedding model."""
+import contextlib
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -8,7 +10,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from scripts.preflight import check_database, check_runtime
+from scripts.preflight import check_database, check_runtime, check_mcp, main
 
 
 class PreflightTests(unittest.TestCase):
@@ -71,6 +73,53 @@ class PreflightTests(unittest.TestCase):
     def test_database_mismatch_fails(self, run):
         run.return_value.returncode = 1
         self.assertFalse(check_database(self.root, 1))
+
+    @patch("scripts.preflight.subprocess.run")
+    def test_mcp_import_failure_timeout_and_success(self, run):
+        run.return_value.returncode = 1
+        self.assertFalse(check_mcp())
+        self.assertEqual(run.call_args.args[0][-1], "from mcp.server.mcpserver import MCPServer")
+        self.assertEqual(run.call_args.kwargs["timeout"], 10)
+        self.assertEqual(run.call_args.kwargs["stderr"], subprocess.DEVNULL)
+        self.assertEqual(run.call_args.kwargs["stdout"], subprocess.DEVNULL)
+        run.side_effect = subprocess.TimeoutExpired("probe", 10)
+        self.assertFalse(check_mcp())
+        run.side_effect = OSError("cannot spawn")
+        self.assertFalse(check_mcp())
+        run.side_effect = None
+        run.return_value.returncode = 0
+        self.assertTrue(check_mcp())
+
+    def run_main(self, mcp_ok=True):
+        output = io.StringIO()
+        with patch("sys.argv", ["preflight", "--runtime", str(self.root)]), \
+             patch("scripts.preflight.importlib.util.find_spec", return_value=object()), \
+             patch("scripts.preflight.check_mcp", return_value=mcp_ok), \
+             contextlib.redirect_stdout(output):
+            code = main()
+        return code, output.getvalue()
+
+    def test_custom_structural_index_remediation(self):
+        (self.data / "learned_state.npz").unlink()
+        code, output = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("same repository into a NEW output", output)
+        self.assertIn("--embed --runtime", output)
+        self.assertIn("Do not mix in Django", output)
+        self.assertNotIn("docs/recovery.md", output)
+
+    def test_broken_mcp_dependency_fails_preflight_actionably(self):
+        code, output = self.run_main(mcp_ok=False)
+        self.assertEqual(code, 1)
+        self.assertIn("MCP server dependencies cannot import", output)
+        self.assertIn("same virtual-environment Python", output)
+        self.assertIn("pip check", output)
+        self.assertNotIn("PASS:", output)
+
+    def test_healthy_custom_runtime_passes(self):
+        code, output = self.run_main()
+        self.assertEqual(code, 0)
+        self.assertIn("PASS: runtime artifacts", output)
 
 
 if __name__ == "__main__":
