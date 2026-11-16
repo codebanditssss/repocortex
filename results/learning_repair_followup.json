@@ -1,0 +1,238 @@
+{
+  "experiment_id": "historical-learning-repair-development-v1",
+  "status": "completed",
+  "model": "openai/gpt-5.6-luna via GMI",
+  "scope": "Exploratory learned-history versus frozen-history repair comparison on previously explored historical tasks, not fresh holdout.",
+  "registered_at_utc": "2026-11-16T02:34:44Z",
+  "attempts": 4,
+  "retries": 0,
+  "training_counts": {
+    "httpx-2810": 50,
+    "httpx-2660": 43
+  },
+  "frozen_compliant_repairs": 1,
+  "learned_compliant_repairs": 1,
+  "frozen_test_repairs": 1,
+  "learned_test_repairs": 1,
+  "rows": [
+    {
+      "task": "httpx-2810",
+      "arm": "frozen",
+      "test_pass": true,
+      "within_budget": true,
+      "compliant_repair": true,
+      "status": "completed",
+      "calls": 5,
+      "input_known": 26165,
+      "output_known": 718,
+      "usage_complete": true,
+      "elapsed_s": 56.99032287499722,
+      "tests": [
+        {
+          "phase": "before",
+          "suite": "regression",
+          "tests": 2,
+          "failures": 2
+        },
+        {
+          "phase": "before",
+          "suite": "guard",
+          "tests": 22,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "regression",
+          "tests": 2,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "guard",
+          "tests": 22,
+          "failures": 0
+        }
+      ],
+      "agent_elapsed_s": 50.99354419299925,
+      "patch_bytes": 567,
+      "lookup_calls": 1,
+      "errors": []
+    },
+    {
+      "task": "httpx-2810",
+      "arm": "learned",
+      "test_pass": true,
+      "within_budget": true,
+      "compliant_repair": true,
+      "status": "completed",
+      "calls": 6,
+      "input_known": 33280,
+      "output_known": 1025,
+      "usage_complete": true,
+      "elapsed_s": 65.30569315399771,
+      "tests": [
+        {
+          "phase": "before",
+          "suite": "regression",
+          "tests": 2,
+          "failures": 2
+        },
+        {
+          "phase": "before",
+          "suite": "guard",
+          "tests": 22,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "regression",
+          "tests": 2,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "guard",
+          "tests": 22,
+          "failures": 0
+        }
+      ],
+      "agent_elapsed_s": 61.02345608700125,
+      "patch_bytes": 566,
+      "lookup_calls": 1,
+      "errors": []
+    },
+    {
+      "task": "httpx-2660",
+      "arm": "learned",
+      "test_pass": false,
+      "within_budget": true,
+      "compliant_repair": false,
+      "status": "completed",
+      "calls": 12,
+      "input_known": 140486,
+      "output_known": 3560,
+      "usage_complete": true,
+      "elapsed_s": 196.75999162899825,
+      "tests": [
+        {
+          "phase": "before",
+          "suite": "regression",
+          "tests": 11,
+          "failures": 4
+        },
+        {
+          "phase": "before",
+          "suite": "guard",
+          "tests": 43,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "regression",
+          "tests": 11,
+          "failures": 3
+        },
+        {
+          "phase": "after",
+          "suite": "guard",
+          "tests": 43,
+          "failures": 0
+        }
+      ],
+      "agent_elapsed_s": 192.0535321339994,
+      "patch_bytes": 1583,
+      "lookup_calls": 1,
+      "errors": []
+    },
+    {
+      "task": "httpx-2660",
+      "arm": "frozen",
+      "test_pass": false,
+      "within_budget": true,
+      "compliant_repair": false,
+      "status": "completed",
+      "calls": 10,
+      "input_known": 86625,
+      "output_known": 2585,
+      "usage_complete": true,
+      "elapsed_s": 165.57193171800463,
+      "tests": [
+        {
+          "phase": "before",
+          "suite": "regression",
+          "tests": 11,
+          "failures": 4
+        },
+        {
+          "phase": "before",
+          "suite": "guard",
+          "tests": 43,
+          "failures": 0
+        },
+        {
+          "phase": "after",
+          "suite": "regression",
+          "tests": 11,
+          "failures": 3
+        },
+        {
+          "phase": "after",
+          "suite": "guard",
+          "tests": 43,
+          "failures": 0
+        }
+      ],
+      "agent_elapsed_s": 162.24995545099955,
+      "patch_bytes": 759,
+      "lookup_calls": 1,
+      "errors": []
+    }
+  ],
+  "initial_lookup_audit": [
+    {
+      "task": "httpx-2810",
+      "memory_vectors_match_immutable_training_text": true,
+      "max_vector_absolute_error": 1.4901161193847656e-08,
+      "training_rows": 50,
+      "protected_files_identical_in_both_checkouts": 90,
+      "shared_prompt_hash": "d08b09d3a103c63c030a76fd210205382ddc14c44be04627888fcbaa474acf22",
+      "tool_names_identical": true,
+      "mandatory_query_provenance": "shared hashed collector invokes locate_bug with exact prompt; request arguments not separately serialized",
+      "added_learned_edges": 139,
+      "modified_existing_edges": 47,
+      "added_relations": [
+        "CO_CHANGED",
+        "FIXED_IN",
+        "SHORTCUT"
+      ],
+      "initial_lookup_results_identical": false
+    },
+    {
+      "task": "httpx-2660",
+      "memory_vectors_match_immutable_training_text": true,
+      "max_vector_absolute_error": 1.4901161193847656e-08,
+      "training_rows": 43,
+      "protected_files_identical_in_both_checkouts": 94,
+      "shared_prompt_hash": "e3040c49bacb82bd6a1435945886d7e9bc9197dc9278c398516fd76eb32d62bb",
+      "tool_names_identical": true,
+      "mandatory_query_provenance": "shared hashed collector invokes locate_bug with exact prompt; request arguments not separately serialized",
+      "added_learned_edges": 126,
+      "modified_existing_edges": 39,
+      "added_relations": [
+        "CO_CHANGED",
+        "FIXED_IN",
+        "SHORTCUT"
+      ],
+      "initial_lookup_results_identical": true
+    }
+  ],
+  "limitations": [
+    "Two previously explored tasks; no fresh holdout or statistical inference.",
+    "Training uses immutable earlier fix commit descriptions, not original issue reports.",
+    "Model pretraining may include public fixes.",
+    "Provider does not expose an immutable model revision.",
+    "Supplemental package-source capture happened after the first model turn; complete ranker/history state and collector/transport/validator hashes were frozen before calls.",
+    "Provider model differs from previous pilots; no cross-pilot performance attribution.",
+    "No production database or runtime was trained or modified."
+  ]
+}
