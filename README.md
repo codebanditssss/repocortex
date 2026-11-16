@@ -306,7 +306,7 @@ Requires Python 3.11+, Docker Compose, git, and network access for source, ticke
 ```sh
 python3 -m venv .venv
 . .venv/bin/activate
-pip install -e .
+pip install -e '.[test]'
 
 # local development only; the token matches the default client settings
 mkdir -p data/hydradb/store data/hydradb/cache
@@ -331,7 +331,7 @@ The first embedding run downloads `sentence-transformers/all-MiniLM-L6-v2`. Exac
 ### Checks and load testing
 
 ```sh
-python -m unittest discover -s tests
+python -m pytest -q
 cd web
 npm test
 npm run lint

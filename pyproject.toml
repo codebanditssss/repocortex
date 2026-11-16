@@ -19,6 +19,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+test = [
+    "pytest>=8,<10",
+]
 multilang = [
     "tree-sitter==0.25.2",
     "tree-sitter-go==0.25.0",

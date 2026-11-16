@@ -5,13 +5,25 @@ import { chartFrame, chartModel, chartSeries, fixedInRoutes, hitSymbol, provenan
 import { scopeEvidence } from "../lib/scope-evidence.ts";
 
 const readData = async (name) => JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), "utf8"));
+const readResult = async (name) => JSON.parse(await readFile(new URL(`../../results/${name}`, import.meta.url), "utf8"));
 const [data, provenance] = await Promise.all([readData("curve"), readData("provenance")]);
 
-test("scope of evidence keeps positive and null results together with their sources", () => {
+test("scope of evidence stays locked to the positive and null result artifacts", async () => {
+  const [django, starlette, repair] = await Promise.all([
+    readResult("baselines.json"),
+    readResult("starlette_prequential_result.json"),
+    readResult("learning_repair_followup.json"),
+  ]);
+  const frozen = django.ablations["learning off"].final["function_acc@10"];
+  const learned = django.ablations.full.final["function_acc@10"];
+  const starletteFlat = starlette.fixed_holdout_checkpoints.flat_memory.at(-1).summary["function_acc@10"];
+  const starletteLearned = starlette.fixed_holdout_checkpoints.learned_graph.at(-1).summary["function_acc@10"];
+  const ties = starlette.primary_final_holdout_learned_minus_flat["function_acc@10"].exact_discordant_fix_test.ties;
+
   assert.deepEqual(scopeEvidence.map(({ study, result, delta, conclusion }) => ({ study, result, delta, conclusion })), [
-    { study: "Django retrospective", result: "45.1% → 48.3%", delta: "+3.1pp", conclusion: "Demonstrated on this split" },
-    { study: "Starlette prospective", result: "54.2% vs 54.2%", delta: "0.0pp · 24 ties", conclusion: "No demonstrated advantage" },
-    { study: "Repair outcomes", result: "1/2 vs 1/2", delta: "Same repair count", conclusion: "No demonstrated advantage" },
+    { study: "Django retrospective", result: `${(frozen * 100).toFixed(1)}% → ${(learned * 100).toFixed(1)}%`, delta: `+${((learned - frozen) * 100).toFixed(1)}pp`, conclusion: "Demonstrated on this split" },
+    { study: "Starlette prospective", result: `${(starletteFlat * 100).toFixed(1)}% vs ${(starletteLearned * 100).toFixed(1)}%`, delta: `${((starletteLearned - starletteFlat) * 100).toFixed(1)}pp · ${ties} ties`, conclusion: "No demonstrated advantage" },
+    { study: "Repair outcomes", result: `${repair.learned_test_repairs}/2 vs ${repair.frozen_test_repairs}/2`, delta: "Same repair count", conclusion: "No demonstrated advantage" },
   ]);
   assert.deepEqual(scopeEvidence.map(({ href }) => href), [
     "https://github.com/codebanditssss/repocortex/blob/main/results/baselines.json",

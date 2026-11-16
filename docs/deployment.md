@@ -79,9 +79,10 @@ project targets have not been verified.
 
 ## Current Vercel frontend
 
-The production website is https://repocortex.vercel.app. Its production
-`REPOCORTEX_API_URL` points to the Python service through a temporary Cloudflare
-tunnel. Vercel serves the interface and saved evidence independently; fresh
-searches require the laptop, recovered database, Python service, and tunnel to
-stay running. This is not a fully hosted backend. If the tunnel restarts, update
-the production environment variable and redeploy. Never use the Bolt URL here.
+The production website is https://repocortex.vercel.app. Its server-side
+`REPOCORTEX_API_URL` points to the persistent Railway Python service. That
+service connects to HydraDB over Railway private networking; the browser never
+receives a Bolt URL or database credential. Fresh searches use the live graph,
+while saved benchmark evidence remains available if the API is unavailable.
+Verify `/api/status` reports `mode: live` and `connected: true` after every
+deployment.
