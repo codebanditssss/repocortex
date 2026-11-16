@@ -41,10 +41,16 @@ The live read-only service check returned 120/120 valid responses at four
 concurrent clients, with 3.51s p50 and 4.07s p95 including network and queueing.
 That short run is not a capacity guarantee. [Run evidence](../results/service_reliability_120.json).
 
-Transfer is not established by the initial pilots: HTTPX improved by one report,
-Flask stayed flat, and training-only memory calibration worsened HTTPX evaluation
-results. The production settings were not changed to that candidate.
-[Calibration evidence](../results/learning_calibration.md).
+Transfer is not established by the four repository checks. HTTPX improves by one
+report; Flask stays flat. Click benefits from its frozen graph, with no further
+top-ten learning gain. Werkzeug's learned graph recovers one frozen-graph miss but
+ties text-only search. [All five comparison arms](../results/repository_ablations.md).
+Training-only memory calibration worsened HTTPX evaluation results; production
+settings were not changed to that candidate. [Calibration evidence](../results/learning_calibration.md).
+
+An actual paired historical repair pilot completed neither task in either arm:
+**0/2 repairs with and without RepoCortex**, no patches, and one provider error.
+It establishes no repair, time or token advantage. [Attempt records and independent regression checks](../results/repair_pilot.md).
 
 ## A concrete evaluation offer
 

@@ -16,7 +16,7 @@ Track 1: self-improving graph.
 
 ## Problem
 
-Coding agents spend a large share of every task just finding where to edit. On a big, old codebase they grep, open files, and read until something looks right, and they start from zero on every bug. The repository already knows a lot about where bugs live: which functions were fixed for similar tickets, which ones change together, what calls what, which tests cover which code. Keyword search and vector stores throw that away. They compare the bug report to each function's text, one at a time, and a report rarely uses the words of the function that fixes it.
+Coding agents need to decide where to investigate before proposing a fix. RepoCortex targets maintainers and platform teams working on mature repositories: it returns candidate functions and inspectable evidence, then retains confirmed-fix history for later reports. Whether that reduces a team's repair effort must be measured; we have no independent customer validation yet.
 
 ## Solution
 
@@ -33,7 +33,7 @@ Agents use it through an MCP server with three tools, `locate_bug`, `learn_from_
 - Every edge carries `w`, `hits`, and `misses`. Learned edges (`FIXED_IN`, `SHORTCUT`, `SAME_AS`, `REFINES`) and new weights are written back with `UNWIND ... MATCH ... SET` during the replay.
 - Live serving reads bounded structural edges from HydraDB and returns query receipts; learned fix memory remains cached. All 319 held-out rows match the offline scorer’s top ten rankings and four-decimal scores on the restored local serving path. A separate eight-query production check matches too. These are serving-parity checks, not new accuracy measurements.
 - A real confirmed Django fix is persisted and replayed in a fresh Python process with the same rankings. Repeated submission is idempotent; each feedback namespace is isolated. This demonstrates the learning mechanism, not an additional held-out accuracy gain.
-- The same client also speaks the hosted `POST /byog/query` API, so moving to HydraDB Cloud is a config change.
+- A hosted `POST /byog/query` adapter also exists. The deployed demo uses the self-hosted Bolt path; hosted-adapter parity is not claimed by these results.
 
 ## Why a graph beats a vector store here
 
@@ -47,17 +47,26 @@ Retrospective replay of 1,281 Django fix commits in time order, scored on 319 la
 - Excluding the three rows with train-seen tickets leaves 316 rows: dense + BM25 0.421, frozen graph 0.456, learned graph **0.487**. The learning gain remains +3.16 points [0.63, 5.70], without retraining.
 - Learning lift on the same held-out set: +3.1 points of function Acc@10 [0.9, 5.6], MRR 0.402 to 0.430. The held-out curve is flat for about 500 fixes, then climbs: early on, similar past tickets usually name a different function (at step 100 the nearest past fix shares a gold function 3.5% of the time), so memory only pays off once it has enough history. Storing fixes and reweighting edges do most of the lift. The ablation is in the README.
 - Two curves that rise earlier, both outside the holdout: on a validation slice of the newest 256 training issues, fn Acc@10 goes 0.414 to 0.449 (peak 0.453) and MRR 0.380 to 0.414. Scoring each training issue before learning from it, the learning graph ends +3.4 points of Acc@10 and +3.3 points of MRR above a frozen replay (0.472 vs 0.439). Over the last 100 issues learning holds 0.460 while frozen falls to 0.410.
-- Claude Sonnet 5.5 agent on 30 held-out bugs: 16% fewer input tokens with the tool, 27% fewer and 22% lower cost when told to call it first. Top-1 correctness was 12/30 without the tool and 13/30 in both tool conditions; this does not establish an accuracy gain.
+- Saved Claude Sonnet 5.5 localization study on 30 held-out bugs: 16% fewer input tokens with the tool, 27% fewer and 22% lower cost when told to call it first. Top-1 correctness was 12/30 without the tool and 13/30 in both tool conditions; this does not establish an accuracy gain.
 - In the saved 30-task study, `locate_bug` alone gets the top-1 function 0.47 of the time, the agent alone 0.40. Retrieval makes no generation-model call.
 - Hosted search check: 40 requests at four concurrent clients, 40 successful live responses, p50 3.41 s and p95 3.69 s across four repeated reports. This is a small smoke test, not a sustained capacity measurement.
 - Saved phase-2 load test: 1,251 requests, 0 failures, p95 44 ms, 63 requests per second. This measured the smaller cached ranker, not live HydraDB traversal latency.
 
-The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, row-paired bootstrap corrections, and the 316-row sensitivity check. The code snapshot includes later fixes, so this is retrospective localization rather than a historical checkout for each issue. Results cover one repository and a small agent eval; they do not establish superiority over other projects.
+The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, row-paired bootstrap corrections, and the 316-row sensitivity check. The code snapshot includes later fixes, so this is retrospective localization rather than a historical checkout for each issue. The main learning result is Django. Four additional repository evaluations separate graph structure from learning; none establishes a consistent transfer advantage. There is no controlled head-to-head comparison against other projects.
+
+## Additional evaluations and buyer evidence
+
+[Five-arm repository comparisons](results/repository_ablations.md) use the same questions within each repository: text-only, frozen graph, flat fix memory, learned graph, and learned graph with traversal disabled. HTTPX improves from 14/33 frozen to 15/33 learned; Flask remains 4/7. Click improves over text-only (18/37 to 21/37) through its frozen graph, with no further top-ten learning gain. Werkzeug goes from 8/16 frozen to 9/16 learned, tying text-only search. Click and Werkzeug datasets were frozen before scoring. Source snapshots, hashes, correlated-fix caveats and failures are retained in the report.
+
+An actual [two-task paired repair pilot](results/repair_pilot.md) produced **0/2 repairs in both arms**. No agent produced a patch; one request failed at the provider. These attempts do not establish repair accuracy, time or token savings. They are reported separately from the saved localization study.
+
+The proposed buyer is an engineering team running coding agents on a mature internal backend. The workflow is search, inspect evidence, review a confirmed diff, and retain that feedback in an isolated repository runtime. A paid support or managed-service offer remains a hypothesis, not a validated business. [Customer and evaluation offer](docs/GTM.md)
 
 ## Demo
 
-- Video (90-second walkthrough): VIDEO_LINK
-- Live demo: https://repocortex.vercel.app/app/locate (Vercel frontend with a Railway-hosted API and HydraDB)
+- Video: pending recording and upload; no video is included in this submission draft.
+- Website: https://repocortex.vercel.app/
+- Live search: https://repocortex.vercel.app/app/locate (Vercel frontend with a Railway-hosted API and HydraDB)
 - Screenshots: `docs/img/`
 - Recording walkthrough: [demo script](docs/demo-script.md)
 

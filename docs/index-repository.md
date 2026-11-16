@@ -56,8 +56,8 @@ The command exits with code 2 on any validation error, and the error message say
   directory is renamed to `--out` only after every step succeeds. If any step fails,
   the staging directory is deleted, so you never get a half-written index.
 - **`--scope`** takes relative directories inside the repository. If you omit it, the
-  command uses every top-level directory that contains `.py` files, plus any top-level
-  `.py` files. Top-level hidden directories, virtualenvs, `build/`, `dist/` and
+  command uses every top-level directory that contains files matching the selected
+  languages, plus matching top-level files (`.py` by default). Top-level hidden directories, virtualenvs, `build/`, `dist/` and
   `node_modules/` are skipped.
 - **Skipped files:**
   - `migrations/` directories (same rule as the builder);
@@ -67,8 +67,8 @@ The command exits with code 2 on any validation error, and the error message say
   - symlinks that resolve outside the repository.
 - `--max-files` (default 20000) stops the run before an unexpectedly large tree is parsed.
   Set it to `0` to disable the limit.
-- The parser only reads source with `ast`. It does not import or execute any of the
-  indexed code. Still, use this command only on repositories you trust.
+- The Python parser reads source with `ast`; optional Go, TypeScript and JavaScript
+  parsing uses tree-sitter. Neither imports or executes indexed code. Still, use this command only on repositories you trust.
 
 ## Optional Go, TypeScript and JavaScript indexing
 
@@ -161,8 +161,8 @@ no non-test functions is rejected in runtime mode.
   ambiguous targets are dropped, and dynamic dispatch is not modelled.
 - **No database writes.** Nothing is ingested into HydraDB or Bolt. To serve or learn
   from this index, ingest it in a separate step that you control.
-- **Parse coverage.** Files that this Python version's `ast` module cannot parse are
-  skipped. The number skipped is recorded as `files_unparseable` in `manifest.json`.
+- **Parse coverage.** Files that the selected parser cannot parse are skipped.
+  The number skipped is recorded as `files_unparseable` in `manifest.json`.
 - **Root node name.** The root is `repo:<checkout-directory-name>`; its graph edges
   use the same identifier. Keep indexes isolated when checkout names coincide.
 - **No benchmark results transfer.** Evaluation numbers measured on the Django

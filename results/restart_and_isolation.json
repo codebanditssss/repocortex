@@ -1,0 +1,205 @@
+{
+  "scope": "synthetic two-function fixture; database and worker restart recovery, not accuracy or capacity",
+  "database_image": "ghcr.io/hydra-db/hydradb:0.4.0",
+  "database_image_id": "sha256:ab71d651fefee13ebb23eb56d72316065bdca563ff7587442e07be663f2bf880",
+  "storage": "local Docker bind mount; same storage across database restarts",
+  "restart_modes": [
+    "docker stop --time 30 / start",
+    "SIGKILL / start"
+  ],
+  "limitations": [
+    "Single journal event and single writer; no production database touched.",
+    "SIGKILL occurs after a successful graceful restart; not a power-loss or immediate post-commit crash test.",
+    "Original base scoring fixture is recreated; existing runtime artifacts are not used."
+  ],
+  "processes": {
+    "write": {
+      "phase": "write",
+      "loaded": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-database-restart",
+        "replayed": 0
+      },
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "feedback": {
+        "ticket": 1202501695478588694,
+        "learned": [
+          "func:fixture.py:beta"
+        ],
+        "persistence": "hydradb feedback journal"
+      },
+      "memory_entries": 1,
+      "learned_edges": 1
+    },
+    "after_graceful_restart": {
+      "phase": "reload",
+      "loaded": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-database-restart",
+        "replayed": 1
+      },
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "feedback": {
+        "ticket": 1202501695478588694,
+        "learned": [
+          "func:fixture.py:beta"
+        ],
+        "skipped": "this report and diff were already learned"
+      },
+      "memory_entries": 1,
+      "learned_edges": 1
+    },
+    "after_abrupt_restart": {
+      "phase": "reload",
+      "loaded": {
+        "storage": "hydradb feedback journal",
+        "namespace": "verify-database-restart",
+        "replayed": 1
+      },
+      "before": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "after": [
+        {
+          "rank": 1,
+          "uid": "func:fixture.py:beta",
+          "file": "fixture.py",
+          "qualname": "beta",
+          "line": 10,
+          "score": 1.08,
+          "path": "issue #1202501695478588694 sim 1.00 -FIXED_IN-> beta (w 1.00)"
+        },
+        {
+          "rank": 2,
+          "uid": "func:fixture.py:alpha",
+          "file": "fixture.py",
+          "qualname": "alpha",
+          "line": 1,
+          "score": 1.0,
+          "path": "dense + bm25"
+        }
+      ],
+      "feedback": {
+        "ticket": 1202501695478588694,
+        "learned": [
+          "func:fixture.py:beta"
+        ],
+        "skipped": "this report and diff were already learned"
+      },
+      "memory_entries": 1,
+      "learned_edges": 1
+    }
+  },
+  "checks": {
+    "confirmed_function_promoted": true,
+    "graceful_database_restart_restores_exact_ranking": true,
+    "abrupt_database_restart_restores_exact_ranking": true,
+    "one_event_replayed_after_each_restart": true,
+    "duplicate_feedback_is_idempotent": true,
+    "disposable_container_removed": true,
+    "temporary_storage_removed": true
+  },
+  "cross_corpus_isolation_checks": {
+    "other_namespace_replays_zero_events": true,
+    "unrelated_corpus_ranking_unchanged": true,
+    "same_namespace_other_corpus_rejected": true,
+    "original_namespace_still_replays_one_event": true
+  },
+  "tested_commit": "29422d721a8314c0af42aaf737bfe3976ab233b2",
+  "isolation_scope": "Synthetic corpus variants sharing function identities but distinct repository nodes; actual disposable HydraDB storage. Not a user-repository accuracy test."
+}
