@@ -122,7 +122,7 @@ def split_audit(dataset: dict) -> dict:
             "feedback": "only training rows passed to learning operators; held-out labels used for scoring only"}
 
 
-def evaluate(dataset: dict, graph, work: Path) -> dict:
+def evaluate(dataset: dict, graph, work: Path, calibrate: bool = False) -> dict:
     from repocortex.eval.harness import eval_bm25, eval_dense, eval_ranker
     from repocortex.learn.replay import replay
     from repocortex.retrieve.bm25 import BM25Index
@@ -144,6 +144,10 @@ def evaluate(dataset: dict, graph, work: Path) -> dict:
     dense = build_dense_index(nodes, embedder)
     def ranker():
         return HybridRanker({uid: dict(node) for uid, node in nodes.items()}, EdgeTable({key: dict(props) for key, props in edges.items()}), bm25, dense, embedder, client=None)
+    calibration = None
+    if calibrate:
+        from repocortex.learn.calibrate import calibrate_memory
+        calibration = calibrate_memory(train, ranker)
     lexical = ranker()
     lexical.graph_mix = 0.0
     lexical.memory_lam = lexical.shortcut_lam = 0.0
@@ -152,6 +156,8 @@ def evaluate(dataset: dict, graph, work: Path) -> dict:
     frozen = ranker()
     baselines["frozen"] = eval_ranker(frozen, test)
     learned = ranker()
+    if calibration is not None:
+        learned.memory_lam = calibration["selected"]["memory_lam"]
     played = replay(learned, train, test, mode="full", points=5, record_prequential=True)
     final = eval_ranker(learned, test)
     observed = {int(row["ticket"]) for row in learned.memory}
@@ -160,7 +166,7 @@ def evaluate(dataset: dict, graph, work: Path) -> dict:
         raise RuntimeError("learned memory does not exactly match the training tickets")
     audit["observed_memory_tickets"] = sorted(observed)
     audit["training_only_memory_verified"] = True
-    return {"status": "completed", "split_audit": audit, "train": len(train), "holdout": len(test),
+    return {"status": "completed", "calibration": calibration, "split_audit": audit, "train": len(train), "holdout": len(test),
         "functions": len(dense.uids), "nodes": len(nodes), "edges": len(edges),
         "baselines": baselines, "learned": final, "curve": played["curve"],
         "operators": played["operators"], "params": played["params"],
@@ -177,6 +183,8 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=120, help="maximum eligible PR commits, fixed before scoring")
     parser.add_argument("--repository", default="pallets/flask", help="GitHub owner/name")
     parser.add_argument("--scope", nargs="+", default=["src/flask"], help="source directories in the checkout")
+    parser.add_argument("--calibrate", action="store_true",
+                        help="choose memory strength using only earlier training fixes; preserve holdout")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", args.repository):
         parser.error("--repository must be owner/name")
@@ -190,12 +198,12 @@ def main() -> None:
         dataset, graph = mine(args.repo, args.work, args.limit, args.repository, tuple(args.scope))
     encoded = json.dumps(dataset, indent=2)
     (args.work / "dataset.json").write_text(encoded)
-    results = evaluate(dataset, graph, args.work)
+    results = evaluate(dataset, graph, args.work, calibrate=args.calibrate)
     results.update({"selection_plan": {"maximum_eligible_pr_commits": args.limit, "holdout_commit_fraction": 0.4, "checkpoint_points": 5},
         "selection_counts": dataset["selection_counts"], "repository": dataset["repository"], "snapshot": dataset["snapshot"],
         "dataset_sha256": hashlib.sha256(encoded.encode()).hexdigest(),
         "sample": [{k: row[k] for k in ("ticket", "url", "pull_request", "commit", "time", "split", "gold_functions")} for row in dataset["issues"]],
-        "methodology": {"backend": "offline in-memory structural graph; no HydraDB call", "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)", "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker", "graph": "current source snapshot, scopes " + ", ".join(dataset["scope"]) + "; no co-change or held-out outcome edges", "parameters": "existing Django defaults transferred unchanged, no target-repository tuning", "limitations": ["Exploratory sample, not a statistically established generalization result.", "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.", "GitHub closing references may include feature requests, not exclusively bugs.", "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.", "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.", "Does not establish hosted live graph learning or cross-repository generalization."]}})
+        "methodology": {"backend": "offline in-memory structural graph; no HydraDB call", "split": "chronological by fix commit, unique issue IDs, last 40% held out (selected before any scoring to retain at least five held-out reports)", "query": "linked GitHub issue title and current body, truncated to 4000 characters by the shared ranker", "graph": "current source snapshot, scopes " + ", ".join(dataset["scope"]) + "; no co-change or held-out outcome edges", "parameters": ("memory strength selected on chronological training-only validation; all other defaults unchanged" if args.calibrate else "existing Django defaults transferred unchanged, no target-repository tuning"), "limitations": ["Exploratory sample, not a statistically established generalization result.", "Retrospective current snapshot includes code from later fixes; issue bodies may have later edits.", "GitHub closing references may include feature requests, not exclusively bugs.", "Only mapped existing functions and PRs with explicit issue links are retained; selection bias applies.", "Fix diff function mapping is a proxy for fault location, not a human-labelled root cause.", "Does not establish hosted live graph learning or cross-repository generalization."]}})
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, indent=2))
     args.output.with_name(args.output.stem + "_dataset.json").write_text(encoded)
