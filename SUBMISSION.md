@@ -58,13 +58,13 @@ The [evaluation audit](docs/evaluation-audit.md) documents repeated ticket IDs, 
 
 [Five-arm repository comparisons](results/repository_ablations.md) use the same questions within each repository: text-only, frozen graph, flat fix memory, learned graph, and learned graph with traversal disabled. HTTPX improves from 14/33 frozen to 15/33 learned; Flask remains 4/7. Click improves over text-only (18/37 to 21/37) through its frozen graph, with no further top-ten learning gain. Werkzeug goes from 8/16 frozen to 9/16 learned, tying text-only search. Click and Werkzeug datasets were frozen before scoring. Source snapshots, hashes, correlated-fix caveats and failures are retained in the report.
 
-An actual [two-task paired repair pilot](results/repair_pilot.md) produced **0/2 repairs in both arms**. No agent produced a patch; one request failed at the provider. These attempts do not establish repair accuracy, time or token savings. They are reported separately from the saved localization study.
+The original [paired repair pilot](results/repair_pilot.md) remains **0/2 in both arms**. A separately registered [four-run follow-up](results/repair_followup.md) passed hidden regression and guard tests on **1/2 tasks in each arm**. Within the equal budgets, baseline scored **0/2** and mandatory initial lookup **1/2**: one baseline repair exceeded its input budget, and another encountered a provider error. This measures frozen source assistance, not learning; these two tasks establish no general repair, time or token advantage.
 
 The proposed buyer is an engineering team running coding agents on a mature internal backend. The workflow is search, inspect evidence, review a confirmed diff, and retain that feedback in an isolated repository runtime. A paid support or managed-service offer remains a hypothesis, not a validated business. [Customer and evaluation offer](docs/GTM.md)
 
 ## Demo
 
-- Video: pending recording and upload; no video is included in this submission draft.
+- Video: a 58-second captioned local walkthrough draft is recorded; public upload and its submission link remain pending.
 - Website: https://repocortex.vercel.app/
 - Live search: https://repocortex.vercel.app/app/locate (Vercel frontend with a Railway-hosted API and HydraDB)
 - Screenshots: `docs/img/`

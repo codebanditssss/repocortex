@@ -1,0 +1,238 @@
+{
+  "experiment_id": "httpx-base-only-repair-followup-v4",
+  "model": "google/gemini-3.8-flash via GMI",
+  "scope": "Frozen base-only graph assistance, not learning benefit",
+  "rows": [
+    {
+      "task": "httpx-2810",
+      "arm": "baseline",
+      "status": "budget_exhausted",
+      "agent_elapsed_s": 96.23291721099667,
+      "total_elapsed_s": 100.72237679699901,
+      "stop_reason": "budget_exhausted",
+      "model_calls": 22,
+      "locate_calls": 0,
+      "provider_reported_input_total": 208611,
+      "provider_reported_output_total": 8199,
+      "after_exit_codes": [
+        0,
+        0
+      ],
+      "patch_bytes": 563,
+      "errors": [
+        {
+          "kind": "agent",
+          "code": "token_budget"
+        }
+      ],
+      "tests": {
+        "before": {
+          "regression": {
+            "count": 2,
+            "failures": 2,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "after": {
+          "regression": {
+            "count": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      },
+      "tests_pass": true,
+      "within_budget": false,
+      "compliant_repair": false,
+      "usage_complete": true
+    },
+    {
+      "task": "httpx-2810",
+      "arm": "locate",
+      "status": "completed",
+      "agent_elapsed_s": 82.768788854999,
+      "total_elapsed_s": 85.66949410699453,
+      "stop_reason": "completed",
+      "model_calls": 17,
+      "locate_calls": 1,
+      "provider_reported_input_total": 154773,
+      "provider_reported_output_total": 7100,
+      "after_exit_codes": [
+        0,
+        0
+      ],
+      "patch_bytes": 563,
+      "errors": [],
+      "tests": {
+        "before": {
+          "regression": {
+            "count": 2,
+            "failures": 2,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "after": {
+          "regression": {
+            "count": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      },
+      "tests_pass": true,
+      "within_budget": true,
+      "compliant_repair": true,
+      "usage_complete": true
+    },
+    {
+      "task": "httpx-2660",
+      "arm": "locate",
+      "status": "budget_exhausted",
+      "agent_elapsed_s": 150.54593997300253,
+      "total_elapsed_s": 153.9381148829998,
+      "stop_reason": "budget_exhausted",
+      "model_calls": 22,
+      "locate_calls": 1,
+      "provider_reported_input_total": 223308,
+      "provider_reported_output_total": 10092,
+      "after_exit_codes": [
+        1,
+        0
+      ],
+      "patch_bytes": 0,
+      "errors": [
+        {
+          "kind": "agent",
+          "code": "token_budget"
+        }
+      ],
+      "tests": {
+        "before": {
+          "regression": {
+            "count": 11,
+            "failures": 4,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 43,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "after": {
+          "regression": {
+            "count": 11,
+            "failures": 4,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 43,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      },
+      "tests_pass": false,
+      "within_budget": false,
+      "compliant_repair": false,
+      "usage_complete": true
+    },
+    {
+      "task": "httpx-2660",
+      "arm": "baseline",
+      "status": "error",
+      "agent_elapsed_s": 66.20652793400222,
+      "total_elapsed_s": 69.81155726099678,
+      "stop_reason": "error",
+      "model_calls": 16,
+      "locate_calls": 0,
+      "provider_reported_input_total": 96441,
+      "provider_reported_output_total": 2385,
+      "after_exit_codes": [
+        1,
+        0
+      ],
+      "patch_bytes": 916,
+      "errors": [
+        {
+          "kind": "provider",
+          "code": "http_400"
+        }
+      ],
+      "tests": {
+        "before": {
+          "regression": {
+            "count": 11,
+            "failures": 4,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 43,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "after": {
+          "regression": {
+            "count": 11,
+            "failures": 5,
+            "errors": 0,
+            "skipped": 0
+          },
+          "guard": {
+            "count": 43,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      },
+      "tests_pass": false,
+      "within_budget": null,
+      "compliant_repair": false,
+      "usage_complete": false
+    }
+  ],
+  "baseline_compliant_repairs": 0,
+  "treatment_compliant_repairs": 1,
+  "baseline_test_repairs": 1,
+  "treatment_test_repairs": 1,
+  "smoke1": "HTTP403 gateway error1010; recorded before study registration; not a repair attempt",
+  "smoke2": "Two successful tool requests after User-Agent restoration; recorded before registration",
+  "no_repair_retries": true,
+  "original_pilot": "0/2 repairs in each arm remains unchanged"
+}

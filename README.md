@@ -78,7 +78,7 @@ A saved experiment compared the same 30 held-out bugs with the same model and co
 | Search tools + `locate_bug` | 53,888 | 13/30 |
 | Instructed to call `locate_bug` first | 46,361 | 13/30 |
 
-For a completed-fix study, the [outcome evaluation protocol](docs/agent-outcomes.md) separates regression-test evidence, elapsed time, cached tokens, errors and missing runs. A subsequent two-task historical repair pilot produced **0/2 repairs in both arms**, with no patches and one provider error. It establishes no repair or speed advantage. [Pilot outcomes and limitations](results/repair_pilot.md)
+The [outcome evaluation protocol](docs/agent-outcomes.md) separates regression tests, budgets, usage and failures. The [original repair pilot](results/repair_pilot.md) remains **0/2 in both arms**. A separately registered [four-run follow-up](results/repair_followup.md) passed hidden tests on **1/2 tasks in each arm**; within budget, baseline scored **0/2** and mandatory initial lookup **1/2**. One baseline repair exceeded its input budget; the other encountered a provider error. This tests frozen source assistance, not learning, and establishes no general repair or efficiency advantage.
 
 The tool-available arm used **16% fewer input tokens**; the locate-first arm used **27% fewer**. A one-issue accuracy difference is too small to establish a gain. This is one model, one run per condition, and 30 tasks; input tokens include cached reads. [protocol, raw runs and caveats](results/agent_eval/README.md)
 
