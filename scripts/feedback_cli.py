@@ -9,6 +9,7 @@ from pathlib import Path
 
 from repocortex.config import Settings
 from repocortex.hydradb import connect
+from repocortex.serve.diff_validation import validate_feedback_diff
 from repocortex.serve.feedback import configure_feedback, feedback_digest
 from repocortex.serve.learn import functions_from_diff, learn_from_fix
 from repocortex.serve.load import load_ranker, locate_report, runtime_directory
@@ -17,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def review(ranker, namespace: str, report: str, diff: str) -> dict:
+    validate_feedback_diff(diff)
     mapped = functions_from_diff(diff, ranker.nodes)
     if not mapped:
         raise ValueError("no changed functions match the indexed snapshot; no feedback was written")

@@ -102,3 +102,12 @@ Reports must be nonempty UTF-8 text with at most 12,000 characters. Diffs must b
 nonempty UTF-8 text with at most 256,000 bytes. Namespaces allow 1–100 letters,
 digits, periods, underscores and hyphens. Keep the namespace, base runtime and
 HydraDB backup together so future processes can reconstruct the same state.
+
+Feedback accepts complete unified text patches with paired `---` / `+++` file
+headers and matching old/new hunk counts. Standard `git diff` metadata,
+zero-length insertions/deletions and no-final-newline markers are supported.
+Truncated patches, overlapping hunks, quoted paths, binary patches and mail-patch
+preambles are rejected before recording feedback. Export a text patch with
+`git diff` and review its matched functions; structural validation does not prove
+that a fix is correct or that its contents match the indexed checkout. Historical
+journal replay and evaluation label mapping retain their existing semantics.

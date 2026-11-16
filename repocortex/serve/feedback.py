@@ -49,6 +49,8 @@ class FeedbackJournal:
         return events
 
     def append(self, report: str, diff: str, golds: list[str]) -> None:
+        from repocortex.serve.diff_validation import validate_feedback_diff
+        validate_feedback_diff(diff)
         digest = feedback_digest(report, diff)
         uid = f"feedback:{self.namespace}:{digest}"
         # Reserve high positive ids, away from the corpus adapter's sequential ids.

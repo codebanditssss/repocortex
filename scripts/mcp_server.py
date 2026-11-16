@@ -119,6 +119,8 @@ def learn_from_fix(report: str, diff: str) -> dict:
     report = _validate_report(report)
     if not isinstance(diff, str) or not diff.strip() or len(diff.encode("utf-8")) > MAX_DIFF_BYTES:
         raise ValueError("diff must contain 1 to 256000 UTF-8 bytes")
+    from repocortex.serve.diff_validation import validate_feedback_diff
+    validate_feedback_diff(diff)
     from repocortex.serve.load import RankingBusyError, REQUEST_LOCK_TIMEOUT_SECONDS
     state = get_state()
     if getattr(state["ranker"], "feedback_journal", None) is None:

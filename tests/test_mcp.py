@@ -21,7 +21,7 @@ class McpTest(unittest.TestCase):
                 m.learn_from_fix("bug", "x" * 256001)
             with patch.object(m, "_http_mode", True):
                 with self.assertRaises(ValueError):
-                    m.learn_from_fix("bug", "+++ b/a.py")
+                    m.learn_from_fix("bug", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n")
             state.assert_not_called()
 
     def test_feedback_without_journal_never_applies_or_writes_base(self):
@@ -38,7 +38,7 @@ class McpTest(unittest.TestCase):
                 state = {"ranker": ranker, "operators": [], "root": root}
                 with patch.object(m, "_http_mode", False), patch.object(m, "get_state", return_value=state), patch("repocortex.serve.learn.learn_from_fix") as apply_fix:
                     with self.assertRaisesRegex(ValueError, "REPOCORTEX_FEEDBACK_NAMESPACE"):
-                        m.learn_from_fix("a valid bug report", "+++ b/a.py")
+                        m.learn_from_fix("a valid bug report", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n")
                 apply_fix.assert_not_called()
                 ranker.request_lock.acquire.assert_not_called()
                 ranker.flush.assert_not_called()
@@ -51,8 +51,8 @@ class McpTest(unittest.TestCase):
                                  client=SimpleNamespace(ping=lambda: {"repo": "repo:fixture", "functions": 2}))
         state = {"ranker": ranker, "operators": []}
         with patch.object(m, "_http_mode", False), patch.object(m, "get_state", return_value=state), patch("repocortex.serve.learn.learn_from_fix", return_value={"learned": ["function"]}) as apply_fix:
-            self.assertEqual(m.learn_from_fix("bug", "+++ b/a.py"), {"learned": ["function"]})
-        apply_fix.assert_called_once_with(ranker, "bug", "+++ b/a.py", operators=[])
+            self.assertEqual(m.learn_from_fix("bug", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n"), {"learned": ["function"]})
+        apply_fix.assert_called_once_with(ranker, "bug", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n", operators=[])
         ranker.request_lock.release.assert_called_once()
 
     def test_wrong_repository_refuses_feedback_under_lock(self):
@@ -62,7 +62,7 @@ class McpTest(unittest.TestCase):
                                  client=SimpleNamespace(ping=lambda: {"repo": "repo:django", "functions": 2}))
         with patch.object(m, "_http_mode", False), patch.object(m, "get_state", return_value={"ranker": ranker, "operators": []}), patch("repocortex.serve.learn.learn_from_fix") as apply_fix:
             with self.assertRaisesRegex(RuntimeError, "matching this runtime"):
-                m.learn_from_fix("bug", "+++ b/a.py")
+                m.learn_from_fix("bug", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n")
         apply_fix.assert_not_called()
         ranker.request_lock.acquire.assert_called_once()
         ranker.request_lock.release.assert_called_once()
@@ -75,7 +75,7 @@ class McpTest(unittest.TestCase):
                                  nodes={"repo:httpx": {"label": "Repo"}}, client=client)
         with patch.object(m, "get_state", return_value={"ranker": ranker, "operators": []}), patch("repocortex.serve.learn.learn_from_fix") as apply_fix:
             with self.assertRaisesRegex(RuntimeError, "no feedback was written"):
-                m.learn_from_fix("bug", "+++ b/a.py")
+                m.learn_from_fix("bug", "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-old\n+new\n")
         apply_fix.assert_not_called()
         ranker.request_lock.release.assert_called_once()
 
