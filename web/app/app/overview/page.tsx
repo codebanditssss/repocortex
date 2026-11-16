@@ -47,6 +47,12 @@ export default function Overview() {
           <p>Graph structure helps Click at top ten, but learning adds no further successes and lowers MRR. Werkzeug recovers one report through learning without beating text-only search. The learning-gain intervals include zero. These retrospective offline checks do not establish reliable generalization.</p>
           <p><a href="https://github.com/codebanditssss/repocortex/blob/main/results/repository_ablations.md" target="_blank" rel="noreferrer">Read all four repository checks and memory controls →</a></p>
         </details>
+        <section className="dashboard-disclosure" aria-labelledby="starlette-confirmation-title">
+          <div className="section-rule"><h2 id="starlette-confirmation-title">Prospective Starlette confirmation</h2><span className="cap">Preregistered before scoring</span></div>
+          <p>The fixed study learned from 41 chronological reports, then evaluated the same 24 untouched holdout reports at every checkpoint.</p>
+          <p>On the training stream, flat fix memory found 31.7% and the learned graph found 34.1%&mdash;a directional secondary result. The registered holdout comparison tied at 54.2%, so this study demonstrated no learning advantage.</p>
+          <p><a href="https://github.com/codebanditssss/repocortex/blob/main/results/starlette_prequential.md" target="_blank" rel="noreferrer">Study summary →</a> · <a href="https://github.com/codebanditssss/repocortex/blob/main/results/starlette_prequential_result.json" target="_blank" rel="noreferrer">Raw result →</a></p>
+        </section>
         <details className="baseline-summary">
           <summary>All baselines, including dense + BM25 without graph</summary>
           <table className="manual-table"><caption>At the end of the pass / held-out accuracy</caption><thead><tr><th scope="col">Method</th><th scope="col">File Acc@1</th><th scope="col">Function Acc@10</th></tr></thead><tbody>

@@ -16,6 +16,8 @@ RepoCortex helps maintainers and coding agents investigate unfamiliar code. Give
 
 We replayed **1,281 Django fixes** in chronological order and evaluated on **319 held-out fix commits**. Strict top-10 function accuracy increased from **45.1% with learning off to 48.3% after replay**. The paired improvement is **3.1 percentage points**, with a 95% bootstrap interval of **0.9–5.6 points**.
 
+A separately preregistered Starlette confirmation froze the dataset, evaluator, embedding artifact, causal arms and decision rule before scoring. Its online predict-then-learn stream directionally favored the learned graph over flat fix memory, but the untouched 24-fix endpoint tied at **54.2% strict accuracy** in every arm. The registered decision is **no demonstrated Starlette learning advantage**. [Protocol and result](results/starlette_prequential.md)
+
 Learning runs through historical replay or confirmed diffs submitted to `learn_from_fix`; merged pull requests are not ingested automatically.
 
 ## Start here
@@ -55,6 +57,28 @@ Source: [full metrics, intervals and configuration](results/baselines.json).
 <img src="results/curve.png" alt="Measured holdout, validation and training-stream curves, shown separately with their baselines" width="900">
 
 The held-out curve dips early and improves after roughly 500 fixes. It is not a steady rise. The plot also includes a validation slice and an expanding training-stream comparison; neither is the held-out result.
+
+### Prospective Starlette confirmation
+
+Starlette was selected and registered before its first score. The study locked 41 chronological reports grouped into 36 fix commits, 24 untouched holdout fixes, four causal arms, source and evaluator hashes, the embedding artifact, checkpoints, failure rules and the final decision rule. All reports associated with one fix were predicted before either adaptive arm observed that fix. No prediction or learning update failed.
+
+| Predict-then-learn stream | Strict function accuracy @10 |
+|---|---:|
+| Text only | 29.3% |
+| Frozen graph | 31.7% |
+| Flat fix memory | 31.7% |
+| Learned graph | 34.1% |
+
+The registered learned-minus-flat stream difference is **+2.8 fix-weighted points**, with a 95% interval of **0.0–8.3 points**. It is a directional result, not a demonstrated advantage.
+
+| Training fix groups absorbed | 0 | 9 | 18 | 27 | 36 |
+|---|---:|---:|---:|---:|---:|
+| Flat-memory strict accuracy | 54.2% | 54.2% | 54.2% | 54.2% | 54.2% |
+| Learned-graph strict accuracy | 54.2% | 54.2% | 54.2% | 54.2% | 54.2% |
+| Flat-memory MRR | 0.507 | 0.507 | 0.507 | 0.502 | 0.523 |
+| Learned-graph MRR | 0.507 | 0.500 | 0.500 | 0.511 | 0.529 |
+
+At the registered final checkpoint, the primary strict-accuracy difference is **0.0 points**: 24 ties, no discordant fixes, exact two-sided *p*=1.0. The secondary MRR difference is +0.0062 with an interval of [0.0000, 0.0176]. This prospective null result does not establish transfer beyond Django. [Summary, registration and raw evidence](results/starlette_prequential.md)
 
 ### What contributes to learning
 
@@ -111,6 +135,8 @@ The expanded comparison also tests flat past-fix memory without traversal and di
 
 These are offline checks, not live HydraDB accuracy tests. No ticket, commit or exact normalized report overlaps occur across each split, but current source snapshots include later fixes, issue bodies may have later edits, and diff-touched functions are only a proxy for fault location. Earlier protocols remain available: [HTTPX](results/transfer_httpx.md) · [Flask](results/transfer_flask.md).
 
+The Starlette study above is a separate prospective confirmation. It is not pooled with these retrospective repository checks, and its null primary endpoint remains reported independently.
+
 ## One answer you can inspect
 
 Held-out ticket **#36865** asks about casting in admin searches. The fix changed `ModelAdmin.get_search_results` and its nested helper `construct_search`.
@@ -149,6 +175,8 @@ flowchart LR
 HydraDB 0.4.0 stores the graph and learned relationships. Ingestion and replay use batched writes; evaluation normally reloads the graph through paged, count-checked reads. The initial graph has **46,443 nodes and 138,150 edges**. The saved learned export has **48,663 nodes and 141,435 edges**. [initial counts](results/graph_stats.json) · [learned export](results/graph.json)
 
 **The serving boundary matters:** the HTTP and MCP locate tools read structural edges from HydraDB for each live request and use those edges in ranking. Responses include the executed Cypher, parameters, and returned row counts. Embeddings and learned fix memory load from the recovered runtime files. Without a database connection, the service labels its answers as cached replay; the recorded evaluation uses the offline scorer. See [the recovery guide](docs/recovery.md).
+
+The Starlette confirmation used the frozen offline scorer to isolate ranking behavior. Live HydraDB evidence comes separately from per-request structural query receipts, production parity, durable feedback journals and restart checks.
 
 Relationship types include `CALLS`, `CO_CHANGED`, `TESTED_BY`, `DEFINES`, `FIXED_IN` and `SHORTCUT`. Their exact spelling is retained in code and queries.
 
